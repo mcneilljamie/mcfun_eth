@@ -93,8 +93,7 @@
       "title": "重要说明",
       "fixedSupply": "所有代币的固定供应量为1,000,000个代币",
       "burnedLiquidity": "初始流动性被永久销毁，无法移除",
-      "noFees": "无代币创建费用 - 只需支付网络gas费用",
-      "tradingFee": "所有交换收取0.4%的交易费"
+      "noFees": "无代币创建费用 - 只需支付网络gas费用"
     },
     "errors": {
       "nameAndSymbol": "请提供代币名称和符号",

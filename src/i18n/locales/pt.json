@@ -93,8 +93,7 @@
       "title": "Notas Importantes",
       "fixedSupply": "Todos os tokens têm um fornecimento fixo de 1.000.000 tokens",
       "burnedLiquidity": "A liquidez inicial é queimada permanentemente e não pode ser removida",
-      "noFees": "Sem taxas de criação de tokens - pague apenas taxas de rede de gás",
-      "tradingFee": "0,4% de taxa de negociação em todas as trocas"
+      "noFees": "Sem taxas de criação de tokens - pague apenas taxas de rede de gás"
     },
     "errors": {
       "nameAndSymbol": "Por favor, forneça nome e símbolo do token",

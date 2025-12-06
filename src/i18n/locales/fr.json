@@ -93,8 +93,7 @@
       "title": "Notes Importantes",
       "fixedSupply": "Tous les tokens ont un approvisionnement fixe de 1 000 000 tokens",
       "burnedLiquidity": "La liquidité initiale est brûlée de manière permanente et ne peut être retirée",
-      "noFees": "Pas de frais de création de tokens - payez uniquement les frais de réseau",
-      "tradingFee": "0,4% de frais d'échange sur tous les swaps"
+      "noFees": "Pas de frais de création de tokens - payez uniquement les frais de réseau"
     },
     "errors": {
       "nameAndSymbol": "Veuillez fournir le nom et le symbole du token",

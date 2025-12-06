@@ -93,8 +93,7 @@
       "title": "Note Importanti",
       "fixedSupply": "Tutti i token hanno una fornitura fissa di 1.000.000 token",
       "burnedLiquidity": "La liquidità iniziale viene bruciata permanentemente e non può essere rimossa",
-      "noFees": "Nessuna commissione di creazione token - paga solo le commissioni di rete",
-      "tradingFee": "0,4% di commissione di scambio su tutti gli swap"
+      "noFees": "Nessuna commissione di creazione token - paga solo le commissioni di rete"
     },
     "errors": {
       "nameAndSymbol": "Fornisci nome e simbolo del token",

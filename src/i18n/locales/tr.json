@@ -93,8 +93,7 @@
       "title": "Önemli Notlar",
       "fixedSupply": "Tüm tokenlar 1.000.000 token sabit arzına sahiptir",
       "burnedLiquidity": "İlk likidite kalıcı olarak yakılır ve kaldırılamaz",
-      "noFees": "Token oluşturma ücreti yok - sadece ağ gaz ücretlerini ödeyin",
-      "tradingFee": "Tüm takaslar için %0.4 işlem ücreti"
+      "noFees": "Token oluşturma ücreti yok - sadece ağ gaz ücretlerini ödeyin"
     },
     "errors": {
       "nameAndSymbol": "Lütfen token adı ve sembolü girin",

@@ -93,8 +93,7 @@
       "title": "Important Notes",
       "fixedSupply": "All tokens have a fixed supply of 1,000,000 tokens",
       "burnedLiquidity": "Initial liquidity is permanently burned and cannot be removed",
-      "noFees": "No token creation fees - only pay network gas fees",
-      "tradingFee": "0.4% trading fee on all swaps"
+      "noFees": "No token creation fees - only pay network gas fees"
     },
     "errors": {
       "nameAndSymbol": "Please provide token name and symbol",
