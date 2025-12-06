@@ -1,8 +1,8 @@
-# Jamm.Fi Deployment Guide
+# JAMM Deployment Guide
 
 ## Overview
 
-Jamm.Fi is a fair launch token platform on Ethereum with a native DEX. This guide will walk you through deploying the smart contracts and configuring the frontend.
+JAMM is a fair launch token platform on Ethereum with a native DEX. This guide will walk you through deploying the smart contracts and configuring the frontend.
 
 ## Smart Contract Deployment
 

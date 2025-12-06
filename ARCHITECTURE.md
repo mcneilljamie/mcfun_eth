@@ -1,8 +1,8 @@
-# Jamm.Fi Technical Architecture
+# JAMM Technical Architecture
 
 ## System Overview
 
-Jamm.Fi is a decentralized token launch platform built on Ethereum with the following components:
+JAMM is a decentralized token launch platform built on Ethereum with the following components:
 
 1. **Smart Contracts** - On-chain logic for token creation, AMM, and trading
 2. **Frontend Application** - React-based user interface

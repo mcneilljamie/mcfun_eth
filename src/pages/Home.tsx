@@ -58,7 +58,7 @@ export function Home({ onNavigate }: HomeProps) {
             <div className="bg-gray-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
               <DollarSign className="w-6 h-6 text-gray-900" />
             </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-2">No Platform Fees</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">No Token Creation Fees</h3>
             <p className="text-gray-600">
               Only pay gas fees. No hidden costs or platform charges.
             </p>
@@ -111,7 +111,7 @@ export function Home({ onNavigate }: HomeProps) {
         </div>
 
         <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl shadow-lg p-8 text-white text-center">
-          <h2 className="text-3xl font-bold mb-4">Why Choose Jamm.Fi?</h2>
+          <h2 className="text-3xl font-bold mb-4">Why Choose JAMM?</h2>
           <p className="text-lg text-gray-300 mb-6 max-w-3xl mx-auto">
             We've built the simplest, safest, and most cost-effective platform for launching tokens on Ethereum.
             No complex parameters, no hidden fees, no rug pulls. Just pure, fair token launches.

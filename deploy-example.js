@@ -1,4 +1,4 @@
-// Example deployment script for Jamm.Fi Factory contract
+// Example deployment script for JAMM Factory contract
 // This can be used with Hardhat or Ethers.js
 
 const { ethers } = require('ethers');
@@ -87,7 +87,7 @@ main()
 `;
 
 console.log('\n' + '='.repeat(60));
-console.log('Jamm.Fi Factory Deployment Guide');
+console.log('JAMM Factory Deployment Guide');
 console.log('='.repeat(60) + '\n');
 
 deployJammFactory().catch((error) => {

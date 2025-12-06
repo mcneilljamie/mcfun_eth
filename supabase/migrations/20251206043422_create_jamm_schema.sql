@@ -1,5 +1,5 @@
 /*
-  # Create Jamm.Fi Database Schema
+  # Create JAMM Database Schema
 
   1. New Tables
     - `tokens`
