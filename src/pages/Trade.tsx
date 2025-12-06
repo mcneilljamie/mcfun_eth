@@ -178,7 +178,7 @@ export function Trade({ selectedToken }: TradeProps) {
                   </div>
                   <div>
                     <span className="text-gray-600">{selectedTokenData.symbol} Reserve:</span>
-                    <p className="font-medium text-gray-900">{formatNumber(reserves.reserveToken)}</p>
+                    <p className="font-medium text-gray-900">{formatNumber(reserves.reserveToken, 1)}</p>
                   </div>
                 </div>
               </div>
@@ -250,13 +250,13 @@ export function Trade({ selectedToken }: TradeProps) {
                 <div className="flex justify-between">
                   <span className="text-gray-600">Trading Fee (0.4%):</span>
                   <span className="font-medium text-gray-900">
-                    {formatNumber(parseFloat(amountIn) * 0.004)} {isETHToToken ? 'ETH' : selectedTokenData?.symbol}
+                    {formatNumber(parseFloat(amountIn) * 0.004, isETHToToken ? 4 : 1)} {isETHToToken ? 'ETH' : selectedTokenData?.symbol}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Minimum Received:</span>
                   <span className="font-medium text-gray-900">
-                    {formatNumber(parseFloat(amountOut) * (100 - slippage) / 100)} {isETHToToken ? selectedTokenData?.symbol : 'ETH'}
+                    {formatNumber(parseFloat(amountOut) * (100 - slippage) / 100, isETHToToken ? 1 : 4)} {isETHToToken ? selectedTokenData?.symbol : 'ETH'}
                   </span>
                 </div>
               </div>
