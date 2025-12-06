@@ -252,7 +252,6 @@ export function About() {
         </div>
 
         <div className="bg-white rounded-xl shadow-lg p-8 text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">About the Founder</h2>
           <p className="text-gray-700 text-lg">
             McFun was founded and is maintained by <span className="font-bold text-gray-900">Jamie McNeill</span>.
           </p>
