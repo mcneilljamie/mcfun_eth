@@ -22,7 +22,7 @@
     "features": {
       "fast": {
         "title": "Ultrarrápido",
-        "description": "Lanza tu token en minutos con una interfaz simple y directa."
+        "description": "Lanza tu token en segundos con una interfaz simple y directa."
       },
       "secure": {
         "title": "Inquebrantable",
@@ -153,11 +153,11 @@
       },
       "step2": {
         "title": "2. Pool de Liquidez Automático",
-        "description": "Inmediatamente después de la creación del token, se crea un pool de liquidez de Creador de Mercado Automatizado (AMM). Depositas ETH (mínimo 0.1 ETH) junto con tus tokens asignados para formar la liquidez inicial. Este ETH queda bloqueado permanentemente en el pool. El comercio se habilita instantáneamente usando la fórmula de producto constante (x * y = k), similar a Uniswap V2."
+        "description": "Inmediatamente después de la creación del token, se crea un pool de liquidez de Creador de Mercado Automatizado (AMM). Depositas ETH (mínimo 0.1 ETH) junto con tus tokens asignados para formar la liquidez inicial. El comercio se habilita instantáneamente usando la fórmula de producto constante (x * y = k), similar a Uniswap V2."
       },
       "step3": {
         "title": "3. Quema de Liquidez",
-        "description": "Los tokens del pool de liquidez (tokens LP) que representan la propiedad del pool se queman permanentemente enviándolos a la dirección cero. Esto bloquea tu ETH y tokens depositados en el pool para siempre, haciendo tu token inquebrantable - nadie puede jamás remover la liquidez inicial, ni siquiera tú."
+        "description": "Los tokens del pool de liquidez (tokens LP) que representan la propiedad del pool se queman permanentemente enviándolos a la dirección cero. Esto quema tu ETH y tokens depositados en el pool para siempre, haciendo tu token inquebrantable - nadie puede jamás remover la liquidez inicial, ni siquiera tú."
       },
       "step4": {
         "title": "4. Comienza el Comercio",
@@ -184,7 +184,7 @@
       },
       "simple": {
         "title": "Simple y Directo",
-        "description": "No se requieren parámetros complejos ni conocimiento de DeFi. Lanza en minutos."
+        "description": "No se requieren parámetros complejos ni conocimiento de DeFi. Lanza en segundos."
       },
       "lowBarrier": {
         "title": "Baja Barrera de Entrada",

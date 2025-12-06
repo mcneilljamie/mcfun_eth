@@ -22,7 +22,7 @@
     "features": {
       "fast": {
         "title": "Lightning Fast",
-        "description": "Launch your token in minutes with a simple, straightforward interface."
+        "description": "Launch your token in seconds with a simple, straightforward interface."
       },
       "secure": {
         "title": "Unruggable",
@@ -153,11 +153,11 @@
       },
       "step2": {
         "title": "2. Automatic Liquidity Pool",
-        "description": "Immediately after token creation, an Automated Market Maker (AMM) liquidity pool is created. You deposit ETH (minimum 0.1 ETH) alongside your allocated tokens to form the initial liquidity. This ETH becomes permanently locked in the pool. Trading is enabled instantly using the constant product formula (x * y = k), similar to Uniswap V2."
+        "description": "Immediately after token creation, an Automated Market Maker (AMM) liquidity pool is created. You deposit ETH (minimum 0.1 ETH) alongside your allocated tokens to form the initial liquidity. Trading is enabled instantly using the constant product formula (x * y = k), similar to Uniswap V2."
       },
       "step3": {
         "title": "3. Liquidity Burning",
-        "description": "The liquidity pool tokens (LP tokens) that represent ownership of the pool are permanently burned by sending them to the zero address. This locks your deposited ETH and tokens in the pool forever, making your token unruggable - no one can ever remove the initial liquidity, not even you."
+        "description": "The liquidity pool tokens (LP tokens) that represent ownership of the pool are permanently burned by sending them to the zero address. This burns your deposited ETH and tokens in the pool forever, making your token unruggable - no one can ever remove the initial liquidity, not even you."
       },
       "step4": {
         "title": "4. Trading Begins",
@@ -184,7 +184,7 @@
       },
       "simple": {
         "title": "Simple & Straightforward",
-        "description": "No complex parameters or DeFi knowledge required. Launch in minutes."
+        "description": "No complex parameters or DeFi knowledge required. Launch in seconds."
       },
       "lowBarrier": {
         "title": "Low Barrier to Entry",
