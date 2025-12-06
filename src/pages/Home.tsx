@@ -111,7 +111,7 @@ export function Home({ onNavigate }: HomeProps) {
         </div>
 
         <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl shadow-lg p-8 text-white text-center">
-          <h2 className="text-3xl font-bold mb-4">Why Choose JAMM?</h2>
+          <h2 className="text-3xl font-bold mb-4">Why Choose McFun?</h2>
           <p className="text-lg text-gray-300 mb-6 max-w-3xl mx-auto">
             We've built the simplest, safest, and most cost-effective platform for launching tokens on Ethereum.
             No complex parameters, no hidden fees, no rug pulls. Just pure, fair token launches.
