@@ -237,7 +237,6 @@ export function Launch({ onNavigate }: LaunchProps) {
                 <li>{t('launch.notes.fixedSupply')}</li>
                 <li>{t('launch.notes.burnedLiquidity')}</li>
                 <li>{t('launch.notes.noFees')}</li>
-                <li>{t('launch.notes.tradingFee')}</li>
               </ul>
             </div>
           </div>
