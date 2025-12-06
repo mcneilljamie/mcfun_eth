@@ -176,18 +176,10 @@ export function About() {
                 <div>
                   <h3 className="text-xl font-bold text-gray-900 mb-2">Trading Fees</h3>
                   <div className="text-3xl font-bold text-gray-900 mb-2">0.4%</div>
-                  <p className="text-gray-700 mb-3">
+                  <p className="text-gray-700">
                     Every token swap on our platform incurs a 0.4% fee. This fee goes to the platform to support infrastructure,
                     development, and ongoing improvements.
                   </p>
-                  <div className="bg-white p-4 rounded-lg">
-                    <p className="font-semibold text-gray-900 mb-2">Example:</p>
-                    <ul className="space-y-1 text-gray-700">
-                      <li>• $100 trade = $0.40 fee</li>
-                      <li>• $1,000 trade = $4.00 fee</li>
-                      <li>• $10,000 trade = $40.00 fee</li>
-                    </ul>
-                  </div>
                 </div>
               </div>
             </div>

@@ -13,6 +13,7 @@ type Page = 'home' | 'launch' | 'trade' | 'tokens' | 'about';
 function App() {
   const [currentPage, setCurrentPage] = useState<Page>('home');
   const [selectedToken, setSelectedToken] = useState<Token | undefined>(undefined);
+  const [nightMode, setNightMode] = useState(false);
 
   const handleNavigate = (page: string) => {
     setCurrentPage(page as Page);
@@ -23,16 +24,27 @@ function App() {
     setCurrentPage('trade');
   };
 
+  const toggleNightMode = () => {
+    setNightMode(!nightMode);
+  };
+
   return (
     <Web3Provider>
-      <div className="min-h-screen bg-gray-100">
-        <Navigation currentPage={currentPage} onNavigate={handleNavigate} />
+      <div className={`min-h-screen ${nightMode ? 'bg-gray-900' : 'bg-gray-100'}`}>
+        <Navigation
+          currentPage={currentPage}
+          onNavigate={handleNavigate}
+          nightMode={nightMode}
+          onToggleNightMode={toggleNightMode}
+        />
 
-        {currentPage === 'home' && <Home onNavigate={handleNavigate} />}
-        {currentPage === 'launch' && <Launch onNavigate={handleNavigate} />}
-        {currentPage === 'trade' && <Trade selectedToken={selectedToken} />}
-        {currentPage === 'tokens' && <Tokens onSelectToken={handleSelectToken} />}
-        {currentPage === 'about' && <About />}
+        <div className={nightMode ? 'invert' : ''}>
+          {currentPage === 'home' && <Home onNavigate={handleNavigate} />}
+          {currentPage === 'launch' && <Launch onNavigate={handleNavigate} />}
+          {currentPage === 'trade' && <Trade selectedToken={selectedToken} />}
+          {currentPage === 'tokens' && <Tokens onSelectToken={handleSelectToken} />}
+          {currentPage === 'about' && <About />}
+        </div>
       </div>
     </Web3Provider>
   );
