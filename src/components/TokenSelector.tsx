@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Search, ChevronDown, X, Trophy } from 'lucide-react';
 import { supabase, Token } from '../lib/supabase';
-import { formatCurrency, formatNumber } from '../lib/utils';
+import { formatCurrency } from '../lib/utils';
 
 interface TokenSelectorProps {
   selectedToken: Token | null;

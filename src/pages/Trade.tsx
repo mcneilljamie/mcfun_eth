@@ -134,14 +134,11 @@ export function Trade({ selectedToken }: TradeProps) {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6 sm:py-12">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-xl shadow-lg p-5 sm:p-8">
-          <div className="mb-6">
-            <div className="flex items-center space-x-3 mb-2">
-              <div className="bg-gray-900 p-2 rounded-lg">
-                <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Trade Tokens</h1>
+          <div className="flex items-center space-x-3 mb-6">
+            <div className="bg-gray-900 p-2 rounded-lg">
+              <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
-            <p className="text-sm text-gray-600 ml-14">Swap between ETH and any ERC20 token</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Trade Tokens</h1>
           </div>
 
           {error && (
@@ -162,7 +159,7 @@ export function Trade({ selectedToken }: TradeProps) {
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Select ERC20 Token to Trade with ETH
+                Select Token
               </label>
               <TokenSelector
                 selectedToken={selectedTokenData}
@@ -173,7 +170,7 @@ export function Trade({ selectedToken }: TradeProps) {
 
             {reserves && selectedTokenData && (
               <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
-                <h3 className="font-medium text-gray-900 mb-2 text-sm sm:text-base">ETH/{selectedTokenData.symbol} Pool Liquidity</h3>
+                <h3 className="font-medium text-gray-900 mb-2 text-sm sm:text-base">Pool Liquidity</h3>
                 <div className="grid grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
                   <div>
                     <span className="text-gray-600">ETH Reserve:</span>
@@ -181,7 +178,7 @@ export function Trade({ selectedToken }: TradeProps) {
                   </div>
                   <div>
                     <span className="text-gray-600">{selectedTokenData.symbol} Reserve:</span>
-                    <p className="font-medium text-gray-900">{formatNumber(reserves.reserveToken, 1)}</p>
+                    <p className="font-medium text-gray-900">{formatNumber(reserves.reserveToken)}</p>
                   </div>
                 </div>
               </div>
@@ -253,13 +250,13 @@ export function Trade({ selectedToken }: TradeProps) {
                 <div className="flex justify-between">
                   <span className="text-gray-600">Trading Fee (0.4%):</span>
                   <span className="font-medium text-gray-900">
-                    {formatNumber(parseFloat(amountIn) * 0.004, isETHToToken ? 4 : 1)} {isETHToToken ? 'ETH' : selectedTokenData?.symbol}
+                    {formatNumber(parseFloat(amountIn) * 0.004)} {isETHToToken ? 'ETH' : selectedTokenData?.symbol}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Minimum Received:</span>
                   <span className="font-medium text-gray-900">
-                    {formatNumber(parseFloat(amountOut) * (100 - slippage) / 100, isETHToToken ? 1 : 4)} {isETHToToken ? selectedTokenData?.symbol : 'ETH'}
+                    {formatNumber(parseFloat(amountOut) * (100 - slippage) / 100)} {isETHToToken ? selectedTokenData?.symbol : 'ETH'}
                   </span>
                 </div>
               </div>
