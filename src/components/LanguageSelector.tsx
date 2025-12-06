@@ -28,23 +28,23 @@ export function LanguageSelector() {
   const isRTL = i18n.language === 'ar' || i18n.language === 'fa';
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative hidden sm:block" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors text-sm sm:text-base font-medium text-gray-900"
+        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors text-base font-medium text-gray-900"
         aria-label="Select language"
       >
         <span className="text-xl">{currentLanguage.flag}</span>
       </button>
 
       {isOpen && (
-        <div className={`absolute top-full mt-2 ${isRTL ? 'sm:left-0' : 'sm:right-0'} right-0 bg-white rounded-lg shadow-lg border border-gray-200 p-2 w-[min(420px,calc(100vw-2rem))] z-50`}>
-          <div className="grid grid-cols-3 sm:grid-cols-4 gap-1">
+        <div className={`absolute top-full mt-2 ${isRTL ? 'left-0' : 'right-0'} bg-white rounded-lg shadow-lg border border-gray-200 p-2 w-[420px] z-50`}>
+          <div className="grid grid-cols-4 gap-1">
             {Object.entries(languages).map(([code, { nativeName, flag }]) => (
               <button
                 key={code}
                 onClick={() => handleLanguageChange(code)}
-                className={`px-2 sm:px-3 py-2.5 rounded-md hover:bg-gray-100 transition-colors flex flex-col items-center justify-center gap-1 ${
+                className={`px-3 py-2.5 rounded-md hover:bg-gray-100 transition-colors flex flex-col items-center justify-center gap-1 ${
                   i18n.language === code ? 'bg-gray-100 ring-2 ring-gray-300' : ''
                 }`}
               >
