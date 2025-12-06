@@ -134,11 +134,14 @@ export function Trade({ selectedToken }: TradeProps) {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6 sm:py-12">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-xl shadow-lg p-5 sm:p-8">
-          <div className="flex items-center space-x-3 mb-6">
-            <div className="bg-gray-900 p-2 rounded-lg">
-              <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+          <div className="mb-6">
+            <div className="flex items-center space-x-3 mb-2">
+              <div className="bg-gray-900 p-2 rounded-lg">
+                <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Trade Tokens</h1>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Trade Tokens</h1>
+            <p className="text-sm text-gray-600 ml-14">Swap between ETH and any ERC20 token</p>
           </div>
 
           {error && (
@@ -159,7 +162,7 @@ export function Trade({ selectedToken }: TradeProps) {
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Select Token
+                Select ERC20 Token to Trade with ETH
               </label>
               <TokenSelector
                 selectedToken={selectedTokenData}
@@ -170,7 +173,7 @@ export function Trade({ selectedToken }: TradeProps) {
 
             {reserves && selectedTokenData && (
               <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
-                <h3 className="font-medium text-gray-900 mb-2 text-sm sm:text-base">Pool Liquidity</h3>
+                <h3 className="font-medium text-gray-900 mb-2 text-sm sm:text-base">ETH/{selectedTokenData.symbol} Pool Liquidity</h3>
                 <div className="grid grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
                   <div>
                     <span className="text-gray-600">ETH Reserve:</span>
