@@ -126,7 +126,7 @@ export function Launch({ onNavigate }: LaunchProps) {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g., My Awesome Token"
+                placeholder="My Awesome Token"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                 disabled={isLaunching}
               />
@@ -140,7 +140,7 @@ export function Launch({ onNavigate }: LaunchProps) {
                 type="text"
                 value={symbol}
                 onChange={(e) => setSymbol(e.target.value.toUpperCase())}
-                placeholder="e.g., MAT"
+                placeholder="MAT"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent uppercase"
                 disabled={isLaunching}
               />
