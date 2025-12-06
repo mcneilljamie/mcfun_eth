@@ -1,0 +1,244 @@
+{
+  "nav": {
+    "brand": "McFun",
+    "launch": "Ra Mắt Token",
+    "trade": "Giao Dịch",
+    "tokens": "Token Phổ Biến",
+    "about": "Giới Thiệu",
+    "connectWallet": "Kết Nối Ví",
+    "connecting": "Đang kết nối...",
+    "connect": "Kết Nối",
+    "launchShort": "Ra Mắt",
+    "tokensShort": "Token"
+  },
+  "home": {
+    "hero": {
+      "title": "Ra Mắt Token Của Bạn",
+      "subtitle": "Đơn Giản. An Toàn. Công Bằng.",
+      "description": "Cách dễ nhất và rẻ nhất để ra mắt token trên Ethereum với thanh khoản tích hợp và bảo mật chống rug.",
+      "launchNow": "Ra Mắt Token Ngay",
+      "explore": "Khám Phá Token"
+    },
+    "features": {
+      "fast": {
+        "title": "Nhanh Như Chớp",
+        "description": "Ra mắt token của bạn trong vài giây với giao diện đơn giản, trực quan."
+      },
+      "secure": {
+        "title": "Chống Rug",
+        "description": "Thanh khoản ban đầu được đốt vĩnh viễn, làm cho token của bạn thực sự an toàn."
+      },
+      "noFees": {
+        "title": "Không Phí Tạo Token",
+        "description": "Chỉ trả phí gas. Không có chi phí ẩn hoặc phí nền tảng."
+      },
+      "fair": {
+        "title": "Ra Mắt Công Bằng",
+        "description": "Nguồn cung token cố định 1M với phân bổ thanh khoản tùy chỉnh."
+      }
+    },
+    "howItWorks": {
+      "title": "Cách Hoạt Động",
+      "step1": {
+        "title": "Tạo Token",
+        "description": "Chọn tên token, ký hiệu và lượng thanh khoản cần khóa."
+      },
+      "step2": {
+        "title": "Thêm Thanh Khoản",
+        "description": "Gửi ít nhất 0.1 ETH để khởi tạo pool thanh khoản token của bạn."
+      },
+      "step3": {
+        "title": "Bắt Đầu Giao Dịch",
+        "description": "Token của bạn có thể giao dịch ngay lập tức trên DEX gốc của chúng tôi"
+      }
+    },
+    "why": {
+      "title": "Tại Sao Chọn McFun?",
+      "description": "Chúng tôi đã xây dựng nền tảng đơn giản nhất, an toàn nhất và hiệu quả về chi phí nhất để ra mắt token trên Ethereum. Không có tham số phức tạp, không có phí ẩn, không có rug pull. Chỉ ra mắt token thuần túy và công bằng.",
+      "stats": {
+        "supply": "Nguồn Cung Cố Định",
+        "liquidity": "Thanh Khoản Tối Thiểu",
+        "fee": "Phí Giao Dịch"
+      }
+    }
+  },
+  "launch": {
+    "title": "Ra Mắt Token Của Bạn",
+    "success": {
+      "title": "Token Đã Ra Mắt Thành Công!",
+      "token": "Token:",
+      "dex": "DEX:",
+      "tx": "TX:",
+      "viewTokens": "Xem trong Token Phổ Biến →"
+    },
+    "form": {
+      "tokenName": "Tên Token",
+      "tokenNamePlaceholder": "Token Tuyệt Vời Của Tôi",
+      "tokenSymbol": "Ký Hiệu Token",
+      "tokenSymbolPlaceholder": "MAT",
+      "liquidityAllocation": "Phân Bổ Thanh Khoản: {{percent}}%",
+      "liquidityNote": "Tối thiểu {{min}}%, khuyến nghị {{recommended}}% cho giao dịch lành mạnh",
+      "initialLiquidity": "Thanh Khoản Ban Đầu (ETH)",
+      "liquidityWarning": "Yêu cầu tối thiểu {{min}} ETH. Số này sẽ được đốt để bảo mật.",
+      "distribution": "Phân Phối Token",
+      "totalSupply": "Tổng Nguồn Cung:",
+      "toLiquidity": "Vào Pool Thanh Khoản (Đã Đốt):",
+      "toWallet": "Vào Ví Của Bạn:",
+      "initialLiq": "Thanh Khoản Ban Đầu:",
+      "launchButton": "Ra Mắt Token",
+      "launching": "Đang Ra Mắt Token...",
+      "connectToLaunch": "Kết Nối Ví Để Ra Mắt"
+    },
+    "notes": {
+      "title": "Ghi Chú Quan Trọng",
+      "fixedSupply": "Tất cả token có nguồn cung cố định 1.000.000 token",
+      "burnedLiquidity": "Thanh khoản ban đầu được đốt vĩnh viễn và không thể xóa",
+      "noFees": "Không có phí tạo token - chỉ trả phí gas mạng"
+    },
+    "errors": {
+      "nameAndSymbol": "Vui lòng cung cấp tên và ký hiệu token",
+      "minLiquidity": "Thanh khoản tối thiểu là {{min}} ETH",
+      "liquidityRange": "Thanh khoản phải từ {{min}}% đến 100%"
+    }
+  },
+  "trade": {
+    "title": "Giao Dịch Token",
+    "selectToken": "Chọn Token",
+    "poolLiquidity": "Thanh Khoản Pool",
+    "ethReserve": "Dự Trữ ETH:",
+    "tokenReserve": "Dự Trữ {{symbol}}:",
+    "youPay": "Bạn Trả",
+    "youReceive": "Bạn Nhận",
+    "priceImpact": "Tác Động Giá:",
+    "slippageTolerance": "Dung Sai Trượt Giá:",
+    "slippageLabel": "Dung Sai Trượt Giá: {{percent}}%",
+    "tradingFee": "Phí Giao Dịch (0.4%):",
+    "minReceived": "Tối Thiểu Nhận Được:",
+    "swapButton": "Hoán Đổi Token",
+    "swapping": "Đang hoán đổi...",
+    "connectToTrade": "Kết Nối Ví Để Giao Dịch",
+    "selectAToken": "Chọn Token",
+    "success": "Hoán đổi hoàn tất thành công!",
+    "error": "Vui lòng nhập số lượng"
+  },
+  "tokens": {
+    "title": "Token Phổ Biến",
+    "search": "Tìm kiếm token...",
+    "loading": "Đang tải token...",
+    "noTokens": "Chưa có token nào được ra mắt",
+    "noResults": "Không tìm thấy token nào phù hợp với tìm kiếm của bạn",
+    "showing": "Hiển thị {{count}} token",
+    "showing_plural": "Hiển thị {{count}} token",
+    "table": {
+      "rank": "#",
+      "token": "Token",
+      "address": "Địa Chỉ",
+      "liquidity": "Thanh Khoản",
+      "volume": "Khối Lượng",
+      "created": "Đã Tạo",
+      "action": "Hành Động",
+      "locked": "{{percent}}% đã khóa",
+      "trade": "Giao Dịch",
+      "holders": "Người Nắm Giữ"
+    }
+  },
+  "about": {
+    "title": "Giới Thiệu McFun",
+    "subtitle": "Cách đơn giản nhất và an toàn nhất để ra mắt token trên Ethereum với thanh khoản tích hợp và bảo mật chống rug.",
+    "howWorks": {
+      "title": "Cách McFun Hoạt Động",
+      "step1": {
+        "title": "1. Tạo Token",
+        "description": "Khi bạn ra mắt token trên McFun, chúng tôi triển khai hợp đồng token ERC-20 mới với nguồn cung cố định 1.000.000 token. Bạn chọn tên token, ký hiệu và phần trăm nguồn cung để phân bổ cho pool thanh khoản ban đầu (tối thiểu 25%)."
+      },
+      "step2": {
+        "title": "2. Pool Thanh Khoản Tự Động",
+        "description": "Ngay sau khi tạo token, pool thanh khoản Automated Market Maker (AMM) được tạo. Bạn gửi ETH (tối thiểu 0.1 ETH) cùng với token được phân bổ để tạo thanh khoản ban đầu. Giao dịch được kích hoạt ngay lập tức bằng công thức tích số không đổi (x * y = k), tương tự như Uniswap V2."
+      },
+      "step3": {
+        "title": "3. Đốt Thanh Khoản",
+        "description": "Token pool thanh khoản (token LP) đại diện cho quyền sở hữu pool được đốt vĩnh viễn bằng cách gửi chúng đến địa chỉ zero. Điều này đốt ETH và token bạn đã gửi trong pool mãi mãi, làm cho token của bạn chống rug - không ai có thể xóa thanh khoản ban đầu, kể cả bạn."
+      },
+      "step4": {
+        "title": "4. Bắt Đầu Giao Dịch",
+        "description": "Token của bạn có thể giao dịch ngay lập tức trên nền tảng của chúng tôi. Mỗi lần hoán đổi phát sinh phí 0.4% được chuyển cho nền tảng để duy trì và cải thiện dịch vụ. Các token còn lại (không được phân bổ cho thanh khoản) được gửi trực tiếp đến ví của bạn."
+      }
+    },
+    "visibility": {
+      "title": "Hiển Thị & Khám Phá Token",
+      "description": "Mọi token được ra mắt qua McFun đều nhận được khả năng hiển thị vĩnh viễn trên nền tảng của chúng tôi, mang lại cho dự án của bạn sự tiếp xúc lâu dài với các nhà giao dịch và nhà đầu tư tiềm năng.",
+      "ranking": {
+        "title": "Niêm Yết & Xếp Hạng Tự Động",
+        "description": "Tất cả token được tự động niêm yết trên trang Token Phổ Biến và xếp hạng theo tổng thanh khoản ETH. Token của bạn có càng nhiều thanh khoản thì xếp hạng càng cao, mang lại khả năng hiển thị tối đa cho các dự án thành công."
+      }
+    },
+    "why": {
+      "title": "Tại Sao Chọn McFun?",
+      "unruggable": {
+        "title": "Thực Sự Chống Rug",
+        "description": "Thanh khoản ban đầu được đốt vĩnh viễn. Không ai có thể xóa nó, làm cho rug pull trở nên không thể."
+      },
+      "fair": {
+        "title": "Không Presale Hoặc Lợi Thế Nội Bộ",
+        "description": "Mọi người giao dịch với cùng một mức giá từ AMM. Ra mắt công bằng cho tất cả người tham gia."
+      },
+      "simple": {
+        "title": "Đơn Giản & Trực Quan",
+        "description": "Không cần tham số phức tạp hoặc kiến thức DeFi. Ra mắt trong vài giây."
+      },
+      "lowBarrier": {
+        "title": "Rào Cản Gia Nhập Thấp",
+        "description": "Chỉ cần thanh khoản tối thiểu 0.1 ETH. Không có phí nền tảng để ra mắt."
+      },
+      "instant": {
+        "title": "Thanh Khoản Ngay Lập Tức",
+        "description": "Token của bạn có thể giao dịch ngay lập tức với chức năng AMM tích hợp."
+      },
+      "transparent": {
+        "title": "Minh Bạch & On-Chain",
+        "description": "Tất cả hợp đồng có thể xác minh trên Etherscan. Không có cơ chế ẩn."
+      }
+    },
+    "fees": {
+      "title": "Cơ Cấu Phí",
+      "launch": {
+        "title": "Phí Ra Mắt Token",
+        "amount": "$0",
+        "description": "Đúng vậy - không có phí tạo token để ra mắt token của bạn. Bạn chỉ trả phí gas mạng Ethereum."
+      },
+      "trading": {
+        "title": "Phí Giao Dịch",
+        "amount": "0.4%",
+        "description": "Mỗi lần hoán đổi token trên nền tảng của chúng tôi phát sinh phí 0.4%. Phí này được chuyển cho nền tảng để hỗ trợ cơ sở hạ tầng, phát triển và cải tiến liên tục."
+      },
+      "why": {
+        "title": "Tại Sao Mô Hình Này?",
+        "description": "Không giống như các DEX truyền thống tính phí cho nhà cung cấp thanh khoản (có thể bị xóa), phí giao dịch 0.4% của chúng tôi đảm bảo tính bền vững của nền tảng mà không ảnh hưởng đến bảo mật token của bạn. Thanh khoản bị đốt vẫn vĩnh viễn và phí giao dịch nhỏ cho phép chúng tôi cung cấp nền tảng đáng tin cậy, được duy trì cho cộng đồng."
+      }
+    },
+    "security": {
+      "title": "Đảm Bảo Bảo Mật",
+      "burned": {
+        "title": "Thanh Khoản Đốt Vĩnh Viễn",
+        "description": "Token LP được gửi đến địa chỉ zero (0x000...000) ngay khi tạo. Điều này có thể xác minh on-chain và không thể hoàn tác."
+      },
+      "immutable": {
+        "title": "Hợp Đồng Bất Biến",
+        "description": "Sau khi triển khai, hợp đồng token và AMM không thể sửa đổi, nâng cấp hoặc tạm dừng. Những gì bạn thấy là những gì bạn nhận được."
+      },
+      "transparent": {
+        "title": "Người Nhận Phí Minh Bạch",
+        "description": "Địa chỉ người nhận phí nền tảng được mã hóa cứng trong hợp đồng và có thể nhìn thấy công khai. Không có công tắc phí ẩn hoặc backdoor."
+      },
+      "opensource": {
+        "title": "Mã Nguồn Mở & Có Thể Xác Minh",
+        "description": "Tất cả smart contract có thể xem và xác minh trên Etherscan. Tự kiểm tra mã trước khi sử dụng nền tảng."
+      }
+    },
+    "founder": "McFun được thành lập và duy trì bởi Jamie McNeill."
+  },
+  "common": {
+    "tokens": "token",
+    "eth": "ETH"
+  }
+}

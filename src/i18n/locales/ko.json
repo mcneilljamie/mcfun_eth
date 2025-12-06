@@ -1,0 +1,244 @@
+{
+  "nav": {
+    "brand": "McFun",
+    "launch": "토큰 출시",
+    "trade": "거래",
+    "tokens": "인기 토큰",
+    "about": "소개",
+    "connectWallet": "지갑 연결",
+    "connecting": "연결 중...",
+    "connect": "연결",
+    "launchShort": "출시",
+    "tokensShort": "토큰"
+  },
+  "home": {
+    "hero": {
+      "title": "토큰 출시하기",
+      "subtitle": "간단함. 안전함. 공정함.",
+      "description": "내장 유동성과 러그풀 방지 보안으로 이더리움에서 토큰을 출시하는 가장 쉽고 저렴한 방법.",
+      "launchNow": "지금 토큰 출시",
+      "explore": "토큰 둘러보기"
+    },
+    "features": {
+      "fast": {
+        "title": "번개처럼 빠름",
+        "description": "간단하고 직관적인 인터페이스로 몇 초 만에 토큰을 출시하세요."
+      },
+      "secure": {
+        "title": "러그풀 불가능",
+        "description": "초기 유동성이 영구적으로 소각되어 토큰이 진정으로 안전합니다."
+      },
+      "noFees": {
+        "title": "토큰 생성 수수료 없음",
+        "description": "가스 수수료만 지불하면 됩니다. 숨겨진 비용이나 플랫폼 수수료가 없습니다."
+      },
+      "fair": {
+        "title": "공정한 출시",
+        "description": "맞춤형 유동성 할당이 가능한 고정 100만 토큰 공급."
+      }
+    },
+    "howItWorks": {
+      "title": "작동 방식",
+      "step1": {
+        "title": "토큰 생성",
+        "description": "토큰 이름, 심볼, 잠글 유동성 양을 선택하세요."
+      },
+      "step2": {
+        "title": "유동성 추가",
+        "description": "토큰의 유동성 풀을 초기화하기 위해 최소 0.1 ETH를 예치하세요."
+      },
+      "step3": {
+        "title": "거래 시작",
+        "description": "토큰이 우리의 네이티브 DEX에서 즉시 거래 가능합니다"
+      }
+    },
+    "why": {
+      "title": "왜 McFun을 선택해야 할까요?",
+      "description": "우리는 이더리움에서 토큰을 출시하기 위한 가장 간단하고, 가장 안전하며, 가장 비용 효율적인 플랫폼을 구축했습니다. 복잡한 매개변수도, 숨겨진 수수료도, 러그풀도 없습니다. 순수하고 공정한 토큰 출시만 있을 뿐입니다.",
+      "stats": {
+        "supply": "고정 공급",
+        "liquidity": "최소 유동성",
+        "fee": "거래 수수료"
+      }
+    }
+  },
+  "launch": {
+    "title": "토큰 출시하기",
+    "success": {
+      "title": "토큰이 성공적으로 출시되었습니다!",
+      "token": "토큰:",
+      "dex": "DEX:",
+      "tx": "TX:",
+      "viewTokens": "인기 토큰에서 보기 →"
+    },
+    "form": {
+      "tokenName": "토큰 이름",
+      "tokenNamePlaceholder": "나의 멋진 토큰",
+      "tokenSymbol": "토큰 심볼",
+      "tokenSymbolPlaceholder": "MAT",
+      "liquidityAllocation": "유동성 할당: {{percent}}%",
+      "liquidityNote": "건강한 거래를 위해 최소 {{min}}%, {{recommended}}% 권장",
+      "initialLiquidity": "초기 유동성 (ETH)",
+      "liquidityWarning": "최소 {{min}} ETH가 필요합니다. 보안을 위해 소각됩니다.",
+      "distribution": "토큰 분배",
+      "totalSupply": "총 공급량:",
+      "toLiquidity": "유동성 풀로 (소각됨):",
+      "toWallet": "지갑으로:",
+      "initialLiq": "초기 유동성:",
+      "launchButton": "토큰 출시",
+      "launching": "토큰 출시 중...",
+      "connectToLaunch": "출시하려면 지갑 연결"
+    },
+    "notes": {
+      "title": "중요 사항",
+      "fixedSupply": "모든 토큰은 1,000,000 토큰의 고정 공급량을 가집니다",
+      "burnedLiquidity": "초기 유동성은 영구적으로 소각되며 제거할 수 없습니다",
+      "noFees": "토큰 생성 수수료 없음 - 네트워크 가스 수수료만 지불"
+    },
+    "errors": {
+      "nameAndSymbol": "토큰 이름과 심볼을 입력해주세요",
+      "minLiquidity": "최소 유동성은 {{min}} ETH입니다",
+      "liquidityRange": "유동성은 {{min}}%에서 100% 사이여야 합니다"
+    }
+  },
+  "trade": {
+    "title": "토큰 거래",
+    "selectToken": "토큰 선택",
+    "poolLiquidity": "풀 유동성",
+    "ethReserve": "ETH 보유량:",
+    "tokenReserve": "{{symbol}} 보유량:",
+    "youPay": "지불 금액",
+    "youReceive": "받을 금액",
+    "priceImpact": "가격 영향:",
+    "slippageTolerance": "슬리피지 허용치:",
+    "slippageLabel": "슬리피지 허용치: {{percent}}%",
+    "tradingFee": "거래 수수료 (0.4%):",
+    "minReceived": "최소 수령액:",
+    "swapButton": "토큰 스왑",
+    "swapping": "스왑 중...",
+    "connectToTrade": "거래하려면 지갑 연결",
+    "selectAToken": "토큰 선택",
+    "success": "스왑이 성공적으로 완료되었습니다!",
+    "error": "금액을 입력해주세요"
+  },
+  "tokens": {
+    "title": "인기 토큰",
+    "search": "토큰 검색...",
+    "loading": "토큰 로딩 중...",
+    "noTokens": "아직 출시된 토큰이 없습니다",
+    "noResults": "검색과 일치하는 토큰을 찾을 수 없습니다",
+    "showing": "{{count}}개 토큰 표시 중",
+    "showing_plural": "{{count}}개 토큰 표시 중",
+    "table": {
+      "rank": "#",
+      "token": "토큰",
+      "address": "주소",
+      "liquidity": "유동성",
+      "volume": "거래량",
+      "created": "생성일",
+      "action": "액션",
+      "locked": "{{percent}}% 잠금",
+      "trade": "거래",
+      "holders": "보유자"
+    }
+  },
+  "about": {
+    "title": "McFun 소개",
+    "subtitle": "내장 유동성과 러그풀 방지 보안으로 이더리움에서 토큰을 출시하는 가장 간단하고 안전한 방법.",
+    "howWorks": {
+      "title": "McFun 작동 방식",
+      "step1": {
+        "title": "1. 토큰 생성",
+        "description": "McFun에서 토큰을 출시하면 1,000,000개의 고정 공급량을 가진 새로운 ERC-20 토큰 계약을 배포합니다. 토큰 이름, 심볼, 초기 유동성 풀에 할당할 공급량의 백분율을 선택합니다 (최소 25%)."
+      },
+      "step2": {
+        "title": "2. 자동 유동성 풀",
+        "description": "토큰 생성 직후 자동화된 마켓 메이커(AMM) 유동성 풀이 생성됩니다. 할당된 토큰과 함께 ETH(최소 0.1 ETH)를 예치하여 초기 유동성을 형성합니다. Uniswap V2와 유사하게 상수 곱 공식(x * y = k)을 사용하여 거래가 즉시 활성화됩니다."
+      },
+      "step3": {
+        "title": "3. 유동성 소각",
+        "description": "풀의 소유권을 나타내는 유동성 풀 토큰(LP 토큰)은 제로 주소로 전송되어 영구적으로 소각됩니다. 이것은 풀에 예치된 ETH와 토큰을 영원히 소각하여 토큰을 러그풀 불가능하게 만듭니다 - 당신을 포함한 누구도 초기 유동성을 제거할 수 없습니다."
+      },
+      "step4": {
+        "title": "4. 거래 시작",
+        "description": "토큰이 플랫폼에서 즉시 거래 가능합니다. 모든 스왑에는 서비스를 유지하고 개선하기 위해 플랫폼에 전달되는 0.4% 수수료가 발생합니다. 나머지 토큰(유동성에 할당되지 않음)은 지갑으로 직접 전송됩니다."
+      }
+    },
+    "visibility": {
+      "title": "토큰 가시성 및 발견",
+      "description": "McFun을 통해 출시된 모든 토큰은 플랫폼에서 영구적인 가시성을 받으며, 프로젝트에 잠재적 거래자와 투자자에게 지속적인 노출을 제공합니다.",
+      "ranking": {
+        "title": "자동 상장 및 순위",
+        "description": "모든 토큰은 인기 토큰 페이지에 자동으로 상장되고 총 ETH 유동성에 따라 순위가 매겨집니다. 토큰에 유동성이 많을수록 순위가 높아져 성공적인 프로젝트에 최대 가시성을 제공합니다."
+      }
+    },
+    "why": {
+      "title": "왜 McFun을 선택해야 할까요?",
+      "unruggable": {
+        "title": "진정한 러그풀 불가능",
+        "description": "초기 유동성이 영구적으로 소각됩니다. 아무도 제거할 수 없어 러그풀이 불가능합니다."
+      },
+      "fair": {
+        "title": "프리세일이나 내부자 이점 없음",
+        "description": "모두 AMM에서 동일한 가격으로 거래합니다. 모든 참가자에게 공정한 출시."
+      },
+      "simple": {
+        "title": "간단하고 직관적",
+        "description": "복잡한 매개변수나 DeFi 지식이 필요 없습니다. 몇 초 만에 출시하세요."
+      },
+      "lowBarrier": {
+        "title": "낮은 진입 장벽",
+        "description": "최소 0.1 ETH 유동성만 필요합니다. 출시를 위한 플랫폼 수수료 없음."
+      },
+      "instant": {
+        "title": "즉시 유동성",
+        "description": "내장 AMM 기능으로 토큰이 즉시 거래 가능합니다."
+      },
+      "transparent": {
+        "title": "투명하고 온체인",
+        "description": "모든 계약은 Etherscan에서 검증 가능합니다. 숨겨진 메커니즘이 없습니다."
+      }
+    },
+    "fees": {
+      "title": "수수료 구조",
+      "launch": {
+        "title": "토큰 출시 수수료",
+        "amount": "$0",
+        "description": "맞습니다 - 토큰을 출시하는 데 토큰 생성 수수료가 없습니다. 이더리움 네트워크 가스 수수료만 지불하면 됩니다."
+      },
+      "trading": {
+        "title": "거래 수수료",
+        "amount": "0.4%",
+        "description": "플랫폼의 모든 토큰 스왑에는 0.4% 수수료가 발생합니다. 이 수수료는 인프라, 개발 및 지속적인 개선을 지원하기 위해 플랫폼으로 전달됩니다."
+      },
+      "why": {
+        "title": "왜 이 모델인가요?",
+        "description": "유동성 공급자에게 수수료를 부과하는 기존 DEX(제거 가능)와 달리, 0.4% 거래 수수료는 토큰의 보안에 영향을 주지 않으면서 플랫폼의 지속 가능성을 보장합니다. 소각된 유동성은 영구적으로 유지되며 작은 거래 수수료를 통해 커뮤니티를 위한 안정적이고 유지 관리되는 플랫폼을 제공할 수 있습니다."
+      }
+    },
+    "security": {
+      "title": "보안 보장",
+      "burned": {
+        "title": "영구 소각된 유동성",
+        "description": "LP 토큰은 생성 즉시 제로 주소(0x000...000)로 전송됩니다. 이것은 온체인에서 검증 가능하며 취소할 수 없습니다."
+      },
+      "immutable": {
+        "title": "불변 계약",
+        "description": "배포되면 토큰 및 AMM 계약을 수정, 업그레이드 또는 일시 중지할 수 없습니다. 보이는 것이 얻는 것입니다."
+      },
+      "transparent": {
+        "title": "투명한 수수료 수령자",
+        "description": "플랫폼 수수료 수령자 주소는 계약에 하드코딩되어 있으며 공개적으로 표시됩니다. 숨겨진 수수료 스위치나 백도어가 없습니다."
+      },
+      "opensource": {
+        "title": "오픈 소스 및 검증 가능",
+        "description": "모든 스마트 계약은 Etherscan에서 보고 검증할 수 있습니다. 플랫폼을 사용하기 전에 직접 코드를 감사하세요."
+      }
+    },
+    "founder": "McFun은 Jamie McNeill이 설립하고 유지 관리합니다."
+  },
+  "common": {
+    "tokens": "토큰",
+    "eth": "ETH"
+  }
+}

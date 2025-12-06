@@ -1,0 +1,244 @@
+{
+  "nav": {
+    "brand": "McFun",
+    "launch": "Luncurkan Token",
+    "trade": "Trading",
+    "tokens": "Token Populer",
+    "about": "Tentang",
+    "connectWallet": "Hubungkan Wallet",
+    "connecting": "Menghubungkan...",
+    "connect": "Hubungkan",
+    "launchShort": "Luncurkan",
+    "tokensShort": "Token"
+  },
+  "home": {
+    "hero": {
+      "title": "Luncurkan Token Anda",
+      "subtitle": "Sederhana. Aman. Adil.",
+      "description": "Cara termudah dan termurah untuk meluncurkan token di Ethereum dengan likuiditas built-in dan keamanan anti-rug.",
+      "launchNow": "Luncurkan Token Sekarang",
+      "explore": "Jelajahi Token"
+    },
+    "features": {
+      "fast": {
+        "title": "Secepat Kilat",
+        "description": "Luncurkan token Anda dalam hitungan detik dengan antarmuka yang sederhana dan langsung."
+      },
+      "secure": {
+        "title": "Anti-Rug",
+        "description": "Likuiditas awal dibakar secara permanen, membuat token Anda benar-benar aman."
+      },
+      "noFees": {
+        "title": "Tanpa Biaya Pembuatan Token",
+        "description": "Hanya bayar biaya gas. Tanpa biaya tersembunyi atau biaya platform."
+      },
+      "fair": {
+        "title": "Peluncuran Adil",
+        "description": "Pasokan token tetap 1M dengan alokasi likuiditas yang dapat disesuaikan."
+      }
+    },
+    "howItWorks": {
+      "title": "Cara Kerjanya",
+      "step1": {
+        "title": "Buat Token",
+        "description": "Pilih nama token, simbol, dan berapa banyak likuiditas yang akan dikunci."
+      },
+      "step2": {
+        "title": "Tambah Likuiditas",
+        "description": "Deposit minimal 0.1 ETH untuk menginisialisasi pool likuiditas token Anda."
+      },
+      "step3": {
+        "title": "Mulai Trading",
+        "description": "Token Anda langsung dapat diperdagangkan di DEX native kami"
+      }
+    },
+    "why": {
+      "title": "Mengapa Memilih McFun?",
+      "description": "Kami telah membangun platform paling sederhana, paling aman, dan paling hemat biaya untuk meluncurkan token di Ethereum. Tanpa parameter rumit, tanpa biaya tersembunyi, tanpa rug pull. Hanya peluncuran token yang murni dan adil.",
+      "stats": {
+        "supply": "Pasokan Tetap",
+        "liquidity": "Likuiditas Min",
+        "fee": "Biaya Trading"
+      }
+    }
+  },
+  "launch": {
+    "title": "Luncurkan Token Anda",
+    "success": {
+      "title": "Token Berhasil Diluncurkan!",
+      "token": "Token:",
+      "dex": "DEX:",
+      "tx": "TX:",
+      "viewTokens": "Lihat di Token Populer →"
+    },
+    "form": {
+      "tokenName": "Nama Token",
+      "tokenNamePlaceholder": "Token Keren Saya",
+      "tokenSymbol": "Simbol Token",
+      "tokenSymbolPlaceholder": "MAT",
+      "liquidityAllocation": "Alokasi Likuiditas: {{percent}}%",
+      "liquidityNote": "Minimum {{min}}%, {{recommended}}% direkomendasikan untuk trading yang sehat",
+      "initialLiquidity": "Likuiditas Awal (ETH)",
+      "liquidityWarning": "Minimum {{min}} ETH diperlukan. Ini akan dibakar untuk keamanan.",
+      "distribution": "Distribusi Token",
+      "totalSupply": "Total Pasokan:",
+      "toLiquidity": "Ke Pool Likuiditas (Dibakar):",
+      "toWallet": "Ke Wallet Anda:",
+      "initialLiq": "Likuiditas Awal:",
+      "launchButton": "Luncurkan Token",
+      "launching": "Meluncurkan Token...",
+      "connectToLaunch": "Hubungkan Wallet untuk Meluncurkan"
+    },
+    "notes": {
+      "title": "Catatan Penting",
+      "fixedSupply": "Semua token memiliki pasokan tetap 1.000.000 token",
+      "burnedLiquidity": "Likuiditas awal dibakar secara permanen dan tidak dapat dihapus",
+      "noFees": "Tanpa biaya pembuatan token - hanya bayar biaya gas jaringan"
+    },
+    "errors": {
+      "nameAndSymbol": "Harap berikan nama dan simbol token",
+      "minLiquidity": "Likuiditas minimum adalah {{min}} ETH",
+      "liquidityRange": "Likuiditas harus antara {{min}}% dan 100%"
+    }
+  },
+  "trade": {
+    "title": "Trading Token",
+    "selectToken": "Pilih Token",
+    "poolLiquidity": "Likuiditas Pool",
+    "ethReserve": "Cadangan ETH:",
+    "tokenReserve": "Cadangan {{symbol}}:",
+    "youPay": "Anda Bayar",
+    "youReceive": "Anda Terima",
+    "priceImpact": "Dampak Harga:",
+    "slippageTolerance": "Toleransi Slippage:",
+    "slippageLabel": "Toleransi Slippage: {{percent}}%",
+    "tradingFee": "Biaya Trading (0.4%):",
+    "minReceived": "Minimum Diterima:",
+    "swapButton": "Tukar Token",
+    "swapping": "Menukar...",
+    "connectToTrade": "Hubungkan Wallet untuk Trading",
+    "selectAToken": "Pilih Token",
+    "success": "Swap berhasil diselesaikan!",
+    "error": "Harap masukkan jumlah"
+  },
+  "tokens": {
+    "title": "Token Populer",
+    "search": "Cari token...",
+    "loading": "Memuat token...",
+    "noTokens": "Belum ada token yang diluncurkan",
+    "noResults": "Tidak ada token yang cocok dengan pencarian Anda",
+    "showing": "Menampilkan {{count}} token",
+    "showing_plural": "Menampilkan {{count}} token",
+    "table": {
+      "rank": "#",
+      "token": "Token",
+      "address": "Alamat",
+      "liquidity": "Likuiditas",
+      "volume": "Volume",
+      "created": "Dibuat",
+      "action": "Aksi",
+      "locked": "{{percent}}% terkunci",
+      "trade": "Trading",
+      "holders": "Pemegang"
+    }
+  },
+  "about": {
+    "title": "Tentang McFun",
+    "subtitle": "Cara paling sederhana dan paling aman untuk meluncurkan token di Ethereum dengan likuiditas built-in dan keamanan anti-rug.",
+    "howWorks": {
+      "title": "Cara Kerja McFun",
+      "step1": {
+        "title": "1. Pembuatan Token",
+        "description": "Ketika Anda meluncurkan token di McFun, kami men-deploy kontrak token ERC-20 baru dengan pasokan tetap 1.000.000 token. Anda memilih nama token, simbol, dan berapa persen pasokan yang akan dialokasikan ke pool likuiditas awal (minimum 25%)."
+      },
+      "step2": {
+        "title": "2. Pool Likuiditas Otomatis",
+        "description": "Segera setelah pembuatan token, pool likuiditas Automated Market Maker (AMM) dibuat. Anda menyetor ETH (minimum 0.1 ETH) bersama dengan token yang dialokasikan untuk membentuk likuiditas awal. Trading diaktifkan secara instan menggunakan rumus produk konstan (x * y = k), mirip dengan Uniswap V2."
+      },
+      "step3": {
+        "title": "3. Pembakaran Likuiditas",
+        "description": "Token pool likuiditas (token LP) yang mewakili kepemilikan pool dibakar secara permanen dengan mengirimkannya ke alamat nol. Ini membakar ETH dan token yang Anda setorkan di pool selamanya, membuat token Anda anti-rug - tidak ada yang bisa menghapus likuiditas awal, bahkan Anda."
+      },
+      "step4": {
+        "title": "4. Trading Dimulai",
+        "description": "Token Anda langsung dapat diperdagangkan di platform kami. Setiap swap dikenakan biaya 0.4% yang masuk ke platform untuk memelihara dan meningkatkan layanan. Token yang tersisa (tidak dialokasikan untuk likuiditas) dikirim langsung ke wallet Anda."
+      }
+    },
+    "visibility": {
+      "title": "Visibilitas & Penemuan Token",
+      "description": "Setiap token yang diluncurkan melalui McFun menerima visibilitas permanen di platform kami, memberikan eksposur berkelanjutan kepada proyek Anda untuk calon trader dan investor.",
+      "ranking": {
+        "title": "Pencatatan & Peringkat Otomatis",
+        "description": "Semua token secara otomatis terdaftar di halaman Token Populer dan diperingkat berdasarkan total likuiditas ETH. Semakin banyak likuiditas yang dimiliki token Anda, semakin tinggi peringkatnya, memberikan visibilitas maksimum untuk proyek yang sukses."
+      }
+    },
+    "why": {
+      "title": "Mengapa Memilih McFun?",
+      "unruggable": {
+        "title": "Benar-Benar Anti-Rug",
+        "description": "Likuiditas awal dibakar secara permanen. Tidak ada yang bisa menghapusnya, membuat rug pull menjadi tidak mungkin."
+      },
+      "fair": {
+        "title": "Tanpa Presale atau Keuntungan Orang Dalam",
+        "description": "Semua orang trading dengan harga yang sama dari AMM. Peluncuran adil untuk semua peserta."
+      },
+      "simple": {
+        "title": "Sederhana & Langsung",
+        "description": "Tidak diperlukan parameter rumit atau pengetahuan DeFi. Luncurkan dalam hitungan detik."
+      },
+      "lowBarrier": {
+        "title": "Hambatan Masuk Rendah",
+        "description": "Hanya membutuhkan likuiditas minimum 0.1 ETH. Tanpa biaya platform untuk meluncurkan."
+      },
+      "instant": {
+        "title": "Likuiditas Instan",
+        "description": "Token Anda dapat diperdagangkan segera dengan fungsionalitas AMM built-in."
+      },
+      "transparent": {
+        "title": "Transparan & On-Chain",
+        "description": "Semua kontrak dapat diverifikasi di Etherscan. Tanpa mekanisme tersembunyi."
+      }
+    },
+    "fees": {
+      "title": "Struktur Biaya",
+      "launch": {
+        "title": "Biaya Peluncuran Token",
+        "amount": "$0",
+        "description": "Benar - tidak ada biaya pembuatan token untuk meluncurkan token Anda. Anda hanya membayar biaya gas jaringan Ethereum."
+      },
+      "trading": {
+        "title": "Biaya Trading",
+        "amount": "0.4%",
+        "description": "Setiap swap token di platform kami dikenakan biaya 0.4%. Biaya ini masuk ke platform untuk mendukung infrastruktur, pengembangan, dan peningkatan berkelanjutan."
+      },
+      "why": {
+        "title": "Mengapa Model Ini?",
+        "description": "Tidak seperti DEX tradisional yang membebankan biaya kepada penyedia likuiditas (yang dapat dihapus), biaya trading 0.4% kami memastikan keberlanjutan platform tanpa mempengaruhi keamanan token Anda. Likuiditas yang dibakar tetap permanen, dan biaya trading kecil memungkinkan kami menyediakan platform yang andal dan terawat untuk komunitas."
+      }
+    },
+    "security": {
+      "title": "Jaminan Keamanan",
+      "burned": {
+        "title": "Likuiditas yang Dibakar Permanen",
+        "description": "Token LP dikirim ke alamat nol (0x000...000) segera setelah pembuatan. Ini dapat diverifikasi on-chain dan tidak dapat dibatalkan."
+      },
+      "immutable": {
+        "title": "Kontrak Tidak Dapat Diubah",
+        "description": "Setelah di-deploy, kontrak token dan AMM tidak dapat dimodifikasi, ditingkatkan, atau dihentikan. Apa yang Anda lihat adalah apa yang Anda dapatkan."
+      },
+      "transparent": {
+        "title": "Penerima Biaya Transparan",
+        "description": "Alamat penerima biaya platform di-hardcode dalam kontrak dan terlihat secara publik. Tanpa switch biaya tersembunyi atau backdoor."
+      },
+      "opensource": {
+        "title": "Open Source & Dapat Diverifikasi",
+        "description": "Semua smart contract dapat dilihat dan diverifikasi di Etherscan. Audit kodenya sendiri sebelum menggunakan platform."
+      }
+    },
+    "founder": "McFun didirikan dan dikelola oleh Jamie McNeill."
+  },
+  "common": {
+    "tokens": "token",
+    "eth": "ETH"
+  }
+}

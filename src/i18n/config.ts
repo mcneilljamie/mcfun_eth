@@ -11,6 +11,11 @@ import ar from './locales/ar.json';
 import zh from './locales/zh.json';
 import ka from './locales/ka.json';
 import tr from './locales/tr.json';
+import hi from './locales/hi.json';
+import id from './locales/id.json';
+import vi from './locales/vi.json';
+import ko from './locales/ko.json';
+import ja from './locales/ja.json';
 
 export const languages = {
   en: { nativeName: 'English', flag: '🇬🇧' },
@@ -23,6 +28,11 @@ export const languages = {
   zh: { nativeName: '中文', flag: '🇨🇳' },
   ka: { nativeName: 'ქართული', flag: '🇬🇪' },
   tr: { nativeName: 'Türkçe', flag: '🇹🇷' },
+  hi: { nativeName: 'हिन्दी', flag: '🇮🇳' },
+  id: { nativeName: 'Bahasa Indonesia', flag: '🇮🇩' },
+  vi: { nativeName: 'Tiếng Việt', flag: '🇻🇳' },
+  ko: { nativeName: '한국어', flag: '🇰🇷' },
+  ja: { nativeName: '日本語', flag: '🇯🇵' },
 };
 
 const savedLanguage = localStorage.getItem('language') || 'en';
@@ -41,6 +51,11 @@ i18n
       zh: { translation: zh },
       ka: { translation: ka },
       tr: { translation: tr },
+      hi: { translation: hi },
+      id: { translation: id },
+      vi: { translation: vi },
+      ko: { translation: ko },
+      ja: { translation: ja },
     },
     lng: savedLanguage,
     fallbackLng: 'en',
