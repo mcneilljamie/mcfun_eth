@@ -149,7 +149,7 @@
       "title": "Cómo Funciona McFun",
       "step1": {
         "title": "1. Creación de Token",
-        "description": "Cuando lanzas un token en McFun, desplegamos un nuevo contrato de token ERC-20 con un suministro fijo de 1,000,000 tokens. Eliges el nombre del token, símbolo y qué porcentaje del suministro asignar al pool de liquidez inicial (mínimo 25%)."
+        "description": "Cuando lanzas un token en McFun, desplegamos un nuevo contrato de token ERC-20 con un suministro fijo de 1,000,000 tokens. Eliges el nombre del token, símbolo y qué porcentaje del suministro asignar al pool de liquidez inicial (mínimo 50%)."
       },
       "step2": {
         "title": "2. Pool de Liquidez Automático",

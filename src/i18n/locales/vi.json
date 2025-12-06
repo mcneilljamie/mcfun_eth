@@ -149,7 +149,7 @@
       "title": "Cách McFun Hoạt Động",
       "step1": {
         "title": "1. Tạo Token",
-        "description": "Khi bạn ra mắt token trên McFun, chúng tôi triển khai hợp đồng token ERC-20 mới với nguồn cung cố định 1.000.000 token. Bạn chọn tên token, ký hiệu và phần trăm nguồn cung để phân bổ cho pool thanh khoản ban đầu (tối thiểu 25%)."
+        "description": "Khi bạn ra mắt token trên McFun, chúng tôi triển khai hợp đồng token ERC-20 mới với nguồn cung cố định 1.000.000 token. Bạn chọn tên token, ký hiệu và phần trăm nguồn cung để phân bổ cho pool thanh khoản ban đầu (tối thiểu 50%)."
       },
       "step2": {
         "title": "2. Pool Thanh Khoản Tự Động",

@@ -149,7 +149,7 @@
       "title": "McFun Nasıl Çalışır",
       "step1": {
         "title": "1. Token Oluşturma",
-        "description": "McFun'da bir token başlattığınızda, sabit 1.000.000 token arzı ile yeni bir ERC-20 token sözleşmesi dağıtıyoruz. Token adını, sembolünü ve ilk likidite havuzuna tahsis edilecek arzın yüzdesini seçersiniz (minimum %25)."
+        "description": "McFun'da bir token başlattığınızda, sabit 1.000.000 token arzı ile yeni bir ERC-20 token sözleşmesi dağıtıyoruz. Token adını, sembolünü ve ilk likidite havuzuna tahsis edilecek arzın yüzdesini seçersiniz (minimum %50)."
       },
       "step2": {
         "title": "2. Otomatik Likidite Havuzu",

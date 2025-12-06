@@ -149,7 +149,7 @@
       "title": "Comment Fonctionne McFun",
       "step1": {
         "title": "1. Création de Token",
-        "description": "Lorsque vous lancez un token sur McFun, nous déployons un nouveau contrat de token ERC-20 avec un approvisionnement fixe de 1 000 000 tokens. Vous choisissez le nom du token, le symbole et le pourcentage de l'approvisionnement à allouer au pool de liquidité initial (minimum 25%)."
+        "description": "Lorsque vous lancez un token sur McFun, nous déployons un nouveau contrat de token ERC-20 avec un approvisionnement fixe de 1 000 000 tokens. Vous choisissez le nom du token, le symbole et le pourcentage de l'approvisionnement à allouer au pool de liquidité initial (minimum 50%)."
       },
       "step2": {
         "title": "2. Pool de Liquidité Automatique",

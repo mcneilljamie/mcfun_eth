@@ -24,13 +24,13 @@ The factory contract handles token creation and initial liquidity setup.
   - Emits `TokenLaunched` event
 
 **Token Distribution:**
-- User specifies liquidity percentage (25-100%)
+- User specifies liquidity percentage (50-100%)
 - Liquidity tokens are sent to AMM and LP tokens burned
 - Remaining tokens sent to creator's wallet
 
 **Security Features:**
 - Minimum 0.1 ETH liquidity requirement
-- Minimum 25% liquidity allocation
+- Minimum 50% liquidity allocation
 - LP tokens automatically burned (sent to dead address)
 - No upgrade mechanisms or admin controls
 

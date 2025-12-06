@@ -14,7 +14,7 @@ interface IJammAMM {
 contract JammFactory {
     address public constant DEAD_ADDRESS = 0x000000000000000000000000000000000000dEaD;
     uint256 public constant MIN_LIQUIDITY_ETH = 0.1 ether;
-    uint256 public constant MIN_LIQUIDITY_PERCENT = 25;
+    uint256 public constant MIN_LIQUIDITY_PERCENT = 50;
     uint256 public constant TOTAL_SUPPLY = 1_000_000 * 10**18;
 
     struct TokenInfo {
@@ -47,7 +47,7 @@ contract JammFactory {
         uint256 liquidityPercent
     ) external payable returns (address tokenAddress, address ammAddress) {
         require(msg.value >= MIN_LIQUIDITY_ETH, "Minimum 0.1 ETH required");
-        require(liquidityPercent >= MIN_LIQUIDITY_PERCENT && liquidityPercent <= 100, "Liquidity must be 25-100%");
+        require(liquidityPercent >= MIN_LIQUIDITY_PERCENT && liquidityPercent <= 100, "Liquidity must be 50-100%");
 
         bytes memory tokenBytecode = abi.encodePacked(
             type(JammToken).creationCode,

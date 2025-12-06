@@ -53,7 +53,7 @@ The following constants are hardcoded in the contracts:
 
 - **Fee Recipient**: `0x227D5F29bAb4Cec30f511169886b86fAeF61C6bc` (receives 0.4% trading fees)
 - **Minimum Liquidity**: 0.1 ETH
-- **Minimum Liquidity Percent**: 25%
+- **Minimum Liquidity Percent**: 50%
 - **Total Supply**: 1,000,000 tokens per launch
 - **Trading Fee**: 0.4% (4/1000)
 
