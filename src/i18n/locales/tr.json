@@ -1,0 +1,237 @@
+{
+  "nav": {
+    "brand": "McFun",
+    "launch": "Token Başlat",
+    "trade": "İşlem Yap",
+    "tokens": "Popüler Tokenlar",
+    "about": "Hakkında",
+    "connectWallet": "Cüzdan Bağla",
+    "connecting": "Bağlanıyor...",
+    "connect": "Bağlan",
+    "launchShort": "Başlat",
+    "tokensShort": "Tokenlar"
+  },
+  "home": {
+    "hero": {
+      "title": "Tokenınızı Başlatın",
+      "subtitle": "Basit. Güvenli. Adil.",
+      "description": "Ethereum'da yerleşik likidite ve güvenli altyapı ile token başlatmanın en kolay ve ucuz yolu.",
+      "launchNow": "Şimdi Token Başlat",
+      "explore": "Tokenları Keşfet"
+    },
+    "features": {
+      "fast": {
+        "title": "Şimşek Hızında",
+        "description": "Basit ve anlaşılır bir arayüz ile dakikalar içinde tokenınızı başlatın."
+      },
+      "secure": {
+        "title": "Rugproof Güvenlik",
+        "description": "İlk likidite kalıcı olarak yakılır, tokenınız gerçekten güvenli olur."
+      },
+      "noFees": {
+        "title": "Token Oluşturma Ücreti Yok",
+        "description": "Sadece gaz ücretlerini ödeyin. Gizli maliyet veya platform ücreti yok."
+      },
+      "fair": {
+        "title": "Adil Başlatma",
+        "description": "Özelleştirilebilir likidite tahsisi ile sabit 1M token arzı."
+      }
+    },
+    "howItWorks": {
+      "title": "Nasıl Çalışır",
+      "step1": {
+        "title": "Token Oluştur",
+        "description": "Token adı, sembolü ve ne kadar likidite kilitleyeceğinizi seçin."
+      },
+      "step2": {
+        "title": "Likidite Ekle",
+        "description": "Tokenınızın likidite havuzunu başlatmak için en az 0.1 ETH yatırın."
+      },
+      "step3": {
+        "title": "İşleme Başla",
+        "description": "Tokenınız yerel DEX'imizde anında işlem görmeye başlar"
+      }
+    },
+    "why": {
+      "title": "Neden McFun?",
+      "description": "Ethereum'da token başlatmak için en basit, en güvenli ve en uygun maliyetli platformu oluşturduk. Karmaşık parametreler yok, gizli ücretler yok, rug pull yok. Sadece saf, adil token başlatmaları.",
+      "stats": {
+        "supply": "Sabit Arz",
+        "liquidity": "Min Likidite",
+        "fee": "İşlem Ücreti"
+      }
+    }
+  },
+  "launch": {
+    "title": "Tokenınızı Başlatın",
+    "success": {
+      "title": "Token Başarıyla Başlatıldı!",
+      "token": "Token:",
+      "dex": "DEX:",
+      "tx": "TX:",
+      "viewTokens": "Popüler Tokenlar'da Görüntüle →"
+    },
+    "form": {
+      "tokenName": "Token Adı",
+      "tokenNamePlaceholder": "Harika Tokenım",
+      "tokenSymbol": "Token Sembolü",
+      "tokenSymbolPlaceholder": "HTK",
+      "liquidityAllocation": "Likidite Tahsisi: {{percent}}%",
+      "liquidityNote": "Minimum {{min}}%, sağlıklı işlemler için {{recommended}}% önerilir",
+      "initialLiquidity": "İlk Likidite (ETH)",
+      "liquidityWarning": "Minimum {{min}} ETH gereklidir. Bu güvenlik için yakılacaktır.",
+      "distribution": "Token Dağılımı",
+      "totalSupply": "Toplam Arz:",
+      "toLiquidity": "Likidite Havuzuna (Yakılacak):",
+      "toWallet": "Cüzdanınıza:",
+      "initialLiq": "İlk Likidite:",
+      "launchButton": "Token Başlat",
+      "launching": "Token Başlatılıyor...",
+      "connectToLaunch": "Başlatmak için Cüzdan Bağlayın"
+    },
+    "notes": {
+      "title": "Önemli Notlar",
+      "fixedSupply": "Tüm tokenlar 1.000.000 token sabit arzına sahiptir",
+      "burnedLiquidity": "İlk likidite kalıcı olarak yakılır ve kaldırılamaz",
+      "noFees": "Token oluşturma ücreti yok - sadece ağ gaz ücretlerini ödeyin",
+      "tradingFee": "Tüm takaslar için %0.4 işlem ücreti"
+    },
+    "errors": {
+      "nameAndSymbol": "Lütfen token adı ve sembolü girin",
+      "minLiquidity": "Minimum likidite {{min}} ETH'dir",
+      "liquidityRange": "Likidite {{min}}% ile 100% arasında olmalıdır"
+    }
+  },
+  "trade": {
+    "title": "Token İşlemleri",
+    "selectToken": "Token Seç",
+    "poolLiquidity": "Havuz Likiditesi",
+    "ethReserve": "ETH Rezervi:",
+    "tokenReserve": "{{symbol}} Rezervi:",
+    "youPay": "Ödeyeceğiniz",
+    "youReceive": "Alacağınız",
+    "priceImpact": "Fiyat Etkisi:",
+    "slippageTolerance": "Kayma Toleransı:",
+    "slippageLabel": "Kayma Toleransı: {{percent}}%",
+    "tradingFee": "İşlem Ücreti (%0.4):",
+    "minReceived": "Minimum Alınacak:",
+    "swapButton": "Token Takası Yap",
+    "swapping": "Takas Yapılıyor...",
+    "connectToTrade": "İşlem Yapmak için Cüzdan Bağlayın",
+    "selectAToken": "Bir Token Seçin",
+    "success": "Takas başarıyla tamamlandı!",
+    "error": "Lütfen bir miktar girin"
+  },
+  "tokens": {
+    "title": "Popüler Tokenlar",
+    "search": "Token ara...",
+    "loading": "Tokenlar yükleniyor...",
+    "noTokens": "Henüz başlatılmış token yok",
+    "noResults": "Aramanızla eşleşen token bulunamadı",
+    "showing": "{{count}} token gösteriliyor",
+    "showing_plural": "{{count}} token gösteriliyor",
+    "table": {
+      "rank": "#",
+      "token": "Token",
+      "address": "Adres",
+      "liquidity": "Likidite",
+      "volume": "Hacim",
+      "created": "Oluşturulma",
+      "action": "İşlem",
+      "locked": "%{{percent}} kilitli",
+      "trade": "İşlem Yap",
+      "holders": "Sahipler"
+    }
+  },
+  "about": {
+    "title": "McFun Hakkında",
+    "subtitle": "Ethereum'da yerleşik likidite ve rugproof güvenlik ile token başlatmanın en basit ve güvenli yolu.",
+    "howWorks": {
+      "title": "McFun Nasıl Çalışır",
+      "step1": {
+        "title": "1. Token Oluşturma",
+        "description": "McFun'da bir token başlattığınızda, sabit 1.000.000 token arzı ile yeni bir ERC-20 token sözleşmesi dağıtıyoruz. Token adını, sembolünü ve ilk likidite havuzuna tahsis edilecek arzın yüzdesini seçersiniz (minimum %25)."
+      },
+      "step2": {
+        "title": "2. Otomatik Likidite Havuzu",
+        "description": "Token oluşturulduktan hemen sonra, bir Otomatik Piyasa Yapıcı (AMM) likidite havuzu oluşturulur. Tahsis edilen tokenlarınızla birlikte ETH (minimum 0.1 ETH) yatırırsınız. Bu havuz, Uniswap V2'ye benzer şekilde sabit çarpım formülünü (x * y = k) kullanarak anında işlem yapılmasını sağlar."
+      },
+      "step3": {
+        "title": "3. Likidite Yakma",
+        "description": "Havuzun sahipliğini temsil eden likidite havuzu tokenları (LP tokenları), sıfır adresine gönderilerek kalıcı olarak yakılır. Bu, tokenınızı rugproof yapar - ilk likiditeyi kimse kaldıramaz, siz bile."
+      },
+      "step4": {
+        "title": "4. İşlemler Başlıyor",
+        "description": "Tokenınız platformumuzda anında işlem görmeye başlar. Her takas, hizmeti sürdürmek ve geliştirmek için platforma giden %0.4 ücret içerir. Kalan tokenlar (likiditeye tahsis edilmeyenler) doğrudan cüzdanınıza gönderilir."
+      }
+    },
+    "why": {
+      "title": "Neden McFun'u Seçmelisiniz?",
+      "unruggable": {
+        "title": "Gerçekten Rugproof",
+        "description": "İlk likidite kalıcı olarak yakılır. Kimse onu kaldıramaz, rug pull'ları imkansız hale getirir."
+      },
+      "fair": {
+        "title": "Ön Satış veya İçeriden Avantaj Yok",
+        "description": "Herkes AMM'den aynı fiyattan işlem yapar. Tüm katılımcılar için adil başlatma."
+      },
+      "simple": {
+        "title": "Basit ve Anlaşılır",
+        "description": "Karmaşık parametrelere veya DeFi bilgisine gerek yok. Dakikalar içinde başlatın."
+      },
+      "lowBarrier": {
+        "title": "Düşük Giriş Bariyeri",
+        "description": "Sadece 0.1 ETH minimum likidite gereklidir. Başlatmak için platform ücreti yok."
+      },
+      "instant": {
+        "title": "Anında Likidite",
+        "description": "Tokenınız yerleşik AMM fonksiyonu ile anında işlem görmeye başlar."
+      },
+      "transparent": {
+        "title": "Şeffaf ve Zincir Üstü",
+        "description": "Tüm sözleşmeler Etherscan'de doğrulanabilir. Gizli mekanizma yok."
+      }
+    },
+    "fees": {
+      "title": "Ücret Yapısı",
+      "launch": {
+        "title": "Token Başlatma Ücretleri",
+        "amount": "$0",
+        "description": "Evet doğru - tokenınızı başlatmak için token oluşturma ücreti yoktur. Sadece Ethereum ağı gaz ücretlerini ödersiniz."
+      },
+      "trading": {
+        "title": "İşlem Ücretleri",
+        "amount": "%0.4",
+        "description": "Platformumuzda her token takası %0.4 ücrete tabidir. Bu ücret, altyapıyı, geliştirmeyi ve devam eden iyileştirmeleri desteklemek için platforma gider."
+      },
+      "why": {
+        "title": "Neden Bu Model?",
+        "description": "Likidite sağlayıcılarından (kaldırılabilen) ücret alan geleneksel DEX'lerin aksine, %0.4 işlem ücretimiz tokenınızın güvenliğini etkilemeden platform sürdürülebilirliğini sağlar. Yakılan likidite kalıcı kalır ve küçük işlem ücreti, topluluğa güvenilir, bakımlı bir platform sunmamızı sağlar."
+      }
+    },
+    "security": {
+      "title": "Güvenlik Garantileri",
+      "burned": {
+        "title": "Kalıcı Olarak Yakılan Likidite",
+        "description": "LP tokenları oluşturulduktan hemen sonra sıfır adresine (0x000...000) gönderilir. Bu, zincir üzerinde doğrulanabilir ve geri alınamaz."
+      },
+      "immutable": {
+        "title": "Değiştirilemez Sözleşmeler",
+        "description": "Dağıtıldıktan sonra token ve AMM sözleşmeleri değiştirilemez, yükseltilemez veya durdurulamaz. Gördüğünüz budur."
+      },
+      "transparent": {
+        "title": "Şeffaf Ücret Alıcısı",
+        "description": "Platform ücret alıcısı adresi sözleşmeye sabit kodlanmıştır ve herkese açıktır. Gizli ücret anahtarı veya arka kapı yoktur."
+      },
+      "opensource": {
+        "title": "Açık Kaynak ve Doğrulanabilir",
+        "description": "Tüm akıllı sözleşmeler Etherscan'de görüntülenebilir ve doğrulanabilir. Platformu kullanmadan önce kodu kendiniz denetleyin."
+      }
+    },
+    "founder": "McFun, Jamie McNeill tarafından kurulmuştur ve sürdürülmektedir."
+  },
+  "common": {
+    "tokens": "token",
+    "eth": "ETH"
+  }
+}

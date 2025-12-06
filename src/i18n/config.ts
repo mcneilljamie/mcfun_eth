@@ -10,6 +10,7 @@ import pt from './locales/pt.json';
 import ar from './locales/ar.json';
 import zh from './locales/zh.json';
 import ka from './locales/ka.json';
+import tr from './locales/tr.json';
 
 export const languages = {
   en: { nativeName: 'English', flag: '🇬🇧' },
@@ -21,6 +22,7 @@ export const languages = {
   ar: { nativeName: 'العربية', flag: '🇸🇦' },
   zh: { nativeName: '中文', flag: '🇨🇳' },
   ka: { nativeName: 'ქართული', flag: '🇬🇪' },
+  tr: { nativeName: 'Türkçe', flag: '🇹🇷' },
 };
 
 const savedLanguage = localStorage.getItem('language') || 'en';
@@ -38,6 +40,7 @@ i18n
       ar: { translation: ar },
       zh: { translation: zh },
       ka: { translation: ka },
+      tr: { translation: tr },
     },
     lng: savedLanguage,
     fallbackLng: 'en',
