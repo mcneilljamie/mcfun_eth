@@ -34,7 +34,7 @@ export const languages = {
   vi: { nativeName: 'Tiếng Việt', flag: '🇻🇳' },
   ko: { nativeName: '한국어', flag: '🇰🇷' },
   ja: { nativeName: '日本語', flag: '🇯🇵' },
-  fa: { nativeName: 'فارسی', flag: '🇮🇷' },
+  fa: { nativeName: 'فارسی', flag: '🇦🇫' },
 };
 
 const savedLanguage = localStorage.getItem('language') || 'en';
