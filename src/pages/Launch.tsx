@@ -234,7 +234,7 @@ export function Launch({ onNavigate }: LaunchProps) {
               <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
                 <li>All tokens have a fixed supply of 1,000,000 tokens</li>
                 <li>Initial liquidity is permanently burned and cannot be removed</li>
-                <li>No platform fees - only pay network gas fees</li>
+                <li>No token creation fees - only pay network gas fees</li>
                 <li>0.4% trading fee on all swaps</li>
               </ul>
             </div>
