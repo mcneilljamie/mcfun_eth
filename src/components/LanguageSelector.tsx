@@ -37,22 +37,21 @@ export function LanguageSelector() {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full mt-2 right-0 bg-white rounded-lg shadow-lg border border-gray-200 py-2 min-w-[200px] z-50">
-          {Object.entries(languages).map(([code, { nativeName, flag }]) => (
-            <button
-              key={code}
-              onClick={() => handleLanguageChange(code)}
-              className={`w-full px-4 py-2.5 text-left hover:bg-gray-100 transition-colors flex items-center gap-3 ${
-                i18n.language === code ? 'bg-gray-50 font-semibold' : ''
-              }`}
-            >
-              <span className="text-xl">{flag}</span>
-              <span className="text-sm text-gray-900">{nativeName}</span>
-              {i18n.language === code && (
-                <span className="ml-auto text-gray-900">✓</span>
-              )}
-            </button>
-          ))}
+        <div className="absolute top-full mt-2 right-0 bg-white rounded-lg shadow-lg border border-gray-200 p-2 w-[480px] z-50">
+          <div className="grid grid-cols-3 gap-1">
+            {Object.entries(languages).map(([code, { nativeName, flag }]) => (
+              <button
+                key={code}
+                onClick={() => handleLanguageChange(code)}
+                className={`px-3 py-2.5 rounded-md hover:bg-gray-100 transition-colors flex flex-col items-center justify-center gap-1 ${
+                  i18n.language === code ? 'bg-gray-100 ring-2 ring-gray-300' : ''
+                }`}
+              >
+                <span className="text-2xl">{flag}</span>
+                <span className="text-xs text-gray-900 text-center leading-tight">{nativeName}</span>
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </div>
