@@ -3,7 +3,8 @@ import { ArrowDownUp, AlertCircle, Loader, TrendingUp } from 'lucide-react';
 import { useWeb3 } from '../lib/web3';
 import { swapTokens, getQuote, getAMMReserves } from '../lib/contracts';
 import { formatNumber, formatCurrency, calculatePriceImpact } from '../lib/utils';
-import { supabase, Token } from '../lib/supabase';
+import { Token } from '../lib/supabase';
+import { TokenSelector } from '../components/TokenSelector';
 
 interface TradeProps {
   selectedToken?: Token;
@@ -12,7 +13,6 @@ interface TradeProps {
 export function Trade({ selectedToken }: TradeProps) {
   const { account, signer, provider, connect } = useWeb3();
 
-  const [tokens, setTokens] = useState<Token[]>([]);
   const [selectedTokenData, setSelectedTokenData] = useState<Token | null>(selectedToken || null);
 
   const [isETHToToken, setIsETHToToken] = useState(true);
@@ -26,10 +26,6 @@ export function Trade({ selectedToken }: TradeProps) {
   const [success, setSuccess] = useState('');
 
   const [reserves, setReserves] = useState<{ reserveETH: string; reserveToken: string } | null>(null);
-
-  useEffect(() => {
-    loadTokens();
-  }, []);
 
   useEffect(() => {
     if (selectedToken) {
@@ -50,20 +46,6 @@ export function Trade({ selectedToken }: TradeProps) {
       setAmountOut('');
     }
   }, [amountIn, isETHToToken, selectedTokenData, provider]);
-
-  const loadTokens = async () => {
-    const { data } = await supabase
-      .from('tokens')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (data) {
-      setTokens(data);
-      if (!selectedTokenData && data.length > 0) {
-        setSelectedTokenData(data[0]);
-      }
-    }
-  };
 
   const loadReserves = async () => {
     if (!selectedTokenData || !provider) return;
@@ -179,21 +161,11 @@ export function Trade({ selectedToken }: TradeProps) {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Select Token
               </label>
-              <select
-                value={selectedTokenData?.token_address || ''}
-                onChange={(e) => {
-                  const token = tokens.find(t => t.token_address === e.target.value);
-                  setSelectedTokenData(token || null);
-                }}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
-              >
-                <option value="">Select a token</option>
-                {tokens.map((token) => (
-                  <option key={token.token_address} value={token.token_address}>
-                    {token.name} ({token.symbol})
-                  </option>
-                ))}
-              </select>
+              <TokenSelector
+                selectedToken={selectedTokenData}
+                onSelectToken={setSelectedTokenData}
+                disabled={isSwapping}
+              />
             </div>
 
             {reserves && selectedTokenData && (
