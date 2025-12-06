@@ -1,4 +1,4 @@
-import { Shield, Lock, Coins, TrendingUp, Users, Zap, DollarSign, Check } from 'lucide-react';
+import { Shield, Lock, Coins, TrendingUp, Users, Zap, DollarSign, Check, Eye } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 export function About() {
@@ -49,6 +49,27 @@ export function About() {
               <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 {t('about.howWorks.step4.description')}
               </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8 border-2 border-blue-200">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
+            <Eye className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
+            {t('about.visibility.title')}
+          </h2>
+          <p className="text-sm sm:text-base text-gray-700 leading-relaxed mb-4">
+            {t('about.visibility.description')}
+          </p>
+          <div className="bg-white/80 backdrop-blur rounded-lg p-4 border border-blue-200">
+            <div className="flex items-start gap-3">
+              <TrendingUp className="w-5 h-5 text-blue-600 flex-shrink-0 mt-1" />
+              <div>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('about.visibility.ranking.title')}</h3>
+                <p className="text-xs sm:text-sm text-gray-700">
+                  {t('about.visibility.ranking.description')}
+                </p>
+              </div>
             </div>
           </div>
         </div>

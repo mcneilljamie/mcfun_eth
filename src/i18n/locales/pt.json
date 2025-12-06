@@ -164,6 +164,14 @@
         "description": "Seu token é imediatamente negociável em nossa plataforma. Cada troca incorre em uma taxa de 0,4% que vai para a plataforma para manter e melhorar o serviço. Os tokens restantes (não alocados à liquidez) são enviados diretamente para sua carteira."
       }
     },
+    "visibility": {
+      "title": "Visibilidade e Descoberta de Tokens",
+      "description": "Cada token lançado através do McFun recebe visibilidade permanente em nossa plataforma, dando ao seu projeto exposição duradoura a potenciais traders e investidores.",
+      "ranking": {
+        "title": "Listagem e Classificação Automáticas",
+        "description": "Todos os tokens são automaticamente listados na página de Tokens Populares e classificados por liquidez total de ETH. Quanto mais liquidez seu token tiver, mais alto ele é classificado, dando aos projetos bem-sucedidos visibilidade máxima."
+      }
+    },
     "why": {
       "title": "Por Que Escolher McFun?",
       "unruggable": {

@@ -164,6 +164,14 @@
         "description": "Il tuo token è immediatamente scambiabile sulla nostra piattaforma. Ogni swap comporta una commissione dello 0,4% che va alla piattaforma per mantenere e migliorare il servizio. I token rimanenti (non allocati alla liquidità) vengono inviati direttamente al tuo portafoglio."
       }
     },
+    "visibility": {
+      "title": "Visibilità e Scoperta dei Token",
+      "description": "Ogni token lanciato tramite McFun riceve visibilità permanente sulla nostra piattaforma, offrendo al tuo progetto un'esposizione duratura a potenziali trader e investitori.",
+      "ranking": {
+        "title": "Listing e Classificazione Automatici",
+        "description": "Tutti i token vengono automaticamente elencati nella pagina Token Popolari e classificati per liquidità ETH totale. Più liquidità ha il tuo token, più alto viene classificato, dando ai progetti di successo la massima visibilità."
+      }
+    },
     "why": {
       "title": "Perché Scegliere McFun?",
       "unruggable": {

@@ -164,6 +164,14 @@
         "description": "Votre token est immédiatement échangeable sur notre plateforme. Chaque swap entraîne des frais de 0,4% qui vont à la plateforme pour maintenir et améliorer le service. Les tokens restants (non alloués à la liquidité) sont envoyés directement à votre portefeuille."
       }
     },
+    "visibility": {
+      "title": "Visibilité et Découverte des Tokens",
+      "description": "Chaque token lancé via McFun bénéficie d'une visibilité permanente sur notre plateforme, offrant à votre projet une exposition durable auprès des traders et investisseurs potentiels.",
+      "ranking": {
+        "title": "Listing et Classement Automatiques",
+        "description": "Tous les tokens sont automatiquement listés sur la page Tokens Populaires et classés par liquidité ETH totale. Plus votre token a de liquidité, plus il est classé haut, donnant aux projets réussis une visibilité maximale."
+      }
+    },
     "why": {
       "title": "Pourquoi Choisir McFun?",
       "unruggable": {

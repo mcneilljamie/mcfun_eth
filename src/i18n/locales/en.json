@@ -164,6 +164,14 @@
         "description": "Your token is immediately tradable on our platform. Every swap incurs a 0.4% fee that goes to the platform to maintain and improve the service. The remaining tokens (not allocated to liquidity) are sent directly to your wallet."
       }
     },
+    "visibility": {
+      "title": "Token Visibility & Discovery",
+      "description": "Every token launched through McFun receives permanent visibility on our platform, giving your project lasting exposure to potential traders and investors.",
+      "ranking": {
+        "title": "Automatic Listing & Ranking",
+        "description": "All tokens are automatically listed on the Popular Tokens page and ranked by total ETH liquidity. The more liquidity your token has, the higher it ranks, giving successful projects maximum visibility."
+      }
+    },
     "why": {
       "title": "Why Choose McFun?",
       "unruggable": {

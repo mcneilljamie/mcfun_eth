@@ -164,6 +164,14 @@
         "description": "Tokenınız platformumuzda anında işlem görmeye başlar. Her takas, hizmeti sürdürmek ve geliştirmek için platforma giden %0.4 ücret içerir. Kalan tokenlar (likiditeye tahsis edilmeyenler) doğrudan cüzdanınıza gönderilir."
       }
     },
+    "visibility": {
+      "title": "Token Görünürlüğü ve Keşfi",
+      "description": "McFun üzerinden başlatılan her token, platformumuzda kalıcı görünürlük elde eder ve projenize potansiyel yatırımcılar ve trader'lar için kalıcı bir görünürlük sağlar.",
+      "ranking": {
+        "title": "Otomatik Listeleme ve Sıralama",
+        "description": "Tüm tokenlar otomatik olarak Popüler Tokenlar sayfasında listelenir ve toplam ETH likidite göre sıralanır. Tokenınızın likidite ne kadar fazla olursa, o kadar yüksek sıralanır ve başarılı projelere maksimum görünürlük sağlar."
+      }
+    },
     "why": {
       "title": "Neden McFun'u Seçmelisiniz?",
       "unruggable": {
