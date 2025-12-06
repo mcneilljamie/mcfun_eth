@@ -173,7 +173,7 @@ export function Launch({ onNavigate }: LaunchProps) {
                 Initial Liquidity (ETH)
               </label>
               <p className="text-sm text-gray-500 mb-3">
-                Minimum {MIN_LIQUIDITY_ETH} ETH required. This will be permanently locked.
+                Minimum {MIN_LIQUIDITY_ETH} ETH required. This will be burned for security.
               </p>
               <input
                 type="number"
