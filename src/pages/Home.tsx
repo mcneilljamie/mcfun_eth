@@ -84,7 +84,7 @@ export function Home({ onNavigate }: HomeProps) {
               </div>
               <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Create Token</h3>
               <p className="text-sm sm:text-base text-gray-600">
-                Choose your token name, symbol, and how much liquidity to lock (minimum 25%).
+                Choose your token name, symbol, and how much liquidity to lock.
               </p>
             </div>
 
