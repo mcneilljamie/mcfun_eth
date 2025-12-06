@@ -7,6 +7,12 @@ interface IERC20 {
     function balanceOf(address account) external view returns (uint256);
 }
 
+/**
+ * @title JammAMM
+ * @notice Automated Market Maker with PERMANENT liquidity lock
+ * @dev CRITICAL: First MINIMUM_LIQUIDITY (1000 wei) is PERMANENTLY BURNED to address(0)
+ *      This ensures every token launched through this platform has liquidity that can NEVER be removed
+ */
 contract JammAMM {
     error ZeroAddress();
     error ZeroAmount();
@@ -56,6 +62,9 @@ contract JammAMM {
             reserveETH = msg.value;
             reserveToken = tokenAmount;
 
+            // PERMANENT LIQUIDITY LOCK: First MINIMUM_LIQUIDITY is burned to address(0)
+            // This ensures liquidity can NEVER be fully removed from the pool
+            // This is a critical security feature for all tokens on this platform
             liquidity[address(0)] = MINIMUM_LIQUIDITY;
             totalLiquidity = MINIMUM_LIQUIDITY;
             liquidityMinted -= MINIMUM_LIQUIDITY;
