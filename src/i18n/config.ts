@@ -16,6 +16,7 @@ import id from './locales/id.json';
 import vi from './locales/vi.json';
 import ko from './locales/ko.json';
 import ja from './locales/ja.json';
+import fa from './locales/fa.json';
 
 export const languages = {
   en: { nativeName: 'English', flag: '🇬🇧' },
@@ -33,6 +34,7 @@ export const languages = {
   vi: { nativeName: 'Tiếng Việt', flag: '🇻🇳' },
   ko: { nativeName: '한국어', flag: '🇰🇷' },
   ja: { nativeName: '日本語', flag: '🇯🇵' },
+  fa: { nativeName: 'فارسی', flag: '🇮🇷' },
 };
 
 const savedLanguage = localStorage.getItem('language') || 'en';
@@ -56,6 +58,7 @@ i18n
       vi: { translation: vi },
       ko: { translation: ko },
       ja: { translation: ja },
+      fa: { translation: fa },
     },
     lng: savedLanguage,
     fallbackLng: 'en',
@@ -66,11 +69,11 @@ i18n
 
 i18n.on('languageChanged', (lng) => {
   localStorage.setItem('language', lng);
-  document.documentElement.dir = lng === 'ar' ? 'rtl' : 'ltr';
+  document.documentElement.dir = (lng === 'ar' || lng === 'fa') ? 'rtl' : 'ltr';
   document.documentElement.lang = lng;
 });
 
-document.documentElement.dir = savedLanguage === 'ar' ? 'rtl' : 'ltr';
+document.documentElement.dir = (savedLanguage === 'ar' || savedLanguage === 'fa') ? 'rtl' : 'ltr';
 document.documentElement.lang = savedLanguage;
 
 export default i18n;
