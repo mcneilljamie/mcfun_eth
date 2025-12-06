@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Trophy, Search, TrendingUp, Copy, CheckCircle } from 'lucide-react';
+import { Trophy, Search, TrendingUp, Copy, CheckCircle, ExternalLink } from 'lucide-react';
 import { supabase, Token } from '../lib/supabase';
 import { formatCurrency, formatAddress, formatTimeAgo } from '../lib/utils';
 
@@ -145,17 +145,29 @@ export function Tokens({ onSelectToken }: TokensProps) {
                         </div>
                       </td>
                       <td className="py-4 px-4">
-                        <button
-                          onClick={() => copyToClipboard(token.token_address)}
-                          className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
-                        >
-                          <span className="font-mono text-sm">{formatAddress(token.token_address)}</span>
-                          {copiedAddress === token.token_address ? (
-                            <CheckCircle className="w-4 h-4 text-green-600" />
-                          ) : (
-                            <Copy className="w-4 h-4" />
-                          )}
-                        </button>
+                        <div className="flex items-center gap-3">
+                          <button
+                            onClick={() => copyToClipboard(token.token_address)}
+                            className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+                          >
+                            <span className="font-mono text-sm">{formatAddress(token.token_address)}</span>
+                            {copiedAddress === token.token_address ? (
+                              <CheckCircle className="w-4 h-4 text-green-600" />
+                            ) : (
+                              <Copy className="w-4 h-4" />
+                            )}
+                          </button>
+                          <a
+                            href={`https://etherscan.io/token/${token.token_address}#balances`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center space-x-1 text-gray-600 hover:text-gray-900 transition-colors text-sm"
+                            title="View top holders on Etherscan"
+                          >
+                            <span>Holders</span>
+                            <ExternalLink className="w-3 h-3" />
+                          </a>
+                        </div>
                       </td>
                       <td className="py-4 px-4">
                         <div className="font-semibold text-gray-900">

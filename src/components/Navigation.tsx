@@ -1,15 +1,12 @@
-import { Moon, Sun } from 'lucide-react';
 import { useWeb3 } from '../lib/web3';
 import { formatAddress } from '../lib/utils';
 
 interface NavigationProps {
   currentPage: string;
   onNavigate: (page: string) => void;
-  nightMode: boolean;
-  onToggleNightMode: () => void;
 }
 
-export function Navigation({ currentPage, onNavigate, nightMode, onToggleNightMode }: NavigationProps) {
+export function Navigation({ currentPage, onNavigate }: NavigationProps) {
   const { account, connect, disconnect, isConnecting } = useWeb3();
 
   return (
@@ -72,13 +69,6 @@ export function Navigation({ currentPage, onNavigate, nightMode, onToggleNightMo
           </div>
 
           <div className="flex items-center gap-3">
-            <button
-              onClick={onToggleNightMode}
-              className="p-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
-              title="Toggle Night Mode"
-            >
-              {nightMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
             {account ? (
               <button
                 onClick={disconnect}
