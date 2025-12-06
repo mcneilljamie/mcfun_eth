@@ -153,11 +153,11 @@
       },
       "step2": {
         "title": "2. Otomatik Likidite Havuzu",
-        "description": "Token oluşturulduktan hemen sonra, bir Otomatik Piyasa Yapıcı (AMM) likidite havuzu oluşturulur. Tahsis edilen tokenlarınızla birlikte ETH (minimum 0.1 ETH) yatırırsınız. Bu havuz, Uniswap V2'ye benzer şekilde sabit çarpım formülünü (x * y = k) kullanarak anında işlem yapılmasını sağlar."
+        "description": "Token oluşturulduktan hemen sonra, bir Otomatik Piyasa Yapıcı (AMM) likidite havuzu oluşturulur. İlk likiditeyi oluşturmak için tahsis edilen tokenlarınızla birlikte ETH yatırırsınız (minimum 0.1 ETH). Bu ETH havuzda kalıcı olarak kilitlenir. Ticaret, Uniswap V2'ye benzer şekilde sabit ürün formülünü (x * y = k) kullanarak anında etkinleştirilir."
       },
       "step3": {
         "title": "3. Likidite Yakma",
-        "description": "Havuzun sahipliğini temsil eden likidite havuzu tokenları (LP tokenları), sıfır adresine gönderilerek kalıcı olarak yakılır. Bu, tokenınızı rugproof yapar - ilk likiditeyi kimse kaldıramaz, siz bile."
+        "description": "Havuzun sahipliğini temsil eden likidite havuzu tokenları (LP tokenları), sıfır adresine gönderilerek kalıcı olarak yakılır. Bu, yatırdığınız ETH ve tokenları havuzda sonsuza kadar kilitler ve tokenınızı rugproof yapar - ilk likiditeyi asla kimse kaldıramaz, siz bile."
       },
       "step4": {
         "title": "4. İşlemler Başlıyor",

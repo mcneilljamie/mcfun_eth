@@ -153,11 +153,11 @@
       },
       "step2": {
         "title": "2. Pool de Liquidez Automático",
-        "description": "Imediatamente após a criação do token, um pool de liquidez Automated Market Maker (AMM) é criado. Você deposita ETH (mínimo 0,1 ETH) junto com seus tokens alocados. Este pool permite negociação instantânea usando a fórmula do produto constante (x * y = k), semelhante ao Uniswap V2."
+        "description": "Imediatamente após a criação do token, um pool de liquidez Automated Market Maker (AMM) é criado. Você deposita ETH (mínimo 0,1 ETH) junto com seus tokens alocados para formar a liquidez inicial. Este ETH fica permanentemente bloqueado no pool. A negociação é habilitada instantaneamente usando a fórmula do produto constante (x * y = k), semelhante ao Uniswap V2."
       },
       "step3": {
         "title": "3. Queima de Liquidez",
-        "description": "Os tokens do pool de liquidez (tokens LP) que representam a propriedade do pool são queimados permanentemente enviando-os para o endereço zero. Isso torna seu token inabalável - ninguém pode remover a liquidez inicial, nem mesmo você."
+        "description": "Os tokens do pool de liquidez (tokens LP) que representam a propriedade do pool são queimados permanentemente enviando-os para o endereço zero. Isso bloqueia seu ETH e tokens depositados no pool para sempre, tornando seu token inabalável - ninguém pode jamais remover a liquidez inicial, nem mesmo você."
       },
       "step4": {
         "title": "4. Início das Negociações",

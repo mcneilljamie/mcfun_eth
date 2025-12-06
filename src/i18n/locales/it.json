@@ -153,11 +153,11 @@
       },
       "step2": {
         "title": "2. Pool di Liquidità Automatico",
-        "description": "Immediatamente dopo la creazione del token, viene creato un pool di liquidità Automated Market Maker (AMM). Depositi ETH (minimo 0,1 ETH) insieme ai tuoi token allocati. Questo pool abilita lo scambio istantaneo usando la formula del prodotto costante (x * y = k), simile a Uniswap V2."
+        "description": "Immediatamente dopo la creazione del token, viene creato un pool di liquidità Automated Market Maker (AMM). Depositi ETH (minimo 0,1 ETH) insieme ai tuoi token allocati per formare la liquidità iniziale. Questo ETH viene bloccato permanentemente nel pool. Lo scambio è abilitato istantaneamente utilizzando la formula del prodotto costante (x * y = k), simile a Uniswap V2."
       },
       "step3": {
         "title": "3. Bruciatura della Liquidità",
-        "description": "I token del pool di liquidità (token LP) che rappresentano la proprietà del pool vengono bruciati permanentemente inviandoli all'indirizzo zero. Questo rende il tuo token inattaccabile - nessuno può rimuovere la liquidità iniziale, nemmeno tu."
+        "description": "I token del pool di liquidità (token LP) che rappresentano la proprietà del pool vengono bruciati permanentemente inviandoli all'indirizzo zero. Questo blocca il tuo ETH e i token depositati nel pool per sempre, rendendo il tuo token inattaccabile - nessuno può mai rimuovere la liquidità iniziale, nemmeno tu."
       },
       "step4": {
         "title": "4. Inizio degli Scambi",
