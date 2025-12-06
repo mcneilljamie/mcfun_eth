@@ -25,6 +25,7 @@ export function LanguageSelector() {
   };
 
   const currentLanguage = languages[i18n.language as keyof typeof languages] || languages.en;
+  const isRTL = i18n.language === 'ar';
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -37,7 +38,7 @@ export function LanguageSelector() {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full mt-2 right-0 bg-white rounded-lg shadow-lg border border-gray-200 p-2 w-[480px] z-50">
+        <div className={`absolute top-full mt-2 ${isRTL ? 'left-0' : 'right-0'} bg-white rounded-lg shadow-lg border border-gray-200 p-2 w-[480px] z-50`}>
           <div className="grid grid-cols-3 gap-1">
             {Object.entries(languages).map(([code, { nativeName, flag }]) => (
               <button
