@@ -54,6 +54,16 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
               >
                 Popular Tokens
               </button>
+              <button
+                onClick={() => onNavigate('about')}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  currentPage === 'about'
+                    ? 'bg-gray-900 text-white'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                About
+              </button>
             </div>
           </div>
 
@@ -107,6 +117,16 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
             }`}
           >
             Tokens
+          </button>
+          <button
+            onClick={() => onNavigate('about')}
+            className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+              currentPage === 'about'
+                ? 'bg-gray-900 text-white'
+                : 'text-gray-700 hover:bg-gray-100'
+            }`}
+          >
+            About
           </button>
         </div>
       </div>

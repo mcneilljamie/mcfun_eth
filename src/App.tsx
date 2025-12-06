@@ -5,9 +5,10 @@ import { Home } from './pages/Home';
 import { Launch } from './pages/Launch';
 import { Trade } from './pages/Trade';
 import { Tokens } from './pages/Tokens';
+import { About } from './pages/About';
 import { Token } from './lib/supabase';
 
-type Page = 'home' | 'launch' | 'trade' | 'tokens';
+type Page = 'home' | 'launch' | 'trade' | 'tokens' | 'about';
 
 function App() {
   const [currentPage, setCurrentPage] = useState<Page>('home');
@@ -31,6 +32,7 @@ function App() {
         {currentPage === 'launch' && <Launch onNavigate={handleNavigate} />}
         {currentPage === 'trade' && <Trade selectedToken={selectedToken} />}
         {currentPage === 'tokens' && <Tokens onSelectToken={handleSelectToken} />}
+        {currentPage === 'about' && <About />}
       </div>
     </Web3Provider>
   );
