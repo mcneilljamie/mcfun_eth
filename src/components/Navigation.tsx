@@ -16,12 +16,12 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
           <div className="flex items-center space-x-8">
             <button
               onClick={() => onNavigate('home')}
-              className="flex items-center space-x-2 text-gray-900 font-bold text-xl hover:text-gray-700 transition-colors"
+              className="flex items-center space-x-2 text-gray-900 font-bold text-lg sm:text-xl hover:text-gray-700 transition-colors"
             >
-              <div className="w-10 h-10 bg-gray-900 text-white rounded-lg flex items-center justify-center font-bold text-lg">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-900 text-white rounded-lg flex items-center justify-center font-bold text-base sm:text-lg">
                 MF
               </div>
-              <span>McFun</span>
+              <span className="hidden xs:inline">McFun</span>
             </button>
 
             <div className="hidden md:flex space-x-1">
@@ -72,7 +72,7 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
             {account ? (
               <button
                 onClick={disconnect}
-                className="bg-gray-900 text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-800 transition-colors"
+                className="bg-gray-900 text-white px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium hover:bg-gray-800 transition-colors"
               >
                 {formatAddress(account)}
               </button>
@@ -80,9 +80,10 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
               <button
                 onClick={connect}
                 disabled={isConnecting}
-                className="bg-gray-900 text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-gray-900 text-white px-4 sm:px-6 py-2 rounded-lg text-sm sm:text-base font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isConnecting ? 'Connecting...' : 'Connect Wallet'}
+                <span className="hidden sm:inline">{isConnecting ? 'Connecting...' : 'Connect Wallet'}</span>
+                <span className="sm:hidden">{isConnecting ? 'Connecting...' : 'Connect'}</span>
               </button>
             )}
           </div>
@@ -91,7 +92,7 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
         <div className="md:hidden flex space-x-1 pb-3">
           <button
             onClick={() => onNavigate('launch')}
-            className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex-1 px-2 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors touch-manipulation ${
               currentPage === 'launch'
                 ? 'bg-gray-900 text-white'
                 : 'text-gray-700 hover:bg-gray-100'
@@ -101,7 +102,7 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
           </button>
           <button
             onClick={() => onNavigate('trade')}
-            className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex-1 px-2 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors touch-manipulation ${
               currentPage === 'trade'
                 ? 'bg-gray-900 text-white'
                 : 'text-gray-700 hover:bg-gray-100'
@@ -111,7 +112,7 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
           </button>
           <button
             onClick={() => onNavigate('tokens')}
-            className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex-1 px-2 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors touch-manipulation ${
               currentPage === 'tokens'
                 ? 'bg-gray-900 text-white'
                 : 'text-gray-700 hover:bg-gray-100'
@@ -121,7 +122,7 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
           </button>
           <button
             onClick={() => onNavigate('about')}
-            className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex-1 px-2 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors touch-manipulation ${
               currentPage === 'about'
                 ? 'bg-gray-900 text-white'
                 : 'text-gray-700 hover:bg-gray-100'

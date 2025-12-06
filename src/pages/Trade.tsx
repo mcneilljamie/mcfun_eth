@@ -149,14 +149,14 @@ export function Trade({ selectedToken }: TradeProps) {
     : 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6 sm:py-12">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-xl shadow-lg p-8">
+        <div className="bg-white rounded-xl shadow-lg p-5 sm:p-8">
           <div className="flex items-center space-x-3 mb-6">
             <div className="bg-gray-900 p-2 rounded-lg">
-              <TrendingUp className="w-6 h-6 text-white" />
+              <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900">Trade Tokens</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Trade Tokens</h1>
           </div>
 
           {error && (
@@ -197,9 +197,9 @@ export function Trade({ selectedToken }: TradeProps) {
             </div>
 
             {reserves && selectedTokenData && (
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h3 className="font-medium text-gray-900 mb-2">Pool Liquidity</h3>
-                <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                <h3 className="font-medium text-gray-900 mb-2 text-sm sm:text-base">Pool Liquidity</h3>
+                <div className="grid grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
                   <div>
                     <span className="text-gray-600">ETH Reserve:</span>
                     <p className="font-medium text-gray-900">{formatCurrency(reserves.reserveETH)}</p>
@@ -213,11 +213,11 @@ export function Trade({ selectedToken }: TradeProps) {
             )}
 
             <div className="space-y-3">
-              <div className="bg-gray-50 rounded-lg p-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                   You Pay
                 </label>
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2 sm:space-x-3">
                   <input
                     type="number"
                     step="0.000001"
@@ -225,10 +225,10 @@ export function Trade({ selectedToken }: TradeProps) {
                     value={amountIn}
                     onChange={(e) => setAmountIn(e.target.value)}
                     placeholder="0.0"
-                    className="flex-1 bg-transparent text-2xl font-semibold outline-none"
+                    className="flex-1 bg-transparent text-xl sm:text-2xl font-semibold outline-none"
                     disabled={isSwapping || !selectedTokenData}
                   />
-                  <span className="text-lg font-semibold text-gray-900">
+                  <span className="text-base sm:text-lg font-semibold text-gray-900 whitespace-nowrap">
                     {isETHToToken ? 'ETH' : selectedTokenData?.symbol || 'TOKEN'}
                   </span>
                 </div>
@@ -237,26 +237,26 @@ export function Trade({ selectedToken }: TradeProps) {
               <div className="flex justify-center">
                 <button
                   onClick={handleFlip}
-                  className="bg-white border-2 border-gray-900 p-2 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="bg-white border-2 border-gray-900 p-2 rounded-lg hover:bg-gray-50 transition-colors touch-manipulation"
                   disabled={isSwapping}
                 >
                   <ArrowDownUp className="w-5 h-5 text-gray-900" />
                 </button>
               </div>
 
-              <div className="bg-gray-50 rounded-lg p-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                   You Receive
                 </label>
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2 sm:space-x-3">
                   <input
                     type="text"
                     value={isLoadingQuote ? 'Loading...' : amountOut}
                     placeholder="0.0"
-                    className="flex-1 bg-transparent text-2xl font-semibold outline-none"
+                    className="flex-1 bg-transparent text-xl sm:text-2xl font-semibold outline-none"
                     disabled
                   />
-                  <span className="text-lg font-semibold text-gray-900">
+                  <span className="text-base sm:text-lg font-semibold text-gray-900 whitespace-nowrap">
                     {isETHToToken ? selectedTokenData?.symbol || 'TOKEN' : 'ETH'}
                   </span>
                 </div>
@@ -264,7 +264,7 @@ export function Trade({ selectedToken }: TradeProps) {
             </div>
 
             {amountIn && amountOut && (
-              <div className="bg-gray-50 rounded-lg p-4 space-y-2 text-sm">
+              <div className="bg-gray-50 rounded-lg p-3 sm:p-4 space-y-2 text-xs sm:text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Price Impact:</span>
                   <span className={`font-medium ${priceImpact > 5 ? 'text-red-600' : 'text-gray-900'}`}>
@@ -291,7 +291,7 @@ export function Trade({ selectedToken }: TradeProps) {
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                 Slippage Tolerance: {slippage}%
               </label>
               <div className="flex space-x-2">
@@ -299,7 +299,7 @@ export function Trade({ selectedToken }: TradeProps) {
                   <button
                     key={value}
                     onClick={() => setSlippage(value)}
-                    className={`flex-1 py-2 rounded-lg font-medium transition-colors ${
+                    className={`flex-1 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors touch-manipulation ${
                       slippage === value
                         ? 'bg-gray-900 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -315,7 +315,7 @@ export function Trade({ selectedToken }: TradeProps) {
             <button
               onClick={handleSwap}
               disabled={isSwapping || !selectedTokenData || !amountIn || !amountOut || !signer}
-              className="w-full bg-gray-900 text-white py-4 rounded-lg font-semibold hover:bg-gray-800 transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2"
+              className="w-full bg-gray-900 text-white py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:bg-gray-800 transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2 touch-manipulation"
             >
               {isSwapping ? (
                 <>
@@ -323,9 +323,9 @@ export function Trade({ selectedToken }: TradeProps) {
                   <span>Swapping...</span>
                 </>
               ) : !account ? (
-                <span>Connect Wallet to Trade</span>
+                <span className="text-sm sm:text-base">Connect Wallet to Trade</span>
               ) : !selectedTokenData ? (
-                <span>Select a Token</span>
+                <span className="text-sm sm:text-base">Select a Token</span>
               ) : (
                 <span>Swap Tokens</span>
               )}

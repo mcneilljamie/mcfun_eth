@@ -76,14 +76,14 @@ export function Launch({ onNavigate }: LaunchProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6 sm:py-12">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-xl shadow-lg p-8">
+        <div className="bg-white rounded-xl shadow-lg p-5 sm:p-8">
           <div className="flex items-center space-x-3 mb-6">
             <div className="bg-gray-900 p-2 rounded-lg">
-              <Rocket className="w-6 h-6 text-white" />
+              <Rocket className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900">Launch Your Token</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Launch Your Token</h1>
           </div>
 
           {success && (
@@ -212,7 +212,7 @@ export function Launch({ onNavigate }: LaunchProps) {
             <button
               onClick={handleLaunch}
               disabled={isLaunching || !signer}
-              className="w-full bg-gray-900 text-white py-4 rounded-lg font-semibold hover:bg-gray-800 transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2"
+              className="w-full bg-gray-900 text-white py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:bg-gray-800 transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2 touch-manipulation"
             >
               {isLaunching ? (
                 <>
@@ -220,7 +220,7 @@ export function Launch({ onNavigate }: LaunchProps) {
                   <span>Launching Token...</span>
                 </>
               ) : !account ? (
-                <span>Connect Wallet to Launch</span>
+                <span className="text-sm sm:text-base">Connect Wallet to Launch</span>
               ) : (
                 <>
                   <Rocket className="w-5 h-5" />
@@ -229,9 +229,9 @@ export function Launch({ onNavigate }: LaunchProps) {
               )}
             </button>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h4 className="font-medium text-blue-900 mb-2">Important Notes</h4>
-              <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4">
+              <h4 className="font-medium text-blue-900 mb-2 text-sm sm:text-base">Important Notes</h4>
+              <ul className="text-xs sm:text-sm text-blue-800 space-y-1 list-disc list-inside">
                 <li>All tokens have a fixed supply of 1,000,000 tokens</li>
                 <li>Initial liquidity is permanently burned and cannot be removed</li>
                 <li>No token creation fees - only pay network gas fees</li>
