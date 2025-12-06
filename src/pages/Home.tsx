@@ -104,7 +104,7 @@ export function Home({ onNavigate }: HomeProps) {
               </div>
               <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Start Trading</h3>
               <p className="text-sm sm:text-base text-gray-600">
-                Your token is instantly tradable on our native DEX with a 0.4% swap fee.
+                Your token is instantly tradable on our native DEX
               </p>
             </div>
           </div>
