@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Rocket, AlertCircle, CheckCircle, Loader } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '../lib/web3';
 import { createToken } from '../lib/contracts';
 import { MIN_LIQUIDITY_ETH, MIN_LIQUIDITY_PERCENT, RECOMMENDED_LIQUIDITY_PERCENT, TOTAL_SUPPLY } from '../contracts/addresses';
@@ -10,6 +11,7 @@ interface LaunchProps {
 }
 
 export function Launch({ onNavigate }: LaunchProps) {
+  const { t } = useTranslation();
   const { account, signer, connect } = useWeb3();
 
   const [name, setName] = useState('');
@@ -38,17 +40,17 @@ export function Launch({ onNavigate }: LaunchProps) {
     setSuccess(null);
 
     if (!name.trim() || !symbol.trim()) {
-      setError('Please provide token name and symbol');
+      setError(t('launch.errors.nameAndSymbol'));
       return;
     }
 
     if (parseFloat(ethAmount) < parseFloat(MIN_LIQUIDITY_ETH)) {
-      setError(`Minimum liquidity is ${MIN_LIQUIDITY_ETH} ETH`);
+      setError(t('launch.errors.minLiquidity', { min: MIN_LIQUIDITY_ETH }));
       return;
     }
 
     if (liquidityPercent < MIN_LIQUIDITY_PERCENT || liquidityPercent > 100) {
-      setError(`Liquidity must be between ${MIN_LIQUIDITY_PERCENT}% and 100%`);
+      setError(t('launch.errors.liquidityRange', { min: MIN_LIQUIDITY_PERCENT }));
       return;
     }
 
@@ -83,7 +85,7 @@ export function Launch({ onNavigate }: LaunchProps) {
             <div className="bg-gray-900 p-2 rounded-lg">
               <Rocket className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Launch Your Token</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('launch.title')}</h1>
           </div>
 
           {success && (
@@ -91,17 +93,17 @@ export function Launch({ onNavigate }: LaunchProps) {
               <div className="flex items-start space-x-3">
                 <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                 <div className="flex-1">
-                  <h3 className="font-semibold text-green-900 mb-2">Token Launched Successfully!</h3>
+                  <h3 className="font-semibold text-green-900 mb-2">{t('launch.success.title')}</h3>
                   <div className="text-sm text-green-800 space-y-1">
-                    <p>Token: {success.tokenAddress}</p>
-                    <p>DEX: {success.ammAddress}</p>
-                    <p>TX: {success.txHash}</p>
+                    <p>{t('launch.success.token')} {success.tokenAddress}</p>
+                    <p>{t('launch.success.dex')} {success.ammAddress}</p>
+                    <p>{t('launch.success.tx')} {success.txHash}</p>
                   </div>
                   <button
                     onClick={() => onNavigate('tokens')}
                     className="mt-3 text-sm font-medium text-green-700 hover:text-green-600"
                   >
-                    View in Popular Tokens →
+                    {t('launch.success.viewTokens')}
                   </button>
                 </div>
               </div>
@@ -120,13 +122,13 @@ export function Launch({ onNavigate }: LaunchProps) {
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Token Name
+                {t('launch.form.tokenName')}
               </label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="My Awesome Token"
+                placeholder={t('launch.form.tokenNamePlaceholder')}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                 disabled={isLaunching}
               />
@@ -134,13 +136,13 @@ export function Launch({ onNavigate }: LaunchProps) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Token Symbol
+                {t('launch.form.tokenSymbol')}
               </label>
               <input
                 type="text"
                 value={symbol}
                 onChange={(e) => setSymbol(e.target.value.toUpperCase())}
-                placeholder="MAT"
+                placeholder={t('launch.form.tokenSymbolPlaceholder')}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent uppercase"
                 disabled={isLaunching}
               />
@@ -148,10 +150,10 @@ export function Launch({ onNavigate }: LaunchProps) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Liquidity Allocation: {liquidityPercent}%
+                {t('launch.form.liquidityAllocation', { percent: liquidityPercent })}
               </label>
               <p className="text-sm text-gray-500 mb-3">
-                Minimum {MIN_LIQUIDITY_PERCENT}%, {RECOMMENDED_LIQUIDITY_PERCENT}% recommended for healthy trading
+                {t('launch.form.liquidityNote', { min: MIN_LIQUIDITY_PERCENT, recommended: RECOMMENDED_LIQUIDITY_PERCENT })}
               </p>
               <input
                 type="range"
@@ -170,10 +172,10 @@ export function Launch({ onNavigate }: LaunchProps) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Initial Liquidity (ETH)
+                {t('launch.form.initialLiquidity')}
               </label>
               <p className="text-sm text-gray-500 mb-3">
-                Minimum {MIN_LIQUIDITY_ETH} ETH required. This will be burned for security.
+                {t('launch.form.liquidityWarning', { min: MIN_LIQUIDITY_ETH })}
               </p>
               <input
                 type="number"
@@ -188,23 +190,23 @@ export function Launch({ onNavigate }: LaunchProps) {
             </div>
 
             <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-              <h3 className="font-medium text-gray-900 mb-3">Token Distribution</h3>
+              <h3 className="font-medium text-gray-900 mb-3">{t('launch.form.distribution')}</h3>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Total Supply:</span>
-                <span className="font-medium text-gray-900">{formatNumber(TOTAL_SUPPLY)} tokens</span>
+                <span className="text-gray-600">{t('launch.form.totalSupply')}</span>
+                <span className="font-medium text-gray-900">{formatNumber(TOTAL_SUPPLY)} {t('common.tokens')}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">To Liquidity Pool (Burned):</span>
-                <span className="font-medium text-gray-900">{formatNumber(tokensToLiquidity)} tokens</span>
+                <span className="text-gray-600">{t('launch.form.toLiquidity')}</span>
+                <span className="font-medium text-gray-900">{formatNumber(tokensToLiquidity)} {t('common.tokens')}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">To Your Wallet:</span>
-                <span className="font-medium text-gray-900">{formatNumber(tokensToCreator)} tokens</span>
+                <span className="text-gray-600">{t('launch.form.toWallet')}</span>
+                <span className="font-medium text-gray-900">{formatNumber(tokensToCreator)} {t('common.tokens')}</span>
               </div>
               <div className="border-t border-gray-200 pt-2 mt-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Initial Liquidity:</span>
-                  <span className="font-medium text-gray-900">{ethAmount} ETH</span>
+                  <span className="text-gray-600">{t('launch.form.initialLiq')}</span>
+                  <span className="font-medium text-gray-900">{ethAmount} {t('common.eth')}</span>
                 </div>
               </div>
             </div>
@@ -217,25 +219,25 @@ export function Launch({ onNavigate }: LaunchProps) {
               {isLaunching ? (
                 <>
                   <Loader className="w-5 h-5 animate-spin" />
-                  <span>Launching Token...</span>
+                  <span>{t('launch.form.launching')}</span>
                 </>
               ) : !account ? (
-                <span className="text-sm sm:text-base">Connect Wallet to Launch</span>
+                <span className="text-sm sm:text-base">{t('launch.form.connectToLaunch')}</span>
               ) : (
                 <>
                   <Rocket className="w-5 h-5" />
-                  <span>Launch Token</span>
+                  <span>{t('launch.form.launchButton')}</span>
                 </>
               )}
             </button>
 
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4">
-              <h4 className="font-medium text-blue-900 mb-2 text-sm sm:text-base">Important Notes</h4>
+              <h4 className="font-medium text-blue-900 mb-2 text-sm sm:text-base">{t('launch.notes.title')}</h4>
               <ul className="text-xs sm:text-sm text-blue-800 space-y-1 list-disc list-inside">
-                <li>All tokens have a fixed supply of 1,000,000 tokens</li>
-                <li>Initial liquidity is permanently burned and cannot be removed</li>
-                <li>No token creation fees - only pay network gas fees</li>
-                <li>0.4% trading fee on all swaps</li>
+                <li>{t('launch.notes.fixedSupply')}</li>
+                <li>{t('launch.notes.burnedLiquidity')}</li>
+                <li>{t('launch.notes.noFees')}</li>
+                <li>{t('launch.notes.tradingFee')}</li>
               </ul>
             </div>
           </div>

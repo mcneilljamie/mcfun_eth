@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Trophy, Search, TrendingUp, Copy, CheckCircle, ExternalLink } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { supabase, Token } from '../lib/supabase';
 import { formatCurrency, formatAddress, formatTimeAgo } from '../lib/utils';
 
@@ -8,6 +9,7 @@ interface TokensProps {
 }
 
 export function Tokens({ onSelectToken }: TokensProps) {
+  const { t } = useTranslation();
   const [tokens, setTokens] = useState<Token[]>([]);
   const [filteredTokens, setFilteredTokens] = useState<Token[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -75,14 +77,14 @@ export function Tokens({ onSelectToken }: TokensProps) {
               <div className="bg-gray-900 p-2 rounded-lg">
                 <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Popular Tokens</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('tokens.title')}</h1>
             </div>
 
             <div className="relative w-full sm:w-auto">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search tokens..."
+                placeholder={t('tokens.search')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
@@ -93,13 +95,13 @@ export function Tokens({ onSelectToken }: TokensProps) {
           {isLoading ? (
             <div className="text-center py-12">
               <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-              <p className="mt-4 text-gray-600">Loading tokens...</p>
+              <p className="mt-4 text-gray-600">{t('tokens.loading')}</p>
             </div>
           ) : filteredTokens.length === 0 ? (
             <div className="text-center py-12">
               <Trophy className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <p className="text-gray-600">
-                {searchQuery ? 'No tokens found matching your search' : 'No tokens launched yet'}
+                {searchQuery ? t('tokens.noResults') : t('tokens.noTokens')}
               </p>
             </div>
           ) : (
@@ -109,13 +111,13 @@ export function Tokens({ onSelectToken }: TokensProps) {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-gray-200">
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">#</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">Token</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">Address</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">Liquidity</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">Volume</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">Created</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">Action</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.rank')}</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.token')}</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.address')}</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.liquidity')}</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.volume')}</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.created')}</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.action')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -166,7 +168,7 @@ export function Tokens({ onSelectToken }: TokensProps) {
                               className="flex items-center space-x-1 text-gray-600 hover:text-gray-900 transition-colors text-sm"
                               title="View top holders on Etherscan"
                             >
-                              <span>Holders</span>
+                              <span>{t('tokens.table.holders')}</span>
                               <ExternalLink className="w-3 h-3" />
                             </a>
                           </div>
@@ -176,7 +178,7 @@ export function Tokens({ onSelectToken }: TokensProps) {
                             {formatCurrency(token.current_eth_reserve || token.initial_liquidity_eth)}
                           </div>
                           <div className="text-sm text-gray-500">
-                            {token.liquidity_percent}% locked
+                            {t('tokens.table.locked', { percent: token.liquidity_percent })}
                           </div>
                         </td>
                         <td className="py-4 px-4">
@@ -195,7 +197,7 @@ export function Tokens({ onSelectToken }: TokensProps) {
                             className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors flex items-center space-x-2"
                           >
                             <TrendingUp className="w-4 h-4" />
-                            <span>Trade</span>
+                            <span>{t('tokens.table.trade')}</span>
                           </button>
                         </td>
                       </tr>
@@ -231,7 +233,7 @@ export function Tokens({ onSelectToken }: TokensProps) {
                         className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors flex items-center space-x-2"
                       >
                         <TrendingUp className="w-4 h-4" />
-                        <span>Trade</span>
+                        <span>{t('tokens.table.trade')}</span>
                       </button>
                     </div>
 
@@ -242,26 +244,26 @@ export function Tokens({ onSelectToken }: TokensProps) {
 
                     <div className="space-y-2 mb-3">
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Liquidity:</span>
+                        <span className="text-sm text-gray-600">{t('tokens.table.liquidity')}:</span>
                         <div className="text-right">
                           <div className="font-semibold text-gray-900">
                             {formatCurrency(token.current_eth_reserve || token.initial_liquidity_eth)}
                           </div>
                           <div className="text-xs text-gray-500">
-                            {token.liquidity_percent}% locked
+                            {t('tokens.table.locked', { percent: token.liquidity_percent })}
                           </div>
                         </div>
                       </div>
 
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Volume:</span>
+                        <span className="text-sm text-gray-600">{t('tokens.table.volume')}:</span>
                         <span className="font-medium text-gray-900">
                           {formatCurrency(token.total_volume_eth)}
                         </span>
                       </div>
 
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Created:</span>
+                        <span className="text-sm text-gray-600">{t('tokens.table.created')}:</span>
                         <span className="text-sm text-gray-900">
                           {formatTimeAgo(token.created_at)}
                         </span>
@@ -288,7 +290,7 @@ export function Tokens({ onSelectToken }: TokensProps) {
                           className="flex items-center space-x-1 text-gray-600 hover:text-gray-900 transition-colors text-sm"
                           title="View top holders on Etherscan"
                         >
-                          <span>Holders</span>
+                          <span>{t('tokens.table.holders')}</span>
                           <ExternalLink className="w-3 h-3" />
                         </a>
                       </div>
@@ -301,7 +303,7 @@ export function Tokens({ onSelectToken }: TokensProps) {
 
           {!isLoading && filteredTokens.length > 0 && (
             <div className="mt-6 text-center text-sm text-gray-500">
-              Showing {filteredTokens.length} token{filteredTokens.length !== 1 ? 's' : ''}
+              {t('tokens.showing', { count: filteredTokens.length })}
             </div>
           )}
         </div>

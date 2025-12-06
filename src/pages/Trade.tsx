@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ArrowDownUp, AlertCircle, Loader, TrendingUp } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '../lib/web3';
 import { swapTokens, getQuote, getAMMReserves } from '../lib/contracts';
 import { formatNumber, formatCurrency, calculatePriceImpact } from '../lib/utils';
@@ -11,6 +12,7 @@ interface TradeProps {
 }
 
 export function Trade({ selectedToken }: TradeProps) {
+  const { t } = useTranslation();
   const { account, signer, provider, connect } = useWeb3();
 
   const [selectedTokenData, setSelectedTokenData] = useState<Token | null>(selectedToken || null);
@@ -84,7 +86,7 @@ export function Trade({ selectedToken }: TradeProps) {
     }
 
     if (!selectedTokenData || !amountIn || !amountOut) {
-      setError('Please enter an amount');
+      setError(t('trade.error'));
       return;
     }
 
@@ -102,7 +104,7 @@ export function Trade({ selectedToken }: TradeProps) {
         minAmountOut,
       });
 
-      setSuccess('Swap completed successfully!');
+      setSuccess(t('trade.success'));
       setAmountIn('');
       setAmountOut('');
       loadReserves();
@@ -138,7 +140,7 @@ export function Trade({ selectedToken }: TradeProps) {
             <div className="bg-gray-900 p-2 rounded-lg">
               <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Trade Tokens</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('trade.title')}</h1>
           </div>
 
           {error && (
@@ -159,7 +161,7 @@ export function Trade({ selectedToken }: TradeProps) {
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Select Token
+                {t('trade.selectToken')}
               </label>
               <TokenSelector
                 selectedToken={selectedTokenData}
@@ -170,14 +172,14 @@ export function Trade({ selectedToken }: TradeProps) {
 
             {reserves && selectedTokenData && (
               <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
-                <h3 className="font-medium text-gray-900 mb-2 text-sm sm:text-base">Pool Liquidity</h3>
+                <h3 className="font-medium text-gray-900 mb-2 text-sm sm:text-base">{t('trade.poolLiquidity')}</h3>
                 <div className="grid grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
                   <div>
-                    <span className="text-gray-600">ETH Reserve:</span>
+                    <span className="text-gray-600">{t('trade.ethReserve')}</span>
                     <p className="font-medium text-gray-900">{formatCurrency(reserves.reserveETH)}</p>
                   </div>
                   <div>
-                    <span className="text-gray-600">{selectedTokenData.symbol} Reserve:</span>
+                    <span className="text-gray-600">{t('trade.tokenReserve', { symbol: selectedTokenData.symbol })}</span>
                     <p className="font-medium text-gray-900">{formatNumber(reserves.reserveToken)}</p>
                   </div>
                 </div>
@@ -187,7 +189,7 @@ export function Trade({ selectedToken }: TradeProps) {
             <div className="space-y-3">
               <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
                 <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
-                  You Pay
+                  {t('trade.youPay')}
                 </label>
                 <div className="flex items-center space-x-2 sm:space-x-3">
                   <input
@@ -201,7 +203,7 @@ export function Trade({ selectedToken }: TradeProps) {
                     disabled={isSwapping || !selectedTokenData}
                   />
                   <span className="text-base sm:text-lg font-semibold text-gray-900 whitespace-nowrap">
-                    {isETHToToken ? 'ETH' : selectedTokenData?.symbol || 'TOKEN'}
+                    {isETHToToken ? t('common.eth') : selectedTokenData?.symbol || 'TOKEN'}
                   </span>
                 </div>
               </div>
@@ -218,7 +220,7 @@ export function Trade({ selectedToken }: TradeProps) {
 
               <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
                 <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
-                  You Receive
+                  {t('trade.youReceive')}
                 </label>
                 <div className="flex items-center space-x-2 sm:space-x-3">
                   <input
@@ -229,7 +231,7 @@ export function Trade({ selectedToken }: TradeProps) {
                     disabled
                   />
                   <span className="text-base sm:text-lg font-semibold text-gray-900 whitespace-nowrap">
-                    {isETHToToken ? selectedTokenData?.symbol || 'TOKEN' : 'ETH'}
+                    {isETHToToken ? selectedTokenData?.symbol || 'TOKEN' : t('common.eth')}
                   </span>
                 </div>
               </div>
@@ -238,25 +240,25 @@ export function Trade({ selectedToken }: TradeProps) {
             {amountIn && amountOut && (
               <div className="bg-gray-50 rounded-lg p-3 sm:p-4 space-y-2 text-xs sm:text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Price Impact:</span>
+                  <span className="text-gray-600">{t('trade.priceImpact')}</span>
                   <span className={`font-medium ${priceImpact > 5 ? 'text-red-600' : 'text-gray-900'}`}>
                     {priceImpact.toFixed(2)}%
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Slippage Tolerance:</span>
+                  <span className="text-gray-600">{t('trade.slippageTolerance')}</span>
                   <span className="font-medium text-gray-900">{slippage}%</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Trading Fee (0.4%):</span>
+                  <span className="text-gray-600">{t('trade.tradingFee')}</span>
                   <span className="font-medium text-gray-900">
-                    {formatNumber(parseFloat(amountIn) * 0.004)} {isETHToToken ? 'ETH' : selectedTokenData?.symbol}
+                    {formatNumber(parseFloat(amountIn) * 0.004)} {isETHToToken ? t('common.eth') : selectedTokenData?.symbol}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Minimum Received:</span>
+                  <span className="text-gray-600">{t('trade.minReceived')}</span>
                   <span className="font-medium text-gray-900">
-                    {formatNumber(parseFloat(amountOut) * (100 - slippage) / 100)} {isETHToToken ? selectedTokenData?.symbol : 'ETH'}
+                    {formatNumber(parseFloat(amountOut) * (100 - slippage) / 100)} {isETHToToken ? selectedTokenData?.symbol : t('common.eth')}
                   </span>
                 </div>
               </div>
@@ -264,7 +266,7 @@ export function Trade({ selectedToken }: TradeProps) {
 
             <div>
               <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
-                Slippage Tolerance: {slippage}%
+                {t('trade.slippageLabel', { percent: slippage })}
               </label>
               <div className="flex space-x-2">
                 {[0.5, 1, 2, 5].map((value) => (
@@ -292,14 +294,14 @@ export function Trade({ selectedToken }: TradeProps) {
               {isSwapping ? (
                 <>
                   <Loader className="w-5 h-5 animate-spin" />
-                  <span>Swapping...</span>
+                  <span>{t('trade.swapping')}</span>
                 </>
               ) : !account ? (
-                <span className="text-sm sm:text-base">Connect Wallet to Trade</span>
+                <span className="text-sm sm:text-base">{t('trade.connectToTrade')}</span>
               ) : !selectedTokenData ? (
-                <span className="text-sm sm:text-base">Select a Token</span>
+                <span className="text-sm sm:text-base">{t('trade.selectAToken')}</span>
               ) : (
-                <span>Swap Tokens</span>
+                <span>{t('trade.swapButton')}</span>
               )}
             </button>
           </div>
