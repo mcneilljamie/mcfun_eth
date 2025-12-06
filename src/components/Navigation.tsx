@@ -1,4 +1,4 @@
-import { Coins, Moon, Sun } from 'lucide-react';
+import { Moon, Sun } from 'lucide-react';
 import { useWeb3 } from '../lib/web3';
 import { formatAddress } from '../lib/utils';
 
@@ -21,8 +21,10 @@ export function Navigation({ currentPage, onNavigate, nightMode, onToggleNightMo
               onClick={() => onNavigate('home')}
               className="flex items-center space-x-2 text-gray-900 font-bold text-xl hover:text-gray-700 transition-colors"
             >
-              <Coins className="w-8 h-8" />
-              <span>Jamm.Fi</span>
+              <div className="w-10 h-10 bg-gray-900 text-white rounded-lg flex items-center justify-center font-bold text-lg">
+                MF
+              </div>
+              <span>McFun</span>
             </button>
 
             <div className="hidden md:flex space-x-1">
