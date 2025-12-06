@@ -77,7 +77,7 @@
       "tokenSymbol": "Token Sembolü",
       "tokenSymbolPlaceholder": "HTK",
       "liquidityAllocation": "Likidite Tahsisi: {{percent}}%",
-      "liquidityNote": "Minimum {{min}}%, sağlıklı işlemler için {{recommended}}% önerilir",
+      "liquidityNote": "Minimum {{min}}%",
       "initialLiquidity": "İlk Likidite (ETH)",
       "liquidityWarning": "Minimum {{min}} ETH gereklidir. Bu güvenlik için yakılacaktır.",
       "distribution": "Token Dağılımı",

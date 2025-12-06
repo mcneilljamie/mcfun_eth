@@ -77,7 +77,7 @@
       "tokenSymbol": "نماد توکن",
       "tokenSymbolPlaceholder": "MAT",
       "liquidityAllocation": "تخصیص نقدینگی: {{percent}}٪",
-      "liquidityNote": "حداقل {{min}}٪، {{recommended}}٪ برای معاملات سالم توصیه می‌شود",
+      "liquidityNote": "حداقل {{min}}٪",
       "initialLiquidity": "نقدینگی اولیه (ETH)",
       "liquidityWarning": "حداقل {{min}} ETH مورد نیاز است. این برای امنیت سوزانده خواهد شد.",
       "distribution": "توزیع توکن",

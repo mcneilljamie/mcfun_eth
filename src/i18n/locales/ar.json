@@ -77,7 +77,7 @@
       "tokenSymbol": "رمز الرمز",
       "tokenSymbolPlaceholder": "MAT",
       "liquidityAllocation": "تخصيص السيولة: {{percent}}%",
-      "liquidityNote": "الحد الأدنى {{min}}%، يوصى بـ {{recommended}}% للتداول الصحي",
+      "liquidityNote": "الحد الأدنى {{min}}%",
       "initialLiquidity": "السيولة الأولية (ETH)",
       "liquidityWarning": "الحد الأدنى المطلوب {{min}} ETH. سيتم حرق هذا من أجل الأمان.",
       "distribution": "توزيع الرموز",

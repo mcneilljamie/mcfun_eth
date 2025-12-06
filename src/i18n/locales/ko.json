@@ -77,7 +77,7 @@
       "tokenSymbol": "토큰 심볼",
       "tokenSymbolPlaceholder": "MAT",
       "liquidityAllocation": "유동성 할당: {{percent}}%",
-      "liquidityNote": "건강한 거래를 위해 최소 {{min}}%, {{recommended}}% 권장",
+      "liquidityNote": "최소 {{min}}%",
       "initialLiquidity": "초기 유동성 (ETH)",
       "liquidityWarning": "최소 {{min}} ETH가 필요합니다. 보안을 위해 소각됩니다.",
       "distribution": "토큰 분배",

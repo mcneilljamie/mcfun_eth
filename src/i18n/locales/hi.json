@@ -77,7 +77,7 @@
       "tokenSymbol": "टोकन प्रतीक",
       "tokenSymbolPlaceholder": "MAT",
       "liquidityAllocation": "लिक्विडिटी आवंटन: {{percent}}%",
-      "liquidityNote": "स्वस्थ ट्रेडिंग के लिए न्यूनतम {{min}}%, {{recommended}}% अनुशंसित",
+      "liquidityNote": "न्यूनतम {{min}}%",
       "initialLiquidity": "प्रारंभिक लिक्विडिटी (ETH)",
       "liquidityWarning": "न्यूनतम {{min}} ETH आवश्यक। यह सुरक्षा के लिए बर्न हो जाएगा।",
       "distribution": "टोकन वितरण",

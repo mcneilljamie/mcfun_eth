@@ -77,7 +77,7 @@
       "tokenSymbol": "Ký Hiệu Token",
       "tokenSymbolPlaceholder": "MAT",
       "liquidityAllocation": "Phân Bổ Thanh Khoản: {{percent}}%",
-      "liquidityNote": "Tối thiểu {{min}}%, khuyến nghị {{recommended}}% cho giao dịch lành mạnh",
+      "liquidityNote": "Tối thiểu {{min}}%",
       "initialLiquidity": "Thanh Khoản Ban Đầu (ETH)",
       "liquidityWarning": "Yêu cầu tối thiểu {{min}} ETH. Số này sẽ được đốt để bảo mật.",
       "distribution": "Phân Phối Token",

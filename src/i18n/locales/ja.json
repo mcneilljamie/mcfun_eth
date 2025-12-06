@@ -77,7 +77,7 @@
       "tokenSymbol": "トークンシンボル",
       "tokenSymbolPlaceholder": "MAT",
       "liquidityAllocation": "流動性配分: {{percent}}%",
-      "liquidityNote": "健全な取引のために最低{{min}}%、{{recommended}}%推奨",
+      "liquidityNote": "最低{{min}}%",
       "initialLiquidity": "初期流動性 (ETH)",
       "liquidityWarning": "最低{{min}} ETHが必要です。これはセキュリティのためにバーンされます。",
       "distribution": "トークン配分",

@@ -77,7 +77,7 @@
       "tokenSymbol": "Simbol Token",
       "tokenSymbolPlaceholder": "MAT",
       "liquidityAllocation": "Alokasi Likuiditas: {{percent}}%",
-      "liquidityNote": "Minimum {{min}}%, {{recommended}}% direkomendasikan untuk trading yang sehat",
+      "liquidityNote": "Minimum {{min}}%",
       "initialLiquidity": "Likuiditas Awal (ETH)",
       "liquidityWarning": "Minimum {{min}} ETH diperlukan. Ini akan dibakar untuk keamanan.",
       "distribution": "Distribusi Token",

@@ -77,7 +77,7 @@
       "tokenSymbol": "ტოკენის სიმბოლო",
       "tokenSymbolPlaceholder": "MAT",
       "liquidityAllocation": "ლიკვიდობის განაწილება: {{percent}}%",
-      "liquidityNote": "მინიმუმ {{min}}%, {{recommended}}% რეკომენდებულია ჯანსაღი ვაჭრობისთვის",
+      "liquidityNote": "მინიმუმ {{min}}%",
       "initialLiquidity": "საწყისი ლიკვიდობა (ETH)",
       "liquidityWarning": "საჭიროა მინიმუმ {{min}} ETH. ეს დაიწვება უსაფრთხოებისთვის.",
       "distribution": "ტოკენების განაწილება",

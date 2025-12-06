@@ -77,7 +77,7 @@
       "tokenSymbol": "代币符号",
       "tokenSymbolPlaceholder": "MAT",
       "liquidityAllocation": "流动性分配：{{percent}}%",
-      "liquidityNote": "最低{{min}}%，建议{{recommended}}%以进行健康交易",
+      "liquidityNote": "最低{{min}}%",
       "initialLiquidity": "初始流动性（ETH）",
       "liquidityWarning": "需要最少{{min}} ETH。这将被销毁以确保安全。",
       "distribution": "代币分配",

@@ -77,7 +77,7 @@
       "tokenSymbol": "Símbolo do Token",
       "tokenSymbolPlaceholder": "MAT",
       "liquidityAllocation": "Alocação de Liquidez: {{percent}}%",
-      "liquidityNote": "Mínimo {{min}}%, {{recommended}}% recomendado para negociação saudável",
+      "liquidityNote": "Mínimo {{min}}%",
       "initialLiquidity": "Liquidez Inicial (ETH)",
       "liquidityWarning": "Mínimo {{min}} ETH necessário. Isso será queimado por segurança.",
       "distribution": "Distribuição de Tokens",
