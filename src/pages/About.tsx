@@ -163,7 +163,7 @@ export function About() {
                   <h3 className="text-xl font-bold text-gray-900 mb-2">Token Launch Fees</h3>
                   <div className="text-3xl font-bold text-green-600 mb-2">$0</div>
                   <p className="text-gray-700">
-                    That's right - there are <span className="font-bold">no platform fees</span> to launch your token.
+                    That's right - there are <span className="font-bold">no token creation fees</span> to launch your token.
                     You only pay Ethereum network gas fees.
                   </p>
                 </div>
