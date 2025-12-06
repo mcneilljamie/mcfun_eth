@@ -1,0 +1,237 @@
+{
+  "nav": {
+    "brand": "McFun",
+    "launch": "发行代币",
+    "trade": "交易",
+    "tokens": "热门代币",
+    "about": "关于",
+    "connectWallet": "连接钱包",
+    "connecting": "连接中...",
+    "connect": "连接",
+    "launchShort": "发行",
+    "tokensShort": "代币"
+  },
+  "home": {
+    "hero": {
+      "title": "发行您的代币",
+      "subtitle": "简单。安全。公平。",
+      "description": "在以太坊上发行代币最简单、最便宜的方式，具有内置流动性和牢不可破的安全性。",
+      "launchNow": "立即发行代币",
+      "explore": "探索代币"
+    },
+    "features": {
+      "fast": {
+        "title": "闪电般快速",
+        "description": "通过简单直接的界面在几分钟内发行您的代币。"
+      },
+      "secure": {
+        "title": "牢不可破",
+        "description": "初始流动性被永久销毁，使您的代币真正安全。"
+      },
+      "noFees": {
+        "title": "无创建费用",
+        "description": "只需支付gas费用。没有隐藏成本或平台费用。"
+      },
+      "fair": {
+        "title": "公平发行",
+        "description": "固定100万代币供应，可自定义流动性分配。"
+      }
+    },
+    "howItWorks": {
+      "title": "如何运作",
+      "step1": {
+        "title": "创建代币",
+        "description": "选择代币名称、符号以及要锁定的流动性数量。"
+      },
+      "step2": {
+        "title": "添加流动性",
+        "description": "至少存入0.1 ETH以初始化代币流动性池。"
+      },
+      "step3": {
+        "title": "开始交易",
+        "description": "您的代币可在我们的原生DEX上即时交易"
+      }
+    },
+    "why": {
+      "title": "为什么选择McFun？",
+      "description": "我们打造了最简单、最安全、最具成本效益的以太坊代币发行平台。无复杂参数、无隐藏费用、无跑路。只有纯粹、公平的代币发行。",
+      "stats": {
+        "supply": "固定供应",
+        "liquidity": "最低流动性",
+        "fee": "交易费用"
+      }
+    }
+  },
+  "launch": {
+    "title": "发行您的代币",
+    "success": {
+      "title": "代币发行成功！",
+      "token": "代币：",
+      "dex": "DEX：",
+      "tx": "TX：",
+      "viewTokens": "在热门代币中查看 →"
+    },
+    "form": {
+      "tokenName": "代币名称",
+      "tokenNamePlaceholder": "我的超棒代币",
+      "tokenSymbol": "代币符号",
+      "tokenSymbolPlaceholder": "MAT",
+      "liquidityAllocation": "流动性分配：{{percent}}%",
+      "liquidityNote": "最低{{min}}%，建议{{recommended}}%以进行健康交易",
+      "initialLiquidity": "初始流动性（ETH）",
+      "liquidityWarning": "需要最少{{min}} ETH。这将被销毁以确保安全。",
+      "distribution": "代币分配",
+      "totalSupply": "总供应量：",
+      "toLiquidity": "到流动性池（已销毁）：",
+      "toWallet": "到您的钱包：",
+      "initialLiq": "初始流动性：",
+      "launchButton": "发行代币",
+      "launching": "发行代币中...",
+      "connectToLaunch": "连接钱包以发行"
+    },
+    "notes": {
+      "title": "重要说明",
+      "fixedSupply": "所有代币的固定供应量为1,000,000个代币",
+      "burnedLiquidity": "初始流动性被永久销毁，无法移除",
+      "noFees": "无代币创建费用 - 只需支付网络gas费用",
+      "tradingFee": "所有交换收取0.4%的交易费"
+    },
+    "errors": {
+      "nameAndSymbol": "请提供代币名称和符号",
+      "minLiquidity": "最低流动性为{{min}} ETH",
+      "liquidityRange": "流动性必须在{{min}}%到100%之间"
+    }
+  },
+  "trade": {
+    "title": "交易代币",
+    "selectToken": "选择代币",
+    "poolLiquidity": "池流动性",
+    "ethReserve": "ETH储备：",
+    "tokenReserve": "{{symbol}}储备：",
+    "youPay": "您支付",
+    "youReceive": "您接收",
+    "priceImpact": "价格影响：",
+    "slippageTolerance": "滑点容忍度：",
+    "slippageLabel": "滑点容忍度：{{percent}}%",
+    "tradingFee": "交易费用（0.4%）：",
+    "minReceived": "最少接收：",
+    "swapButton": "交换代币",
+    "swapping": "交换中...",
+    "connectToTrade": "连接钱包以交易",
+    "selectAToken": "选择一个代币",
+    "success": "交换成功完成！",
+    "error": "请输入金额"
+  },
+  "tokens": {
+    "title": "热门代币",
+    "search": "搜索代币...",
+    "loading": "加载代币中...",
+    "noTokens": "尚未发行代币",
+    "noResults": "未找到与您的搜索匹配的代币",
+    "showing": "显示{{count}}个代币",
+    "showing_plural": "显示{{count}}个代币",
+    "table": {
+      "rank": "#",
+      "token": "代币",
+      "address": "地址",
+      "liquidity": "流动性",
+      "volume": "交易量",
+      "created": "创建",
+      "action": "操作",
+      "locked": "{{percent}}%已锁定",
+      "trade": "交易",
+      "holders": "持有者"
+    }
+  },
+  "about": {
+    "title": "关于McFun",
+    "subtitle": "在以太坊上发行代币最简单、最安全的方式，具有内置流动性和牢不可破的安全性。",
+    "howWorks": {
+      "title": "McFun如何运作",
+      "step1": {
+        "title": "1. 代币创建",
+        "description": "当您在McFun上发行代币时，我们部署一个新的ERC-20代币合约，固定供应量为1,000,000个代币。您选择代币名称、符号以及要分配给初始流动性池的供应百分比（最低25%）。"
+      },
+      "step2": {
+        "title": "2. 自动流动性池",
+        "description": "代币创建后立即创建自动做市商（AMM）流动性池。您存入ETH（最少0.1 ETH）以及您分配的代币。该池使用恒定乘积公式（x * y = k）实现即时交易，类似于Uniswap V2。"
+      },
+      "step3": {
+        "title": "3. 流动性销毁",
+        "description": "代表池所有权的流动性池代币（LP代币）通过发送到零地址而被永久销毁。这使您的代币牢不可破 - 没有人可以移除初始流动性，即使是您。"
+      },
+      "step4": {
+        "title": "4. 开始交易",
+        "description": "您的代币可在我们的平台上立即交易。每次交换都会产生0.4%的费用，用于维护和改进服务。剩余的代币（未分配给流动性）直接发送到您的钱包。"
+      }
+    },
+    "why": {
+      "title": "为什么选择McFun？",
+      "unruggable": {
+        "title": "真正牢不可破",
+        "description": "初始流动性被永久销毁。没有人可以移除它，使跑路成为不可能。"
+      },
+      "fair": {
+        "title": "无预售或内部优势",
+        "description": "每个人都以AMM的相同价格交易。对所有参与者公平发行。"
+      },
+      "simple": {
+        "title": "简单直接",
+        "description": "无需复杂参数或DeFi知识。几分钟内发行。"
+      },
+      "lowBarrier": {
+        "title": "低进入门槛",
+        "description": "仅需0.1 ETH最低流动性。发行无需平台费用。"
+      },
+      "instant": {
+        "title": "即时流动性",
+        "description": "您的代币可通过内置AMM功能立即交易。"
+      },
+      "transparent": {
+        "title": "透明且链上",
+        "description": "所有合约均可在Etherscan上验证。无隐藏机制。"
+      }
+    },
+    "fees": {
+      "title": "费用结构",
+      "launch": {
+        "title": "代币发行费用",
+        "amount": "$0",
+        "description": "没错 - 发行代币无需支付代币创建费用。您只需支付以太坊网络gas费用。"
+      },
+      "trading": {
+        "title": "交易费用",
+        "amount": "0.4%",
+        "description": "我们平台上的每次代币交换都会产生0.4%的费用。此费用用于支持基础设施、开发和持续改进。"
+      },
+      "why": {
+        "title": "为什么采用此模式？",
+        "description": "与向流动性提供者收取费用（可以移除）的传统DEX不同，我们0.4%的交易费用确保了平台的可持续性，而不会影响您代币的安全性。销毁的流动性保持永久，小额交易费用使我们能够为社区提供可靠、维护良好的平台。"
+      }
+    },
+    "security": {
+      "title": "安全保证",
+      "burned": {
+        "title": "永久销毁的流动性",
+        "description": "LP代币在创建后立即发送到零地址（0x000...000）。这可以在链上验证且无法撤销。"
+      },
+      "immutable": {
+        "title": "不可变合约",
+        "description": "一旦部署，代币和AMM合约无法修改、升级或暂停。所见即所得。"
+      },
+      "transparent": {
+        "title": "透明费用接收者",
+        "description": "平台费用接收地址硬编码在合约中并公开可见。无隐藏费用开关或后门。"
+      },
+      "opensource": {
+        "title": "开源且可验证",
+        "description": "所有智能合约都可以在Etherscan上查看和验证。使用平台前请自行审核代码。"
+      }
+    },
+    "founder": "McFun由杰米·麦克尼尔创立并维护。"
+  },
+  "common": {
+    "tokens": "代币",
+    "eth": "ETH"
+  }
+}

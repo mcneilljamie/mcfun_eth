@@ -1,0 +1,237 @@
+{
+  "nav": {
+    "brand": "McFun",
+    "launch": "Lançar Token",
+    "trade": "Negociar",
+    "tokens": "Tokens Populares",
+    "about": "Sobre",
+    "connectWallet": "Conectar Carteira",
+    "connecting": "Conectando...",
+    "connect": "Conectar",
+    "launchShort": "Lançar",
+    "tokensShort": "Tokens"
+  },
+  "home": {
+    "hero": {
+      "title": "Lance Seu Token",
+      "subtitle": "Simples. Seguro. Justo.",
+      "description": "A maneira mais fácil e barata de lançar tokens no Ethereum com liquidez integrada e segurança inabalável.",
+      "launchNow": "Lançar Token Agora",
+      "explore": "Explorar Tokens"
+    },
+    "features": {
+      "fast": {
+        "title": "Ultra Rápido",
+        "description": "Lance seu token em minutos com uma interface simples e direta."
+      },
+      "secure": {
+        "title": "Inabalável",
+        "description": "A liquidez inicial é queimada permanentemente, tornando seu token verdadeiramente seguro."
+      },
+      "noFees": {
+        "title": "Sem Taxas de Criação",
+        "description": "Pague apenas taxas de gás. Sem custos ocultos ou taxas de plataforma."
+      },
+      "fair": {
+        "title": "Lançamento Justo",
+        "description": "Fornecimento fixo de 1M tokens com alocação de liquidez personalizável."
+      }
+    },
+    "howItWorks": {
+      "title": "Como Funciona",
+      "step1": {
+        "title": "Criar Token",
+        "description": "Escolha o nome, símbolo e quanta liquidez bloquear."
+      },
+      "step2": {
+        "title": "Adicionar Liquidez",
+        "description": "Deposite pelo menos 0,1 ETH para inicializar o pool de liquidez."
+      },
+      "step3": {
+        "title": "Começar a Negociar",
+        "description": "Seu token é instantaneamente negociável em nossa DEX nativa"
+      }
+    },
+    "why": {
+      "title": "Por Que Escolher McFun?",
+      "description": "Construímos a plataforma mais simples, segura e econômica para lançar tokens no Ethereum. Sem parâmetros complexos, sem taxas ocultas, sem golpes. Apenas lançamentos de tokens puros e justos.",
+      "stats": {
+        "supply": "Fornecimento Fixo",
+        "liquidity": "Liquidez Mín",
+        "fee": "Taxa de Negociação"
+      }
+    }
+  },
+  "launch": {
+    "title": "Lance Seu Token",
+    "success": {
+      "title": "Token Lançado com Sucesso!",
+      "token": "Token:",
+      "dex": "DEX:",
+      "tx": "TX:",
+      "viewTokens": "Ver em Tokens Populares →"
+    },
+    "form": {
+      "tokenName": "Nome do Token",
+      "tokenNamePlaceholder": "Meu Token Incrível",
+      "tokenSymbol": "Símbolo do Token",
+      "tokenSymbolPlaceholder": "MAT",
+      "liquidityAllocation": "Alocação de Liquidez: {{percent}}%",
+      "liquidityNote": "Mínimo {{min}}%, {{recommended}}% recomendado para negociação saudável",
+      "initialLiquidity": "Liquidez Inicial (ETH)",
+      "liquidityWarning": "Mínimo {{min}} ETH necessário. Isso será queimado por segurança.",
+      "distribution": "Distribuição de Tokens",
+      "totalSupply": "Fornecimento Total:",
+      "toLiquidity": "Para o Pool de Liquidez (Queimado):",
+      "toWallet": "Para Sua Carteira:",
+      "initialLiq": "Liquidez Inicial:",
+      "launchButton": "Lançar Token",
+      "launching": "Lançando Token...",
+      "connectToLaunch": "Conectar Carteira para Lançar"
+    },
+    "notes": {
+      "title": "Notas Importantes",
+      "fixedSupply": "Todos os tokens têm um fornecimento fixo de 1.000.000 tokens",
+      "burnedLiquidity": "A liquidez inicial é queimada permanentemente e não pode ser removida",
+      "noFees": "Sem taxas de criação de tokens - pague apenas taxas de rede de gás",
+      "tradingFee": "0,4% de taxa de negociação em todas as trocas"
+    },
+    "errors": {
+      "nameAndSymbol": "Por favor, forneça nome e símbolo do token",
+      "minLiquidity": "A liquidez mínima é {{min}} ETH",
+      "liquidityRange": "A liquidez deve estar entre {{min}}% e 100%"
+    }
+  },
+  "trade": {
+    "title": "Negociar Tokens",
+    "selectToken": "Selecionar Token",
+    "poolLiquidity": "Liquidez do Pool",
+    "ethReserve": "Reserva ETH:",
+    "tokenReserve": "Reserva {{symbol}}:",
+    "youPay": "Você Paga",
+    "youReceive": "Você Recebe",
+    "priceImpact": "Impacto no Preço:",
+    "slippageTolerance": "Tolerância ao Deslizamento:",
+    "slippageLabel": "Tolerância ao Deslizamento: {{percent}}%",
+    "tradingFee": "Taxa de Negociação (0,4%):",
+    "minReceived": "Mínimo Recebido:",
+    "swapButton": "Trocar Tokens",
+    "swapping": "Trocando...",
+    "connectToTrade": "Conectar Carteira para Negociar",
+    "selectAToken": "Selecione um Token",
+    "success": "Troca concluída com sucesso!",
+    "error": "Por favor, insira um valor"
+  },
+  "tokens": {
+    "title": "Tokens Populares",
+    "search": "Buscar tokens...",
+    "loading": "Carregando tokens...",
+    "noTokens": "Nenhum token lançado ainda",
+    "noResults": "Nenhum token encontrado correspondente à sua busca",
+    "showing": "Mostrando {{count}} token",
+    "showing_plural": "Mostrando {{count}} tokens",
+    "table": {
+      "rank": "#",
+      "token": "Token",
+      "address": "Endereço",
+      "liquidity": "Liquidez",
+      "volume": "Volume",
+      "created": "Criado",
+      "action": "Ação",
+      "locked": "{{percent}}% bloqueado",
+      "trade": "Negociar",
+      "holders": "Detentores"
+    }
+  },
+  "about": {
+    "title": "Sobre McFun",
+    "subtitle": "A maneira mais simples e segura de lançar tokens no Ethereum com liquidez integrada e segurança inabalável.",
+    "howWorks": {
+      "title": "Como Funciona o McFun",
+      "step1": {
+        "title": "1. Criação de Token",
+        "description": "Quando você lança um token no McFun, implantamos um novo contrato de token ERC-20 com um fornecimento fixo de 1.000.000 tokens. Você escolhe o nome do token, símbolo e qual porcentagem do fornecimento alocar ao pool de liquidez inicial (mínimo 25%)."
+      },
+      "step2": {
+        "title": "2. Pool de Liquidez Automático",
+        "description": "Imediatamente após a criação do token, um pool de liquidez Automated Market Maker (AMM) é criado. Você deposita ETH (mínimo 0,1 ETH) junto com seus tokens alocados. Este pool permite negociação instantânea usando a fórmula do produto constante (x * y = k), semelhante ao Uniswap V2."
+      },
+      "step3": {
+        "title": "3. Queima de Liquidez",
+        "description": "Os tokens do pool de liquidez (tokens LP) que representam a propriedade do pool são queimados permanentemente enviando-os para o endereço zero. Isso torna seu token inabalável - ninguém pode remover a liquidez inicial, nem mesmo você."
+      },
+      "step4": {
+        "title": "4. Início das Negociações",
+        "description": "Seu token é imediatamente negociável em nossa plataforma. Cada troca incorre em uma taxa de 0,4% que vai para a plataforma para manter e melhorar o serviço. Os tokens restantes (não alocados à liquidez) são enviados diretamente para sua carteira."
+      }
+    },
+    "why": {
+      "title": "Por Que Escolher McFun?",
+      "unruggable": {
+        "title": "Verdadeiramente Inabalável",
+        "description": "A liquidez inicial é queimada permanentemente. Ninguém pode removê-la, tornando golpes impossíveis."
+      },
+      "fair": {
+        "title": "Sem Pré-vendas ou Vantagens Internas",
+        "description": "Todos negociam ao mesmo preço do AMM. Lançamento justo para todos os participantes."
+      },
+      "simple": {
+        "title": "Simples e Direto",
+        "description": "Não são necessários parâmetros complexos ou conhecimento de DeFi. Lance em minutos."
+      },
+      "lowBarrier": {
+        "title": "Baixa Barreira de Entrada",
+        "description": "Apenas 0,1 ETH de liquidez mínima necessária. Sem taxas de plataforma para lançar."
+      },
+      "instant": {
+        "title": "Liquidez Instantânea",
+        "description": "Seu token é negociável imediatamente com funcionalidade AMM integrada."
+      },
+      "transparent": {
+        "title": "Transparente e On-Chain",
+        "description": "Todos os contratos são verificáveis no Etherscan. Sem mecanismos ocultos."
+      }
+    },
+    "fees": {
+      "title": "Estrutura de Taxas",
+      "launch": {
+        "title": "Taxas de Lançamento de Token",
+        "amount": "$0",
+        "description": "Isso mesmo - não há taxas de criação de tokens para lançar seu token. Você paga apenas as taxas de gás da rede Ethereum."
+      },
+      "trading": {
+        "title": "Taxas de Negociação",
+        "amount": "0,4%",
+        "description": "Cada troca de tokens em nossa plataforma incorre em uma taxa de 0,4%. Esta taxa vai para a plataforma para apoiar infraestrutura, desenvolvimento e melhorias contínuas."
+      },
+      "why": {
+        "title": "Por Que Este Modelo?",
+        "description": "Ao contrário das DEXs tradicionais que cobram taxas dos provedores de liquidez (que podem ser removidas), nossa taxa de negociação de 0,4% garante a sustentabilidade da plataforma sem impactar a segurança do seu token. A liquidez queimada permanece permanente, e a pequena taxa de negociação nos permite fornecer uma plataforma confiável e mantida para a comunidade."
+      }
+    },
+    "security": {
+      "title": "Garantias de Segurança",
+      "burned": {
+        "title": "Liquidez Queimada Permanentemente",
+        "description": "Os tokens LP são enviados para o endereço zero (0x000...000) imediatamente após a criação. Isso é verificável on-chain e não pode ser desfeito."
+      },
+      "immutable": {
+        "title": "Contratos Imutáveis",
+        "description": "Uma vez implantados, os contratos de tokens e AMM não podem ser modificados, atualizados ou pausados. O que você vê é o que você obtém."
+      },
+      "transparent": {
+        "title": "Destinatário de Taxas Transparente",
+        "description": "O endereço do destinatário de taxas da plataforma está codificado no contrato e publicamente visível. Sem mudanças de taxas ocultas ou backdoors."
+      },
+      "opensource": {
+        "title": "Open Source e Verificável",
+        "description": "Todos os contratos inteligentes podem ser visualizados e verificados no Etherscan. Audite o código você mesmo antes de usar a plataforma."
+      }
+    },
+    "founder": "McFun foi fundado e é mantido por Jamie McNeill."
+  },
+  "common": {
+    "tokens": "tokens",
+    "eth": "ETH"
+  }
+}

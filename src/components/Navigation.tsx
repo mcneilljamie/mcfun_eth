@@ -1,5 +1,7 @@
 import { useWeb3 } from '../lib/web3';
 import { formatAddress } from '../lib/utils';
+import { useTranslation } from 'react-i18next';
+import { LanguageSelector } from './LanguageSelector';
 
 interface NavigationProps {
   currentPage: string;
@@ -8,6 +10,7 @@ interface NavigationProps {
 
 export function Navigation({ currentPage, onNavigate }: NavigationProps) {
   const { account, connect, disconnect, isConnecting } = useWeb3();
+  const { t } = useTranslation();
 
   return (
     <nav className="bg-white border-b border-gray-200">
@@ -21,7 +24,7 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
               <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-900 text-white rounded-lg flex items-center justify-center font-bold text-base sm:text-lg">
                 MF
               </div>
-              <span className="hidden xs:inline">McFun</span>
+              <span className="hidden xs:inline">{t('nav.brand')}</span>
             </button>
 
             <div className="hidden md:flex space-x-1">
@@ -33,7 +36,7 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
-                Launch Token
+                {t('nav.launch')}
               </button>
               <button
                 onClick={() => onNavigate('trade')}
@@ -43,7 +46,7 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
-                Trade
+                {t('nav.trade')}
               </button>
               <button
                 onClick={() => onNavigate('tokens')}
@@ -53,7 +56,7 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
-                Popular Tokens
+                {t('nav.tokens')}
               </button>
               <button
                 onClick={() => onNavigate('about')}
@@ -63,12 +66,13 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
-                About
+                {t('nav.about')}
               </button>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
+            <LanguageSelector />
             {account ? (
               <button
                 onClick={disconnect}
@@ -82,8 +86,8 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
                 disabled={isConnecting}
                 className="bg-gray-900 text-white px-4 sm:px-6 py-2 rounded-lg text-sm sm:text-base font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <span className="hidden sm:inline">{isConnecting ? 'Connecting...' : 'Connect Wallet'}</span>
-                <span className="sm:hidden">{isConnecting ? 'Connecting...' : 'Connect'}</span>
+                <span className="hidden sm:inline">{isConnecting ? t('nav.connecting') : t('nav.connectWallet')}</span>
+                <span className="sm:hidden">{isConnecting ? t('nav.connecting') : t('nav.connect')}</span>
               </button>
             )}
           </div>
@@ -98,7 +102,7 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
                 : 'text-gray-700 hover:bg-gray-100'
             }`}
           >
-            Launch
+            {t('nav.launchShort')}
           </button>
           <button
             onClick={() => onNavigate('trade')}
@@ -108,7 +112,7 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
                 : 'text-gray-700 hover:bg-gray-100'
             }`}
           >
-            Trade
+            {t('nav.trade')}
           </button>
           <button
             onClick={() => onNavigate('tokens')}
@@ -118,7 +122,7 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
                 : 'text-gray-700 hover:bg-gray-100'
             }`}
           >
-            Tokens
+            {t('nav.tokensShort')}
           </button>
           <button
             onClick={() => onNavigate('about')}
@@ -128,7 +132,7 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
                 : 'text-gray-700 hover:bg-gray-100'
             }`}
           >
-            About
+            {t('nav.about')}
           </button>
         </div>
       </div>
