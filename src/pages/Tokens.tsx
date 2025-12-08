@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { Trophy, Search, TrendingUp, Copy, CheckCircle, ExternalLink } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { supabase, Token } from '../lib/supabase';
-import { formatCurrency, formatAddress, formatTimeAgo } from '../lib/utils';
+import { formatCurrency, formatAddress, formatTimeAgo, formatUSD, ethToUSD } from '../lib/utils';
+import { getEthPriceUSD } from '../lib/ethPrice';
 
 interface TokensProps {
   onSelectToken: (token: Token) => void;
@@ -15,10 +16,20 @@ export function Tokens({ onSelectToken }: TokensProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
+  const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
 
   useEffect(() => {
     loadTokens();
+    loadEthPrice();
+
+    const interval = setInterval(loadEthPrice, 60000);
+    return () => clearInterval(interval);
   }, []);
+
+  const loadEthPrice = async () => {
+    const price = await getEthPriceUSD();
+    setEthPriceUSD(price);
+  };
 
   useEffect(() => {
     if (searchQuery.trim()) {
@@ -68,6 +79,22 @@ export function Tokens({ onSelectToken }: TokensProps) {
     }
   };
 
+  const calculateTokenPriceUSD = (token: Token): number => {
+    const ethReserve = parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
+    const tokenReserve = parseFloat(token.current_token_reserve?.toString() || '1000000');
+
+    if (tokenReserve === 0) return 0;
+
+    const priceInEth = ethReserve / tokenReserve;
+    return priceInEth * ethPriceUSD;
+  };
+
+  const calculateMarketCap = (token: Token): number => {
+    const TOKEN_TOTAL_SUPPLY = 1000000;
+    const priceUSD = calculateTokenPriceUSD(token);
+    return priceUSD * TOKEN_TOTAL_SUPPLY;
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6 sm:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -114,8 +141,10 @@ export function Tokens({ onSelectToken }: TokensProps) {
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.rank')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.token')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.address')}</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.price')}</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.marketCap')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.liquidity')}</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.volume')}</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.allTimeVolume')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.created')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.action')}</th>
                     </tr>
@@ -175,15 +204,22 @@ export function Tokens({ onSelectToken }: TokensProps) {
                         </td>
                         <td className="py-4 px-4">
                           <div className="font-semibold text-gray-900">
-                            {formatCurrency(token.current_eth_reserve || token.initial_liquidity_eth)}
+                            {formatUSD(calculateTokenPriceUSD(token), false)}
                           </div>
-                          <div className="text-sm text-gray-500">
-                            {t('tokens.table.locked', { percent: token.liquidity_percent })}
+                        </td>
+                        <td className="py-4 px-4">
+                          <div className="font-semibold text-gray-900">
+                            {formatUSD(calculateMarketCap(token), true)}
+                          </div>
+                        </td>
+                        <td className="py-4 px-4">
+                          <div className="font-semibold text-gray-900">
+                            {formatUSD(ethToUSD(token.current_eth_reserve || token.initial_liquidity_eth, ethPriceUSD), true)}
                           </div>
                         </td>
                         <td className="py-4 px-4">
                           <div className="font-medium text-gray-900">
-                            {formatCurrency(token.total_volume_eth)}
+                            {formatUSD(ethToUSD(token.total_volume_eth, ethPriceUSD), true)}
                           </div>
                         </td>
                         <td className="py-4 px-4">
@@ -244,21 +280,30 @@ export function Tokens({ onSelectToken }: TokensProps) {
 
                     <div className="space-y-2 mb-3">
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">{t('tokens.table.liquidity')}:</span>
-                        <div className="text-right">
-                          <div className="font-semibold text-gray-900">
-                            {formatCurrency(token.current_eth_reserve || token.initial_liquidity_eth)}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            {t('tokens.table.locked', { percent: token.liquidity_percent })}
-                          </div>
-                        </div>
+                        <span className="text-sm text-gray-600">{t('tokens.table.price')}:</span>
+                        <span className="font-semibold text-gray-900">
+                          {formatUSD(calculateTokenPriceUSD(token), false)}
+                        </span>
                       </div>
 
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">{t('tokens.table.volume')}:</span>
+                        <span className="text-sm text-gray-600">{t('tokens.table.marketCap')}:</span>
+                        <span className="font-semibold text-gray-900">
+                          {formatUSD(calculateMarketCap(token), true)}
+                        </span>
+                      </div>
+
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">{t('tokens.table.liquidity')}:</span>
+                        <span className="font-semibold text-gray-900">
+                          {formatUSD(ethToUSD(token.current_eth_reserve || token.initial_liquidity_eth, ethPriceUSD), true)}
+                        </span>
+                      </div>
+
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">{t('tokens.table.allTimeVolume')}:</span>
                         <span className="font-medium text-gray-900">
-                          {formatCurrency(token.total_volume_eth)}
+                          {formatUSD(ethToUSD(token.total_volume_eth, ethPriceUSD), true)}
                         </span>
                       </div>
 

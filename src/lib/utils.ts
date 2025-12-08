@@ -56,3 +56,33 @@ export function formatTimeAgo(timestamp: string): string {
 export function classNames(...classes: (string | boolean | undefined)[]): string {
   return classes.filter(Boolean).join(' ');
 }
+
+export function ethToUSD(ethAmount: string | number, ethPriceUSD: number): number {
+  const eth = typeof ethAmount === 'string' ? parseFloat(ethAmount) : ethAmount;
+  if (isNaN(eth)) return 0;
+  return eth * ethPriceUSD;
+}
+
+export function formatUSD(value: number, abbreviated: boolean = false): string {
+  if (isNaN(value) || value === 0) return '$0';
+
+  if (abbreviated) {
+    if (value >= 1000000) {
+      return `$${(value / 1000000).toFixed(2)}M`;
+    }
+    if (value >= 1000) {
+      return `$${(value / 1000).toFixed(2)}K`;
+    }
+  }
+
+  if (value < 0.01) {
+    return `$${value.toFixed(6)}`;
+  }
+
+  return value.toLocaleString('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: value < 1 ? 4 : 2,
+  });
+}
