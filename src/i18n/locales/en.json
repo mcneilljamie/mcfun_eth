@@ -263,5 +263,18 @@
     "reserve": "Reserve",
     "ammContract": "AMM Contract",
     "viewOnEtherscan": "View on Etherscan"
+  },
+  "wallet": {
+    "connectWallet": "Connect Your Wallet",
+    "connectToMetaMask": "Connect to MetaMask",
+    "byConnecting": "By connecting your wallet, you agree to our Terms of Service",
+    "connected": "Wallet connected successfully!",
+    "connectionFailed": "Failed to connect wallet",
+    "disconnected": "Wallet disconnected",
+    "balance": "Balance",
+    "copyAddress": "Copy Address",
+    "copied": "Address Copied!",
+    "viewExplorer": "View on Explorer",
+    "disconnect": "Disconnect"
   }
 }

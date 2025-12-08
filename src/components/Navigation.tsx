@@ -1,7 +1,10 @@
+import { useState } from 'react';
 import { useWeb3 } from '../lib/web3';
-import { formatAddress } from '../lib/utils';
 import { useTranslation } from 'react-i18next';
 import { LanguageSelector } from './LanguageSelector';
+import { WalletModal } from './WalletModal';
+import { AccountDropdown } from './AccountDropdown';
+import { Toast } from './Toast';
 
 interface NavigationProps {
   currentPage: string;
@@ -9,8 +12,27 @@ interface NavigationProps {
 }
 
 export function Navigation({ currentPage, onNavigate }: NavigationProps) {
-  const { account, connect, disconnect, isConnecting } = useWeb3();
+  const { account, connect, disconnect, isConnecting, chainId, error } = useWeb3();
   const { t } = useTranslation();
+  const [showWalletModal, setShowWalletModal] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+
+  const handleConnect = async () => {
+    try {
+      await connect();
+      setToast({ message: t('wallet.connected'), type: 'success' });
+    } catch (err) {
+      setToast({
+        message: err instanceof Error ? err.message : t('wallet.connectionFailed'),
+        type: 'error'
+      });
+    }
+  };
+
+  const handleDisconnect = () => {
+    disconnect();
+    setToast({ message: t('wallet.disconnected'), type: 'info' });
+  };
 
   return (
     <nav className="bg-white border-b border-gray-200">
@@ -74,15 +96,14 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
           <div className="flex items-center gap-3">
             <LanguageSelector />
             {account ? (
-              <button
-                onClick={disconnect}
-                className="bg-gray-900 text-white px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium hover:bg-gray-800 transition-colors"
-              >
-                {formatAddress(account)}
-              </button>
+              <AccountDropdown
+                account={account}
+                chainId={chainId}
+                onDisconnect={handleDisconnect}
+              />
             ) : (
               <button
-                onClick={connect}
+                onClick={() => setShowWalletModal(true)}
                 disabled={isConnecting}
                 className="bg-gray-900 text-white px-4 sm:px-6 py-2 rounded-lg text-sm sm:text-base font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
@@ -136,6 +157,21 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
           </button>
         </div>
       </div>
+
+      <WalletModal
+        isOpen={showWalletModal}
+        onClose={() => setShowWalletModal(false)}
+        onConnect={handleConnect}
+        isConnecting={isConnecting}
+      />
+
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </nav>
   );
 }

@@ -10,9 +10,12 @@ interface Web3ContextType {
   error: string | null;
   connect: () => Promise<void>;
   disconnect: () => void;
+  switchNetwork: (targetChainId: number) => Promise<void>;
 }
 
 const Web3Context = createContext<Web3ContextType | undefined>(undefined);
+
+const STORAGE_KEY = 'wallet_connected';
 
 export function Web3Provider({ children }: { children: ReactNode }) {
   const [provider, setProvider] = useState<BrowserProvider | null>(null);
@@ -40,9 +43,12 @@ export function Web3Provider({ children }: { children: ReactNode }) {
       setSigner(newSigner);
       setAccount(accounts[0]);
       setChainId(Number(network.chainId));
+
+      localStorage.setItem(STORAGE_KEY, 'true');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to connect wallet');
       console.error('Failed to connect wallet:', err);
+      throw err;
     } finally {
       setIsConnecting(false);
     }
@@ -54,7 +60,54 @@ export function Web3Provider({ children }: { children: ReactNode }) {
     setAccount(null);
     setChainId(null);
     setError(null);
+    localStorage.removeItem(STORAGE_KEY);
   };
+
+  const switchNetwork = async (targetChainId: number) => {
+    if (!window.ethereum) return;
+
+    try {
+      const chainIdHex = `0x${targetChainId.toString(16)}`;
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: chainIdHex }],
+      });
+    } catch (err: any) {
+      if (err.code === 4902) {
+        console.error('Network not added to wallet');
+      }
+      throw err;
+    }
+  };
+
+  useEffect(() => {
+    const attemptReconnect = async () => {
+      const wasConnected = localStorage.getItem(STORAGE_KEY);
+      if (wasConnected && window.ethereum) {
+        try {
+          const newProvider = new BrowserProvider(window.ethereum);
+          const accounts = await newProvider.send('eth_accounts', []);
+
+          if (accounts.length > 0) {
+            const newSigner = await newProvider.getSigner();
+            const network = await newProvider.getNetwork();
+
+            setProvider(newProvider);
+            setSigner(newSigner);
+            setAccount(accounts[0]);
+            setChainId(Number(network.chainId));
+          } else {
+            localStorage.removeItem(STORAGE_KEY);
+          }
+        } catch (err) {
+          console.error('Failed to reconnect:', err);
+          localStorage.removeItem(STORAGE_KEY);
+        }
+      }
+    };
+
+    attemptReconnect();
+  }, []);
 
   useEffect(() => {
     if (window.ethereum) {
@@ -91,6 +144,7 @@ export function Web3Provider({ children }: { children: ReactNode }) {
         error,
         connect,
         disconnect,
+        switchNetwork,
       }}
     >
       {children}
