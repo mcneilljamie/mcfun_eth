@@ -1,13 +1,14 @@
 import { useState } from 'react';
-import { Rocket, AlertCircle, CheckCircle, Loader } from 'lucide-react';
+import { Rocket, AlertCircle, Loader } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '../lib/web3';
 import { createToken } from '../lib/contracts';
 import { MIN_LIQUIDITY_ETH, MIN_LIQUIDITY_PERCENT, RECOMMENDED_LIQUIDITY_PERCENT, TOTAL_SUPPLY } from '../contracts/addresses';
 import { formatNumber } from '../lib/utils';
+import { LaunchCelebration } from '../components/LaunchCelebration';
 
 interface LaunchProps {
-  onNavigate: (page: string) => void;
+  onNavigate: (page: string, tokenAddress?: string) => void;
 }
 
 export function Launch({ onNavigate }: LaunchProps) {
@@ -25,6 +26,8 @@ export function Launch({ onNavigate }: LaunchProps) {
     tokenAddress: string;
     ammAddress: string;
     txHash: string;
+    tokenName: string;
+    tokenSymbol: string;
   } | null>(null);
 
   const tokensToLiquidity = (TOTAL_SUPPLY * liquidityPercent) / 100;
@@ -64,7 +67,11 @@ export function Launch({ onNavigate }: LaunchProps) {
         ethAmount,
       });
 
-      setSuccess(result);
+      setSuccess({
+        ...result,
+        tokenName: name.trim(),
+        tokenSymbol: symbol.trim().toUpperCase(),
+      });
       setName('');
       setSymbol('');
       setLiquidityPercent(RECOMMENDED_LIQUIDITY_PERCENT);
@@ -78,37 +85,28 @@ export function Launch({ onNavigate }: LaunchProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6 sm:py-12">
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-xl shadow-lg p-5 sm:p-8">
-          <div className="flex items-center space-x-3 mb-6">
-            <div className="bg-gray-900 p-2 rounded-lg">
-              <Rocket className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('launch.title')}</h1>
-          </div>
+    <>
+      {success && (
+        <LaunchCelebration
+          tokenName={success.tokenName}
+          tokenSymbol={success.tokenSymbol}
+          tokenAddress={success.tokenAddress}
+          ammAddress={success.ammAddress}
+          txHash={success.txHash}
+          onClose={() => setSuccess(null)}
+          onViewToken={() => onNavigate('token-detail', success.tokenAddress)}
+        />
+      )}
 
-          {success && (
-            <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-              <div className="flex items-start space-x-3">
-                <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                <div className="flex-1">
-                  <h3 className="font-semibold text-green-900 mb-2">{t('launch.success.title')}</h3>
-                  <div className="text-sm text-green-800 space-y-1">
-                    <p>{t('launch.success.token')} {success.tokenAddress}</p>
-                    <p>{t('launch.success.dex')} {success.ammAddress}</p>
-                    <p>{t('launch.success.tx')} {success.txHash}</p>
-                  </div>
-                  <button
-                    onClick={() => onNavigate('tokens')}
-                    className="mt-3 text-sm font-medium text-green-700 hover:text-green-600"
-                  >
-                    {t('launch.success.viewTokens')}
-                  </button>
-                </div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6 sm:py-12">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-xl shadow-lg p-5 sm:p-8">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="bg-gray-900 p-2 rounded-lg">
+                <Rocket className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('launch.title')}</h1>
             </div>
-          )}
 
           {error && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -240,8 +238,9 @@ export function Launch({ onNavigate }: LaunchProps) {
               </ul>
             </div>
           </div>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -24,7 +24,18 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     loadEthPrice();
 
     const interval = setInterval(loadEthPrice, 60000);
-    return () => clearInterval(interval);
+
+    const subscription = supabase
+      .channel('tokens-channel')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'tokens' }, () => {
+        loadTokens();
+      })
+      .subscribe();
+
+    return () => {
+      clearInterval(interval);
+      subscription.unsubscribe();
+    };
   }, []);
 
   const loadEthPrice = async () => {

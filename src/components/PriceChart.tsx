@@ -14,13 +14,11 @@ export function PriceChart({ tokenAddress }: PriceChartProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [timeframe, setTimeframe] = useState<'24H' | '7D' | 'ALL'>('24H');
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
-  const [tokenCreatedAt, setTokenCreatedAt] = useState<string | null>(null);
   const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
 
   useEffect(() => {
     loadPriceHistory();
     loadEthPrice();
-    loadTokenCreatedAt();
 
     const interval = setInterval(loadEthPrice, 60000);
     return () => clearInterval(interval);
@@ -29,23 +27,6 @@ export function PriceChart({ tokenAddress }: PriceChartProps) {
   const loadEthPrice = async () => {
     const price = await getEthPriceUSD();
     setEthPriceUSD(price);
-  };
-
-  const loadTokenCreatedAt = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('tokens')
-        .select('created_at')
-        .eq('token_address', tokenAddress)
-        .maybeSingle();
-
-      if (error) throw error;
-      if (data) {
-        setTokenCreatedAt(data.created_at);
-      }
-    } catch (err) {
-      console.error('Failed to load token created_at:', err);
-    }
   };
 
   const loadPriceHistory = async () => {
@@ -139,7 +120,31 @@ export function PriceChart({ tokenAddress }: PriceChartProps) {
     return { x, y, timestamp: snapshot.created_at };
   });
 
-  const pathData = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+  const createSmoothPath = (points: Array<{ x: number; y: number }>) => {
+    if (points.length < 2) return `M ${points[0].x} ${points[0].y}`;
+    if (points.length === 2) return `M ${points[0].x} ${points[0].y} L ${points[1].x} ${points[1].y}`;
+
+    const tension = 0.3;
+    let path = `M ${points[0].x} ${points[0].y}`;
+
+    for (let i = 0; i < points.length - 1; i++) {
+      const p0 = i > 0 ? points[i - 1] : points[0];
+      const p1 = points[i];
+      const p2 = points[i + 1];
+      const p3 = i < points.length - 2 ? points[i + 2] : p2;
+
+      const cp1x = p1.x + (p2.x - p0.x) * tension;
+      const cp1y = p1.y + (p2.y - p0.y) * tension;
+      const cp2x = p2.x - (p3.x - p1.x) * tension;
+      const cp2y = p2.y - (p3.y - p1.y) * tension;
+
+      path += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2.x} ${p2.y}`;
+    }
+
+    return path;
+  };
+
+  const pathData = createSmoothPath(points);
 
   const formatAxisTimestamp = (timestamp: string) => {
     const date = new Date(timestamp);
@@ -191,7 +196,7 @@ export function PriceChart({ tokenAddress }: PriceChartProps) {
         </div>
 
         <div className="flex space-x-2">
-          {(['7D', '24H', 'ALL'] as const).map((tf) => (
+          {(['24H', '7D', 'ALL'] as const).map((tf) => (
             <button
               key={tf}
               onClick={() => setTimeframe(tf)}
@@ -360,19 +365,37 @@ export function PriceChart({ tokenAddress }: PriceChartProps) {
           )}
         </svg>
 
-        {hoveredPoint !== null && (
-          <div
-            className="absolute bg-gray-900 text-white px-3 py-2 rounded-lg text-sm shadow-lg pointer-events-none"
-            style={{
-              left: `${(points[hoveredPoint].x / width) * 100}%`,
-              top: `${(points[hoveredPoint].y / height) * 100}%`,
-              transform: 'translate(-50%, -120%)',
-            }}
-          >
-            <div className="font-semibold">{formatUSD(pricesUSD[hoveredPoint], false)}</div>
-            <div className="text-xs text-gray-300">{formatTooltipTimestamp(snapshots[hoveredPoint].created_at)}</div>
-          </div>
-        )}
+        {hoveredPoint !== null && (() => {
+          const xPercent = (points[hoveredPoint].x / width) * 100;
+          const yPercent = (points[hoveredPoint].y / height) * 100;
+
+          let translateX = '-50%';
+          let translateY = '-120%';
+
+          if (xPercent < 15) {
+            translateX = '0%';
+          } else if (xPercent > 85) {
+            translateX = '-100%';
+          }
+
+          if (yPercent < 20) {
+            translateY = '20%';
+          }
+
+          return (
+            <div
+              className="absolute bg-gray-900 text-white px-3 py-2 rounded-lg text-sm shadow-lg pointer-events-none whitespace-nowrap z-10"
+              style={{
+                left: `${xPercent}%`,
+                top: `${yPercent}%`,
+                transform: `translate(${translateX}, ${translateY})`,
+              }}
+            >
+              <div className="font-semibold">{formatUSD(pricesUSD[hoveredPoint], false)}</div>
+              <div className="text-xs text-gray-300">{formatTooltipTimestamp(snapshots[hoveredPoint].created_at)}</div>
+            </div>
+          );
+        })()}
       </div>
     </div>
   );

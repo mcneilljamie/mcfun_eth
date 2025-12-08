@@ -16,8 +16,11 @@ function App() {
   const [selectedToken, setSelectedToken] = useState<Token | undefined>(undefined);
   const [selectedTokenAddress, setSelectedTokenAddress] = useState<string | undefined>(undefined);
 
-  const handleNavigate = (page: string) => {
+  const handleNavigate = (page: string, tokenAddress?: string) => {
     setCurrentPage(page as Page);
+    if (tokenAddress) {
+      setSelectedTokenAddress(tokenAddress);
+    }
   };
 
   const handleSelectToken = (token: Token) => {
