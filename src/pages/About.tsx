@@ -1,37 +1,59 @@
 import { useState, useEffect } from 'react';
-import { Shield, Lock, Coins, TrendingUp, Users, Zap, DollarSign, Check, Eye } from 'lucide-react';
+import { Shield, Lock, Coins, TrendingUp, Users, Zap, DollarSign, Check, Eye, BarChart3 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { formatCurrency } from '../lib/utils';
 
+interface PlatformStats {
+  totalMarketCapUsd: number;
+  totalVolumeEth: number;
+  tokenCount: number;
+}
+
 export function About() {
   const { t } = useTranslation();
   const [totalLiquidity, setTotalLiquidity] = useState<string>('0');
+  const [platformStats, setPlatformStats] = useState<PlatformStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    loadTotalLiquidity();
-    const interval = setInterval(loadTotalLiquidity, 30000);
+    loadData();
+    const interval = setInterval(loadData, 30000);
     return () => clearInterval(interval);
   }, []);
 
-  const loadTotalLiquidity = async () => {
+  const loadData = async () => {
     try {
-      const { data, error } = await supabase
+      // Load total liquidity
+      const { data: tokensData, error: tokensError } = await supabase
         .from('tokens')
         .select('current_eth_reserve, initial_liquidity_eth');
 
-      if (error) throw error;
-
-      if (data) {
-        const total = data.reduce((sum, token) => {
+      if (!tokensError && tokensData) {
+        const total = tokensData.reduce((sum, token) => {
           const reserve = parseFloat(token.current_eth_reserve || token.initial_liquidity_eth || '0');
           return sum + reserve;
         }, 0);
         setTotalLiquidity(total.toString());
       }
+
+      // Load platform stats
+      const { data: statsData, error: statsError } = await supabase
+        .from('platform_stats')
+        .select('total_market_cap_usd, total_volume_eth, token_count')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (!statsError && statsData) {
+        setPlatformStats({
+          totalMarketCapUsd: parseFloat(statsData.total_market_cap_usd || '0'),
+          totalVolumeEth: parseFloat(statsData.total_volume_eth || '0'),
+          tokenCount: statsData.token_count || 0,
+        });
+      }
     } catch (err) {
-      console.error('Failed to load total liquidity:', err);
+      console.error('Failed to load data:', err);
     } finally {
       setIsLoading(false);
     }
@@ -297,19 +319,53 @@ export function About() {
         </div>
 
         <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8 border-2 border-green-200">
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-2 mb-3">
-              <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-green-600" />
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Total DEX Liquidity</h2>
-            </div>
-            {isLoading ? (
-              <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-green-600"></div>
-            ) : (
-              <div className="text-3xl sm:text-4xl font-bold text-green-700">
-                {formatCurrency(totalLiquidity)}
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 text-center mb-6">Platform Statistics</h2>
+
+          <div className="grid md:grid-cols-3 gap-4 sm:gap-6">
+            <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <h3 className="text-sm sm:text-base font-bold text-gray-900">Total Market Cap</h3>
               </div>
-            )}
-            <p className="text-sm text-gray-600 mt-2">Total ETH liquidity on the DEX</p>
+              {isLoading ? (
+                <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
+              ) : (
+                <div className="text-2xl sm:text-3xl font-bold text-green-700">
+                  {platformStats ? `$${(platformStats.totalMarketCapUsd / 1_000_000).toFixed(2)}M` : '$0'}
+                </div>
+              )}
+              <p className="text-xs text-gray-600 mt-1">Combined FDV of all tokens</p>
+            </div>
+
+            <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <h3 className="text-sm sm:text-base font-bold text-gray-900">Total Liquidity</h3>
+              </div>
+              {isLoading ? (
+                <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
+              ) : (
+                <div className="text-2xl sm:text-3xl font-bold text-green-700">
+                  {formatCurrency(totalLiquidity)}
+                </div>
+              )}
+              <p className="text-xs text-gray-600 mt-1">Total ETH in liquidity pools</p>
+            </div>
+
+            <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Coins className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <h3 className="text-sm sm:text-base font-bold text-gray-900">Trading Volume</h3>
+              </div>
+              {isLoading ? (
+                <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
+              ) : (
+                <div className="text-2xl sm:text-3xl font-bold text-green-700">
+                  {platformStats ? formatCurrency(platformStats.totalVolumeEth.toString()) : '0 ETH'}
+                </div>
+              )}
+              <p className="text-xs text-gray-600 mt-1">Cumulative trading volume</p>
+            </div>
           </div>
         </div>
 

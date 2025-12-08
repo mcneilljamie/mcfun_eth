@@ -119,6 +119,62 @@ Deno.serve(async (req: Request) => {
       }
     }
 
+    // Calculate and store platform statistics
+    try {
+      // Get latest price snapshot for each token
+      const { data: latestPrices, error: pricesError } = await supabase
+        .from("price_snapshots")
+        .select("token_address, price_eth, eth_price_usd")
+        .order("created_at", { ascending: false });
+
+      if (pricesError) {
+        console.error("Failed to fetch latest prices:", pricesError);
+      } else if (latestPrices && latestPrices.length > 0) {
+        // Group by token_address and get the latest price for each
+        const latestByToken = new Map();
+        for (const price of latestPrices) {
+          if (!latestByToken.has(price.token_address)) {
+            latestByToken.set(price.token_address, price);
+          }
+        }
+
+        // Calculate total market cap (FDV)
+        // Each token has 1 billion fixed supply
+        const TOTAL_SUPPLY = 1_000_000_000;
+        let totalMarketCapUSD = 0;
+
+        for (const [, priceData] of latestByToken) {
+          const fdv = TOTAL_SUPPLY * parseFloat(priceData.price_eth) * parseFloat(priceData.eth_price_usd);
+          totalMarketCapUSD += fdv;
+        }
+
+        // Get total volume
+        const { data: volumeData, error: volumeError } = await supabase
+          .from("tokens")
+          .select("total_volume_eth");
+
+        let totalVolumeETH = 0;
+        if (!volumeError && volumeData) {
+          totalVolumeETH = volumeData.reduce((sum, t) => sum + parseFloat(t.total_volume_eth || "0"), 0);
+        }
+
+        // Insert platform stats
+        const { error: statsError } = await supabase
+          .from("platform_stats")
+          .insert({
+            total_market_cap_usd: totalMarketCapUSD,
+            total_volume_eth: totalVolumeETH,
+            token_count: latestByToken.size,
+          });
+
+        if (statsError) {
+          console.error("Failed to insert platform stats:", statsError);
+        }
+      }
+    } catch (err: any) {
+      console.error("Failed to calculate platform stats:", err);
+    }
+
     return new Response(
       JSON.stringify(results),
       {
