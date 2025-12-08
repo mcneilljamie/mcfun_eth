@@ -12,7 +12,7 @@ interface PriceChartProps {
 export function PriceChart({ tokenAddress }: PriceChartProps) {
   const [snapshots, setSnapshots] = useState<PriceSnapshot[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [timeframe, setTimeframe] = useState<'24H' | '7D' | 'ALL'>('7D');
+  const [timeframe, setTimeframe] = useState<'24H' | '7D' | 'ALL'>('24H');
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
   const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
 
@@ -196,7 +196,7 @@ export function PriceChart({ tokenAddress }: PriceChartProps) {
         </div>
 
         <div className="flex space-x-2">
-          {(['7D', '24H', 'ALL'] as const).map((tf) => (
+          {(['24H', '7D', 'ALL'] as const).map((tf) => (
             <button
               key={tf}
               onClick={() => setTimeframe(tf)}
