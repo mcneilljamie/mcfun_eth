@@ -309,7 +309,7 @@ export function About() {
                 {formatCurrency(totalLiquidity)}
               </div>
             )}
-            <p className="text-sm text-gray-600 mt-2">Combined liquidity across all tokens</p>
+            <p className="text-sm text-gray-600 mt-2">Total ETH liquidity on the DEX</p>
           </div>
         </div>
 
