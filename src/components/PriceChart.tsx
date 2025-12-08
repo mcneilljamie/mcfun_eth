@@ -12,7 +12,7 @@ interface PriceChartProps {
 export function PriceChart({ tokenAddress }: PriceChartProps) {
   const [snapshots, setSnapshots] = useState<PriceSnapshot[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [timeframe, setTimeframe] = useState<'1H' | '24H' | '7D' | 'ALL'>('24H');
+  const [timeframe, setTimeframe] = useState<'24H' | '7D' | 'ALL'>('24H');
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
   const [tokenCreatedAt, setTokenCreatedAt] = useState<string | null>(null);
   const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
@@ -62,9 +62,6 @@ export function PriceChart({ tokenAddress }: PriceChartProps) {
       let cutoffDate = new Date();
 
       switch (timeframe) {
-        case '1H':
-          cutoffDate.setHours(now.getHours() - 1);
-          break;
         case '24H':
           cutoffDate.setHours(now.getHours() - 24);
           break;
@@ -147,9 +144,7 @@ export function PriceChart({ tokenAddress }: PriceChartProps) {
   const formatAxisTimestamp = (timestamp: string) => {
     const date = new Date(timestamp);
 
-    if (timeframe === '1H') {
-      return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-    } else if (timeframe === '24H') {
+    if (timeframe === '24H') {
       return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
     } else if (timeframe === '7D') {
       return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -196,7 +191,7 @@ export function PriceChart({ tokenAddress }: PriceChartProps) {
         </div>
 
         <div className="flex space-x-2">
-          {(['1H', '24H', '7D', 'ALL'] as const).map((tf) => (
+          {(['24H', '7D', 'ALL'] as const).map((tf) => (
             <button
               key={tf}
               onClick={() => setTimeframe(tf)}
