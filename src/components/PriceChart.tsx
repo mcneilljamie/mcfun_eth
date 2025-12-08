@@ -12,7 +12,7 @@ interface PriceChartProps {
 export function PriceChart({ tokenAddress }: PriceChartProps) {
   const [snapshots, setSnapshots] = useState<PriceSnapshot[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [timeframe, setTimeframe] = useState<'24H' | '7D' | 'ALL'>('24H');
+  const [timeframe, setTimeframe] = useState<'24H' | '7D' | 'ALL'>('7D');
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
   const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
 
