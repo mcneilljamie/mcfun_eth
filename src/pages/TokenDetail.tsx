@@ -209,7 +209,11 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
         </div>
 
         <div className="mb-6">
-          <PriceChart tokenAddress={token.token_address} tokenSymbol={token.symbol} />
+          <PriceChart
+            tokenAddress={token.token_address}
+            tokenSymbol={token.symbol}
+            currentPriceUSD={calculateTokenPriceUSD()}
+          />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

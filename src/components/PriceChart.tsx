@@ -7,9 +7,10 @@ import { getEthPriceUSD } from '../lib/ethPrice';
 interface PriceChartProps {
   tokenAddress: string;
   tokenSymbol: string;
+  currentPriceUSD: number;
 }
 
-export function PriceChart({ tokenAddress }: PriceChartProps) {
+export function PriceChart({ tokenAddress, currentPriceUSD }: PriceChartProps) {
   const [snapshots, setSnapshots] = useState<PriceSnapshot[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [timeframe, setTimeframe] = useState<'24H' | '7D' | 'ALL'>('24H');
@@ -102,9 +103,8 @@ export function PriceChart({ tokenAddress }: PriceChartProps) {
 
   const minPrice = Math.min(...pricesUSD);
   const maxPrice = Math.max(...pricesUSD);
-  const currentPrice = pricesETH[pricesETH.length - 1] * ethPriceUSD;
   const firstPrice = pricesUSD[0];
-  const priceChange = ((currentPrice - firstPrice) / firstPrice) * 100;
+  const priceChange = ((currentPriceUSD - firstPrice) / firstPrice) * 100;
 
   const width = 800;
   const height = 300;
@@ -191,19 +191,15 @@ export function PriceChart({ tokenAddress }: PriceChartProps) {
           <h3 className="text-lg font-bold text-gray-900">Price Chart</h3>
           <div className="flex items-center space-x-2 mt-1">
             <span className="text-2xl font-bold text-gray-900">
-              {formatUSD(currentPrice, false)}
+              {formatUSD(currentPriceUSD, false)}
             </span>
             <span
               className={`flex items-center text-sm font-medium ${priceChange >= 0 ? 'text-green-600' : 'text-red-600'}`}
-              title={`${priceChange >= 0 ? 'Up' : 'Down'} ${Math.abs(priceChange).toFixed(2)}% since ${formatTooltipTimestamp(snapshots[0].created_at)} using accurate historical ETH/USD rates`}
             >
               {priceChange >= 0 ? <TrendingUp className="w-4 h-4 mr-1" /> : <TrendingDown className="w-4 h-4 mr-1" />}
               {Math.abs(priceChange).toFixed(2)}%
             </span>
           </div>
-          <p className="text-xs text-gray-500 mt-1">
-            Using accurate historical ETH/USD prices
-          </p>
         </div>
 
         <div className="flex space-x-2">
