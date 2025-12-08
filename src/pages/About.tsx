@@ -315,7 +315,15 @@ export function About() {
 
         <div className="bg-white rounded-xl shadow-lg p-5 sm:p-8 text-center">
           <p className="text-sm sm:text-base text-gray-700 sm:text-lg">
-            {t('about.founder')}
+            McFun was founded and is maintained by{' '}
+            <a
+              href="https://jamiemcneill.substack.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800 font-semibold underline"
+            >
+              Jamie McNeill
+            </a>.
           </p>
         </div>
       </div>
