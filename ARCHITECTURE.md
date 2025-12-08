@@ -1,8 +1,8 @@
-# JAMM Technical Architecture
+# McFun Technical Architecture
 
 ## System Overview
 
-JAMM is a decentralized token launch platform built on Ethereum with the following components:
+McFun is a decentralized token launch platform built on Ethereum with the following components:
 
 1. **Smart Contracts** - On-chain logic for token creation, AMM, and trading
 2. **Frontend Application** - React-based user interface
@@ -11,7 +11,7 @@ JAMM is a decentralized token launch platform built on Ethereum with the followi
 
 ## Smart Contract Architecture
 
-### JammFactory Contract
+### McFunFactory Contract
 
 The factory contract handles token creation and initial liquidity setup.
 
@@ -34,7 +34,7 @@ The factory contract handles token creation and initial liquidity setup.
 - LP tokens automatically burned (sent to dead address)
 - No upgrade mechanisms or admin controls
 
-### JammAMM Contract
+### McFunAMM Contract
 
 Each token gets its own AMM contract implementing the constant product (xy=k) formula.
 
@@ -62,7 +62,7 @@ With 0.4% fee deducted from amountIn
 - Fees sent to `0x227D5F29bAb4Cec30f511169886b86fAeF61C6bc`
 - Fee calculated before swap execution
 
-### JammToken Contract
+### McFunToken Contract
 
 Standard ERC20 implementation with:
 - Fixed supply: 1,000,000 tokens
@@ -231,7 +231,7 @@ Page-level state managed with React hooks:
 
 ## Deployment Checklist
 
-- [ ] Deploy JammFactory contract
+- [ ] Deploy McFunFactory contract
 - [ ] Verify contract on Etherscan
 - [ ] Update factory address in frontend
 - [ ] Deploy frontend to hosting

@@ -285,7 +285,7 @@ export function LaunchCelebration({
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <h4 className="font-medium text-blue-900 mb-2">Share with your community!</h4>
               <p className="text-sm text-blue-800">
-                I just launched ${tokenSymbol} on JAMM! Check it out: {chartUrl}
+                I just launched ${tokenSymbol} on McFun! Check it out: {chartUrl}
               </p>
             </div>
 

@@ -1,10 +1,10 @@
-// Example deployment script for JAMM Factory contract
+// Example deployment script for McFun Factory contract
 // This can be used with Hardhat or Ethers.js
 
 const { ethers } = require('ethers');
 const fs = require('fs');
 
-async function deployJammFactory() {
+async function deployMcFunFactory() {
   // Setup provider and wallet
   const provider = new ethers.JsonRpcProvider('YOUR_RPC_URL');
   const wallet = new ethers.Wallet('YOUR_PRIVATE_KEY', provider);
@@ -13,7 +13,7 @@ async function deployJammFactory() {
   console.log('Network:', (await provider.getNetwork()).name);
 
   // Read contract bytecode
-  const factoryBytecode = fs.readFileSync('./src/contracts/JammFactory.sol', 'utf8');
+  const factoryBytecode = fs.readFileSync('./src/contracts/McFunFactory.sol', 'utf8');
 
   // In a real deployment, you would:
   // 1. Compile the Solidity code to get bytecode and ABI
@@ -30,8 +30,8 @@ async function deployJammFactory() {
 
   console.log('\nAlternatively, use Remix IDE:');
   console.log('1. Go to https://remix.ethereum.org');
-  console.log('2. Create new file: JammFactory.sol');
-  console.log('3. Paste contract code from src/contracts/JammFactory.sol');
+  console.log('2. Create new file: McFunFactory.sol');
+  console.log('3. Paste contract code from src/contracts/McFunFactory.sol');
   console.log('4. Compile with Solidity 0.8.20+');
   console.log('5. Deploy using "Deploy & Run Transactions" tab');
   console.log('6. Copy deployed contract address');
@@ -39,7 +39,7 @@ async function deployJammFactory() {
 
   console.log('\nAfter deployment:');
   console.log('1. Verify contract on Etherscan');
-  console.log('2. Update JAMM_FACTORY_ADDRESS in src/contracts/addresses.ts');
+  console.log('2. Update MCFUN_FACTORY_ADDRESS in src/contracts/addresses.ts');
   console.log('3. Test token creation');
   console.log('4. Set up event indexer for database updates');
 }
@@ -50,15 +50,15 @@ const hardhatExample = `
 const hre = require("hardhat");
 
 async function main() {
-  console.log("Deploying JammFactory...");
+  console.log("Deploying McFunFactory...");
 
-  const JammFactory = await hre.ethers.getContractFactory("JammFactory");
-  const factory = await JammFactory.deploy();
+  const McFunFactory = await hre.ethers.getContractFactory("McFunFactory");
+  const factory = await McFunFactory.deploy();
 
   await factory.waitForDeployment();
 
   const address = await factory.getAddress();
-  console.log("JammFactory deployed to:", address);
+  console.log("McFunFactory deployed to:", address);
 
   console.log("\\nWaiting for block confirmations...");
   await factory.deploymentTransaction().wait(5);
@@ -75,7 +75,7 @@ async function main() {
   }
 
   console.log("\\n✅ Deployment complete!");
-  console.log("Update JAMM_FACTORY_ADDRESS in src/contracts/addresses.ts to:", address);
+  console.log("Update MCFUN_FACTORY_ADDRESS in src/contracts/addresses.ts to:", address);
 }
 
 main()
@@ -87,10 +87,10 @@ main()
 `;
 
 console.log('\n' + '='.repeat(60));
-console.log('JAMM Factory Deployment Guide');
+console.log('McFun Factory Deployment Guide');
 console.log('='.repeat(60) + '\n');
 
-deployJammFactory().catch((error) => {
+deployMcFunFactory().catch((error) => {
   console.error('Error:', error);
   process.exit(1);
 });

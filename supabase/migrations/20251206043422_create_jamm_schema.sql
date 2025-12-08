@@ -1,5 +1,5 @@
 /*
-  # Create JAMM Database Schema
+  # Create McFun Database Schema
 
   1. New Tables
     - `tokens`

@@ -1,6 +1,6 @@
 import { Contract, parseEther, formatEther, formatUnits } from 'ethers';
-import { JAMM_FACTORY_ABI, JAMM_AMM_ABI, ERC20_ABI } from '../contracts/abis';
-import { JAMM_FACTORY_ADDRESS } from '../contracts/addresses';
+import { MCFUN_FACTORY_ABI, MCFUN_AMM_ABI, ERC20_ABI } from '../contracts/abis';
+import { MCFUN_FACTORY_ADDRESS } from '../contracts/addresses';
 
 export interface TokenLaunchParams {
   name: string;
@@ -17,7 +17,7 @@ export interface SwapParams {
 }
 
 export async function createToken(signer: any, params: TokenLaunchParams) {
-  const factory = new Contract(JAMM_FACTORY_ADDRESS, JAMM_FACTORY_ABI, signer);
+  const factory = new Contract(MCFUN_FACTORY_ADDRESS, MCFUN_FACTORY_ABI, signer);
 
   const tx = await factory.createToken(
     params.name,
@@ -46,7 +46,7 @@ export async function createToken(signer: any, params: TokenLaunchParams) {
 }
 
 export async function swapTokens(signer: any, params: SwapParams) {
-  const amm = new Contract(params.ammAddress, JAMM_AMM_ABI, signer);
+  const amm = new Contract(params.ammAddress, MCFUN_AMM_ABI, signer);
 
   let tx;
   if (params.isETHToToken) {
@@ -73,7 +73,7 @@ export async function swapTokens(signer: any, params: SwapParams) {
 }
 
 export async function getAMMReserves(provider: any, ammAddress: string) {
-  const amm = new Contract(ammAddress, JAMM_AMM_ABI, provider);
+  const amm = new Contract(ammAddress, MCFUN_AMM_ABI, provider);
 
   const [reserveETH, reserveToken, tokenAddress] = await Promise.all([
     amm.reserveETH(),
@@ -89,7 +89,7 @@ export async function getAMMReserves(provider: any, ammAddress: string) {
 }
 
 export async function getPrice(provider: any, ammAddress: string) {
-  const amm = new Contract(ammAddress, JAMM_AMM_ABI, provider);
+  const amm = new Contract(ammAddress, MCFUN_AMM_ABI, provider);
   const price = await amm.getPrice();
   return formatEther(price);
 }
@@ -100,7 +100,7 @@ export async function getQuote(
   isETHToToken: boolean,
   amountIn: string
 ) {
-  const amm = new Contract(ammAddress, JAMM_AMM_ABI, provider);
+  const amm = new Contract(ammAddress, MCFUN_AMM_ABI, provider);
 
   if (isETHToToken) {
     const tokenOut = await amm.getTokenOut(parseEther(amountIn));

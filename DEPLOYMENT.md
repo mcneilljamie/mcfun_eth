@@ -1,8 +1,8 @@
-# JAMM Deployment Guide
+# McFun Deployment Guide
 
 ## Overview
 
-JAMM is a fair launch token platform on Ethereum with a native DEX. This guide will walk you through deploying the smart contracts and configuring the frontend.
+McFun is a fair launch token platform on Ethereum with a native DEX. This guide will walk you through deploying the smart contracts and configuring the frontend.
 
 ## Smart Contract Deployment
 
@@ -15,9 +15,9 @@ JAMM is a fair launch token platform on Ethereum with a native DEX. This guide w
 ### Contract Files
 
 The smart contracts are located in `src/contracts/`:
-- `JammFactory.sol` - Main factory contract that creates tokens and AMM pairs
-- `JammAMM.sol` - Automated Market Maker (xy=k constant product formula)
-- `JammToken.sol` - ERC20 token template
+- `McFunFactory.sol` - Main factory contract that creates tokens and AMM pairs
+- `McFunAMM.sol` - Automated Market Maker (xy=k constant product formula)
+- `McFunToken.sol` - ERC20 token template
 
 ### Deployment Steps
 
@@ -30,12 +30,12 @@ The smart contracts are located in `src/contracts/`:
    forge build
    ```
 
-2. **Deploy JammFactory**
+2. **Deploy McFunFactory**
 
-   The factory contract is self-contained and includes both JammToken and JammAMM bytecode.
+   The factory contract is self-contained and includes both McFunToken and McFunAMM bytecode.
 
    ```solidity
-   // Deploy the JammFactory contract
+   // Deploy the McFunFactory contract
    // No constructor arguments needed
    ```
 
@@ -44,7 +44,7 @@ The smart contracts are located in `src/contracts/`:
    After deployment, update `src/contracts/addresses.ts` with your deployed factory address:
 
    ```typescript
-   export const JAMM_FACTORY_ADDRESS = "YOUR_DEPLOYED_FACTORY_ADDRESS";
+   export const MCFUN_FACTORY_ADDRESS = "YOUR_DEPLOYED_FACTORY_ADDRESS";
    ```
 
 ### Contract Constants
@@ -107,7 +107,7 @@ The platform includes two Supabase Edge Functions for indexing blockchain data:
 This function monitors blockchain events and populates the database with token launches and swap data.
 
 **Functionality:**
-- Scans blockchain blocks for `TokenLaunched` events from JammFactory
+- Scans blockchain blocks for `TokenLaunched` events from McFunFactory
 - Scans for `Swap` events from all known AMM contracts
 - Inserts new tokens into the `tokens` table
 - Records swaps in the `swaps` table

@@ -1,4 +1,4 @@
-export const JAMM_FACTORY_ABI = [
+export const MCFUN_FACTORY_ABI = [
   "function createToken(string memory name, string memory symbol, uint256 liquidityPercent) external payable returns (address tokenAddress, address ammAddress)",
   "function getTokenCount() external view returns (uint256)",
   "function getToken(uint256 index) external view returns (tuple(address tokenAddress, address ammAddress, string name, string symbol, address creator, uint256 timestamp, uint256 initialLiquidityETH, uint256 liquidityPercent))",
@@ -7,7 +7,7 @@ export const JAMM_FACTORY_ABI = [
   "event TokenLaunched(address indexed tokenAddress, address indexed ammAddress, string name, string symbol, address indexed creator, uint256 liquidityPercent, uint256 initialLiquidityETH)"
 ];
 
-export const JAMM_AMM_ABI = [
+export const MCFUN_AMM_ABI = [
   "function addLiquidity(uint256 tokenAmount) external payable returns (uint256)",
   "function removeLiquidity(uint256 liquidityAmount) external returns (uint256 ethAmount, uint256 tokenAmount)",
   "function swapETHForToken(uint256 minTokenOut) external payable returns (uint256 tokenOut)",
