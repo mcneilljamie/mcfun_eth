@@ -101,6 +101,8 @@ export function PriceChart({ tokenAddress, currentPriceUSD }: PriceChartProps) {
     return priceETH * historicalEthPrice;
   });
 
+  pricesUSD.push(currentPriceUSD);
+
   const minPrice = Math.min(...pricesUSD);
   const maxPrice = Math.max(...pricesUSD);
   const firstPrice = pricesUSD[0];
@@ -113,9 +115,18 @@ export function PriceChart({ tokenAddress, currentPriceUSD }: PriceChartProps) {
   const paddingTop = 40;
   const paddingBottom = 60;
 
-  const points = snapshots.map((snapshot, index) => {
-    const x = snapshots.length > 1
-      ? paddingLeft + (index / (snapshots.length - 1)) * (width - paddingLeft - paddingRight)
+  const snapshotsWithCurrent = [...snapshots, {
+    created_at: new Date().toISOString(),
+    price_eth: '0',
+    eth_reserve: '0',
+    token_reserve: '0',
+    id: 'current',
+    token_address: tokenAddress
+  } as PriceSnapshot];
+
+  const points = snapshotsWithCurrent.map((snapshot, index) => {
+    const x = snapshotsWithCurrent.length > 1
+      ? paddingLeft + (index / (snapshotsWithCurrent.length - 1)) * (width - paddingLeft - paddingRight)
       : paddingLeft + (width - paddingLeft - paddingRight) / 2;
     const priceUSD = pricesUSD[index];
     const priceRange = maxPrice - minPrice;
@@ -178,10 +189,10 @@ export function PriceChart({ tokenAddress, currentPriceUSD }: PriceChartProps) {
     return minPrice + (maxPrice - minPrice) * (i / (yAxisLabels - 1));
   }).reverse();
 
-  const xAxisLabels = Math.min(6, snapshots.length);
+  const xAxisLabels = Math.min(6, snapshotsWithCurrent.length);
   const xAxisIndices = Array.from({ length: xAxisLabels }, (_, i) => {
     if (xAxisLabels === 1) return 0;
-    return Math.floor((i / (xAxisLabels - 1)) * (snapshots.length - 1));
+    return Math.floor((i / (xAxisLabels - 1)) * (snapshotsWithCurrent.length - 1));
   });
 
   return (
@@ -314,7 +325,7 @@ export function PriceChart({ tokenAddress, currentPriceUSD }: PriceChartProps) {
 
           {xAxisIndices.map((snapshotIndex, index) => {
             const point = points[snapshotIndex];
-            const label = formatAxisTimestamp(snapshots[snapshotIndex].created_at);
+            const label = formatAxisTimestamp(snapshotsWithCurrent[snapshotIndex].created_at);
             return (
               <g key={`x-${index}`}>
                 <line
@@ -399,7 +410,7 @@ export function PriceChart({ tokenAddress, currentPriceUSD }: PriceChartProps) {
               }}
             >
               <div className="font-semibold">{formatUSD(pricesUSD[hoveredPoint], false)}</div>
-              <div className="text-xs text-gray-300">{formatTooltipTimestamp(snapshots[hoveredPoint].created_at)}</div>
+              <div className="text-xs text-gray-300">{formatTooltipTimestamp(snapshotsWithCurrent[hoveredPoint].created_at)}</div>
             </div>
           );
         })()}
