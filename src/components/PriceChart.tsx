@@ -102,9 +102,7 @@ export function PriceChart({ tokenAddress }: PriceChartProps) {
 
   const minPrice = Math.min(...pricesUSD);
   const maxPrice = Math.max(...pricesUSD);
-  const lastSnapshot = snapshots[snapshots.length - 1];
-  const currentEthPrice = lastSnapshot.eth_price_usd ? parseFloat(lastSnapshot.eth_price_usd) : ethPriceUSD;
-  const currentPrice = pricesETH[pricesETH.length - 1] * currentEthPrice;
+  const currentPrice = pricesETH[pricesETH.length - 1] * ethPriceUSD;
   const firstPrice = pricesUSD[0];
   const priceChange = ((currentPrice - firstPrice) / firstPrice) * 100;
 
