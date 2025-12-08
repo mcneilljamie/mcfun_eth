@@ -102,7 +102,9 @@ export function PriceChart({ tokenAddress }: PriceChartProps) {
 
   const minPrice = Math.min(...pricesUSD);
   const maxPrice = Math.max(...pricesUSD);
-  const currentPrice = pricesETH[pricesETH.length - 1] * ethPriceUSD;
+  const lastSnapshot = snapshots[snapshots.length - 1];
+  const currentEthPrice = lastSnapshot.eth_price_usd ? parseFloat(lastSnapshot.eth_price_usd) : ethPriceUSD;
+  const currentPrice = pricesETH[pricesETH.length - 1] * currentEthPrice;
   const firstPrice = pricesUSD[0];
   const priceChange = ((currentPrice - firstPrice) / firstPrice) * 100;
 
@@ -193,11 +195,17 @@ export function PriceChart({ tokenAddress }: PriceChartProps) {
             <span className="text-2xl font-bold text-gray-900">
               {formatUSD(currentPrice, false)}
             </span>
-            <span className={`flex items-center text-sm font-medium ${priceChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <span
+              className={`flex items-center text-sm font-medium ${priceChange >= 0 ? 'text-green-600' : 'text-red-600'}`}
+              title={`${priceChange >= 0 ? 'Up' : 'Down'} ${Math.abs(priceChange).toFixed(2)}% since ${formatTooltipTimestamp(snapshots[0].created_at)} using accurate historical ETH/USD rates`}
+            >
               {priceChange >= 0 ? <TrendingUp className="w-4 h-4 mr-1" /> : <TrendingDown className="w-4 h-4 mr-1" />}
               {Math.abs(priceChange).toFixed(2)}%
             </span>
           </div>
+          <p className="text-xs text-gray-500 mt-1">
+            Using accurate historical ETH/USD prices
+          </p>
         </div>
 
         <div className="flex space-x-2">
