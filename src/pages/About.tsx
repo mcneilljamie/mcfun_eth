@@ -1,8 +1,41 @@
+import { useState, useEffect } from 'react';
 import { Shield, Lock, Coins, TrendingUp, Users, Zap, DollarSign, Check, Eye } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { supabase } from '../lib/supabase';
+import { formatCurrency } from '../lib/utils';
 
 export function About() {
   const { t } = useTranslation();
+  const [totalLiquidity, setTotalLiquidity] = useState<string>('0');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    loadTotalLiquidity();
+    const interval = setInterval(loadTotalLiquidity, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const loadTotalLiquidity = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('tokens')
+        .select('current_eth_reserve, initial_liquidity_eth');
+
+      if (error) throw error;
+
+      if (data) {
+        const total = data.reduce((sum, token) => {
+          const reserve = parseFloat(token.current_eth_reserve || token.initial_liquidity_eth || '0');
+          return sum + reserve;
+        }, 0);
+        setTotalLiquidity(total.toString());
+      }
+    } catch (err) {
+      console.error('Failed to load total liquidity:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -260,6 +293,23 @@ export function About() {
                 </p>
               </div>
             </div>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8 border-2 border-green-200">
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-green-600" />
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Total DEX Liquidity</h2>
+            </div>
+            {isLoading ? (
+              <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-green-600"></div>
+            ) : (
+              <div className="text-3xl sm:text-4xl font-bold text-green-700">
+                {formatCurrency(totalLiquidity)}
+              </div>
+            )}
+            <p className="text-sm text-gray-600 mt-2">Combined liquidity across all tokens</p>
           </div>
         </div>
 

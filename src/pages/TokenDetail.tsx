@@ -180,9 +180,6 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
               <div className="text-xl sm:text-2xl font-bold text-gray-900">
                 {formatUSD(calculateTokenPriceUSD(), false)}
               </div>
-              <div className="text-xs text-gray-500 mt-1">
-                {formatCurrency(calculateTokenPriceUSD() / ethPriceUSD)}
-              </div>
             </div>
 
             <div className="bg-gray-50 rounded-lg p-4">
@@ -206,9 +203,6 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
               <div className="text-sm text-gray-600 mb-1">{t('tokenDetail.allTimeVolume')}</div>
               <div className="text-xl sm:text-2xl font-bold text-gray-900">
                 {formatCurrency(token.total_volume_eth)}
-              </div>
-              <div className="text-xs text-gray-500 mt-1">
-                {formatUSD(ethToUSD(token.total_volume_eth, ethPriceUSD), true)}
               </div>
             </div>
           </div>
