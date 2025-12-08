@@ -238,42 +238,68 @@ export function Trade({ selectedToken }: TradeProps) {
             </div>
 
             {amountIn && amountOut && (
-              <div className="bg-gray-50 rounded-lg p-3 sm:p-4 space-y-2 text-xs sm:text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">{t('trade.priceImpact')}</span>
-                  <span className={`font-medium ${priceImpact > 5 ? 'text-red-600' : 'text-gray-900'}`}>
-                    {priceImpact.toFixed(2)}%
-                  </span>
+              <>
+                {priceImpact > 3 && (
+                  <div className={`rounded-lg p-3 sm:p-4 border ${
+                    priceImpact > 10 ? 'bg-red-50 border-red-300' : priceImpact > 5 ? 'bg-orange-50 border-orange-300' : 'bg-yellow-50 border-yellow-300'
+                  }`}>
+                    <div className="flex items-start space-x-2">
+                      <AlertCircle className={`w-5 h-5 mt-0.5 flex-shrink-0 ${
+                        priceImpact > 10 ? 'text-red-600' : priceImpact > 5 ? 'text-orange-600' : 'text-yellow-600'
+                      }`} />
+                      <div>
+                        <p className={`text-sm font-semibold ${
+                          priceImpact > 10 ? 'text-red-900' : priceImpact > 5 ? 'text-orange-900' : 'text-yellow-900'
+                        }`}>
+                          {priceImpact > 10 ? 'Very High' : priceImpact > 5 ? 'High' : 'Moderate'} Price Impact
+                        </p>
+                        <p className={`text-xs mt-1 ${
+                          priceImpact > 10 ? 'text-red-800' : priceImpact > 5 ? 'text-orange-800' : 'text-yellow-800'
+                        }`}>
+                          This trade will significantly affect the token price. Consider reducing your trade size or increasing slippage tolerance if the transaction fails.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="bg-gray-50 rounded-lg p-3 sm:p-4 space-y-2 text-xs sm:text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">{t('trade.priceImpact')}</span>
+                    <span className={`font-medium ${priceImpact > 5 ? 'text-red-600' : 'text-gray-900'}`}>
+                      {priceImpact.toFixed(2)}%
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">{t('trade.slippageTolerance')}</span>
+                    <span className="font-medium text-gray-900">{slippage === 100 ? 'Unlimited' : `${slippage}%`}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">{t('trade.tradingFee')}</span>
+                    <span className="font-medium text-gray-900">
+                      {formatNumber(parseFloat(amountIn) * 0.004)} {isETHToToken ? t('common.eth') : selectedTokenData?.symbol}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">{t('trade.minReceived')}</span>
+                    <span className="font-medium text-gray-900">
+                      {slippage === 100 ? '0' : formatNumber(parseFloat(amountOut) * (100 - slippage) / 100)} {isETHToToken ? selectedTokenData?.symbol : t('common.eth')}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">{t('trade.slippageTolerance')}</span>
-                  <span className="font-medium text-gray-900">{slippage}%</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">{t('trade.tradingFee')}</span>
-                  <span className="font-medium text-gray-900">
-                    {formatNumber(parseFloat(amountIn) * 0.004)} {isETHToToken ? t('common.eth') : selectedTokenData?.symbol}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">{t('trade.minReceived')}</span>
-                  <span className="font-medium text-gray-900">
-                    {formatNumber(parseFloat(amountOut) * (100 - slippage) / 100)} {isETHToToken ? selectedTokenData?.symbol : t('common.eth')}
-                  </span>
-                </div>
-              </div>
+              </>
             )}
 
             <div>
               <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
-                {t('trade.slippageLabel', { percent: slippage })}
+                {t('trade.slippageLabel', { percent: slippage === 100 ? 'Unlimited' : slippage })}
               </label>
-              <div className="flex space-x-2">
+              <div className="grid grid-cols-5 gap-2">
                 {[0.5, 1, 2, 5].map((value) => (
                   <button
                     key={value}
                     onClick={() => setSlippage(value)}
-                    className={`flex-1 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors touch-manipulation ${
+                    className={`py-2 rounded-lg text-sm sm:text-base font-medium transition-colors touch-manipulation ${
                       slippage === value
                         ? 'bg-gray-900 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -283,7 +309,26 @@ export function Trade({ selectedToken }: TradeProps) {
                     {value}%
                   </button>
                 ))}
+                <button
+                  onClick={() => setSlippage(100)}
+                  className={`py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors touch-manipulation ${
+                    slippage === 100
+                      ? 'bg-orange-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                  disabled={isSwapping}
+                  title="No slippage limit - use with caution"
+                >
+                  Unlimited
+                </button>
               </div>
+              {slippage === 100 && (
+                <div className="mt-2 p-2 bg-orange-50 border border-orange-200 rounded-lg">
+                  <p className="text-xs text-orange-800">
+                    <span className="font-semibold">Warning:</span> Unlimited slippage may result in unfavorable trade prices.
+                  </p>
+                </div>
+              )}
             </div>
 
             <button

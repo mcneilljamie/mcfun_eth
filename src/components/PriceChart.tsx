@@ -15,6 +15,7 @@ export function PriceChart({ tokenAddress }: PriceChartProps) {
   const [timeframe, setTimeframe] = useState<'1H' | '24H' | '7D' | 'ALL'>('24H');
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
   const [tokenCreatedAt, setTokenCreatedAt] = useState<string | null>(null);
+  const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
 
   useEffect(() => {
     loadPriceHistory();
@@ -138,27 +139,28 @@ export function PriceChart({ tokenAddress }: PriceChartProps) {
 
   const pathData = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
 
-  const formatTimeSinceDeployment = (timestamp: string) => {
-    if (!tokenCreatedAt) return '';
-    const deployTime = new Date(tokenCreatedAt).getTime();
-    const snapshotTime = new Date(timestamp).getTime();
-    const diffMs = snapshotTime - deployTime;
-
-    const minutes = Math.floor(diffMs / 60000);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
-    const weeks = Math.floor(days / 7);
+  const formatAxisTimestamp = (timestamp: string) => {
+    const date = new Date(timestamp);
 
     if (timeframe === '1H') {
-      return `${minutes}m`;
+      return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
     } else if (timeframe === '24H') {
-      return `${hours}h`;
+      return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
     } else if (timeframe === '7D') {
-      return `${days}d`;
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     } else {
-      if (weeks > 0) return `${weeks}w`;
-      return `${days}d`;
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     }
+  };
+
+  const formatTooltipTimestamp = (timestamp: string) => {
+    const date = new Date(timestamp);
+    return date.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   };
 
   const yAxisLabels = 5;
@@ -204,8 +206,35 @@ export function PriceChart({ tokenAddress }: PriceChartProps) {
         </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <svg viewBox={`0 0 ${width} ${height}`} className="w-full">
+      <div className="overflow-x-auto relative">
+        <svg
+          viewBox={`0 0 ${width} ${height}`}
+          className="w-full"
+          onMouseMove={(e) => {
+            const svg = e.currentTarget;
+            const rect = svg.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * width;
+
+            if (x < paddingLeft || x > width - paddingRight) {
+              setHoveredPoint(null);
+              return;
+            }
+
+            let closestIndex = 0;
+            let closestDistance = Infinity;
+
+            points.forEach((point, index) => {
+              const distance = Math.abs(point.x - x);
+              if (distance < closestDistance) {
+                closestDistance = distance;
+                closestIndex = index;
+              }
+            });
+
+            setHoveredPoint(closestIndex);
+          }}
+          onMouseLeave={() => setHoveredPoint(null)}
+        >
           <defs>
             <linearGradient id="priceGradient" x1="0" x2="0" y1="0" y2="1">
               <stop offset="0%" stopColor="#111827" stopOpacity="0.2" />
@@ -226,17 +255,6 @@ export function PriceChart({ tokenAddress }: PriceChartProps) {
             strokeLinecap="round"
             strokeLinejoin="round"
           />
-
-          {points.map((point, index) => (
-            <circle
-              key={index}
-              cx={point.x}
-              cy={point.y}
-              r="3"
-              fill="#111827"
-              className="opacity-0 hover:opacity-100 transition-opacity"
-            />
-          ))}
 
           <line
             x1={paddingLeft}
@@ -283,7 +301,7 @@ export function PriceChart({ tokenAddress }: PriceChartProps) {
 
           {xAxisIndices.map((snapshotIndex, index) => {
             const point = points[snapshotIndex];
-            const label = formatTimeSinceDeployment(snapshots[snapshotIndex].created_at);
+            const label = formatAxisTimestamp(snapshots[snapshotIndex].created_at);
             return (
               <g key={`x-${index}`}>
                 <line
@@ -306,22 +324,54 @@ export function PriceChart({ tokenAddress }: PriceChartProps) {
               </g>
             );
           })}
-        </svg>
-      </div>
 
-      <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-gray-200">
-        <div>
-          <div className="text-sm text-gray-600">High</div>
-          <div className="font-semibold text-gray-900">{formatUSD(maxPrice, false)}</div>
-        </div>
-        <div>
-          <div className="text-sm text-gray-600">Low</div>
-          <div className="font-semibold text-gray-900">{formatUSD(minPrice, false)}</div>
-        </div>
-        <div>
-          <div className="text-sm text-gray-600">Data Points</div>
-          <div className="font-semibold text-gray-900">{snapshots.length}</div>
-        </div>
+          {hoveredPoint !== null && (
+            <g>
+              <line
+                x1={points[hoveredPoint].x}
+                y1={paddingTop}
+                x2={points[hoveredPoint].x}
+                y2={height - paddingBottom}
+                stroke="#111827"
+                strokeWidth="1"
+                strokeDasharray="4"
+                opacity="0.5"
+              />
+              <line
+                x1={paddingLeft}
+                y1={points[hoveredPoint].y}
+                x2={width - paddingRight}
+                y2={points[hoveredPoint].y}
+                stroke="#111827"
+                strokeWidth="1"
+                strokeDasharray="4"
+                opacity="0.5"
+              />
+              <circle
+                cx={points[hoveredPoint].x}
+                cy={points[hoveredPoint].y}
+                r="5"
+                fill="#111827"
+                stroke="white"
+                strokeWidth="2"
+              />
+            </g>
+          )}
+        </svg>
+
+        {hoveredPoint !== null && (
+          <div
+            className="absolute bg-gray-900 text-white px-3 py-2 rounded-lg text-sm shadow-lg pointer-events-none"
+            style={{
+              left: `${(points[hoveredPoint].x / width) * 100}%`,
+              top: `${(points[hoveredPoint].y / height) * 100}%`,
+              transform: 'translate(-50%, -120%)',
+            }}
+          >
+            <div className="font-semibold">{formatUSD(pricesUSD[hoveredPoint], false)}</div>
+            <div className="text-xs text-gray-300">{formatTooltipTimestamp(snapshots[hoveredPoint].created_at)}</div>
+          </div>
+        )}
       </div>
     </div>
   );

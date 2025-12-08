@@ -216,7 +216,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                         </td>
                         <td className="py-4 px-4">
                           <div className="font-semibold text-gray-900">
-                            {formatUSD(ethToUSD(token.current_eth_reserve || token.initial_liquidity_eth, ethPriceUSD), true)}
+                            {formatCurrency(token.current_eth_reserve || token.initial_liquidity_eth)}
                           </div>
                         </td>
                         <td className="py-4 px-4">
@@ -305,7 +305,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">{t('tokens.table.liquidity')}:</span>
                         <span className="font-semibold text-gray-900">
-                          {formatUSD(ethToUSD(token.current_eth_reserve || token.initial_liquidity_eth, ethPriceUSD), true)}
+                          {formatCurrency(token.current_eth_reserve || token.initial_liquidity_eth)}
                         </span>
                       </div>
 

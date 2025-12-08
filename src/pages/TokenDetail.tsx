@@ -228,10 +228,6 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
                 <span className="text-gray-600">Created</span>
                 <span className="font-semibold text-gray-900">{formatTimeAgo(token.created_at)}</span>
               </div>
-              <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-gray-600">Liquidity Locked</span>
-                <span className="font-semibold text-gray-900">{token.liquidity_percent}%</span>
-              </div>
               <div className="flex justify-between items-center py-2">
                 <span className="text-gray-600">Token Contract</span>
                 <a
@@ -261,10 +257,6 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
                 <span className="font-semibold text-gray-900">
                   {parseFloat(token.current_token_reserve?.toString() || '0').toLocaleString()} {token.symbol}
                 </span>
-              </div>
-              <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-gray-600">Trading Fee</span>
-                <span className="font-semibold text-gray-900">0.4%</span>
               </div>
               <div className="flex justify-between items-center py-2">
                 <span className="text-gray-600">AMM Contract</span>
