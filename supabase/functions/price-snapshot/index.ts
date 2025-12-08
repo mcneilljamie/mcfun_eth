@@ -14,6 +14,17 @@ const AMM_ABI = [
   "function getPrice() external view returns (uint256)"
 ];
 
+async function fetchEthPriceUSD(): Promise<number> {
+  try {
+    const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
+    const data = await response.json();
+    return data.ethereum?.usd || 3000;
+  } catch (error) {
+    console.error('Failed to fetch ETH price, using default:', error);
+    return 3000;
+  }
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, {
@@ -29,6 +40,8 @@ Deno.serve(async (req: Request) => {
 
     const supabase = createClient(supabaseUrl, supabaseKey);
     const provider = new ethers.JsonRpcProvider(rpcUrl);
+
+    const ethPriceUSD = await fetchEthPriceUSD();
 
     const { data: tokens, error: tokensError } = await supabase
       .from("tokens")
@@ -83,6 +96,7 @@ Deno.serve(async (req: Request) => {
             price_eth: priceFormatted,
             eth_reserve: ethReserveFormatted,
             token_reserve: tokenReserveFormatted,
+            eth_price_usd: ethPriceUSD,
             created_at: new Date().toISOString(),
           });
 

@@ -94,10 +94,15 @@ export function PriceChart({ tokenAddress }: PriceChartProps) {
   }
 
   const pricesETH = snapshots.map((s) => parseFloat(s.price_eth));
-  const pricesUSD = pricesETH.map(p => p * ethPriceUSD);
+  const pricesUSD = snapshots.map((snapshot, index) => {
+    const priceETH = pricesETH[index];
+    const historicalEthPrice = snapshot.eth_price_usd ? parseFloat(snapshot.eth_price_usd) : ethPriceUSD;
+    return priceETH * historicalEthPrice;
+  });
+
   const minPrice = Math.min(...pricesUSD);
   const maxPrice = Math.max(...pricesUSD);
-  const currentPrice = pricesUSD[pricesUSD.length - 1];
+  const currentPrice = pricesETH[pricesETH.length - 1] * ethPriceUSD;
   const firstPrice = pricesUSD[0];
   const priceChange = ((currentPrice - firstPrice) / firstPrice) * 100;
 

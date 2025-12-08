@@ -44,5 +44,6 @@ export interface PriceSnapshot {
   price_eth: string;
   eth_reserve: string;
   token_reserve: string;
+  eth_price_usd?: string;
   created_at: string;
 }
