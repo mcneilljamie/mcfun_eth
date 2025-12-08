@@ -1,7 +1,10 @@
+import { useState, useEffect } from 'react';
 import { useWeb3 } from '../lib/web3';
 import { formatAddress } from '../lib/utils';
 import { useTranslation } from 'react-i18next';
 import { LanguageSelector } from './LanguageSelector';
+import { fetchGasFees, type GasFees } from '../lib/gasFees';
+import { Fuel } from 'lucide-react';
 
 interface NavigationProps {
   currentPage: string;
@@ -11,6 +14,19 @@ interface NavigationProps {
 export function Navigation({ currentPage, onNavigate }: NavigationProps) {
   const { account, connect, disconnect, isConnecting } = useWeb3();
   const { t } = useTranslation();
+  const [gasFees, setGasFees] = useState<GasFees | null>(null);
+
+  useEffect(() => {
+    const loadGasFees = async () => {
+      const fees = await fetchGasFees();
+      setGasFees(fees);
+    };
+
+    loadGasFees();
+    const interval = setInterval(loadGasFees, 30000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <nav className="bg-white border-b border-gray-200">
@@ -72,6 +88,16 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
           </div>
 
           <div className="flex items-center gap-3">
+            {gasFees && (
+              <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-lg">
+                <Fuel className="w-4 h-4 text-gray-700" />
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="text-gray-600">
+                    {gasFees.standard} <span className="text-gray-500">Gwei</span>
+                  </span>
+                </div>
+              </div>
+            )}
             <LanguageSelector />
             {account ? (
               <button
