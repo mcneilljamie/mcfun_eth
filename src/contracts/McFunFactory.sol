@@ -3,6 +3,7 @@ pragma solidity ^0.8.20;
 
 interface IERC20 {
     function transfer(address to, uint256 value) external returns (bool);
+    function transferFrom(address from, address to, uint256 value) external returns (bool);
     function approve(address spender, uint256 value) external returns (bool);
     function balanceOf(address account) external view returns (uint256);
 }
@@ -12,6 +13,13 @@ interface IMcFunAMM {
 }
 
 contract McFunFactory {
+    error ReentrancyGuard();
+    error InvalidETHAmount();
+    error InvalidLiquidityPercent();
+    error InvalidNameOrSymbol();
+    error TokenCreationFailed();
+    error AMMCreationFailed();
+
     address public constant DEAD_ADDRESS = 0x000000000000000000000000000000000000dEaD;
     uint256 public constant MIN_LIQUIDITY_ETH = 0.1 ether;
     uint256 public constant MIN_LIQUIDITY_PERCENT = 50;
@@ -31,6 +39,15 @@ contract McFunFactory {
     TokenInfo[] public tokens;
     mapping(address => address) public tokenToAMM;
 
+    uint256 private locked = 1;
+
+    modifier nonReentrant() {
+        if (locked != 1) revert ReentrancyGuard();
+        locked = 2;
+        _;
+        locked = 1;
+    }
+
     event TokenLaunched(
         address indexed tokenAddress,
         address indexed ammAddress,
@@ -45,9 +62,10 @@ contract McFunFactory {
         string memory name,
         string memory symbol,
         uint256 liquidityPercent
-    ) external payable returns (address tokenAddress, address ammAddress) {
-        require(msg.value >= MIN_LIQUIDITY_ETH, "Minimum 0.1 ETH required");
-        require(liquidityPercent >= MIN_LIQUIDITY_PERCENT && liquidityPercent <= 100, "Liquidity must be 50-100%");
+    ) external payable nonReentrant returns (address tokenAddress, address ammAddress) {
+        if (msg.value < MIN_LIQUIDITY_ETH) revert InvalidETHAmount();
+        if (liquidityPercent < MIN_LIQUIDITY_PERCENT || liquidityPercent > 100) revert InvalidLiquidityPercent();
+        if (bytes(name).length == 0 || bytes(symbol).length == 0) revert InvalidNameOrSymbol();
 
         bytes memory tokenBytecode = abi.encodePacked(
             type(McFunToken).creationCode,
@@ -57,7 +75,7 @@ contract McFunFactory {
         assembly {
             tokenAddress := create(0, add(tokenBytecode, 0x20), mload(tokenBytecode))
         }
-        require(tokenAddress != address(0), "Token creation failed");
+        if (tokenAddress == address(0)) revert TokenCreationFailed();
 
         bytes memory ammBytecode = abi.encodePacked(
             type(McFunAMM).creationCode,
@@ -67,7 +85,7 @@ contract McFunFactory {
         assembly {
             ammAddress := create(0, add(ammBytecode, 0x20), mload(ammBytecode))
         }
-        require(ammAddress != address(0), "AMM creation failed");
+        if (ammAddress == address(0)) revert AMMCreationFailed();
 
         uint256 liquidityTokens = (TOTAL_SUPPLY * liquidityPercent) / 100;
         uint256 creatorTokens = TOTAL_SUPPLY - liquidityTokens;
@@ -111,6 +129,10 @@ contract McFunFactory {
 }
 
 contract McFunToken {
+    error ZeroAddress();
+    error InsufficientBalance();
+    error InsufficientAllowance();
+
     string public name;
     string public symbol;
     uint8 public constant decimals = 18;
@@ -131,7 +153,8 @@ contract McFunToken {
     }
 
     function transfer(address to, uint256 value) external returns (bool) {
-        require(balanceOf[msg.sender] >= value, "Insufficient balance");
+        if (to == address(0)) revert ZeroAddress();
+        if (balanceOf[msg.sender] < value) revert InsufficientBalance();
         balanceOf[msg.sender] -= value;
         balanceOf[to] += value;
         emit Transfer(msg.sender, to, value);
@@ -139,14 +162,16 @@ contract McFunToken {
     }
 
     function approve(address spender, uint256 value) external returns (bool) {
+        if (spender == address(0)) revert ZeroAddress();
         allowance[msg.sender][spender] = value;
         emit Approval(msg.sender, spender, value);
         return true;
     }
 
     function transferFrom(address from, address to, uint256 value) external returns (bool) {
-        require(balanceOf[from] >= value, "Insufficient balance");
-        require(allowance[from][msg.sender] >= value, "Insufficient allowance");
+        if (to == address(0)) revert ZeroAddress();
+        if (balanceOf[from] < value) revert InsufficientBalance();
+        if (allowance[from][msg.sender] < value) revert InsufficientAllowance();
         balanceOf[from] -= value;
         balanceOf[to] += value;
         allowance[from][msg.sender] -= value;
@@ -156,6 +181,12 @@ contract McFunToken {
 }
 
 contract McFunAMM {
+    error ZeroAddress();
+    error ZeroAmount();
+    error InsufficientLiquidity();
+    error SlippageExceeded();
+    error ReentrancyGuard();
+
     address public token;
     address public constant feeRecipient = 0x227D5F29bAb4Cec30f511169886b86fAeF61C6bc;
     uint256 public constant FEE_PERCENT = 4;
@@ -167,11 +198,21 @@ contract McFunAMM {
 
     mapping(address => uint256) public liquidity;
 
+    uint256 private locked = 1;
+
+    modifier nonReentrant() {
+        if (locked != 1) revert ReentrancyGuard();
+        locked = 2;
+        _;
+        locked = 1;
+    }
+
     event LiquidityAdded(address indexed provider, uint256 ethAmount, uint256 tokenAmount, uint256 liquidityMinted);
     event LiquidityRemoved(address indexed provider, uint256 ethAmount, uint256 tokenAmount, uint256 liquidityBurned);
     event Swap(address indexed user, uint256 ethIn, uint256 tokenIn, uint256 ethOut, uint256 tokenOut);
 
     constructor(address _token) {
+        if (_token == address(0)) revert ZeroAddress();
         token = _token;
     }
 
@@ -180,14 +221,15 @@ contract McFunAMM {
     }
 
     function transfer(address to, uint256 value) external returns (bool) {
-        require(liquidity[msg.sender] >= value, "Insufficient balance");
+        if (to == address(0)) revert ZeroAddress();
+        if (liquidity[msg.sender] < value) revert InsufficientLiquidity();
         liquidity[msg.sender] -= value;
         liquidity[to] += value;
         return true;
     }
 
-    function addLiquidity(uint256 tokenAmount) external payable returns (uint256 liquidityMinted) {
-        require(msg.value > 0 && tokenAmount > 0, "Invalid amounts");
+    function addLiquidity(uint256 tokenAmount) external payable nonReentrant returns (uint256 liquidityMinted) {
+        if (msg.value == 0 || tokenAmount == 0) revert ZeroAmount();
 
         if (totalLiquidity == 0) {
             liquidityMinted = msg.value;
@@ -212,8 +254,9 @@ contract McFunAMM {
         return liquidityMinted;
     }
 
-    function removeLiquidity(uint256 liquidityAmount) external returns (uint256 ethAmount, uint256 tokenAmount) {
-        require(liquidity[msg.sender] >= liquidityAmount, "Insufficient liquidity");
+    function removeLiquidity(uint256 liquidityAmount) external nonReentrant returns (uint256 ethAmount, uint256 tokenAmount) {
+        if (liquidityAmount == 0) revert ZeroAmount();
+        if (liquidity[msg.sender] < liquidityAmount) revert InsufficientLiquidity();
 
         ethAmount = (liquidityAmount * reserveETH) / totalLiquidity;
         tokenAmount = (liquidityAmount * reserveToken) / totalLiquidity;
@@ -231,15 +274,16 @@ contract McFunAMM {
         return (ethAmount, tokenAmount);
     }
 
-    function swapETHForToken(uint256 minTokenOut) external payable returns (uint256 tokenOut) {
-        require(msg.value > 0, "Invalid ETH amount");
+    function swapETHForToken(uint256 minTokenOut) external payable nonReentrant returns (uint256 tokenOut) {
+        if (msg.value == 0) revert ZeroAmount();
+        if (reserveToken == 0 || reserveETH == 0) revert InsufficientLiquidity();
 
         uint256 fee = (msg.value * FEE_PERCENT) / FEE_DENOMINATOR;
         uint256 ethAfterFee = msg.value - fee;
 
         tokenOut = (ethAfterFee * reserveToken) / (reserveETH + ethAfterFee);
-        require(tokenOut >= minTokenOut, "Slippage too high");
-        require(tokenOut <= reserveToken, "Insufficient liquidity");
+        if (tokenOut < minTokenOut) revert SlippageExceeded();
+        if (tokenOut > reserveToken) revert InsufficientLiquidity();
 
         reserveETH += ethAfterFee;
         reserveToken -= tokenOut;
@@ -252,16 +296,18 @@ contract McFunAMM {
         return tokenOut;
     }
 
-    function swapTokenForETH(uint256 tokenIn, uint256 minETHOut) external returns (uint256 ethOut) {
-        require(tokenIn > 0, "Invalid token amount");
+    function swapTokenForETH(uint256 tokenIn, uint256 minETHOut) external nonReentrant returns (uint256 ethOut) {
+        if (tokenIn == 0) revert ZeroAmount();
+        if (reserveToken == 0 || reserveETH == 0) revert InsufficientLiquidity();
+
         IERC20(token).transferFrom(msg.sender, address(this), tokenIn);
 
         uint256 ethBeforeFee = (tokenIn * reserveETH) / (reserveToken + tokenIn);
         uint256 fee = (ethBeforeFee * FEE_PERCENT) / FEE_DENOMINATOR;
         ethOut = ethBeforeFee - fee;
 
-        require(ethOut >= minETHOut, "Slippage too high");
-        require(ethOut <= reserveETH, "Insufficient liquidity");
+        if (ethOut < minETHOut) revert SlippageExceeded();
+        if (ethOut > reserveETH) revert InsufficientLiquidity();
 
         reserveToken += tokenIn;
         reserveETH -= ethBeforeFee;
@@ -290,11 +336,4 @@ contract McFunAMM {
         uint256 ethBeforeFee = (tokenIn * reserveETH) / (reserveToken + tokenIn);
         return ethBeforeFee - ((ethBeforeFee * FEE_PERCENT) / FEE_DENOMINATOR);
     }
-}
-
-interface IERC20 {
-    function transfer(address to, uint256 value) external returns (bool);
-    function transferFrom(address from, address to, uint256 value) external returns (bool);
-    function balanceOf(address account) external view returns (uint256);
-    function approve(address spender, uint256 value) external returns (bool);
 }
