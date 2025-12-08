@@ -98,25 +98,157 @@ The database schema has already been created in Supabase with the following tabl
    - AWS S3 + CloudFront
    - IPFS
 
-## Backend Services (Optional)
+## Backend Services
 
-For the platform to be fully functional, you'll need to implement backend services to:
+The platform includes two Supabase Edge Functions for indexing blockchain data:
 
-1. **Event Indexer** - Listen for blockchain events and update the database
-   - Listen for `TokenLaunched` events from JammFactory
-   - Listen for `Swap` events from all AMM contracts
-   - Update `tokens`, `swaps`, and `price_snapshots` tables
+### 1. Event Indexer (`event-indexer`)
 
-2. **Price Snapshot Service** - Periodically capture price data
-   - Run every 5-15 minutes
-   - Query AMM reserves and calculate prices
-   - Store in `price_snapshots` table
+This function monitors blockchain events and populates the database with token launches and swap data.
 
-These can be implemented as:
-- Supabase Edge Functions
-- AWS Lambda functions
-- Separate Node.js services
-- Subgraph (The Graph Protocol)
+**Functionality:**
+- Scans blockchain blocks for `TokenLaunched` events from JammFactory
+- Scans for `Swap` events from all known AMM contracts
+- Inserts new tokens into the `tokens` table
+- Records swaps in the `swaps` table
+- Updates token reserves and volume
+
+**Usage:**
+
+Call the function via HTTP POST:
+
+```bash
+curl -X POST "https://YOUR_PROJECT.supabase.co/functions/v1/event-indexer" \
+  -H "Authorization: Bearer YOUR_ANON_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fromBlock": 12345678,
+    "toBlock": 12345788,
+    "indexTokenLaunches": true,
+    "indexSwaps": true
+  }'
+```
+
+**Parameters:**
+- `fromBlock` (optional): Starting block number (defaults to current block - 1000)
+- `toBlock` (optional): Ending block number (defaults to current block)
+- `indexTokenLaunches` (optional): Whether to index token launches (default: true)
+- `indexSwaps` (optional): Whether to index swaps (default: true)
+
+**Automation:**
+
+Set up a cron job or scheduled task to call this function periodically:
+
+```bash
+# Example: Run every 5 minutes to index recent blocks
+*/5 * * * * curl -X POST "https://YOUR_PROJECT.supabase.co/functions/v1/event-indexer" \
+  -H "Authorization: Bearer YOUR_ANON_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"indexTokenLaunches": true, "indexSwaps": true}'
+```
+
+Or use a service like:
+- GitHub Actions with scheduled workflows
+- Render.com cron jobs
+- EasyCron
+- Vercel Cron Jobs
+
+### 2. Price Snapshot Service (`price-snapshot`)
+
+This function captures current prices from all tokens for historical chart data.
+
+**Functionality:**
+- Queries all tokens from the database
+- Fetches current reserves and price from each AMM contract
+- Stores price snapshots in the `price_snapshots` table
+- Updates current reserves in the `tokens` table
+
+**Usage:**
+
+Call the function via HTTP POST:
+
+```bash
+curl -X POST "https://YOUR_PROJECT.supabase.co/functions/v1/price-snapshot" \
+  -H "Authorization: Bearer YOUR_ANON_KEY"
+```
+
+**Automation:**
+
+Set up a cron job to call this function every 1-5 minutes:
+
+```bash
+# Example: Run every 2 minutes to capture price history
+*/2 * * * * curl -X POST "https://YOUR_PROJECT.supabase.co/functions/v1/price-snapshot" \
+  -H "Authorization: Bearer YOUR_ANON_KEY"
+```
+
+**Recommended Schedule:**
+- Active trading periods: Every 1 minute
+- Normal periods: Every 2-5 minutes
+- Low activity: Every 10-15 minutes
+
+### Environment Variables
+
+Both edge functions require the following environment variables (automatically configured in Supabase):
+- `SUPABASE_URL` - Your Supabase project URL
+- `SUPABASE_SERVICE_ROLE_KEY` - Service role key for database writes
+- `ETHEREUM_RPC_URL` - Ethereum RPC endpoint (optional, defaults to public RPC)
+
+**Setting Custom RPC URL:**
+
+If you want to use your own Infura/Alchemy endpoint:
+
+1. Go to Supabase Dashboard > Project Settings > Edge Functions
+2. Add secret: `ETHEREUM_RPC_URL` = `https://eth-mainnet.g.alchemy.com/v2/YOUR-API-KEY`
+
+### Monitoring
+
+Both functions return detailed JSON responses:
+
+**Event Indexer Response:**
+```json
+{
+  "tokensIndexed": 5,
+  "swapsIndexed": 127,
+  "errors": [],
+  "fromBlock": 12345678,
+  "toBlock": 12345788
+}
+```
+
+**Price Snapshot Response:**
+```json
+{
+  "snapshotsCreated": 42,
+  "errors": [],
+  "timestamp": "2024-12-08T12:34:56Z"
+}
+```
+
+Monitor the `errors` array for any issues. Set up alerts if errors occur frequently.
+
+### Initial Data Population
+
+After deploying contracts, run the event indexer with a specific block range to populate historical data:
+
+```bash
+# Index from contract deployment block to current
+curl -X POST "https://YOUR_PROJECT.supabase.co/functions/v1/event-indexer" \
+  -H "Authorization: Bearer YOUR_ANON_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fromBlock": DEPLOYMENT_BLOCK_NUMBER,
+    "indexTokenLaunches": true,
+    "indexSwaps": true
+  }'
+```
+
+Then immediately run the price snapshot service to populate initial chart data:
+
+```bash
+curl -X POST "https://YOUR_PROJECT.supabase.co/functions/v1/price-snapshot" \
+  -H "Authorization: Bearer YOUR_ANON_KEY"
+```
 
 ## Testing
 
