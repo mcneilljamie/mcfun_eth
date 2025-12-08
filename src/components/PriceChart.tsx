@@ -131,9 +131,14 @@ export function PriceChart({ tokenAddress }: PriceChartProps) {
   const paddingBottom = 60;
 
   const points = snapshots.map((snapshot, index) => {
-    const x = paddingLeft + (index / (snapshots.length - 1)) * (width - paddingLeft - paddingRight);
+    const x = snapshots.length > 1
+      ? paddingLeft + (index / (snapshots.length - 1)) * (width - paddingLeft - paddingRight)
+      : paddingLeft + (width - paddingLeft - paddingRight) / 2;
     const priceUSD = pricesUSD[index];
-    const y = paddingTop + ((maxPrice - priceUSD) / (maxPrice - minPrice)) * (height - paddingTop - paddingBottom);
+    const priceRange = maxPrice - minPrice;
+    const y = priceRange > 0
+      ? paddingTop + ((maxPrice - priceUSD) / priceRange) * (height - paddingTop - paddingBottom)
+      : paddingTop + (height - paddingTop - paddingBottom) / 2;
     return { x, y, timestamp: snapshot.created_at };
   });
 
@@ -170,6 +175,7 @@ export function PriceChart({ tokenAddress }: PriceChartProps) {
 
   const xAxisLabels = Math.min(6, snapshots.length);
   const xAxisIndices = Array.from({ length: xAxisLabels }, (_, i) => {
+    if (xAxisLabels === 1) return 0;
     return Math.floor((i / (xAxisLabels - 1)) * (snapshots.length - 1));
   });
 
