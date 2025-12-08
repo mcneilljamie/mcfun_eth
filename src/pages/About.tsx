@@ -320,7 +320,7 @@ export function About() {
               href="https://jamiemcneill.substack.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-800 font-semibold underline"
+              className="text-gray-700 hover:text-gray-900 font-semibold underline"
             >
               Jamie McNeill
             </a>.
