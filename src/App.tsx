@@ -5,14 +5,16 @@ import { Home } from './pages/Home';
 import { Launch } from './pages/Launch';
 import { Trade } from './pages/Trade';
 import { Tokens } from './pages/Tokens';
+import { TokenDetail } from './pages/TokenDetail';
 import { About } from './pages/About';
 import { Token } from './lib/supabase';
 
-type Page = 'home' | 'launch' | 'trade' | 'tokens' | 'about';
+type Page = 'home' | 'launch' | 'trade' | 'tokens' | 'token-detail' | 'about';
 
 function App() {
   const [currentPage, setCurrentPage] = useState<Page>('home');
   const [selectedToken, setSelectedToken] = useState<Token | undefined>(undefined);
+  const [selectedTokenAddress, setSelectedTokenAddress] = useState<string | undefined>(undefined);
 
   const handleNavigate = (page: string) => {
     setCurrentPage(page as Page);
@@ -21,6 +23,15 @@ function App() {
   const handleSelectToken = (token: Token) => {
     setSelectedToken(token);
     setCurrentPage('trade');
+  };
+
+  const handleViewTokenDetail = (tokenAddress: string) => {
+    setSelectedTokenAddress(tokenAddress);
+    setCurrentPage('token-detail');
+  };
+
+  const handleBackToTokens = () => {
+    setCurrentPage('tokens');
   };
 
   return (
@@ -35,7 +46,19 @@ function App() {
           {currentPage === 'home' && <Home onNavigate={handleNavigate} />}
           {currentPage === 'launch' && <Launch onNavigate={handleNavigate} />}
           {currentPage === 'trade' && <Trade selectedToken={selectedToken} />}
-          {currentPage === 'tokens' && <Tokens onSelectToken={handleSelectToken} />}
+          {currentPage === 'tokens' && (
+            <Tokens
+              onSelectToken={handleSelectToken}
+              onViewToken={handleViewTokenDetail}
+            />
+          )}
+          {currentPage === 'token-detail' && selectedTokenAddress && (
+            <TokenDetail
+              tokenAddress={selectedTokenAddress}
+              onBack={handleBackToTokens}
+              onTrade={handleSelectToken}
+            />
+          )}
           {currentPage === 'about' && <About />}
         </div>
       </div>

@@ -7,9 +7,10 @@ import { getEthPriceUSD } from '../lib/ethPrice';
 
 interface TokensProps {
   onSelectToken: (token: Token) => void;
+  onViewToken: (tokenAddress: string) => void;
 }
 
-export function Tokens({ onSelectToken }: TokensProps) {
+export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   const { t } = useTranslation();
   const [tokens, setTokens] = useState<Token[]>([]);
   const [filteredTokens, setFilteredTokens] = useState<Token[]>([]);
@@ -153,7 +154,8 @@ export function Tokens({ onSelectToken }: TokensProps) {
                     {filteredTokens.map((token, index) => (
                       <tr
                         key={token.id}
-                        className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                        className="border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer"
+                        onClick={() => onViewToken(token.token_address)}
                       >
                         <td className="py-4 px-4">
                           <div className="flex items-center space-x-2">
@@ -229,7 +231,10 @@ export function Tokens({ onSelectToken }: TokensProps) {
                         </td>
                         <td className="py-4 px-4">
                           <button
-                            onClick={() => onSelectToken(token)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onSelectToken(token);
+                            }}
                             className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors flex items-center space-x-2"
                           >
                             <TrendingUp className="w-4 h-4" />
@@ -247,7 +252,8 @@ export function Tokens({ onSelectToken }: TokensProps) {
                 {filteredTokens.map((token, index) => (
                   <div
                     key={token.id}
-                    className="bg-gray-50 rounded-lg p-4 border border-gray-200"
+                    className="bg-gray-50 rounded-lg p-4 border border-gray-200 cursor-pointer hover:border-gray-300 transition-colors"
+                    onClick={() => onViewToken(token.token_address)}
                   >
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center space-x-2">
@@ -265,7 +271,10 @@ export function Tokens({ onSelectToken }: TokensProps) {
                         <span className="font-medium text-gray-500 text-sm">#{index + 1}</span>
                       </div>
                       <button
-                        onClick={() => onSelectToken(token)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onSelectToken(token);
+                        }}
                         className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors flex items-center space-x-2"
                       >
                         <TrendingUp className="w-4 h-4" />
