@@ -253,7 +253,7 @@
     "tokenInformation": "토큰 정보",
     "totalSupply": "총 공급량",
     "creator": "생성자",
-    "created": "생성일",
+    "created": "출시 후 일수",
     "tokenContract": "토큰 컨트랙트",
     "poolInformation": "풀 정보",
     "ethReserve": "ETH 보유량",

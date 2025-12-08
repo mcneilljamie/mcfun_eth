@@ -253,7 +253,7 @@
     "tokenInformation": "Informations sur le Token",
     "totalSupply": "Approvisionnement Total",
     "creator": "Créateur",
-    "created": "Créé",
+    "created": "Jours depuis le lancement",
     "tokenContract": "Contrat du Token",
     "poolInformation": "Informations sur le Pool",
     "ethReserve": "Réserve ETH",

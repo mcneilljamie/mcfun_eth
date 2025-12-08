@@ -253,7 +253,7 @@
     "tokenInformation": "トークン情報",
     "totalSupply": "総供給量",
     "creator": "作成者",
-    "created": "作成日時",
+    "created": "ローンチからの日数",
     "tokenContract": "トークンコントラクト",
     "poolInformation": "プール情報",
     "ethReserve": "ETH準備金",

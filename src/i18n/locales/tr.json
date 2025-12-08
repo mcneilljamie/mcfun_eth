@@ -253,7 +253,7 @@
     "tokenInformation": "Token Bilgisi",
     "totalSupply": "Toplam Arz",
     "creator": "Oluşturan",
-    "created": "Oluşturulma",
+    "created": "Başlatmadan bu yana gün",
     "tokenContract": "Token Sözleşmesi",
     "poolInformation": "Havuz Bilgisi",
     "ethReserve": "ETH Rezervi",

@@ -255,7 +255,7 @@
     "tokenInformation": "Token Information",
     "totalSupply": "Total Supply",
     "creator": "Creator",
-    "created": "Created",
+    "created": "Days since launch",
     "tokenContract": "Token Contract",
     "poolInformation": "Pool Information",
     "ethReserve": "ETH Reserve",

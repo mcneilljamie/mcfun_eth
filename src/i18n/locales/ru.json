@@ -253,7 +253,7 @@
     "tokenInformation": "Информация о токене",
     "totalSupply": "Общее предложение",
     "creator": "Создатель",
-    "created": "Создано",
+    "created": "Дней с момента запуска",
     "tokenContract": "Контракт токена",
     "poolInformation": "Информация о пуле",
     "ethReserve": "Резерв ETH",
