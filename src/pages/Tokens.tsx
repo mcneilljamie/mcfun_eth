@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Trophy, Search, TrendingUp, Copy, CheckCircle, ExternalLink } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { supabase, Token } from '../lib/supabase';
-import { formatCurrency, formatAddress, formatTimeAgo, formatUSD, ethToUSD } from '../lib/utils';
+import { formatCurrency, formatAddress, formatTimeAgo, formatUSD } from '../lib/utils';
 import { getEthPriceUSD } from '../lib/ethPrice';
 
 interface TokensProps {
@@ -232,7 +232,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                         </td>
                         <td className="py-4 px-4">
                           <div className="font-medium text-gray-900">
-                            {formatUSD(ethToUSD(token.total_volume_eth, ethPriceUSD), true)}
+                            {formatCurrency(token.total_volume_eth)}
                           </div>
                         </td>
                         <td className="py-4 px-4">
@@ -323,7 +323,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">{t('tokens.table.allTimeVolume')}:</span>
                         <span className="font-medium text-gray-900">
-                          {formatUSD(ethToUSD(token.total_volume_eth, ethPriceUSD), true)}
+                          {formatCurrency(token.total_volume_eth)}
                         </span>
                       </div>
 

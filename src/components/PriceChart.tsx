@@ -196,7 +196,7 @@ export function PriceChart({ tokenAddress }: PriceChartProps) {
         </div>
 
         <div className="flex space-x-2">
-          {(['24H', '7D', 'ALL'] as const).map((tf) => (
+          {(['7D', '24H', 'ALL'] as const).map((tf) => (
             <button
               key={tf}
               onClick={() => setTimeframe(tf)}

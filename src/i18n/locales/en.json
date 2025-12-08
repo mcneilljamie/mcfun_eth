@@ -127,8 +127,7 @@
     "loading": "Loading tokens...",
     "noTokens": "No tokens launched yet",
     "noResults": "No tokens found matching your search",
-    "showing": "Showing {{count}} token",
-    "showing_plural": "Showing {{count}} tokens",
+    "showing": "Showing {{count}} tokens",
     "table": {
       "rank": "#",
       "token": "Token",

@@ -150,6 +150,18 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
                 >
                   <ExternalLink className="w-4 h-4" />
                 </a>
+                {token.website && (
+                  <a
+                    href={token.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors flex items-center space-x-1"
+                    title="Visit Website"
+                  >
+                    <ExternalLink className="w-3 h-3" />
+                    <span>Website</span>
+                  </a>
+                )}
               </div>
             </div>
 
@@ -193,10 +205,10 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="text-sm text-gray-600 mb-1">{t('tokenDetail.allTimeVolume')}</div>
               <div className="text-xl sm:text-2xl font-bold text-gray-900">
-                {formatUSD(ethToUSD(token.total_volume_eth, ethPriceUSD), true)}
+                {formatCurrency(token.total_volume_eth)}
               </div>
               <div className="text-xs text-gray-500 mt-1">
-                {formatCurrency(token.total_volume_eth)}
+                {formatUSD(ethToUSD(token.total_volume_eth, ethPriceUSD), true)}
               </div>
             </div>
           </div>

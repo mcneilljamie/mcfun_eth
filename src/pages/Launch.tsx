@@ -17,6 +17,7 @@ export function Launch({ onNavigate }: LaunchProps) {
 
   const [name, setName] = useState('');
   const [symbol, setSymbol] = useState('');
+  const [website, setWebsite] = useState('');
   const [liquidityPercent, setLiquidityPercent] = useState(RECOMMENDED_LIQUIDITY_PERCENT);
   const [ethAmount, setEthAmount] = useState(MIN_LIQUIDITY_ETH);
 
@@ -67,6 +68,14 @@ export function Launch({ onNavigate }: LaunchProps) {
         ethAmount,
       });
 
+      if (website.trim()) {
+        const { supabase } = await import('../lib/supabase');
+        await supabase
+          .from('tokens')
+          .update({ website: website.trim() })
+          .eq('token_address', result.tokenAddress.toLowerCase());
+      }
+
       setSuccess({
         ...result,
         tokenName: name.trim(),
@@ -74,6 +83,7 @@ export function Launch({ onNavigate }: LaunchProps) {
       });
       setName('');
       setSymbol('');
+      setWebsite('');
       setLiquidityPercent(RECOMMENDED_LIQUIDITY_PERCENT);
       setEthAmount(MIN_LIQUIDITY_ETH);
     } catch (err: any) {
@@ -142,6 +152,20 @@ export function Launch({ onNavigate }: LaunchProps) {
                 onChange={(e) => setSymbol(e.target.value.toUpperCase())}
                 placeholder={t('launch.form.tokenSymbolPlaceholder')}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent uppercase"
+                disabled={isLaunching}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Website <span className="text-gray-400 font-normal">(Optional)</span>
+              </label>
+              <input
+                type="url"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
+                placeholder="https://yourtoken.com"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                 disabled={isLaunching}
               />
             </div>
