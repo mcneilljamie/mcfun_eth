@@ -254,6 +254,7 @@
     "totalSupply": "Toplam Arz",
     "creator": "Oluşturan",
     "created": "Başlatmadan bu yana gün",
+    "website": "Web Sitesi",
     "tokenContract": "Token Sözleşmesi",
     "poolInformation": "Havuz Bilgisi",
     "ethReserve": "ETH Rezervi",

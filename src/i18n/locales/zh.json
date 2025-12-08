@@ -254,6 +254,7 @@
     "totalSupply": "总供应量",
     "creator": "创建者",
     "created": "发布天数",
+    "website": "网站",
     "tokenContract": "代币合约",
     "poolInformation": "池信息",
     "ethReserve": "ETH储备",

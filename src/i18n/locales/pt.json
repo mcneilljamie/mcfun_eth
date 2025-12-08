@@ -254,6 +254,7 @@
     "totalSupply": "Fornecimento Total",
     "creator": "Criador",
     "created": "Dias desde o lançamento",
+    "website": "Site",
     "tokenContract": "Contrato do Token",
     "poolInformation": "Informações do Pool",
     "ethReserve": "Reserva ETH",

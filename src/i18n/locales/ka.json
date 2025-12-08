@@ -254,6 +254,7 @@
     "totalSupply": "მთლიანი მიწოდება",
     "creator": "შემქმნელი",
     "created": "დღეები გაშვებიდან",
+    "website": "ვებსაიტი",
     "tokenContract": "ტოკენის კონტრაქტი",
     "poolInformation": "პულის ინფორმაცია",
     "ethReserve": "ETH რეზერვი",

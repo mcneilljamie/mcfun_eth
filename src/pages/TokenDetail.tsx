@@ -238,6 +238,20 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
                 <span className="text-gray-600">{t('tokenDetail.created')}</span>
                 <span className="font-semibold text-gray-900">{formatTimeAgo(token.created_at)}</span>
               </div>
+              {token.website && (
+                <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                  <span className="text-gray-600">{t('tokenDetail.website')}</span>
+                  <a
+                    href={token.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center space-x-2 text-gray-900 hover:text-gray-700 transition-colors"
+                  >
+                    <span className="text-sm truncate max-w-[200px]">{token.website.replace(/^https?:\/\//, '')}</span>
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                </div>
+              )}
               <div className="flex justify-between items-center py-2">
                 <span className="text-gray-600">{t('tokenDetail.tokenContract')}</span>
                 <a

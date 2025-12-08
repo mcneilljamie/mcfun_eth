@@ -254,6 +254,7 @@
     "totalSupply": "Total Pasokan",
     "creator": "Pembuat",
     "created": "Hari sejak peluncuran",
+    "website": "Situs Web",
     "tokenContract": "Kontrak Token",
     "poolInformation": "Informasi Pool",
     "ethReserve": "Cadangan ETH",

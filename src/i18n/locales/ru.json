@@ -254,6 +254,7 @@
     "totalSupply": "Общее предложение",
     "creator": "Создатель",
     "created": "Дней с момента запуска",
+    "website": "Веб-сайт",
     "tokenContract": "Контракт токена",
     "poolInformation": "Информация о пуле",
     "ethReserve": "Резерв ETH",

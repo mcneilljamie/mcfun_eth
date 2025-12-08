@@ -254,6 +254,7 @@
     "totalSupply": "الإمداد الكلي",
     "creator": "المنشئ",
     "created": "أيام منذ الإطلاق",
+    "website": "الموقع الإلكتروني",
     "tokenContract": "عقد الرمز",
     "poolInformation": "معلومات المجمع",
     "ethReserve": "احتياطي ETH",

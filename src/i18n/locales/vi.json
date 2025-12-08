@@ -254,6 +254,7 @@
     "totalSupply": "Tổng cung",
     "creator": "Người tạo",
     "created": "Số ngày kể từ khi ra mắt",
+    "website": "Trang Web",
     "tokenContract": "Hợp đồng Token",
     "poolInformation": "Thông tin Pool",
     "ethReserve": "Dự trữ ETH",
