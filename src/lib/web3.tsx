@@ -8,7 +8,7 @@ interface Web3ContextType {
   chainId: number | null;
   isConnecting: boolean;
   error: string | null;
-  connect: () => Promise<void>;
+  connect: (walletType?: 'metamask' | 'rabby' | 'phantom') => Promise<void>;
   disconnect: () => void;
   switchNetwork: (targetChainId: number) => Promise<void>;
 }
@@ -25,16 +25,32 @@ export function Web3Provider({ children }: { children: ReactNode }) {
   const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const connect = async () => {
+  const connect = async (walletType?: 'metamask' | 'rabby' | 'phantom') => {
     try {
       setIsConnecting(true);
       setError(null);
 
-      if (!window.ethereum) {
-        throw new Error('Please install MetaMask or another Web3 wallet');
+      let provider: any = null;
+
+      if (walletType === 'rabby' && window.rabby) {
+        provider = window.rabby;
+      } else if (walletType === 'phantom' && window.phantom?.ethereum) {
+        provider = window.phantom.ethereum;
+      } else if (walletType === 'metamask' && window.ethereum) {
+        if (window.ethereum.isMetaMask && !window.ethereum.isRabby) {
+          provider = window.ethereum;
+        } else {
+          throw new Error('MetaMask not detected. Please install MetaMask extension.');
+        }
+      } else if (!walletType && window.ethereum) {
+        provider = window.ethereum;
       }
 
-      const newProvider = new BrowserProvider(window.ethereum);
+      if (!provider) {
+        throw new Error('Please install a Web3 wallet');
+      }
+
+      const newProvider = new BrowserProvider(provider);
       const accounts = await newProvider.send('eth_requestAccounts', []);
       const newSigner = await newProvider.getSigner();
       const network = await newProvider.getNetwork();
@@ -83,26 +99,33 @@ export function Web3Provider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const attemptReconnect = async () => {
       const wasConnected = localStorage.getItem(STORAGE_KEY);
-      if (wasConnected && window.ethereum) {
-        try {
-          const newProvider = new BrowserProvider(window.ethereum);
-          const accounts = await newProvider.send('eth_accounts', []);
+      if (wasConnected) {
+        const providers = [
+          window.rabby,
+          window.phantom?.ethereum,
+          window.ethereum,
+        ].filter(Boolean);
 
-          if (accounts.length > 0) {
-            const newSigner = await newProvider.getSigner();
-            const network = await newProvider.getNetwork();
+        for (const provider of providers) {
+          try {
+            const newProvider = new BrowserProvider(provider);
+            const accounts = await newProvider.send('eth_accounts', []);
 
-            setProvider(newProvider);
-            setSigner(newSigner);
-            setAccount(accounts[0]);
-            setChainId(Number(network.chainId));
-          } else {
-            localStorage.removeItem(STORAGE_KEY);
+            if (accounts.length > 0) {
+              const newSigner = await newProvider.getSigner();
+              const network = await newProvider.getNetwork();
+
+              setProvider(newProvider);
+              setSigner(newSigner);
+              setAccount(accounts[0]);
+              setChainId(Number(network.chainId));
+              return;
+            }
+          } catch (err) {
+            continue;
           }
-        } catch (err) {
-          console.error('Failed to reconnect:', err);
-          localStorage.removeItem(STORAGE_KEY);
         }
+        localStorage.removeItem(STORAGE_KEY);
       }
     };
 
@@ -163,5 +186,9 @@ export function useWeb3() {
 declare global {
   interface Window {
     ethereum?: any;
+    rabby?: any;
+    phantom?: {
+      ethereum?: any;
+    };
   }
 }

@@ -17,9 +17,9 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
   const [showWalletModal, setShowWalletModal] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
-  const handleConnect = async () => {
+  const handleConnect = async (walletType?: 'metamask' | 'rabby' | 'phantom') => {
     try {
-      await connect();
+      await connect(walletType);
       setToast({ message: t('wallet.connected'), type: 'success' });
     } catch (err) {
       setToast({

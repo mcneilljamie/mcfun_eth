@@ -266,7 +266,9 @@
   },
   "wallet": {
     "connectWallet": "Connect Your Wallet",
-    "connectToMetaMask": "Connect to MetaMask",
+    "connectToMetaMask": "Most popular Ethereum wallet",
+    "connectToRabby": "Multi-chain wallet for DeFi",
+    "connectToPhantom": "Fast & secure Web3 wallet",
     "byConnecting": "By connecting your wallet, you agree to our Terms of Service",
     "connected": "Wallet connected successfully!",
     "connectionFailed": "Failed to connect wallet",
@@ -275,6 +277,8 @@
     "copyAddress": "Copy Address",
     "copied": "Address Copied!",
     "viewExplorer": "View on Explorer",
-    "disconnect": "Disconnect"
+    "disconnect": "Disconnect",
+    "notInstalled": "Not installed - Click to download",
+    "install": "Install"
   }
 }
