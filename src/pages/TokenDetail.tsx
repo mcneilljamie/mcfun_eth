@@ -87,7 +87,7 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center py-12">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-            <p className="mt-4 text-gray-600">Loading token...</p>
+            <p className="mt-4 text-gray-600">{t('tokenDetail.loadingToken')}</p>
           </div>
         </div>
       </div>
@@ -103,10 +103,10 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
             className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors mb-6"
           >
             <ArrowLeft className="w-5 h-5" />
-            <span>Back to Tokens</span>
+            <span>{t('tokenDetail.backToTokens')}</span>
           </button>
           <div className="bg-white rounded-xl shadow-lg p-8 text-center">
-            <p className="text-gray-600">Token not found</p>
+            <p className="text-gray-600">{t('tokenDetail.tokenNotFound')}</p>
           </div>
         </div>
       </div>
@@ -121,7 +121,7 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
           className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors mb-6"
         >
           <ArrowLeft className="w-5 h-5" />
-          <span>Back to Tokens</span>
+          <span>{t('tokenDetail.backToTokens')}</span>
         </button>
 
         <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8 mb-6">
@@ -146,7 +146,7 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-600 hover:text-gray-900 transition-colors"
-                  title="View on Etherscan"
+                  title={t('tokenDetail.viewOnEtherscan')}
                 >
                   <ExternalLink className="w-4 h-4" />
                 </a>
@@ -158,13 +158,13 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
               className="bg-gray-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors flex items-center space-x-2"
             >
               <TrendingUp className="w-5 h-5" />
-              <span>Trade</span>
+              <span>{t('tokenDetail.trade')}</span>
             </button>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
             <div className="bg-gray-50 rounded-lg p-4">
-              <div className="text-sm text-gray-600 mb-1">Price</div>
+              <div className="text-sm text-gray-600 mb-1">{t('tokenDetail.price')}</div>
               <div className="text-xl sm:text-2xl font-bold text-gray-900">
                 {formatUSD(calculateTokenPriceUSD(), false)}
               </div>
@@ -174,14 +174,14 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
             </div>
 
             <div className="bg-gray-50 rounded-lg p-4">
-              <div className="text-sm text-gray-600 mb-1">Market Cap</div>
+              <div className="text-sm text-gray-600 mb-1">{t('tokenDetail.marketCap')}</div>
               <div className="text-xl sm:text-2xl font-bold text-gray-900">
                 {formatUSD(calculateMarketCap(), true)}
               </div>
             </div>
 
             <div className="bg-gray-50 rounded-lg p-4">
-              <div className="text-sm text-gray-600 mb-1">Liquidity</div>
+              <div className="text-sm text-gray-600 mb-1">{t('tokenDetail.liquidity')}</div>
               <div className="text-xl sm:text-2xl font-bold text-gray-900">
                 {formatUSD(ethToUSD(token.current_eth_reserve || token.initial_liquidity_eth, ethPriceUSD), true)}
               </div>
@@ -191,7 +191,7 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
             </div>
 
             <div className="bg-gray-50 rounded-lg p-4">
-              <div className="text-sm text-gray-600 mb-1">All-Time Volume</div>
+              <div className="text-sm text-gray-600 mb-1">{t('tokenDetail.allTimeVolume')}</div>
               <div className="text-xl sm:text-2xl font-bold text-gray-900">
                 {formatUSD(ethToUSD(token.total_volume_eth, ethPriceUSD), true)}
               </div>
@@ -208,14 +208,14 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-white rounded-xl shadow-lg p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Token Information</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-4">{t('tokenDetail.tokenInformation')}</h2>
             <div className="space-y-3">
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-gray-600">Total Supply</span>
+                <span className="text-gray-600">{t('tokenDetail.totalSupply')}</span>
                 <span className="font-semibold text-gray-900">1,000,000 {token.symbol}</span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-gray-600">Creator</span>
+                <span className="text-gray-600">{t('tokenDetail.creator')}</span>
                 <button
                   onClick={() => copyToClipboard(token.creator_address)}
                   className="flex items-center space-x-2 text-gray-900 hover:text-gray-700 transition-colors"
@@ -225,11 +225,11 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
                 </button>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-gray-600">Created</span>
+                <span className="text-gray-600">{t('tokenDetail.created')}</span>
                 <span className="font-semibold text-gray-900">{formatTimeAgo(token.created_at)}</span>
               </div>
               <div className="flex justify-between items-center py-2">
-                <span className="text-gray-600">Token Contract</span>
+                <span className="text-gray-600">{t('tokenDetail.tokenContract')}</span>
                 <a
                   href={`https://etherscan.io/token/${token.token_address}`}
                   target="_blank"
@@ -244,22 +244,22 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
           </div>
 
           <div className="bg-white rounded-xl shadow-lg p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Pool Information</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-4">{t('tokenDetail.poolInformation')}</h2>
             <div className="space-y-3">
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-gray-600">ETH Reserve</span>
+                <span className="text-gray-600">{t('tokenDetail.ethReserve')}</span>
                 <span className="font-semibold text-gray-900">
                   {formatCurrency(token.current_eth_reserve || token.initial_liquidity_eth)}
                 </span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-gray-600">{token.symbol} Reserve</span>
+                <span className="text-gray-600">{token.symbol} {t('tokenDetail.reserve')}</span>
                 <span className="font-semibold text-gray-900">
                   {parseFloat(token.current_token_reserve?.toString() || '0').toLocaleString()} {token.symbol}
                 </span>
               </div>
               <div className="flex justify-between items-center py-2">
-                <span className="text-gray-600">AMM Contract</span>
+                <span className="text-gray-600">{t('tokenDetail.ammContract')}</span>
                 <a
                   href={`https://etherscan.io/address/${token.amm_address}`}
                   target="_blank"

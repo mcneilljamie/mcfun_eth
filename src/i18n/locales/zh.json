@@ -240,5 +240,25 @@
   "common": {
     "tokens": "代币",
     "eth": "ETH"
+  },
+  "tokenDetail": {
+    "loadingToken": "加载代币中...",
+    "backToTokens": "返回代币",
+    "tokenNotFound": "未找到代币",
+    "trade": "交易",
+    "price": "价格",
+    "marketCap": "市值",
+    "liquidity": "流动性",
+    "allTimeVolume": "总交易量",
+    "tokenInformation": "代币信息",
+    "totalSupply": "总供应量",
+    "creator": "创建者",
+    "created": "创建时间",
+    "tokenContract": "代币合约",
+    "poolInformation": "池信息",
+    "ethReserve": "ETH储备",
+    "reserve": "储备",
+    "ammContract": "AMM合约",
+    "viewOnEtherscan": "在Etherscan上查看"
   }
 }

@@ -240,5 +240,25 @@
   "common": {
     "tokens": "токенов",
     "eth": "ETH"
+  },
+  "tokenDetail": {
+    "loadingToken": "Загрузка токена...",
+    "backToTokens": "Назад к токенам",
+    "tokenNotFound": "Токен не найден",
+    "trade": "Торговать",
+    "price": "Цена",
+    "marketCap": "Рыночная капитализация",
+    "liquidity": "Ликвидность",
+    "allTimeVolume": "Общий объем",
+    "tokenInformation": "Информация о токене",
+    "totalSupply": "Общее предложение",
+    "creator": "Создатель",
+    "created": "Создано",
+    "tokenContract": "Контракт токена",
+    "poolInformation": "Информация о пуле",
+    "ethReserve": "Резерв ETH",
+    "reserve": "Резерв",
+    "ammContract": "Контракт AMM",
+    "viewOnEtherscan": "Посмотреть на Etherscan"
   }
 }

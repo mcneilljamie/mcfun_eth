@@ -240,5 +240,25 @@
   "common": {
     "tokens": "توکن‌ها",
     "eth": "ETH"
+  },
+  "tokenDetail": {
+    "loadingToken": "در حال بارگذاری توکن...",
+    "backToTokens": "بازگشت به توکن‌ها",
+    "tokenNotFound": "توکن یافت نشد",
+    "trade": "معامله",
+    "price": "قیمت",
+    "marketCap": "ارزش بازار",
+    "liquidity": "نقدینگی",
+    "allTimeVolume": "حجم کل",
+    "tokenInformation": "اطلاعات توکن",
+    "totalSupply": "عرضه کل",
+    "creator": "سازنده",
+    "created": "ایجاد شده",
+    "tokenContract": "قرارداد توکن",
+    "poolInformation": "اطلاعات استخر",
+    "ethReserve": "ذخیره ETH",
+    "reserve": "ذخیره",
+    "ammContract": "قرارداد AMM",
+    "viewOnEtherscan": "مشاهده در Etherscan"
   }
 }

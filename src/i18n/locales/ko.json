@@ -240,5 +240,25 @@
   "common": {
     "tokens": "토큰",
     "eth": "ETH"
+  },
+  "tokenDetail": {
+    "loadingToken": "토큰 로딩 중...",
+    "backToTokens": "토큰으로 돌아가기",
+    "tokenNotFound": "토큰을 찾을 수 없습니다",
+    "trade": "거래",
+    "price": "가격",
+    "marketCap": "시가총액",
+    "liquidity": "유동성",
+    "allTimeVolume": "총 거래량",
+    "tokenInformation": "토큰 정보",
+    "totalSupply": "총 공급량",
+    "creator": "생성자",
+    "created": "생성일",
+    "tokenContract": "토큰 컨트랙트",
+    "poolInformation": "풀 정보",
+    "ethReserve": "ETH 보유량",
+    "reserve": "보유량",
+    "ammContract": "AMM 컨트랙트",
+    "viewOnEtherscan": "Etherscan에서 보기"
   }
 }

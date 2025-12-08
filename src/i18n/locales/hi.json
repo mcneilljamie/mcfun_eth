@@ -240,5 +240,25 @@
   "common": {
     "tokens": "टोकन",
     "eth": "ETH"
+  },
+  "tokenDetail": {
+    "loadingToken": "टोकन लोड हो रहा है...",
+    "backToTokens": "टोकन पर वापस जाएं",
+    "tokenNotFound": "टोकन नहीं मिला",
+    "trade": "ट्रेड",
+    "price": "कीमत",
+    "marketCap": "मार्केट कैप",
+    "liquidity": "लिक्विडिटी",
+    "allTimeVolume": "कुल वॉल्यूम",
+    "tokenInformation": "टोकन जानकारी",
+    "totalSupply": "कुल सप्लाई",
+    "creator": "निर्माता",
+    "created": "बनाया गया",
+    "tokenContract": "टोकन कॉन्ट्रैक्ट",
+    "poolInformation": "पूल जानकारी",
+    "ethReserve": "ETH रिजर्व",
+    "reserve": "रिजर्व",
+    "ammContract": "AMM कॉन्ट्रैक्ट",
+    "viewOnEtherscan": "Etherscan पर देखें"
   }
 }

@@ -240,5 +240,25 @@
   "common": {
     "tokens": "token",
     "eth": "ETH"
+  },
+  "tokenDetail": {
+    "loadingToken": "Token yükleniyor...",
+    "backToTokens": "Tokenlara Dön",
+    "tokenNotFound": "Token bulunamadı",
+    "trade": "İşlem Yap",
+    "price": "Fiyat",
+    "marketCap": "Piyasa Değeri",
+    "liquidity": "Likidite",
+    "allTimeVolume": "Toplam Hacim",
+    "tokenInformation": "Token Bilgisi",
+    "totalSupply": "Toplam Arz",
+    "creator": "Oluşturan",
+    "created": "Oluşturulma",
+    "tokenContract": "Token Sözleşmesi",
+    "poolInformation": "Havuz Bilgisi",
+    "ethReserve": "ETH Rezervi",
+    "reserve": "Rezerv",
+    "ammContract": "AMM Sözleşmesi",
+    "viewOnEtherscan": "Etherscan'de Görüntüle"
   }
 }

@@ -240,5 +240,25 @@
   "common": {
     "tokens": "ტოკენები",
     "eth": "ETH"
+  },
+  "tokenDetail": {
+    "loadingToken": "ტოკენის ჩატვირთვა...",
+    "backToTokens": "ტოკენებზე დაბრუნება",
+    "tokenNotFound": "ტოკენი ვერ მოიძებნა",
+    "trade": "ვაჭრობა",
+    "price": "ფასი",
+    "marketCap": "საბაზრო კაპიტალიზაცია",
+    "liquidity": "ლიკვიდურობა",
+    "allTimeVolume": "მთლიანი მოცულობა",
+    "tokenInformation": "ტოკენის ინფორმაცია",
+    "totalSupply": "მთლიანი მიწოდება",
+    "creator": "შემქმნელი",
+    "created": "შეიქმნა",
+    "tokenContract": "ტოკენის კონტრაქტი",
+    "poolInformation": "პულის ინფორმაცია",
+    "ethReserve": "ETH რეზერვი",
+    "reserve": "რეზერვი",
+    "ammContract": "AMM კონტრაქტი",
+    "viewOnEtherscan": "Etherscan-ზე ნახვა"
   }
 }

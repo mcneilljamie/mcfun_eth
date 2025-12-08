@@ -240,5 +240,25 @@
   "common": {
     "tokens": "رموز",
     "eth": "ETH"
+  },
+  "tokenDetail": {
+    "loadingToken": "جارٍ تحميل الرمز...",
+    "backToTokens": "العودة إلى الرموز",
+    "tokenNotFound": "لم يتم العثور على الرمز",
+    "trade": "تداول",
+    "price": "السعر",
+    "marketCap": "القيمة السوقية",
+    "liquidity": "السيولة",
+    "allTimeVolume": "إجمالي الحجم",
+    "tokenInformation": "معلومات الرمز",
+    "totalSupply": "الإمداد الكلي",
+    "creator": "المنشئ",
+    "created": "تم الإنشاء",
+    "tokenContract": "عقد الرمز",
+    "poolInformation": "معلومات المجمع",
+    "ethReserve": "احتياطي ETH",
+    "reserve": "احتياطي",
+    "ammContract": "عقد AMM",
+    "viewOnEtherscan": "عرض على Etherscan"
   }
 }

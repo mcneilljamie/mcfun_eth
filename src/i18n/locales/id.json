@@ -240,5 +240,25 @@
   "common": {
     "tokens": "token",
     "eth": "ETH"
+  },
+  "tokenDetail": {
+    "loadingToken": "Memuat token...",
+    "backToTokens": "Kembali ke Token",
+    "tokenNotFound": "Token tidak ditemukan",
+    "trade": "Trading",
+    "price": "Harga",
+    "marketCap": "Kapitalisasi Pasar",
+    "liquidity": "Likuiditas",
+    "allTimeVolume": "Volume Total",
+    "tokenInformation": "Informasi Token",
+    "totalSupply": "Total Pasokan",
+    "creator": "Pembuat",
+    "created": "Dibuat",
+    "tokenContract": "Kontrak Token",
+    "poolInformation": "Informasi Pool",
+    "ethReserve": "Cadangan ETH",
+    "reserve": "Cadangan",
+    "ammContract": "Kontrak AMM",
+    "viewOnEtherscan": "Lihat di Etherscan"
   }
 }

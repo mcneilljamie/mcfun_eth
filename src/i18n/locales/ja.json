@@ -240,5 +240,25 @@
   "common": {
     "tokens": "トークン",
     "eth": "ETH"
+  },
+  "tokenDetail": {
+    "loadingToken": "トークンを読み込んでいます...",
+    "backToTokens": "トークンに戻る",
+    "tokenNotFound": "トークンが見つかりません",
+    "trade": "取引",
+    "price": "価格",
+    "marketCap": "時価総額",
+    "liquidity": "流動性",
+    "allTimeVolume": "総取引量",
+    "tokenInformation": "トークン情報",
+    "totalSupply": "総供給量",
+    "creator": "作成者",
+    "created": "作成日時",
+    "tokenContract": "トークンコントラクト",
+    "poolInformation": "プール情報",
+    "ethReserve": "ETH準備金",
+    "reserve": "準備金",
+    "ammContract": "AMMコントラクト",
+    "viewOnEtherscan": "Etherscanで表示"
   }
 }

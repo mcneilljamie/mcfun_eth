@@ -240,5 +240,25 @@
   "common": {
     "tokens": "tokens",
     "eth": "ETH"
+  },
+  "tokenDetail": {
+    "loadingToken": "Chargement du token...",
+    "backToTokens": "Retour aux Tokens",
+    "tokenNotFound": "Token non trouvé",
+    "trade": "Échanger",
+    "price": "Prix",
+    "marketCap": "Capitalisation Boursière",
+    "liquidity": "Liquidité",
+    "allTimeVolume": "Volume Total",
+    "tokenInformation": "Informations sur le Token",
+    "totalSupply": "Approvisionnement Total",
+    "creator": "Créateur",
+    "created": "Créé",
+    "tokenContract": "Contrat du Token",
+    "poolInformation": "Informations sur le Pool",
+    "ethReserve": "Réserve ETH",
+    "reserve": "Réserve",
+    "ammContract": "Contrat AMM",
+    "viewOnEtherscan": "Voir sur Etherscan"
   }
 }
