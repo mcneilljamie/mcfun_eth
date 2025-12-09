@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Shield, Lock, Coins, TrendingUp, Users, Zap, DollarSign, Check, Eye, BarChart3 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
-import { formatCurrency } from '../lib/utils';
+import { formatCurrency, formatUSD } from '../lib/utils';
 
 interface PlatformStats {
   totalMarketCapUsd: number;
@@ -331,7 +331,7 @@ export function About() {
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
               ) : (
                 <div className="text-2xl sm:text-3xl font-bold text-green-700">
-                  {platformStats ? `$${(platformStats.totalMarketCapUsd / 1_000_000).toFixed(2)}M` : '$0'}
+                  {platformStats ? formatUSD(platformStats.totalMarketCapUsd, true) : '$0'}
                 </div>
               )}
               <p className="text-xs text-gray-600 mt-1">Combined FDV of all tokens</p>
