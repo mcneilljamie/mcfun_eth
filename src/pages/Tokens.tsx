@@ -266,7 +266,6 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.price')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.marketCap')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.liquidity')}</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.allTimeVolume')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.created')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.action')}</th>
                     </tr>
@@ -338,11 +337,6 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                         <td className="py-4 px-4">
                           <div className="font-semibold text-gray-900">
                             {formatCurrency(liveReserves[token.token_address]?.reserveETH || token.current_eth_reserve || token.initial_liquidity_eth)}
-                          </div>
-                        </td>
-                        <td className="py-4 px-4">
-                          <div className="font-medium text-gray-900">
-                            {formatCurrency(liveVolumes[token.token_address] || token.total_volume_eth)}
                           </div>
                         </td>
                         <td className="py-4 px-4">
@@ -427,13 +421,6 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                         <span className="text-sm text-gray-600">{t('tokens.table.liquidity')}:</span>
                         <span className="font-semibold text-gray-900">
                           {formatCurrency(liveReserves[token.token_address]?.reserveETH || token.current_eth_reserve || token.initial_liquidity_eth)}
-                        </span>
-                      </div>
-
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">{t('tokens.table.allTimeVolume')}:</span>
-                        <span className="font-medium text-gray-900">
-                          {formatCurrency(liveVolumes[token.token_address] || token.total_volume_eth)}
                         </span>
                       </div>
 
