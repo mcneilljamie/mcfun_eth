@@ -95,6 +95,22 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     setIsLoading(true);
 
     try {
+      // Index recent swaps in the background (non-blocking)
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+      fetch(`${supabaseUrl}/functions/v1/event-indexer`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${supabaseAnonKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          indexTokenLaunches: false,
+          indexSwaps: true
+        }),
+      }).catch(err => console.error('Failed to index swaps:', err));
+
       const { data, error } = await supabase
         .from('tokens')
         .select('*')

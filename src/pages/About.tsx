@@ -24,10 +24,11 @@ export function About() {
 
   const loadData = async () => {
     try {
-      // Sync reserves from blockchain (non-blocking)
+      // Sync data from blockchain (non-blocking)
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
+      // Sync reserves
       fetch(`${supabaseUrl}/functions/v1/sync-reserves`, {
         method: 'POST',
         headers: {
@@ -35,6 +36,19 @@ export function About() {
           'Content-Type': 'application/json',
         },
       }).catch(err => console.error('Failed to sync reserves:', err));
+
+      // Index recent swaps
+      fetch(`${supabaseUrl}/functions/v1/event-indexer`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${supabaseAnonKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          indexTokenLaunches: false,
+          indexSwaps: true
+        }),
+      }).catch(err => console.error('Failed to index swaps:', err));
 
       // Load total liquidity
       const { data: tokensData, error: tokensError } = await supabase

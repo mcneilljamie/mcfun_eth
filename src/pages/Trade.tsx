@@ -141,6 +141,22 @@ export function Trade({ selectedToken }: TradeProps) {
       setAmountOut('');
       loadReserves();
       loadBalances();
+
+      // Index the swap event in the background (non-blocking)
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+      fetch(`${supabaseUrl}/functions/v1/event-indexer`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${supabaseAnonKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          indexTokenLaunches: false,
+          indexSwaps: true
+        }),
+      }).catch(err => console.error('Failed to index swap:', err));
     } catch (err: any) {
       console.error('Failed to swap:', err);
       setError(err.message || 'Failed to complete swap. Please try again.');
