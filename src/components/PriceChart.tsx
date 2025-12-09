@@ -67,6 +67,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<'Area'> | null>(null);
   const [timeRange, setTimeRange] = useState<TimeRange>('24H');
+  const lastFormattedTimeRef = useRef<string>('');
   const { data, loading, error, priceChange, currentPrice, refetch } = useChartData(
     tokenAddress,
     timeRange
@@ -141,10 +142,21 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
   useEffect(() => {
     if (!chartRef.current) return;
 
+    // Reset the last formatted time when changing time ranges
+    lastFormattedTimeRef.current = '';
+
     chartRef.current.applyOptions({
       timeScale: {
         tickMarkFormatter: (time: number, tickMarkType: TickMarkType) => {
-          return formatTimeForRange(time, timeRange, tickMarkType);
+          const formatted = formatTimeForRange(time, timeRange, tickMarkType);
+
+          // Avoid showing duplicate consecutive labels
+          if (formatted === lastFormattedTimeRef.current) {
+            return '';
+          }
+
+          lastFormattedTimeRef.current = formatted;
+          return formatted;
         },
       },
     });
@@ -168,6 +180,9 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
   // Update chart data
   useEffect(() => {
     if (!seriesRef.current || !data || data.length === 0) return;
+
+    // Reset the last formatted time when data changes
+    lastFormattedTimeRef.current = '';
 
     const chartData: LineData[] = data.map((point) => ({
       time: point.time as Time,
