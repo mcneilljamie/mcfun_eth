@@ -24,6 +24,14 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
   const [liveReserves, setLiveReserves] = useState<{ reserveETH: string; reserveToken: string } | null>(null);
 
+  const ensureProtocol = (url: string): string => {
+    if (!url) return url;
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    return `https://${url}`;
+  };
+
   useEffect(() => {
     loadToken();
     loadEthPrice();
@@ -52,7 +60,7 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
       const { data, error } = await supabase
         .from('tokens')
         .select('*')
-        .eq('token_address', tokenAddress)
+        .eq('token_address', tokenAddress.toLowerCase())
         .maybeSingle();
 
       if (error) throw error;
@@ -184,7 +192,7 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
                 </a>
                 {token.website && (
                   <a
-                    href={token.website}
+                    href={ensureProtocol(token.website)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors flex items-center space-x-1"
@@ -261,7 +269,7 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
                 <div className="flex justify-between items-center py-2 border-b border-gray-100">
                   <span className="text-gray-600">{t('tokenDetail.website')}</span>
                   <a
-                    href={token.website}
+                    href={ensureProtocol(token.website)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center space-x-2 text-gray-900 hover:text-gray-700 transition-colors"

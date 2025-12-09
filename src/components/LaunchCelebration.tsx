@@ -54,7 +54,6 @@ export function LaunchCelebration({
     }
   };
 
-  const chartUrl = `${window.location.origin}/?token=${tokenAddress}`;
   const explorerUrl = getExplorerUrl(chainId || 11155111);
   const etherscanTokenUrl = `${explorerUrl}/token/${tokenAddress}`;
   const etherscanPoolUrl = `${explorerUrl}/address/${ammAddress}`;
@@ -153,35 +152,10 @@ export function LaunchCelebration({
             <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6">
               <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
                 <ExternalLink className="w-5 h-5 mr-2" />
-                Shareable Links
+                Contract Addresses
               </h3>
 
               <div className="space-y-3">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Token Chart
-                  </label>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="text"
-                      value={chartUrl}
-                      readOnly
-                      className="flex-1 px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm font-mono"
-                    />
-                    <button
-                      onClick={() => copyToClipboard(chartUrl, 'chart')}
-                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
-                      title="Copy chart link"
-                    >
-                      {copiedItem === 'chart' ? (
-                        <CheckCircle className="w-5 h-5 text-green-400" />
-                      ) : (
-                        <Copy className="w-5 h-5" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Token Contract Address
@@ -289,7 +263,7 @@ export function LaunchCelebration({
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <h4 className="font-medium text-blue-900 mb-2">Share with your community!</h4>
               <p className="text-sm text-blue-800">
-                I just launched ${tokenSymbol} on McFun! Check it out: {chartUrl}
+                I just launched ${tokenSymbol} on McFun! Token: {tokenAddress}
               </p>
             </div>
 

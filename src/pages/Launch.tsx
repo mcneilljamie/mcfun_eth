@@ -74,11 +74,14 @@ export function Launch({ onNavigate }: LaunchProps) {
       const tokenReserve = ((TOTAL_SUPPLY * liquidityPercent) / 100).toString();
       const ethReserve = ethAmount;
 
+      const normalizedTokenAddress = result.tokenAddress.toLowerCase();
+      const normalizedAmmAddress = result.ammAddress.toLowerCase();
+
       await supabase
         .from('tokens')
         .upsert({
-          token_address: result.tokenAddress.toLowerCase(),
-          amm_address: result.ammAddress.toLowerCase(),
+          token_address: normalizedTokenAddress,
+          amm_address: normalizedAmmAddress,
           name: name.trim(),
           symbol: symbol.trim().toUpperCase(),
           creator_address: account.toLowerCase(),
@@ -99,7 +102,7 @@ export function Launch({ onNavigate }: LaunchProps) {
       await supabase
         .from('price_snapshots')
         .insert({
-          token_address: result.tokenAddress.toLowerCase(),
+          token_address: normalizedTokenAddress,
           price_eth: priceEth.toString(),
           eth_reserve: ethReserve,
           token_reserve: tokenReserve,
@@ -107,7 +110,9 @@ export function Launch({ onNavigate }: LaunchProps) {
         });
 
       setSuccess({
-        ...result,
+        tokenAddress: normalizedTokenAddress,
+        ammAddress: normalizedAmmAddress,
+        txHash: result.txHash,
         tokenName: name.trim(),
         tokenSymbol: symbol.trim().toUpperCase(),
       });
