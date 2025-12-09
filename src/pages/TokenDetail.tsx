@@ -206,7 +206,7 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
             </button>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6">
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="text-sm text-gray-600 mb-1">{t('tokenDetail.price')}</div>
               <div className="text-xl sm:text-2xl font-bold text-gray-900">
@@ -228,13 +228,6 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
               </div>
               <div className="text-xs text-gray-500 mt-1">
                 {formatCurrency(liveReserves?.reserveETH || token.current_eth_reserve || token.initial_liquidity_eth)}
-              </div>
-            </div>
-
-            <div className="bg-gray-50 rounded-lg p-4">
-              <div className="text-sm text-gray-600 mb-1">{t('tokenDetail.allTimeVolume')}</div>
-              <div className="text-xl sm:text-2xl font-bold text-gray-900">
-                {formatCurrency(token.total_volume_eth)}
               </div>
             </div>
           </div>
