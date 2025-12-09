@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { TrendingUp, TrendingDown } from 'lucide-react';
+import { TrendingUp, TrendingDown, ZoomIn, ZoomOut } from 'lucide-react';
 import { supabase, PriceSnapshot } from '../lib/supabase';
 import { formatUSD } from '../lib/utils';
 import { getEthPriceUSD } from '../lib/ethPrice';
@@ -24,22 +24,22 @@ interface LocalSnapshot {
   is_local?: boolean;
 }
 
-export function PriceChart({ tokenAddress, ammAddress }: PriceChartProps) {
+type TimeframeType = '15M' | '1H' | '24H' | '7D' | 'ALL';
+
+export function PriceChart({ tokenAddress, ammAddress, tokenSymbol }: PriceChartProps) {
   const [snapshots, setSnapshots] = useState<LocalSnapshot[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [timeframe, setTimeframe] = useState<'15M' | '24H' | '7D' | 'ALL'>('24H');
+  const [timeframe, setTimeframe] = useState<TimeframeType>('24H');
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
   const [currentPriceETH, setCurrentPriceETH] = useState<number>(0);
   const { provider } = useWeb3();
   const localSnapshotsRef = useRef<LocalSnapshot[]>([]);
+  const [tokenAge, setTokenAge] = useState<number>(0);
 
   useEffect(() => {
     loadPriceHistory();
     loadEthPrice();
-
-    if (provider && ammAddress) {
-      captureLocalSnapshot();
-    }
+    checkTokenAge();
 
     const ethPriceInterval = setInterval(loadEthPrice, 60000);
 
@@ -47,7 +47,7 @@ export function PriceChart({ tokenAddress, ammAddress }: PriceChartProps) {
       if (provider && ammAddress) {
         await captureLocalSnapshot();
       }
-    }, 30000);
+    }, 15000);
 
     return () => {
       clearInterval(ethPriceInterval);
@@ -56,7 +56,7 @@ export function PriceChart({ tokenAddress, ammAddress }: PriceChartProps) {
   }, [tokenAddress, provider, ammAddress]);
 
   useEffect(() => {
-    loadPriceHistory(false);
+    loadPriceHistory();
   }, [timeframe]);
 
   const loadEthPrice = async () => {
@@ -64,74 +64,103 @@ export function PriceChart({ tokenAddress, ammAddress }: PriceChartProps) {
     setEthPriceUSD(price);
   };
 
+  const checkTokenAge = async () => {
+    try {
+      const { data } = await supabase
+        .from('tokens')
+        .select('created_at')
+        .eq('token_address', tokenAddress)
+        .maybeSingle();
+
+      if (data) {
+        const age = Date.now() - new Date(data.created_at).getTime();
+        setTokenAge(age);
+      }
+    } catch (err) {
+      console.error('Failed to check token age:', err);
+    }
+  };
+
   const captureLocalSnapshot = async () => {
     if (!provider || !ammAddress) return;
 
     try {
       const priceETH = await getPrice(provider, ammAddress);
-      setCurrentPriceETH(parseFloat(priceETH));
+      const priceValue = parseFloat(priceETH);
 
-      const newSnapshot: LocalSnapshot = {
-        created_at: new Date().toISOString(),
-        price_eth: priceETH,
-        eth_reserve: '0',
-        token_reserve: '0',
-        id: `local-${Date.now()}`,
-        token_address: tokenAddress,
-        eth_price_usd: ethPriceUSD.toString(),
-        is_local: true,
-      };
+      if (priceValue > 0) {
+        setCurrentPriceETH(priceValue);
 
-      localSnapshotsRef.current = [...localSnapshotsRef.current, newSnapshot];
+        const newSnapshot: LocalSnapshot = {
+          created_at: new Date().toISOString(),
+          price_eth: priceETH,
+          eth_reserve: '0',
+          token_reserve: '0',
+          id: `local-${Date.now()}`,
+          token_address: tokenAddress,
+          eth_price_usd: ethPriceUSD.toString(),
+          is_local: true,
+        };
 
-      if (localSnapshotsRef.current.length > 100) {
-        localSnapshotsRef.current = localSnapshotsRef.current.slice(-100);
+        const existingSnapshots = localSnapshotsRef.current;
+        const lastSnapshot = existingSnapshots[existingSnapshots.length - 1];
+
+        if (!lastSnapshot || new Date(newSnapshot.created_at).getTime() - new Date(lastSnapshot.created_at).getTime() >= 10000) {
+          localSnapshotsRef.current = [...existingSnapshots, newSnapshot].slice(-50);
+          mergeSnapshots();
+        }
       }
-
-      mergeSnapshots();
     } catch (err) {
       console.error('Failed to capture local snapshot:', err);
     }
   };
 
-  const mergeSnapshots = () => {
-    const now = new Date();
-    let cutoffDate = new Date();
+  const aggregateDataPoints = (data: LocalSnapshot[], targetPoints: number): LocalSnapshot[] => {
+    if (data.length <= targetPoints) return data;
 
-    switch (timeframe) {
-      case '15M':
-        cutoffDate.setMinutes(now.getMinutes() - 15);
-        break;
-      case '24H':
-        cutoffDate.setHours(now.getHours() - 24);
-        break;
-      case '7D':
-        cutoffDate.setDate(now.getDate() - 7);
-        break;
-      case 'ALL':
-        cutoffDate = new Date(0);
-        break;
+    const interval = Math.ceil(data.length / targetPoints);
+    const aggregated: LocalSnapshot[] = [];
+
+    for (let i = 0; i < data.length; i += interval) {
+      const chunk = data.slice(i, Math.min(i + interval, data.length));
+      const avgPrice = chunk.reduce((sum, s) => sum + parseFloat(s.price_eth), 0) / chunk.length;
+      const avgEthReserve = chunk.reduce((sum, s) => sum + parseFloat(s.eth_reserve || '0'), 0) / chunk.length;
+      const avgTokenReserve = chunk.reduce((sum, s) => sum + parseFloat(s.token_reserve || '0'), 0) / chunk.length;
+
+      aggregated.push({
+        ...chunk[Math.floor(chunk.length / 2)],
+        price_eth: avgPrice.toString(),
+        eth_reserve: avgEthReserve.toString(),
+        token_reserve: avgTokenReserve.toString(),
+      });
     }
 
-    const filteredLocal = localSnapshotsRef.current.filter(
-      s => new Date(s.created_at) >= cutoffDate
-    );
+    return aggregated;
+  };
 
+  const mergeSnapshots = () => {
     setSnapshots(prev => {
       const dbSnapshots = prev.filter(s => !s.is_local);
-      const allSnapshots = [...dbSnapshots, ...filteredLocal];
-      return allSnapshots.sort((a, b) =>
+      const localSnapshots = localSnapshotsRef.current;
+      const allSnapshots = [...dbSnapshots, ...localSnapshots];
+
+      const sorted = allSnapshots.sort((a, b) =>
         new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
       );
+
+      const uniqueSnapshots = sorted.filter((snapshot, index, self) =>
+        index === self.findIndex(s =>
+          Math.abs(new Date(s.created_at).getTime() - new Date(snapshot.created_at).getTime()) < 5000
+        )
+      );
+
+      return uniqueSnapshots;
     });
   };
 
-  const loadPriceHistory = async (clearLocal = true) => {
+  const loadPriceHistory = async () => {
     setIsLoading(true);
-
-    if (clearLocal) {
-      localSnapshotsRef.current = [];
-    }
+    localSnapshotsRef.current = [];
 
     try {
       let query = supabase
@@ -142,18 +171,27 @@ export function PriceChart({ tokenAddress, ammAddress }: PriceChartProps) {
 
       const now = new Date();
       let cutoffDate = new Date();
+      let targetPoints = 100;
 
       switch (timeframe) {
         case '15M':
           cutoffDate.setMinutes(now.getMinutes() - 15);
+          targetPoints = 30;
+          break;
+        case '1H':
+          cutoffDate.setHours(now.getHours() - 1);
+          targetPoints = 60;
           break;
         case '24H':
           cutoffDate.setHours(now.getHours() - 24);
+          targetPoints = 100;
           break;
         case '7D':
           cutoffDate.setDate(now.getDate() - 7);
+          targetPoints = 150;
           break;
         case 'ALL':
+          targetPoints = 200;
           break;
       }
 
@@ -165,18 +203,20 @@ export function PriceChart({ tokenAddress, ammAddress }: PriceChartProps) {
 
       if (error) throw error;
 
-      if (data) {
-        setSnapshots(data);
+      if (data && data.length > 0) {
+        const aggregated = aggregateDataPoints(data, targetPoints);
+        setSnapshots(aggregated);
+      } else {
+        setSnapshots([]);
       }
-
-      mergeSnapshots();
     } catch (err) {
       console.error('Failed to load price history:', err);
+      setSnapshots([]);
     } finally {
       setIsLoading(false);
     }
 
-    if (provider && ammAddress && clearLocal) {
+    if (provider && ammAddress) {
       await captureLocalSnapshot();
     }
   };
@@ -192,13 +232,34 @@ export function PriceChart({ tokenAddress, ammAddress }: PriceChartProps) {
     );
   }
 
+  const isVeryNewToken = tokenAge > 0 && tokenAge < 3600000;
+
   if (snapshots.length === 0) {
     return (
       <div className="bg-white rounded-xl shadow-md p-6">
         <h3 className="text-lg font-bold text-gray-900 mb-4">Price Chart</h3>
-        <div className="text-center py-8 text-gray-500">
-          No price data available yet
-        </div>
+        {provider && ammAddress && currentPriceETH > 0 ? (
+          <div className="text-center py-8">
+            <div className="mb-4">
+              <div className="text-sm text-gray-600 mb-2">Current Price</div>
+              <div className="text-3xl font-bold text-gray-900">
+                {formatUSD(currentPriceETH * ethPriceUSD, false)}
+              </div>
+              <div className="text-sm text-gray-500 mt-1">
+                {currentPriceETH.toFixed(10)} ETH
+              </div>
+            </div>
+            <div className="text-gray-500 text-sm">
+              {isVeryNewToken
+                ? 'Building price history... Chart will appear after a few minutes of activity'
+                : 'No historical price data available yet'}
+            </div>
+          </div>
+        ) : (
+          <div className="text-center py-8 text-gray-500">
+            No price data available yet
+          </div>
+        )}
       </div>
     );
   }
@@ -214,29 +275,58 @@ export function PriceChart({ tokenAddress, ammAddress }: PriceChartProps) {
     ? currentPriceETH * ethPriceUSD
     : pricesUSD[pricesUSD.length - 1] || 0;
 
-  const firstPrice = pricesUSD[0];
-  const priceChange = ((currentPriceUSD - firstPrice) / firstPrice) * 100;
+  const firstPrice = pricesUSD[0] || currentPriceUSD;
+  const priceChange = firstPrice > 0 ? ((currentPriceUSD - firstPrice) / firstPrice) * 100 : 0;
   const isPositiveChange = priceChange >= 0;
 
-  const snapshotsWithCurrent = [...snapshots, {
-    created_at: new Date().toISOString(),
-    price_eth: currentPriceETH.toString(),
-    eth_reserve: '0',
-    token_reserve: '0',
-    id: 'current',
-    token_address: tokenAddress
-  } as LocalSnapshot];
-
-  const allPricesUSD = [...pricesUSD, currentPriceUSD];
-
-  const chartData: ChartDataPoint[] = snapshotsWithCurrent.map((snapshot, index) => ({
+  let chartData: ChartDataPoint[] = snapshots.map((snapshot, index) => ({
     time: Math.floor(new Date(snapshot.created_at).getTime() / 1000),
-    value: allPricesUSD[index]
+    value: pricesUSD[index]
   }));
+
+  if (currentPriceETH > 0) {
+    chartData.push({
+      time: Math.floor(Date.now() / 1000),
+      value: currentPriceUSD
+    });
+  }
+
+  chartData = chartData.filter((point, index, arr) =>
+    point.value > 0 && (index === 0 || point.time > arr[index - 1].time)
+  );
+
+  if (chartData.length < 2) {
+    return (
+      <div className="bg-white rounded-xl shadow-md p-6">
+        <h3 className="text-lg font-bold text-gray-900 mb-4">Price Chart</h3>
+        <div className="text-center py-8">
+          <div className="mb-4">
+            <div className="text-sm text-gray-600 mb-2">Current Price</div>
+            <div className="text-3xl font-bold text-gray-900">
+              {formatUSD(currentPriceUSD, false)}
+            </div>
+          </div>
+          <div className="text-gray-500 text-sm">
+            Collecting more data points to display chart...
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const availableTimeframes: TimeframeType[] = tokenAge < 900000
+    ? ['15M']
+    : tokenAge < 3600000
+    ? ['15M', '1H']
+    : tokenAge < 86400000
+    ? ['15M', '1H', '24H']
+    : tokenAge < 604800000
+    ? ['1H', '24H', '7D']
+    : ['1H', '24H', '7D', 'ALL'];
 
   return (
     <div className="bg-white rounded-xl shadow-md p-6">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
         <div className="flex-1">
           <h3 className="text-lg font-bold text-gray-900">Price Chart</h3>
           <div className="flex items-center space-x-2 mt-1">
@@ -250,14 +340,17 @@ export function PriceChart({ tokenAddress, ammAddress }: PriceChartProps) {
               {Math.abs(priceChange).toFixed(2)}%
             </span>
           </div>
+          <div className="text-xs text-gray-500 mt-1">
+            {chartData.length} data points over {timeframe}
+          </div>
         </div>
 
-        <div className="flex space-x-2">
-          {(['15M', '24H', '7D', 'ALL'] as const).map((tf) => (
+        <div className="flex flex-wrap gap-2">
+          {availableTimeframes.map((tf) => (
             <button
               key={tf}
               onClick={() => setTimeframe(tf)}
-              className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                 timeframe === tf
                   ? 'bg-gray-900 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'

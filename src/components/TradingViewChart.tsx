@@ -134,10 +134,45 @@ export function TradingViewChart({
   useEffect(() => {
     if (!seriesRef.current || !data.length) return;
 
-    seriesRef.current.setData(data);
+    const validData = data.filter(d => d.value > 0 && !isNaN(d.value) && isFinite(d.value));
+
+    if (validData.length === 0) return;
+
+    seriesRef.current.setData(validData);
 
     if (chartRef.current) {
       chartRef.current.timeScale().fitContent();
+
+      const prices = validData.map(d => d.value);
+      const minPrice = Math.min(...prices);
+      const maxPrice = Math.max(...prices);
+      const range = maxPrice - minPrice;
+
+      if (range === 0 || range < maxPrice * 0.001) {
+        const padding = maxPrice * 0.02;
+        seriesRef.current.applyOptions({
+          priceFormat: {
+            type: 'custom',
+            formatter: (price: number) => {
+              if (price >= 1) {
+                return `$${price.toFixed(6)}`;
+              } else if (price >= 0.01) {
+                return `$${price.toFixed(8)}`;
+              } else {
+                return `$${price.toFixed(10)}`;
+              }
+            },
+          },
+        });
+
+        chartRef.current.priceScale('right').applyOptions({
+          autoScale: true,
+          scaleMargins: {
+            top: 0.2,
+            bottom: 0.2,
+          },
+        });
+      }
     }
   }, [data]);
 
