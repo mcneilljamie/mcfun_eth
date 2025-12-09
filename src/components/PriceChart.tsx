@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { TrendingUp, TrendingDown, ZoomIn, ZoomOut } from 'lucide-react';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 import { supabase, PriceSnapshot } from '../lib/supabase';
 import { formatUSD } from '../lib/utils';
 import { getEthPriceUSD } from '../lib/ethPrice';
@@ -24,12 +24,9 @@ interface LocalSnapshot {
   is_local?: boolean;
 }
 
-type TimeframeType = '15M' | '1H' | '24H' | '7D' | 'ALL';
-
 export function PriceChart({ tokenAddress, ammAddress, tokenSymbol }: PriceChartProps) {
   const [snapshots, setSnapshots] = useState<LocalSnapshot[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [timeframe, setTimeframe] = useState<TimeframeType>('24H');
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
   const [currentPriceETH, setCurrentPriceETH] = useState<number>(0);
   const { provider } = useWeb3();
@@ -54,10 +51,6 @@ export function PriceChart({ tokenAddress, ammAddress, tokenSymbol }: PriceChart
       clearInterval(livePriceInterval);
     };
   }, [tokenAddress, provider, ammAddress]);
-
-  useEffect(() => {
-    loadPriceHistory();
-  }, [timeframe]);
 
   const loadEthPrice = async () => {
     const price = await getEthPriceUSD();
@@ -163,48 +156,16 @@ export function PriceChart({ tokenAddress, ammAddress, tokenSymbol }: PriceChart
     localSnapshotsRef.current = [];
 
     try {
-      let query = supabase
+      const { data, error } = await supabase
         .from('price_snapshots')
         .select('*')
         .eq('token_address', tokenAddress)
         .order('created_at', { ascending: true });
 
-      const now = new Date();
-      let cutoffDate = new Date();
-      let targetPoints = 100;
-
-      switch (timeframe) {
-        case '15M':
-          cutoffDate.setMinutes(now.getMinutes() - 15);
-          targetPoints = 30;
-          break;
-        case '1H':
-          cutoffDate.setHours(now.getHours() - 1);
-          targetPoints = 60;
-          break;
-        case '24H':
-          cutoffDate.setHours(now.getHours() - 24);
-          targetPoints = 100;
-          break;
-        case '7D':
-          cutoffDate.setDate(now.getDate() - 7);
-          targetPoints = 150;
-          break;
-        case 'ALL':
-          targetPoints = 200;
-          break;
-      }
-
-      if (timeframe !== 'ALL') {
-        query = query.gte('created_at', cutoffDate.toISOString());
-      }
-
-      const { data, error } = await query;
-
       if (error) throw error;
 
       if (data && data.length > 0) {
-        const aggregated = aggregateDataPoints(data, targetPoints);
+        const aggregated = aggregateDataPoints(data, 200);
         setSnapshots(aggregated);
       } else {
         setSnapshots([]);
@@ -314,51 +275,20 @@ export function PriceChart({ tokenAddress, ammAddress, tokenSymbol }: PriceChart
     );
   }
 
-  const availableTimeframes: TimeframeType[] = tokenAge < 900000
-    ? ['15M']
-    : tokenAge < 3600000
-    ? ['15M', '1H']
-    : tokenAge < 86400000
-    ? ['15M', '1H', '24H']
-    : tokenAge < 604800000
-    ? ['1H', '24H', '7D']
-    : ['1H', '24H', '7D', 'ALL'];
-
   return (
     <div className="bg-white rounded-xl shadow-md p-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-        <div className="flex-1">
-          <h3 className="text-lg font-bold text-gray-900">Price Chart</h3>
-          <div className="flex items-center space-x-2 mt-1">
-            <span className="text-2xl font-bold text-gray-900">
-              {formatUSD(currentPriceUSD, false)}
-            </span>
-            <span
-              className={`flex items-center text-sm font-medium ${priceChange >= 0 ? 'text-green-600' : 'text-red-600'}`}
-            >
-              {priceChange >= 0 ? <TrendingUp className="w-4 h-4 mr-1" /> : <TrendingDown className="w-4 h-4 mr-1" />}
-              {Math.abs(priceChange).toFixed(2)}%
-            </span>
-          </div>
-          <div className="text-xs text-gray-500 mt-1">
-            {chartData.length} data points over {timeframe}
-          </div>
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          {availableTimeframes.map((tf) => (
-            <button
-              key={tf}
-              onClick={() => setTimeframe(tf)}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                timeframe === tf
-                  ? 'bg-gray-900 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {tf}
-            </button>
-          ))}
+      <div className="flex flex-col gap-4 mb-4">
+        <h3 className="text-lg font-bold text-gray-900">Price Chart</h3>
+        <div className="flex items-center space-x-2">
+          <span className="text-2xl font-bold text-gray-900">
+            {formatUSD(currentPriceUSD, false)}
+          </span>
+          <span
+            className={`flex items-center text-sm font-medium ${priceChange >= 0 ? 'text-green-600' : 'text-red-600'}`}
+          >
+            {priceChange >= 0 ? <TrendingUp className="w-4 h-4 mr-1" /> : <TrendingDown className="w-4 h-4 mr-1" />}
+            {Math.abs(priceChange).toFixed(2)}%
+          </span>
         </div>
       </div>
 
