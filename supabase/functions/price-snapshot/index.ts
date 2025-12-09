@@ -43,20 +43,36 @@ Deno.serve(async (req: Request) => {
 
     const ethPriceUSD = await fetchEthPriceUSD();
 
-    // Check if we should only process recent tokens (< 24 hours old)
+    // Check age filter for token selection
     const requestBody = await req.json().catch(() => ({}));
     const onlyRecentTokens = requestBody.onlyRecentTokens === true;
+    const tokenAgeFilter = requestBody.tokenAgeFilter || null;
 
     let query = supabase
       .from("tokens")
       .select("token_address, amm_address, symbol, created_at");
 
-    // If onlyRecentTokens is true, filter to tokens created in the last 24 hours
+    const now = new Date();
+
+    // Filter tokens by age
     if (onlyRecentTokens) {
-      const twentyFourHoursAgo = new Date();
+      // Tokens < 24 hours old
+      const twentyFourHoursAgo = new Date(now);
       twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
       query = query.gte("created_at", twentyFourHoursAgo.toISOString());
+    } else if (tokenAgeFilter === 'week') {
+      // Tokens between 24 hours and 7 days old
+      const twentyFourHoursAgo = new Date(now);
+      twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
+
+      const sevenDaysAgo = new Date(now);
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+      query = query
+        .gte("created_at", sevenDaysAgo.toISOString())
+        .lt("created_at", twentyFourHoursAgo.toISOString());
     }
+    // If no filter, process all tokens (for hourly snapshots)
 
     const { data: tokens, error: tokensError } = await query;
 
