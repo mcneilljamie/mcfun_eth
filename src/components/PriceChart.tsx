@@ -16,19 +16,21 @@ function formatTimeForRange(time: number, timeRange: TimeRange, tickMarkType: Ti
 
   switch (timeRange) {
     case '1H':
-      // For 1 hour: show HH:MM format
+      // For 1 hour: show HH:MM:SS format to differentiate close timestamps
       return date.toLocaleTimeString('en-US', {
         hour: '2-digit',
         minute: '2-digit',
+        second: '2-digit',
         hour12: false
       });
 
     case '24H':
-      // For 24 hours: show HH:MM format
+      // For 24 hours: show HH:MM:SS for time marks, dates for day boundaries
       if (tickMarkType === TickMarkType.Time) {
         return date.toLocaleTimeString('en-US', {
           hour: '2-digit',
           minute: '2-digit',
+          second: '2-digit',
           hour12: false
         });
       }
@@ -40,10 +42,13 @@ function formatTimeForRange(time: number, timeRange: TimeRange, tickMarkType: Ti
 
     case '7D':
     case '30D':
-      // For 7-30 days: show date
-      return date.toLocaleDateString('en-US', {
+      // For 7-30 days: show date and time
+      return date.toLocaleString('en-US', {
         month: 'short',
-        day: 'numeric'
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
       });
 
     case 'ALL':
@@ -67,7 +72,6 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<'Area'> | null>(null);
   const [timeRange, setTimeRange] = useState<TimeRange>('24H');
-  const lastFormattedTimeRef = useRef<string>('');
   const { data, loading, error, priceChange, currentPrice, refetch } = useChartData(
     tokenAddress,
     timeRange
@@ -142,21 +146,10 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
   useEffect(() => {
     if (!chartRef.current) return;
 
-    // Reset the last formatted time when changing time ranges
-    lastFormattedTimeRef.current = '';
-
     chartRef.current.applyOptions({
       timeScale: {
         tickMarkFormatter: (time: number, tickMarkType: TickMarkType) => {
-          const formatted = formatTimeForRange(time, timeRange, tickMarkType);
-
-          // Avoid showing duplicate consecutive labels
-          if (formatted === lastFormattedTimeRef.current) {
-            return '';
-          }
-
-          lastFormattedTimeRef.current = formatted;
-          return formatted;
+          return formatTimeForRange(time, timeRange, tickMarkType);
         },
       },
     });
@@ -180,9 +173,6 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
   // Update chart data
   useEffect(() => {
     if (!seriesRef.current || !data || data.length === 0) return;
-
-    // Reset the last formatted time when data changes
-    lastFormattedTimeRef.current = '';
 
     const chartData: LineData[] = data.map((point) => ({
       time: point.time as Time,
