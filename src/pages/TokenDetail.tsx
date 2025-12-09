@@ -7,6 +7,7 @@ import { getEthPriceUSD } from '../lib/ethPrice';
 import { getAMMReserves } from '../lib/contracts';
 import { useWeb3 } from '../lib/web3';
 import { getExplorerUrl } from '../contracts/addresses';
+import { PriceChart } from '../components/PriceChart';
 
 interface TokenDetailProps {
   tokenAddress: string;
@@ -231,6 +232,8 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
             </div>
           </div>
         </div>
+
+        <PriceChart tokenAddress={token.token_address} tokenSymbol={token.symbol} theme="light" />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-white rounded-xl shadow-lg p-6">
