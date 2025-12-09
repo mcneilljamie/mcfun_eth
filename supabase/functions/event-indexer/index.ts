@@ -8,7 +8,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-const FACTORY_ADDRESS = "0x0000000000000000000000000000000000000000";
+const FACTORY_ADDRESS = "0xDE377c1C3280C2De18479Acbe40a06a79E0B3831";
 
 const FACTORY_ABI = [
   "event TokenLaunched(address indexed tokenAddress, address indexed ammAddress, string name, string symbol, address indexed creator, uint256 liquidityPercent, uint256 initialLiquidityETH)"
@@ -38,7 +38,7 @@ Deno.serve(async (req: Request) => {
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const rpcUrl = Deno.env.get("ETHEREUM_RPC_URL") || "https://eth.llamarpc.com";
+    const rpcUrl = Deno.env.get("ETHEREUM_RPC_URL") || "https://rpc.sepolia.org";
 
     const supabase = createClient(supabaseUrl, supabaseKey);
     const provider = new ethers.JsonRpcProvider(rpcUrl);

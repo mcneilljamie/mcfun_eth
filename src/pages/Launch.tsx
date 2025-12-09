@@ -68,13 +68,26 @@ export function Launch({ onNavigate }: LaunchProps) {
         ethAmount,
       });
 
-      if (website.trim()) {
-        const { supabase } = await import('../lib/supabase');
-        await supabase
-          .from('tokens')
-          .update({ website: website.trim() })
-          .eq('token_address', result.tokenAddress.toLowerCase());
-      }
+      const { supabase } = await import('../lib/supabase');
+
+      await supabase
+        .from('tokens')
+        .upsert({
+          token_address: result.tokenAddress.toLowerCase(),
+          amm_address: result.ammAddress.toLowerCase(),
+          name: name.trim(),
+          symbol: symbol.trim().toUpperCase(),
+          creator_address: account.toLowerCase(),
+          liquidity_percent: liquidityPercent,
+          initial_liquidity_eth: ethAmount,
+          current_eth_reserve: ethAmount,
+          current_token_reserve: ((TOTAL_SUPPLY * liquidityPercent) / 100).toString(),
+          total_volume_eth: '0',
+          website: website.trim() || null,
+          created_at: new Date().toISOString(),
+        }, {
+          onConflict: 'token_address',
+        });
 
       setSuccess({
         ...result,
