@@ -99,9 +99,6 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
         borderColor: isDark ? '#2a2a2a' : '#e5e7eb',
         timeVisible: true,
         secondsVisible: false,
-        tickMarkFormatter: (time: number, tickMarkType: TickMarkType) => {
-          return formatTimeForRange(time, timeRange, tickMarkType);
-        },
       },
       crosshair: {
         mode: 1,
@@ -139,6 +136,19 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
       chart.remove();
     };
   }, [theme, priceChange, timeRange]);
+
+  // Update time scale formatter when time range changes
+  useEffect(() => {
+    if (!chartRef.current) return;
+
+    chartRef.current.applyOptions({
+      timeScale: {
+        tickMarkFormatter: (time: number, tickMarkType: TickMarkType) => {
+          return formatTimeForRange(time, timeRange, tickMarkType);
+        },
+      },
+    });
+  }, [timeRange]);
 
   // Update chart colors when price change direction changes
   useEffect(() => {
