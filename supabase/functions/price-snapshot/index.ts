@@ -94,11 +94,11 @@ Deno.serve(async (req: Request) => {
 
     for (let i = 0; i < tokens.length; i += batchSize) {
       const batch = tokens.slice(i, i + batchSize);
-      
+
       const batchResults = await Promise.allSettled(
         batch.map(async (token) => {
           const amm = new ethers.Contract(token.amm_address, AMM_ABI, provider);
-          
+
           const [reserveETH, reserveToken, price] = await Promise.all([
             amm.reserveETH(),
             amm.reserveToken(),
@@ -112,6 +112,27 @@ Deno.serve(async (req: Request) => {
           // Skip if reserves are zero (token not yet initialized)
           if (ethReserveFormatted === "0.0" || tokenReserveFormatted === "0.0") {
             return { success: false, error: `Zero reserves for ${token.symbol}` };
+          }
+
+          // Check last snapshot to see if reserves changed (i.e., if there was trading activity)
+          const { data: lastSnapshot } = await supabase
+            .from("price_snapshots")
+            .select("eth_reserve, token_reserve")
+            .eq("token_address", token.token_address)
+            .order("created_at", { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+          // Only create snapshot if reserves changed (meaning there was a trade)
+          // or if this is the first snapshot for this token
+          if (lastSnapshot) {
+            const reservesUnchanged =
+              lastSnapshot.eth_reserve === ethReserveFormatted &&
+              lastSnapshot.token_reserve === tokenReserveFormatted;
+
+            if (reservesUnchanged) {
+              return { success: false, error: `No activity for ${token.symbol}` };
+            }
           }
 
           return {
