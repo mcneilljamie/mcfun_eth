@@ -43,7 +43,7 @@ export function PriceChart({ tokenAddress, currentPriceUSD, ammAddress }: PriceC
       if (provider && ammAddress) {
         await captureLocalSnapshot();
       }
-    }, 10000);
+    }, 30000);
 
     return () => {
       clearInterval(ethPriceInterval);
@@ -209,6 +209,11 @@ export function PriceChart({ tokenAddress, currentPriceUSD, ammAddress }: PriceC
 
   const minPrice = Math.min(...pricesUSD);
   const maxPrice = Math.max(...pricesUSD);
+  const priceRange = maxPrice - minPrice;
+  const padding = priceRange * 0.1;
+  const chartMinPrice = minPrice - padding;
+  const chartMaxPrice = maxPrice + padding;
+
   const firstPrice = pricesUSD[0];
   const priceChange = ((currentPriceUSD - firstPrice) / firstPrice) * 100;
 
@@ -233,9 +238,9 @@ export function PriceChart({ tokenAddress, currentPriceUSD, ammAddress }: PriceC
       ? paddingLeft + (index / (snapshotsWithCurrent.length - 1)) * (width - paddingLeft - paddingRight)
       : paddingLeft + (width - paddingLeft - paddingRight) / 2;
     const priceUSD = pricesUSD[index];
-    const priceRange = maxPrice - minPrice;
-    const y = priceRange > 0
-      ? paddingTop + ((maxPrice - priceUSD) / priceRange) * (height - paddingTop - paddingBottom)
+    const chartRange = chartMaxPrice - chartMinPrice;
+    const y = chartRange > 0
+      ? paddingTop + ((chartMaxPrice - priceUSD) / chartRange) * (height - paddingTop - paddingBottom)
       : paddingTop + (height - paddingTop - paddingBottom) / 2;
     return { x, y, timestamp: snapshot.created_at };
   });
@@ -304,31 +309,9 @@ export function PriceChart({ tokenAddress, currentPriceUSD, ammAddress }: PriceC
     });
   };
 
-  const hasRecentData = snapshots.some(s => {
-    const age = Date.now() - new Date(s.created_at).getTime();
-    return age < 60000;
-  });
-
-  const hasSpreadData = snapshots.length > 1 && (() => {
-    const firstTime = new Date(snapshots[0].created_at).getTime();
-    const lastTime = new Date(snapshots[snapshots.length - 1].created_at).getTime();
-    const spread = lastTime - firstTime;
-
-    switch (timeframe) {
-      case '15M':
-        return spread >= 5 * 60 * 1000;
-      case '24H':
-        return spread >= 60 * 60 * 1000;
-      case '7D':
-        return spread >= 24 * 60 * 60 * 1000;
-      default:
-        return true;
-    }
-  })();
-
   const yAxisLabels = 5;
   const yAxisValues = Array.from({ length: yAxisLabels }, (_, i) => {
-    return minPrice + (maxPrice - minPrice) * (i / (yAxisLabels - 1));
+    return chartMinPrice + (chartMaxPrice - chartMinPrice) * (i / (yAxisLabels - 1));
   }).reverse();
 
   let xAxisLabels = 6;
@@ -363,12 +346,6 @@ export function PriceChart({ tokenAddress, currentPriceUSD, ammAddress }: PriceC
               {Math.abs(priceChange).toFixed(2)}%
             </span>
           </div>
-          {!hasSpreadData && snapshots.length > 0 && (
-            <div className="mt-2 text-xs text-gray-500 flex items-center gap-1">
-              <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-pulse"></div>
-              Building history...
-            </div>
-          )}
         </div>
 
         <div className="flex space-x-2">
