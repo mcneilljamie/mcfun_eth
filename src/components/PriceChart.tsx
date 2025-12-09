@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { createChart, IChartApi, ISeriesApi, LineData, Time, AreaSeries } from 'lightweight-charts';
+import { createChart, IChartApi, ISeriesApi, LineData, Time, AreaSeries, TickMarkType } from 'lightweight-charts';
 import { useChartData, TimeRange } from '../hooks/useChartData';
 import { TimeRangeSelector } from './TimeRangeSelector';
 import { TrendingUp, TrendingDown } from 'lucide-react';
@@ -8,6 +8,58 @@ interface PriceChartProps {
   tokenAddress: string;
   tokenSymbol: string;
   theme?: 'light' | 'dark';
+}
+
+// Helper function to format time based on time range
+function formatTimeForRange(time: number, timeRange: TimeRange, tickMarkType: TickMarkType): string {
+  const date = new Date(time * 1000);
+
+  switch (timeRange) {
+    case '1H':
+      // For 1 hour: show HH:MM format
+      return date.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      });
+
+    case '24H':
+      // For 24 hours: show HH:MM format
+      if (tickMarkType === TickMarkType.Time) {
+        return date.toLocaleTimeString('en-US', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false
+        });
+      }
+      // For day boundary, show date
+      return date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric'
+      });
+
+    case '7D':
+    case '30D':
+      // For 7-30 days: show date
+      return date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric'
+      });
+
+    case 'ALL':
+      // For all time: show month and day
+      return date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric'
+      });
+
+    default:
+      return date.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      });
+  }
 }
 
 export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceChartProps) {
@@ -47,6 +99,9 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
         borderColor: isDark ? '#2a2a2a' : '#e5e7eb',
         timeVisible: true,
         secondsVisible: false,
+        tickMarkFormatter: (time: number, tickMarkType: TickMarkType) => {
+          return formatTimeForRange(time, timeRange, tickMarkType);
+        },
       },
       crosshair: {
         mode: 1,
@@ -83,7 +138,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
       window.removeEventListener('resize', handleResize);
       chart.remove();
     };
-  }, [theme, priceChange]);
+  }, [theme, priceChange, timeRange]);
 
   // Update chart colors when price change direction changes
   useEffect(() => {

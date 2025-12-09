@@ -77,12 +77,44 @@ export function useChartData(tokenAddress: string | undefined, timeRange: TimeRa
       }
 
       // Transform data for the chart
-      const transformedData: ChartDataPoint[] = chartData.map((point: any) => ({
+      let transformedData: ChartDataPoint[] = chartData.map((point: any) => ({
         time: Number(point.time_seconds),
         value: parseFloat(point.price_usd),
         priceEth: parseFloat(point.price_eth),
         isInterpolated: point.is_interpolated
       }));
+
+      // Filter out data points with large time gaps for short time ranges
+      // This prevents mixing old backfilled data with recent real data
+      if (transformedData.length > 1 && hoursBack <= 24) {
+        const expectedInterval = hoursBack === 1 ? 60 : 300; // 1 min for 1H, 5 min for 24H
+        const maxGap = expectedInterval * 20; // Allow up to 20x the expected interval
+
+        // Find the first continuous segment from the most recent data
+        const continuousData: ChartDataPoint[] = [];
+
+        // Start from the most recent point and work backwards
+        for (let i = transformedData.length - 1; i >= 0; i--) {
+          if (continuousData.length === 0) {
+            continuousData.unshift(transformedData[i]);
+          } else {
+            const timeDiff = continuousData[0].time - transformedData[i].time;
+
+            // If the gap is reasonable, include this point
+            if (timeDiff <= maxGap) {
+              continuousData.unshift(transformedData[i]);
+            } else {
+              // Large gap detected, stop here
+              break;
+            }
+          }
+        }
+
+        // Only use the continuous segment if it has at least 2 points
+        if (continuousData.length >= 2) {
+          transformedData = continuousData;
+        }
+      }
 
       // Calculate price change percentage
       if (transformedData.length >= 2) {
