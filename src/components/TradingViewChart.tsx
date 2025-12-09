@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { createChart, IChartApi, ISeriesApi, ColorType, LineStyle } from 'lightweight-charts';
+import { createChart, IChartApi, ISeriesApi, ColorType, LineStyle, AreaSeries } from 'lightweight-charts';
 
 export interface ChartDataPoint {
   time: number;
@@ -87,7 +87,7 @@ export function TradingViewChart({
       },
     });
 
-    const areaSeries = chart.addAreaSeries({
+    const areaSeries = chart.addSeries(AreaSeries, {
       lineColor: lineColor,
       topColor: topColor,
       bottomColor: bottomColor,
