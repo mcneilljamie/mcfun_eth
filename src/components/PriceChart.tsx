@@ -5,6 +5,7 @@ import { formatUSD } from '../lib/utils';
 import { getEthPriceUSD } from '../lib/ethPrice';
 import { useWeb3 } from '../lib/web3';
 import { getPrice } from '../lib/contracts';
+import { TradingViewChart, ChartDataPoint } from './TradingViewChart';
 
 interface PriceChartProps {
   tokenAddress: string;
@@ -28,7 +29,6 @@ export function PriceChart({ tokenAddress, ammAddress }: PriceChartProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [timeframe, setTimeframe] = useState<'15M' | '24H' | '7D' | 'ALL'>('24H');
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
-  const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
   const [currentPriceETH, setCurrentPriceETH] = useState<number>(0);
   const { provider } = useWeb3();
   const localSnapshotsRef = useRef<LocalSnapshot[]>([]);
@@ -213,130 +213,26 @@ export function PriceChart({ tokenAddress, ammAddress }: PriceChartProps) {
   const currentPriceUSD = currentPriceETH > 0
     ? currentPriceETH * ethPriceUSD
     : pricesUSD[pricesUSD.length - 1] || 0;
-  pricesUSD.push(currentPriceUSD);
-
-  const minPrice = Math.min(...pricesUSD);
-  const maxPrice = Math.max(...pricesUSD);
-  const priceRange = maxPrice - minPrice;
-  const padding = Math.max(priceRange * 0.15, minPrice * 0.05);
-  const chartMinPrice = Math.max(0, minPrice - padding);
-  const chartMaxPrice = maxPrice + padding;
 
   const firstPrice = pricesUSD[0];
   const priceChange = ((currentPriceUSD - firstPrice) / firstPrice) * 100;
-
-  const width = 800;
-  const height = 300;
-  const paddingLeft = 80;
-  const paddingRight = 40;
-  const paddingTop = 40;
-  const paddingBottom = 60;
+  const isPositiveChange = priceChange >= 0;
 
   const snapshotsWithCurrent = [...snapshots, {
     created_at: new Date().toISOString(),
-    price_eth: '0',
+    price_eth: currentPriceETH.toString(),
     eth_reserve: '0',
     token_reserve: '0',
     id: 'current',
     token_address: tokenAddress
-  } as PriceSnapshot];
+  } as LocalSnapshot];
 
-  const points = snapshotsWithCurrent.map((snapshot, index) => {
-    const x = snapshotsWithCurrent.length > 1
-      ? paddingLeft + (index / (snapshotsWithCurrent.length - 1)) * (width - paddingLeft - paddingRight)
-      : paddingLeft + (width - paddingLeft - paddingRight) / 2;
-    const priceUSD = pricesUSD[index];
-    const chartRange = chartMaxPrice - chartMinPrice;
-    const y = chartRange > 0
-      ? paddingTop + ((chartMaxPrice - priceUSD) / chartRange) * (height - paddingTop - paddingBottom)
-      : paddingTop + (height - paddingTop - paddingBottom) / 2;
-    return { x, y, timestamp: snapshot.created_at };
-  });
+  const allPricesUSD = [...pricesUSD, currentPriceUSD];
 
-  const createSmoothPath = (points: Array<{ x: number; y: number }>) => {
-    if (points.length < 2) return `M ${points[0].x} ${points[0].y}`;
-    if (points.length === 2) return `M ${points[0].x} ${points[0].y} L ${points[1].x} ${points[1].y}`;
-
-    const tension = 0.3;
-    let path = `M ${points[0].x} ${points[0].y}`;
-
-    for (let i = 0; i < points.length - 1; i++) {
-      const p0 = i > 0 ? points[i - 1] : points[0];
-      const p1 = points[i];
-      const p2 = points[i + 1];
-      const p3 = i < points.length - 2 ? points[i + 2] : p2;
-
-      const cp1x = p1.x + (p2.x - p0.x) * tension;
-      const cp1y = p1.y + (p2.y - p0.y) * tension;
-      const cp2x = p2.x - (p3.x - p1.x) * tension;
-      const cp2y = p2.y - (p3.y - p1.y) * tension;
-
-      path += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2.x} ${p2.y}`;
-    }
-
-    return path;
-  };
-
-  const pathData = createSmoothPath(points);
-
-  const isPositiveChange = priceChange >= 0;
-  const chartColor = isPositiveChange ? '#10B981' : '#EF4444';
-  const chartColorLight = isPositiveChange ? '#10B98120' : '#EF444420';
-
-  const formatAxisTimestamp = (timestamp: string) => {
-    const date = new Date(timestamp);
-
-    if (timeframe === '15M') {
-      return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-    } else if (timeframe === '24H') {
-      return date.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
-    } else if (timeframe === '7D') {
-      const now = new Date();
-      const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
-
-      if (diffDays === 0) {
-        return 'Today';
-      } else if (diffDays === 1) {
-        return 'Yesterday';
-      } else {
-        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      }
-    } else {
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    }
-  };
-
-  const formatTooltipTimestamp = (timestamp: string) => {
-    const date = new Date(timestamp);
-    return date.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    });
-  };
-
-  const yAxisLabels = 5;
-  const yAxisValues = Array.from({ length: yAxisLabels }, (_, i) => {
-    return chartMinPrice + (chartMaxPrice - chartMinPrice) * (i / (yAxisLabels - 1));
-  }).reverse();
-
-  let xAxisLabels = 6;
-  if (timeframe === '15M') {
-    xAxisLabels = 4;
-  } else if (timeframe === '24H') {
-    xAxisLabels = 6;
-  } else if (timeframe === '7D') {
-    xAxisLabels = 7;
-  }
-
-  xAxisLabels = Math.min(xAxisLabels, snapshotsWithCurrent.length);
-
-  const xAxisIndices = Array.from({ length: xAxisLabels }, (_, i) => {
-    if (xAxisLabels === 1) return 0;
-    return Math.round((i / (xAxisLabels - 1)) * (snapshotsWithCurrent.length - 1));
-  });
+  const chartData: ChartDataPoint[] = snapshotsWithCurrent.map((snapshot, index) => ({
+    time: Math.floor(new Date(snapshot.created_at).getTime() / 1000),
+    value: allPricesUSD[index]
+  }));
 
   return (
     <div className="bg-white rounded-xl shadow-md p-6">
@@ -373,214 +269,12 @@ export function PriceChart({ tokenAddress, ammAddress }: PriceChartProps) {
         </div>
       </div>
 
-      <div className="overflow-x-auto relative">
-        <svg
-          viewBox={`0 0 ${width} ${height}`}
-          className="w-full"
-          onMouseMove={(e) => {
-            const svg = e.currentTarget;
-            const rect = svg.getBoundingClientRect();
-            const x = ((e.clientX - rect.left) / rect.width) * width;
-
-            if (x < paddingLeft || x > width - paddingRight) {
-              setHoveredPoint(null);
-              return;
-            }
-
-            let closestIndex = 0;
-            let closestDistance = Infinity;
-
-            points.forEach((point, index) => {
-              const distance = Math.abs(point.x - x);
-              if (distance < closestDistance) {
-                closestDistance = distance;
-                closestIndex = index;
-              }
-            });
-
-            setHoveredPoint(closestIndex);
-          }}
-          onMouseLeave={() => setHoveredPoint(null)}
-        >
-          <defs>
-            <linearGradient id="priceGradient" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0%" stopColor={chartColor} stopOpacity="0.3" />
-              <stop offset="100%" stopColor={chartColor} stopOpacity="0" />
-            </linearGradient>
-          </defs>
-
-          {yAxisValues.map((value, index) => {
-            const y = paddingTop + (index / (yAxisLabels - 1)) * (height - paddingTop - paddingBottom);
-            return (
-              <line
-                key={`grid-${index}`}
-                x1={paddingLeft}
-                y1={y}
-                x2={width - paddingRight}
-                y2={y}
-                stroke="#F3F4F6"
-                strokeWidth="1"
-              />
-            );
-          })}
-
-          <path
-            d={`${pathData} L ${points[points.length - 1].x} ${height - paddingBottom} L ${paddingLeft} ${height - paddingBottom} Z`}
-            fill="url(#priceGradient)"
-          />
-
-          <path
-            d={pathData}
-            fill="none"
-            stroke={chartColor}
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-
-          <line
-            x1={paddingLeft}
-            y1={height - paddingBottom}
-            x2={width - paddingRight}
-            y2={height - paddingBottom}
-            stroke="#E5E7EB"
-            strokeWidth="1"
-          />
-
-          <line
-            x1={paddingLeft}
-            y1={paddingTop}
-            x2={paddingLeft}
-            y2={height - paddingBottom}
-            stroke="#E5E7EB"
-            strokeWidth="1"
-          />
-
-          {yAxisValues.map((value, index) => {
-            const y = paddingTop + (index / (yAxisLabels - 1)) * (height - paddingTop - paddingBottom);
-            return (
-              <g key={`y-${index}`}>
-                <line
-                  x1={paddingLeft - 5}
-                  y1={y}
-                  x2={paddingLeft}
-                  y2={y}
-                  stroke="#9CA3AF"
-                  strokeWidth="1"
-                />
-                <text
-                  x={paddingLeft - 10}
-                  y={y + 4}
-                  textAnchor="end"
-                  fontSize="11"
-                  fill="#6B7280"
-                  fontWeight="500"
-                >
-                  {formatUSD(value, true)}
-                </text>
-              </g>
-            );
-          })}
-
-          {xAxisIndices.map((snapshotIndex, index) => {
-            const point = points[snapshotIndex];
-            const label = formatAxisTimestamp(snapshotsWithCurrent[snapshotIndex].created_at);
-
-            let textAnchor: 'start' | 'middle' | 'end' = 'middle';
-            if (index === 0 && xAxisLabels > 2) {
-              textAnchor = 'start';
-            } else if (index === xAxisLabels - 1 && xAxisLabels > 2) {
-              textAnchor = 'end';
-            }
-
-            return (
-              <g key={`x-${index}`}>
-                <line
-                  x1={point.x}
-                  y1={height - paddingBottom}
-                  x2={point.x}
-                  y2={height - paddingBottom + 5}
-                  stroke="#9CA3AF"
-                  strokeWidth="1"
-                />
-                <text
-                  x={point.x}
-                  y={height - paddingBottom + 20}
-                  textAnchor={textAnchor}
-                  fontSize="11"
-                  fill="#6B7280"
-                  fontWeight="500"
-                >
-                  {label}
-                </text>
-              </g>
-            );
-          })}
-
-          {hoveredPoint !== null && (
-            <g>
-              <line
-                x1={points[hoveredPoint].x}
-                y1={paddingTop}
-                x2={points[hoveredPoint].x}
-                y2={height - paddingBottom}
-                stroke={chartColor}
-                strokeWidth="1.5"
-                strokeDasharray="5,5"
-                opacity="0.6"
-              />
-              <circle
-                cx={points[hoveredPoint].x}
-                cy={points[hoveredPoint].y}
-                r="6"
-                fill={chartColor}
-                stroke="white"
-                strokeWidth="3"
-              />
-            </g>
-          )}
-        </svg>
-
-        {hoveredPoint !== null && (() => {
-          const xPercent = (points[hoveredPoint].x / width) * 100;
-          const yPercent = (points[hoveredPoint].y / height) * 100;
-
-          let translateX = '-50%';
-          let translateY = '-120%';
-
-          if (xPercent < 15) {
-            translateX = '0%';
-          } else if (xPercent > 85) {
-            translateX = '-100%';
-          }
-
-          if (yPercent < 20) {
-            translateY = '20%';
-          }
-
-          const hoveredPrice = pricesUSD[hoveredPoint];
-          const percentChange = ((hoveredPrice - firstPrice) / firstPrice) * 100;
-
-          return (
-            <div
-              className="absolute bg-white border-2 px-3 py-2 rounded-lg text-sm shadow-xl pointer-events-none whitespace-nowrap z-10"
-              style={{
-                left: `${xPercent}%`,
-                top: `${yPercent}%`,
-                transform: `translate(${translateX}, ${translateY})`,
-                borderColor: chartColor,
-              }}
-            >
-              <div className="font-bold text-gray-900 text-base">{formatUSD(hoveredPrice, false)}</div>
-              <div className="flex items-center gap-1 text-xs mt-0.5" style={{ color: chartColor }}>
-                <span className="font-medium">{percentChange >= 0 ? '+' : ''}{percentChange.toFixed(2)}%</span>
-              </div>
-              <div className="text-xs text-gray-500 mt-1 border-t pt-1">
-                {formatTooltipTimestamp(snapshotsWithCurrent[hoveredPoint].created_at)}
-              </div>
-            </div>
-          );
-        })()}
+      <div className="mt-4">
+        <TradingViewChart
+          data={chartData}
+          height={350}
+          isPositive={isPositiveChange}
+        />
       </div>
     </div>
   );
