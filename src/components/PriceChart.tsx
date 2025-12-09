@@ -266,13 +266,28 @@ export function PriceChart({ tokenAddress, currentPriceUSD, ammAddress }: PriceC
 
   const pathData = createSmoothPath(points);
 
+  const isPositiveChange = priceChange >= 0;
+  const chartColor = isPositiveChange ? '#10B981' : '#EF4444';
+  const chartColorLight = isPositiveChange ? '#10B98120' : '#EF444420';
+
   const formatAxisTimestamp = (timestamp: string) => {
     const date = new Date(timestamp);
 
-    if (timeframe === '15M' || timeframe === '24H') {
-      return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    if (timeframe === '15M') {
+      return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    } else if (timeframe === '24H') {
+      return date.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
     } else if (timeframe === '7D') {
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      const now = new Date();
+      const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+
+      if (diffDays === 0) {
+        return 'Today';
+      } else if (diffDays === 1) {
+        return 'Yesterday';
+      } else {
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      }
     } else {
       return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     }
@@ -283,26 +298,59 @@ export function PriceChart({ tokenAddress, currentPriceUSD, ammAddress }: PriceC
     return date.toLocaleString('en-US', {
       month: 'short',
       day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
     });
   };
+
+  const hasRecentData = snapshots.some(s => {
+    const age = Date.now() - new Date(s.created_at).getTime();
+    return age < 60000;
+  });
+
+  const hasSpreadData = snapshots.length > 1 && (() => {
+    const firstTime = new Date(snapshots[0].created_at).getTime();
+    const lastTime = new Date(snapshots[snapshots.length - 1].created_at).getTime();
+    const spread = lastTime - firstTime;
+
+    switch (timeframe) {
+      case '15M':
+        return spread >= 5 * 60 * 1000;
+      case '24H':
+        return spread >= 60 * 60 * 1000;
+      case '7D':
+        return spread >= 24 * 60 * 60 * 1000;
+      default:
+        return true;
+    }
+  })();
 
   const yAxisLabels = 5;
   const yAxisValues = Array.from({ length: yAxisLabels }, (_, i) => {
     return minPrice + (maxPrice - minPrice) * (i / (yAxisLabels - 1));
   }).reverse();
 
-  const xAxisLabels = Math.min(6, snapshotsWithCurrent.length);
+  let xAxisLabels = 6;
+  if (timeframe === '15M') {
+    xAxisLabels = 4;
+  } else if (timeframe === '24H') {
+    xAxisLabels = 6;
+  } else if (timeframe === '7D') {
+    xAxisLabels = 7;
+  }
+
+  xAxisLabels = Math.min(xAxisLabels, snapshotsWithCurrent.length);
+
   const xAxisIndices = Array.from({ length: xAxisLabels }, (_, i) => {
     if (xAxisLabels === 1) return 0;
-    return Math.floor((i / (xAxisLabels - 1)) * (snapshotsWithCurrent.length - 1));
+    return Math.round((i / (xAxisLabels - 1)) * (snapshotsWithCurrent.length - 1));
   });
 
   return (
     <div className="bg-white rounded-xl shadow-md p-6">
       <div className="flex items-center justify-between mb-4">
-        <div>
+        <div className="flex-1">
           <h3 className="text-lg font-bold text-gray-900">Price Chart</h3>
           <div className="flex items-center space-x-2 mt-1">
             <span className="text-2xl font-bold text-gray-900">
@@ -315,6 +363,12 @@ export function PriceChart({ tokenAddress, currentPriceUSD, ammAddress }: PriceC
               {Math.abs(priceChange).toFixed(2)}%
             </span>
           </div>
+          {!hasSpreadData && snapshots.length > 0 && (
+            <div className="mt-2 text-xs text-gray-500 flex items-center gap-1">
+              <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-pulse"></div>
+              Building history...
+            </div>
+          )}
         </div>
 
         <div className="flex space-x-2">
@@ -365,10 +419,25 @@ export function PriceChart({ tokenAddress, currentPriceUSD, ammAddress }: PriceC
         >
           <defs>
             <linearGradient id="priceGradient" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0%" stopColor="#111827" stopOpacity="0.2" />
-              <stop offset="100%" stopColor="#111827" stopOpacity="0" />
+              <stop offset="0%" stopColor={chartColor} stopOpacity="0.3" />
+              <stop offset="100%" stopColor={chartColor} stopOpacity="0" />
             </linearGradient>
           </defs>
+
+          {yAxisValues.map((value, index) => {
+            const y = paddingTop + (index / (yAxisLabels - 1)) * (height - paddingTop - paddingBottom);
+            return (
+              <line
+                key={`grid-${index}`}
+                x1={paddingLeft}
+                y1={y}
+                x2={width - paddingRight}
+                y2={y}
+                stroke="#F3F4F6"
+                strokeWidth="1"
+              />
+            );
+          })}
 
           <path
             d={`${pathData} L ${points[points.length - 1].x} ${height - paddingBottom} L ${paddingLeft} ${height - paddingBottom} Z`}
@@ -378,8 +447,8 @@ export function PriceChart({ tokenAddress, currentPriceUSD, ammAddress }: PriceC
           <path
             d={pathData}
             fill="none"
-            stroke="#111827"
-            strokeWidth="2"
+            stroke={chartColor}
+            strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
@@ -418,8 +487,9 @@ export function PriceChart({ tokenAddress, currentPriceUSD, ammAddress }: PriceC
                   x={paddingLeft - 10}
                   y={y + 4}
                   textAnchor="end"
-                  fontSize="12"
+                  fontSize="11"
                   fill="#6B7280"
+                  fontWeight="500"
                 >
                   {formatUSD(value, true)}
                 </text>
@@ -430,6 +500,14 @@ export function PriceChart({ tokenAddress, currentPriceUSD, ammAddress }: PriceC
           {xAxisIndices.map((snapshotIndex, index) => {
             const point = points[snapshotIndex];
             const label = formatAxisTimestamp(snapshotsWithCurrent[snapshotIndex].created_at);
+
+            let textAnchor: 'start' | 'middle' | 'end' = 'middle';
+            if (index === 0 && xAxisLabels > 2) {
+              textAnchor = 'start';
+            } else if (index === xAxisLabels - 1 && xAxisLabels > 2) {
+              textAnchor = 'end';
+            }
+
             return (
               <g key={`x-${index}`}>
                 <line
@@ -443,9 +521,10 @@ export function PriceChart({ tokenAddress, currentPriceUSD, ammAddress }: PriceC
                 <text
                   x={point.x}
                   y={height - paddingBottom + 20}
-                  textAnchor="middle"
-                  fontSize="12"
+                  textAnchor={textAnchor}
+                  fontSize="11"
                   fill="#6B7280"
+                  fontWeight="500"
                 >
                   {label}
                 </text>
@@ -460,28 +539,18 @@ export function PriceChart({ tokenAddress, currentPriceUSD, ammAddress }: PriceC
                 y1={paddingTop}
                 x2={points[hoveredPoint].x}
                 y2={height - paddingBottom}
-                stroke="#111827"
-                strokeWidth="1"
-                strokeDasharray="4"
-                opacity="0.5"
-              />
-              <line
-                x1={paddingLeft}
-                y1={points[hoveredPoint].y}
-                x2={width - paddingRight}
-                y2={points[hoveredPoint].y}
-                stroke="#111827"
-                strokeWidth="1"
-                strokeDasharray="4"
-                opacity="0.5"
+                stroke={chartColor}
+                strokeWidth="1.5"
+                strokeDasharray="5,5"
+                opacity="0.6"
               />
               <circle
                 cx={points[hoveredPoint].x}
                 cy={points[hoveredPoint].y}
-                r="5"
-                fill="#111827"
+                r="6"
+                fill={chartColor}
                 stroke="white"
-                strokeWidth="2"
+                strokeWidth="3"
               />
             </g>
           )}
@@ -504,17 +573,26 @@ export function PriceChart({ tokenAddress, currentPriceUSD, ammAddress }: PriceC
             translateY = '20%';
           }
 
+          const hoveredPrice = pricesUSD[hoveredPoint];
+          const percentChange = ((hoveredPrice - firstPrice) / firstPrice) * 100;
+
           return (
             <div
-              className="absolute bg-gray-900 text-white px-3 py-2 rounded-lg text-sm shadow-lg pointer-events-none whitespace-nowrap z-10"
+              className="absolute bg-white border-2 px-3 py-2 rounded-lg text-sm shadow-xl pointer-events-none whitespace-nowrap z-10"
               style={{
                 left: `${xPercent}%`,
                 top: `${yPercent}%`,
                 transform: `translate(${translateX}, ${translateY})`,
+                borderColor: chartColor,
               }}
             >
-              <div className="font-semibold">{formatUSD(pricesUSD[hoveredPoint], false)}</div>
-              <div className="text-xs text-gray-300">{formatTooltipTimestamp(snapshotsWithCurrent[hoveredPoint].created_at)}</div>
+              <div className="font-bold text-gray-900 text-base">{formatUSD(hoveredPrice, false)}</div>
+              <div className="flex items-center gap-1 text-xs mt-0.5" style={{ color: chartColor }}>
+                <span className="font-medium">{percentChange >= 0 ? '+' : ''}{percentChange.toFixed(2)}%</span>
+              </div>
+              <div className="text-xs text-gray-500 mt-1 border-t pt-1">
+                {formatTooltipTimestamp(snapshotsWithCurrent[hoveredPoint].created_at)}
+              </div>
             </div>
           );
         })()}
