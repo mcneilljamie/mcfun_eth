@@ -5,6 +5,8 @@ import { supabase, Token } from '../lib/supabase';
 import { formatCurrency, formatAddress, formatTimeAgo, formatUSD, ethToUSD } from '../lib/utils';
 import { getEthPriceUSD } from '../lib/ethPrice';
 import { PriceChart } from '../components/PriceChart';
+import { getAMMReserves } from '../lib/contracts';
+import { useWeb3 } from '../lib/web3';
 
 interface TokenDetailProps {
   tokenAddress: string;
@@ -14,18 +16,28 @@ interface TokenDetailProps {
 
 export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps) {
   const { t } = useTranslation();
+  const { provider } = useWeb3();
   const [token, setToken] = useState<Token | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
+  const [liveReserves, setLiveReserves] = useState<{ reserveETH: string; reserveToken: string } | null>(null);
 
   useEffect(() => {
     loadToken();
     loadEthPrice();
 
-    const interval = setInterval(loadEthPrice, 60000);
-    return () => clearInterval(interval);
+    const ethPriceInterval = setInterval(loadEthPrice, 60000);
+    return () => clearInterval(ethPriceInterval);
   }, [tokenAddress]);
+
+  useEffect(() => {
+    if (token && provider) {
+      loadLiveReserves();
+      const reservesInterval = setInterval(loadLiveReserves, 10000);
+      return () => clearInterval(reservesInterval);
+    }
+  }, [token, provider]);
 
   const loadEthPrice = async () => {
     const price = await getEthPriceUSD();
@@ -54,6 +66,20 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
     }
   };
 
+  const loadLiveReserves = async () => {
+    if (!token || !provider) return;
+
+    try {
+      const reserves = await getAMMReserves(provider, token.amm_address);
+      setLiveReserves({
+        reserveETH: reserves.reserveETH,
+        reserveToken: reserves.reserveToken,
+      });
+    } catch (err) {
+      console.error('Failed to load live reserves:', err);
+    }
+  };
+
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -66,8 +92,13 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
 
   const calculateTokenPriceUSD = (): number => {
     if (!token) return 0;
-    const ethReserve = parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
-    const tokenReserve = parseFloat(token.current_token_reserve?.toString() || '1000000');
+
+    const ethReserve = liveReserves
+      ? parseFloat(liveReserves.reserveETH)
+      : parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
+    const tokenReserve = liveReserves
+      ? parseFloat(liveReserves.reserveToken)
+      : parseFloat(token.current_token_reserve?.toString() || '1000000');
 
     if (tokenReserve === 0) return 0;
 
@@ -192,10 +223,10 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="text-sm text-gray-600 mb-1">{t('tokenDetail.liquidity')}</div>
               <div className="text-xl sm:text-2xl font-bold text-gray-900">
-                {formatUSD(ethToUSD(token.current_eth_reserve || token.initial_liquidity_eth, ethPriceUSD), true)}
+                {formatUSD(ethToUSD(liveReserves?.reserveETH || token.current_eth_reserve || token.initial_liquidity_eth, ethPriceUSD), true)}
               </div>
               <div className="text-xs text-gray-500 mt-1">
-                {formatCurrency(token.current_eth_reserve || token.initial_liquidity_eth)}
+                {formatCurrency(liveReserves?.reserveETH || token.current_eth_reserve || token.initial_liquidity_eth)}
               </div>
             </div>
 
@@ -273,13 +304,13 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
                 <span className="text-gray-600">{t('tokenDetail.ethReserve')}</span>
                 <span className="font-semibold text-gray-900">
-                  {formatCurrency(token.current_eth_reserve || token.initial_liquidity_eth)}
+                  {formatCurrency(liveReserves?.reserveETH || token.current_eth_reserve || token.initial_liquidity_eth)}
                 </span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
                 <span className="text-gray-600">{token.symbol} {t('tokenDetail.reserve')}</span>
                 <span className="font-semibold text-gray-900">
-                  {parseFloat(token.current_token_reserve?.toString() || '0').toLocaleString()} {token.symbol}
+                  {parseFloat(liveReserves?.reserveToken || token.current_token_reserve?.toString() || '0').toLocaleString()} {token.symbol}
                 </span>
               </div>
               <div className="flex justify-between items-center py-2">

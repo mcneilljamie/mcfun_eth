@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { supabase, Token } from '../lib/supabase';
 import { formatCurrency, formatAddress, formatTimeAgo, formatUSD } from '../lib/utils';
 import { getEthPriceUSD } from '../lib/ethPrice';
+import { getAMMReserves } from '../lib/contracts';
+import { useWeb3 } from '../lib/web3';
 
 interface TokensProps {
   onSelectToken: (token: Token) => void;
@@ -12,12 +14,14 @@ interface TokensProps {
 
 export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   const { t } = useTranslation();
+  const { provider } = useWeb3();
   const [tokens, setTokens] = useState<Token[]>([]);
   const [filteredTokens, setFilteredTokens] = useState<Token[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
+  const [liveReserves, setLiveReserves] = useState<Record<string, { reserveETH: string; reserveToken: string }>>({});
 
   useEffect(() => {
     loadTokens();
@@ -37,6 +41,14 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
       subscription.unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    if (tokens.length > 0 && provider) {
+      loadLiveReserves();
+      const reservesInterval = setInterval(loadLiveReserves, 10000);
+      return () => clearInterval(reservesInterval);
+    }
+  }, [tokens, provider]);
 
   const loadEthPrice = async () => {
     const price = await getEthPriceUSD();
@@ -81,6 +93,41 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     }
   };
 
+  const loadLiveReserves = async () => {
+    if (!provider || tokens.length === 0) return;
+
+    try {
+      const reservesPromises = tokens.map(async (token) => {
+        try {
+          const reserves = await getAMMReserves(provider, token.amm_address);
+          return {
+            tokenAddress: token.token_address,
+            reserves: {
+              reserveETH: reserves.reserveETH,
+              reserveToken: reserves.reserveToken,
+            },
+          };
+        } catch (err) {
+          console.error(`Failed to load reserves for ${token.symbol}:`, err);
+          return null;
+        }
+      });
+
+      const results = await Promise.all(reservesPromises);
+      const newReserves: Record<string, { reserveETH: string; reserveToken: string }> = {};
+
+      results.forEach((result) => {
+        if (result) {
+          newReserves[result.tokenAddress] = result.reserves;
+        }
+      });
+
+      setLiveReserves(newReserves);
+    } catch (err) {
+      console.error('Failed to load live reserves:', err);
+    }
+  };
+
   const copyToClipboard = async (address: string) => {
     try {
       await navigator.clipboard.writeText(address);
@@ -92,8 +139,13 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   };
 
   const calculateTokenPriceUSD = (token: Token): number => {
-    const ethReserve = parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
-    const tokenReserve = parseFloat(token.current_token_reserve?.toString() || '1000000');
+    const reserves = liveReserves[token.token_address];
+    const ethReserve = reserves
+      ? parseFloat(reserves.reserveETH)
+      : parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
+    const tokenReserve = reserves
+      ? parseFloat(reserves.reserveToken)
+      : parseFloat(token.current_token_reserve?.toString() || '1000000');
 
     if (tokenReserve === 0) return 0;
 
@@ -227,7 +279,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                         </td>
                         <td className="py-4 px-4">
                           <div className="font-semibold text-gray-900">
-                            {formatCurrency(token.current_eth_reserve || token.initial_liquidity_eth)}
+                            {formatCurrency(liveReserves[token.token_address]?.reserveETH || token.current_eth_reserve || token.initial_liquidity_eth)}
                           </div>
                         </td>
                         <td className="py-4 px-4">
@@ -316,7 +368,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">{t('tokens.table.liquidity')}:</span>
                         <span className="font-semibold text-gray-900">
-                          {formatCurrency(token.current_eth_reserve || token.initial_liquidity_eth)}
+                          {formatCurrency(liveReserves[token.token_address]?.reserveETH || token.current_eth_reserve || token.initial_liquidity_eth)}
                         </span>
                       </div>
 
