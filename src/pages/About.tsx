@@ -24,6 +24,18 @@ export function About() {
 
   const loadData = async () => {
     try {
+      // Sync reserves from blockchain (non-blocking)
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+      fetch(`${supabaseUrl}/functions/v1/sync-reserves`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${supabaseAnonKey}`,
+          'Content-Type': 'application/json',
+        },
+      }).catch(err => console.error('Failed to sync reserves:', err));
+
       // Load total liquidity
       const { data: tokensData, error: tokensError } = await supabase
         .from('tokens')
@@ -37,21 +49,23 @@ export function About() {
         setTotalLiquidity(total.toString());
       }
 
-      // Load platform stats
-      const { data: statsData, error: statsError } = await supabase
-        .from('platform_stats')
-        .select('total_market_cap_usd, total_volume_eth, token_count')
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
+      // Load platform stats (wait a bit for sync to complete)
+      setTimeout(async () => {
+        const { data: statsData, error: statsError } = await supabase
+          .from('platform_stats')
+          .select('total_market_cap_usd, total_volume_eth, token_count')
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
 
-      if (!statsError && statsData) {
-        setPlatformStats({
-          totalMarketCapUsd: parseFloat(statsData.total_market_cap_usd || '0'),
-          totalVolumeEth: parseFloat(statsData.total_volume_eth || '0'),
-          tokenCount: statsData.token_count || 0,
-        });
-      }
+        if (!statsError && statsData) {
+          setPlatformStats({
+            totalMarketCapUsd: parseFloat(statsData.total_market_cap_usd || '0'),
+            totalVolumeEth: parseFloat(statsData.total_volume_eth || '0'),
+            tokenCount: statsData.token_count || 0,
+          });
+        }
+      }, 2000);
     } catch (err) {
       console.error('Failed to load data:', err);
     } finally {
