@@ -22,6 +22,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
   const [liveReserves, setLiveReserves] = useState<Record<string, { reserveETH: string; reserveToken: string }>>({});
+  const [liveVolumes, setLiveVolumes] = useState<Record<string, string>>({});
 
   useEffect(() => {
     loadTokens();
@@ -45,7 +46,11 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   useEffect(() => {
     if (tokens.length > 0 && provider) {
       loadLiveReserves();
-      const reservesInterval = setInterval(loadLiveReserves, 10000);
+      loadLiveVolumes();
+      const reservesInterval = setInterval(() => {
+        loadLiveReserves();
+        loadLiveVolumes();
+      }, 10000);
       return () => clearInterval(reservesInterval);
     }
   }, [tokens, provider]);
@@ -139,6 +144,28 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
       setLiveReserves(newReserves);
     } catch (err) {
       console.error('Failed to load live reserves:', err);
+    }
+  };
+
+  const loadLiveVolumes = async () => {
+    if (tokens.length === 0) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('tokens')
+        .select('token_address, total_volume_eth')
+        .in('token_address', tokens.map(t => t.token_address));
+
+      if (error) throw error;
+
+      const newVolumes: Record<string, string> = {};
+      data?.forEach(token => {
+        newVolumes[token.token_address] = token.total_volume_eth;
+      });
+
+      setLiveVolumes(newVolumes);
+    } catch (err) {
+      console.error('Failed to load live volumes:', err);
     }
   };
 
@@ -298,7 +325,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                         </td>
                         <td className="py-4 px-4">
                           <div className="font-medium text-gray-900">
-                            {formatCurrency(token.total_volume_eth)}
+                            {formatCurrency(liveVolumes[token.token_address] || token.total_volume_eth)}
                           </div>
                         </td>
                         <td className="py-4 px-4">
@@ -389,7 +416,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">{t('tokens.table.allTimeVolume')}:</span>
                         <span className="font-medium text-gray-900">
-                          {formatCurrency(token.total_volume_eth)}
+                          {formatCurrency(liveVolumes[token.token_address] || token.total_volume_eth)}
                         </span>
                       </div>
 
