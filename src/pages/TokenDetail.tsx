@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { supabase, Token } from '../lib/supabase';
 import { formatCurrency, formatAddress, formatTimeAgo, formatUSD, ethToUSD } from '../lib/utils';
 import { getEthPriceUSD } from '../lib/ethPrice';
-import { PriceChart } from '../components/PriceChart';
 import { getAMMReserves } from '../lib/contracts';
 import { useWeb3 } from '../lib/web3';
 import { getExplorerUrl } from '../contracts/addresses';
@@ -231,14 +230,6 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
               </div>
             </div>
           </div>
-        </div>
-
-        <div className="mb-6">
-          <PriceChart
-            tokenAddress={token.token_address}
-            tokenSymbol={token.symbol}
-            ammAddress={token.amm_address}
-          />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
