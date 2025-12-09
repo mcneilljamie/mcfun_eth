@@ -91,6 +91,36 @@ Deno.serve(async (req: Request) => {
             results.errors.push(`Failed to insert token ${args.tokenAddress}: ${error.message}`);
           } else {
             results.tokensIndexed++;
+
+            // Generate initial price history for the new token
+            try {
+              const initialPriceETH = parseFloat(ethers.formatEther(args.initialLiquidityETH)) / 1000000;
+              const historyResponse = await fetch(`${supabaseUrl}/functions/v1/generate-initial-history`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${supabaseKey}`,
+                },
+                body: JSON.stringify({
+                  tokenAddress: args.tokenAddress.toLowerCase(),
+                  initialPriceETH: initialPriceETH,
+                  initialEthReserve: parseFloat(ethers.formatEther(args.initialLiquidityETH)),
+                  initialTokenReserve: 1000000,
+                  createdAt: new Date(block.timestamp * 1000).toISOString(),
+                  hoursOfHistory: 24,
+                }),
+              });
+
+              if (!historyResponse.ok) {
+                const errorText = await historyResponse.text();
+                console.error(`Failed to generate initial history for ${args.tokenAddress}: ${errorText}`);
+              } else {
+                const historyResult = await historyResponse.json();
+                console.log(`Generated ${historyResult.snapshotsCreated} initial snapshots for ${args.tokenAddress}`);
+              }
+            } catch (historyErr: any) {
+              console.error(`Error generating initial history for ${args.tokenAddress}:`, historyErr);
+            }
           }
         }
       } catch (err: any) {

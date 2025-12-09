@@ -49,6 +49,7 @@ export function TradingViewChart({
       height: height,
       rightPriceScale: {
         borderColor: '#E5E7EB',
+        visible: true,
         scaleMargins: {
           top: 0.1,
           bottom: 0.1,
@@ -58,6 +59,8 @@ export function TradingViewChart({
         borderColor: '#E5E7EB',
         timeVisible: true,
         secondsVisible: false,
+        fixLeftEdge: true,
+        fixRightEdge: true,
       },
       crosshair: {
         mode: 1,
