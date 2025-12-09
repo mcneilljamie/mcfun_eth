@@ -7,6 +7,7 @@ import { getEthPriceUSD } from '../lib/ethPrice';
 import { PriceChart } from '../components/PriceChart';
 import { getAMMReserves } from '../lib/contracts';
 import { useWeb3 } from '../lib/web3';
+import { getExplorerUrl } from '../contracts/addresses';
 
 interface TokenDetailProps {
   tokenAddress: string;
@@ -16,7 +17,7 @@ interface TokenDetailProps {
 
 export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps) {
   const { t } = useTranslation();
-  const { provider } = useWeb3();
+  const { provider, chainId } = useWeb3();
   const [token, setToken] = useState<Token | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [copiedAddress, setCopiedAddress] = useState(false);
@@ -173,7 +174,7 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
                   )}
                 </button>
                 <a
-                  href={`https://etherscan.io/token/${token.token_address}`}
+                  href={`${getExplorerUrl(chainId || 11155111)}/token/${token.token_address}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-600 hover:text-gray-900 transition-colors"
@@ -286,7 +287,7 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
               <div className="flex justify-between items-center py-2">
                 <span className="text-gray-600">{t('tokenDetail.tokenContract')}</span>
                 <a
-                  href={`https://etherscan.io/token/${token.token_address}`}
+                  href={`${getExplorerUrl(chainId || 11155111)}/token/${token.token_address}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center space-x-2 text-gray-900 hover:text-gray-700 transition-colors"
@@ -316,7 +317,7 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
               <div className="flex justify-between items-center py-2">
                 <span className="text-gray-600">{t('tokenDetail.ammContract')}</span>
                 <a
-                  href={`https://etherscan.io/address/${token.amm_address}`}
+                  href={`${getExplorerUrl(chainId || 11155111)}/address/${token.amm_address}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center space-x-2 text-gray-900 hover:text-gray-700 transition-colors"

@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, Copy, CheckCircle, ExternalLink, Sparkles } from 'lucide-react';
+import { useWeb3 } from '../lib/web3';
+import { getExplorerUrl } from '../contracts/addresses';
 
 interface LaunchCelebrationProps {
   tokenName: string;
@@ -20,6 +22,7 @@ export function LaunchCelebration({
   onClose,
   onViewToken,
 }: LaunchCelebrationProps) {
+  const { chainId } = useWeb3();
   const [copiedItem, setCopiedItem] = useState<string | null>(null);
   const [fireworks, setFireworks] = useState<Array<{ id: number; x: number; y: number }>>([]);
 
@@ -52,8 +55,9 @@ export function LaunchCelebration({
   };
 
   const chartUrl = `${window.location.origin}/?token=${tokenAddress}`;
-  const etherscanTokenUrl = `https://etherscan.io/token/${tokenAddress}`;
-  const etherscanPoolUrl = `https://etherscan.io/address/${ammAddress}`;
+  const explorerUrl = getExplorerUrl(chainId || 11155111);
+  const etherscanTokenUrl = `${explorerUrl}/token/${tokenAddress}`;
+  const etherscanPoolUrl = `${explorerUrl}/address/${ammAddress}`;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
@@ -269,11 +273,11 @@ export function LaunchCelebration({
                       )}
                     </button>
                     <a
-                      href={`https://etherscan.io/tx/${txHash}`}
+                      href={`${explorerUrl}/tx/${txHash}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
-                      title="View on Etherscan"
+                      title="View on block explorer"
                     >
                       <ExternalLink className="w-5 h-5" />
                     </a>
