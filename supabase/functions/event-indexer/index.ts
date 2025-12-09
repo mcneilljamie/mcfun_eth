@@ -175,6 +175,15 @@ Deno.serve(async (req: Request) => {
       }
     }
 
+    // Update platform stats after indexing
+    if (results.swapsIndexed > 0 || results.tokensIndexed > 0) {
+      try {
+        await supabase.rpc('update_platform_stats');
+      } catch (err: any) {
+        results.errors.push(`Failed to update platform stats: ${err.message}`);
+      }
+    }
+
     return new Response(
       JSON.stringify(results),
       {

@@ -121,41 +121,41 @@ Deno.serve(async (req: Request) => {
 
     // Calculate and store platform statistics
     try {
-      // Get latest price snapshot for each token
-      const { data: latestPrices, error: pricesError } = await supabase
-        .from("price_snapshots")
-        .select("token_address, price_eth, eth_price_usd")
-        .order("created_at", { ascending: false });
+      // Get all tokens with their current data
+      const { data: allTokens, error: allTokensError } = await supabase
+        .from("tokens")
+        .select("token_address, current_eth_reserve, total_volume_eth");
 
-      if (pricesError) {
-        console.error("Failed to fetch latest prices:", pricesError);
-      } else if (latestPrices && latestPrices.length > 0) {
-        // Group by token_address and get the latest price for each
-        const latestByToken = new Map();
-        for (const price of latestPrices) {
-          if (!latestByToken.has(price.token_address)) {
-            latestByToken.set(price.token_address, price);
-          }
-        }
-
-        // Calculate total market cap (FDV)
-        // Each token has 1 billion fixed supply
-        const TOTAL_SUPPLY = 1_000_000_000;
+      if (allTokensError) {
+        console.error("Failed to fetch tokens for stats:", allTokensError);
+      } else if (allTokens && allTokens.length > 0) {
+        // Calculate total market cap using current reserves
+        const TOTAL_SUPPLY = 1_000_000;
         let totalMarketCapUSD = 0;
-
-        for (const [, priceData] of latestByToken) {
-          const fdv = TOTAL_SUPPLY * parseFloat(priceData.price_eth) * parseFloat(priceData.eth_price_usd);
-          totalMarketCapUSD += fdv;
-        }
-
-        // Get total volume
-        const { data: volumeData, error: volumeError } = await supabase
-          .from("tokens")
-          .select("total_volume_eth");
-
         let totalVolumeETH = 0;
-        if (!volumeError && volumeData) {
-          totalVolumeETH = volumeData.reduce((sum, t) => sum + parseFloat(t.total_volume_eth || "0"), 0);
+
+        for (const token of allTokens) {
+          const ethReserve = parseFloat(token.current_eth_reserve || "0");
+          
+          // Calculate price from reserves (if we have reserves)
+          if (ethReserve > 0) {
+            // Get token reserve from latest snapshot or calculate
+            const { data: snapshot } = await supabase
+              .from("price_snapshots")
+              .select("price_eth")
+              .eq("token_address", token.token_address)
+              .order("created_at", { ascending: false })
+              .limit(1)
+              .maybeSingle();
+            
+            if (snapshot) {
+              const priceETH = parseFloat(snapshot.price_eth);
+              const fdv = TOTAL_SUPPLY * priceETH * ethPriceUSD;
+              totalMarketCapUSD += fdv;
+            }
+          }
+          
+          totalVolumeETH += parseFloat(token.total_volume_eth || "0");
         }
 
         // Insert platform stats
@@ -164,7 +164,7 @@ Deno.serve(async (req: Request) => {
           .insert({
             total_market_cap_usd: totalMarketCapUSD,
             total_volume_eth: totalVolumeETH,
-            token_count: latestByToken.size,
+            token_count: allTokens.length,
           });
 
         if (statsError) {
