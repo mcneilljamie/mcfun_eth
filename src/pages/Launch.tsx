@@ -69,6 +69,10 @@ export function Launch({ onNavigate }: LaunchProps) {
       });
 
       const { supabase } = await import('../lib/supabase');
+      const { getEthPriceUSD } = await import('../lib/ethPrice');
+
+      const tokenReserve = ((TOTAL_SUPPLY * liquidityPercent) / 100).toString();
+      const ethReserve = ethAmount;
 
       await supabase
         .from('tokens')
@@ -80,13 +84,26 @@ export function Launch({ onNavigate }: LaunchProps) {
           creator_address: account.toLowerCase(),
           liquidity_percent: liquidityPercent,
           initial_liquidity_eth: ethAmount,
-          current_eth_reserve: ethAmount,
-          current_token_reserve: ((TOTAL_SUPPLY * liquidityPercent) / 100).toString(),
+          current_eth_reserve: ethReserve,
+          current_token_reserve: tokenReserve,
           total_volume_eth: '0',
           website: website.trim() || null,
           created_at: new Date().toISOString(),
         }, {
           onConflict: 'token_address',
+        });
+
+      const priceEth = parseFloat(ethReserve) / parseFloat(tokenReserve);
+      const ethPriceUsd = await getEthPriceUSD();
+
+      await supabase
+        .from('price_snapshots')
+        .insert({
+          token_address: result.tokenAddress.toLowerCase(),
+          price_eth: priceEth.toString(),
+          eth_reserve: ethReserve,
+          token_reserve: tokenReserve,
+          eth_price_usd: ethPriceUsd.toString(),
         });
 
       setSuccess({

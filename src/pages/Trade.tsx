@@ -142,10 +142,11 @@ export function Trade({ selectedToken }: TradeProps) {
       loadReserves();
       loadBalances();
 
-      // Index the swap event in the background (non-blocking)
+      // Update data in the background (non-blocking)
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
+      // Index the swap event
       fetch(`${supabaseUrl}/functions/v1/event-indexer`, {
         method: 'POST',
         headers: {
@@ -157,6 +158,15 @@ export function Trade({ selectedToken }: TradeProps) {
           indexSwaps: true
         }),
       }).catch(err => console.error('Failed to index swap:', err));
+
+      // Create a price snapshot immediately
+      fetch(`${supabaseUrl}/functions/v1/price-snapshot`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${supabaseAnonKey}`,
+          'Content-Type': 'application/json',
+        },
+      }).catch(err => console.error('Failed to create snapshot:', err));
     } catch (err: any) {
       console.error('Failed to swap:', err);
       setError(err.message || 'Failed to complete swap. Please try again.');
