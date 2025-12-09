@@ -43,9 +43,22 @@ Deno.serve(async (req: Request) => {
 
     const ethPriceUSD = await fetchEthPriceUSD();
 
-    const { data: tokens, error: tokensError } = await supabase
+    // Check if we should only process recent tokens (< 24 hours old)
+    const requestBody = await req.json().catch(() => ({}));
+    const onlyRecentTokens = requestBody.onlyRecentTokens === true;
+
+    let query = supabase
       .from("tokens")
-      .select("token_address, amm_address, symbol");
+      .select("token_address, amm_address, symbol, created_at");
+
+    // If onlyRecentTokens is true, filter to tokens created in the last 24 hours
+    if (onlyRecentTokens) {
+      const twentyFourHoursAgo = new Date();
+      twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
+      query = query.gte("created_at", twentyFourHoursAgo.toISOString());
+    }
+
+    const { data: tokens, error: tokensError } = await query;
 
     if (tokensError) {
       throw new Error(`Failed to fetch tokens: ${tokensError.message}`);
