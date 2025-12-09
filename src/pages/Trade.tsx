@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { ArrowDownUp, AlertCircle, Loader, TrendingUp } from 'lucide-react';
+import { ArrowDownUp, AlertCircle, Loader, TrendingUp, Wallet } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '../lib/web3';
 import { swapTokens, getQuote, getAMMReserves } from '../lib/contracts';
 import { formatNumber, formatCurrency, calculatePriceImpact } from '../lib/utils';
 import { Token } from '../lib/supabase';
 import { TokenSelector } from '../components/TokenSelector';
+import { Contract, formatEther } from 'ethers';
 
 interface TradeProps {
   selectedToken?: Token;
@@ -28,6 +29,8 @@ export function Trade({ selectedToken }: TradeProps) {
   const [success, setSuccess] = useState('');
 
   const [reserves, setReserves] = useState<{ reserveETH: string; reserveToken: string } | null>(null);
+  const [ethBalance, setEthBalance] = useState<string>('0');
+  const [tokenBalance, setTokenBalance] = useState<string>('0');
 
   useEffect(() => {
     if (selectedToken) {
@@ -40,6 +43,12 @@ export function Trade({ selectedToken }: TradeProps) {
       loadReserves();
     }
   }, [selectedTokenData, provider]);
+
+  useEffect(() => {
+    if (account && provider) {
+      loadBalances();
+    }
+  }, [account, provider, selectedTokenData]);
 
   useEffect(() => {
     if (amountIn && selectedTokenData && provider) {
@@ -57,6 +66,29 @@ export function Trade({ selectedToken }: TradeProps) {
       setReserves(reserveData);
     } catch (err) {
       console.error('Failed to load reserves:', err);
+    }
+  };
+
+  const loadBalances = async () => {
+    if (!account || !provider) return;
+
+    try {
+      const ethBal = await provider.getBalance(account);
+      setEthBalance(formatEther(ethBal));
+
+      if (selectedTokenData) {
+        const tokenContract = new Contract(
+          selectedTokenData.token_address,
+          ['function balanceOf(address) view returns (uint256)'],
+          provider
+        );
+        const tokenBal = await tokenContract.balanceOf(account);
+        setTokenBalance(formatEther(tokenBal));
+      } else {
+        setTokenBalance('0');
+      }
+    } catch (err) {
+      console.error('Failed to load balances:', err);
     }
   };
 
@@ -108,6 +140,7 @@ export function Trade({ selectedToken }: TradeProps) {
       setAmountIn('');
       setAmountOut('');
       loadReserves();
+      loadBalances();
     } catch (err: any) {
       console.error('Failed to swap:', err);
       setError(err.message || 'Failed to complete swap. Please try again.');
@@ -188,9 +221,19 @@ export function Trade({ selectedToken }: TradeProps) {
 
             <div className="space-y-3">
               <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
-                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
-                  {t('trade.youPay')}
-                </label>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700">
+                    {t('trade.youPay')}
+                  </label>
+                  {account && (
+                    <div className="flex items-center space-x-1 text-xs text-gray-600">
+                      <Wallet className="w-3 h-3" />
+                      <span>
+                        {formatNumber(isETHToToken ? ethBalance : tokenBalance)} {isETHToToken ? t('common.eth') : selectedTokenData?.symbol}
+                      </span>
+                    </div>
+                  )}
+                </div>
                 <div className="flex items-center space-x-2 sm:space-x-3">
                   <input
                     type="number"
@@ -219,9 +262,19 @@ export function Trade({ selectedToken }: TradeProps) {
               </div>
 
               <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
-                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
-                  {t('trade.youReceive')}
-                </label>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700">
+                    {t('trade.youReceive')}
+                  </label>
+                  {account && (
+                    <div className="flex items-center space-x-1 text-xs text-gray-600">
+                      <Wallet className="w-3 h-3" />
+                      <span>
+                        {formatNumber(isETHToToken ? tokenBalance : ethBalance)} {isETHToToken ? selectedTokenData?.symbol : t('common.eth')}
+                      </span>
+                    </div>
+                  )}
+                </div>
                 <div className="flex items-center space-x-2 sm:space-x-3">
                   <input
                     type="text"
