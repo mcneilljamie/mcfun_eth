@@ -1,0 +1,231 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "/tmp/cc-agent/61154910/project/src/contracts/JammAMM.sol": {
+      "lastModificationDate": 1765261594562,
+      "contentHash": "51b25b370b5e9c497afce9b0307c9d89",
+      "sourceName": "src/contracts/JammAMM.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IERC20",
+        "JammAMM"
+      ]
+    },
+    "/tmp/cc-agent/61154910/project/src/contracts/JammFactory.sol": {
+      "lastModificationDate": 1765261594562,
+      "contentHash": "0c455a3815194aab7651069565a81aa3",
+      "sourceName": "src/contracts/JammFactory.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IERC20",
+        "IJammAMM",
+        "JammAMM",
+        "JammFactory",
+        "JammToken"
+      ]
+    },
+    "/tmp/cc-agent/61154910/project/src/contracts/JammToken.sol": {
+      "lastModificationDate": 1765261594562,
+      "contentHash": "dd0626bac95c646d319fbcd81efeabe7",
+      "sourceName": "src/contracts/JammToken.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "JammToken"
+      ]
+    },
+    "/tmp/cc-agent/61154910/project/src/contracts/McFunAMM.sol": {
+      "lastModificationDate": 1765261594562,
+      "contentHash": "e735c85882eb9aa0ca7a5fef2f6202b6",
+      "sourceName": "src/contracts/McFunAMM.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IERC20",
+        "McFunAMM"
+      ]
+    },
+    "/tmp/cc-agent/61154910/project/src/contracts/McFunFactory.sol": {
+      "lastModificationDate": 1765261594562,
+      "contentHash": "bbce04a5d48183c5e49158e6236af2da",
+      "sourceName": "src/contracts/McFunFactory.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IERC20",
+        "IMcFunAMM",
+        "McFunAMM",
+        "McFunFactory",
+        "McFunToken"
+      ]
+    },
+    "/tmp/cc-agent/61154910/project/src/contracts/McFunToken.sol": {
+      "lastModificationDate": 1765261594562,
+      "contentHash": "e8cab158256867fe0b9b57e2ebf2fe0b",
+      "sourceName": "src/contracts/McFunToken.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "McFunToken"
+      ]
+    }
+  }
+}
