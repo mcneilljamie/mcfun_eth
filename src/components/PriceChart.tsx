@@ -13,7 +13,7 @@ interface PriceChartProps {
 export function PriceChart({ tokenAddress, currentPriceUSD }: PriceChartProps) {
   const [snapshots, setSnapshots] = useState<PriceSnapshot[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [timeframe, setTimeframe] = useState<'24H' | '7D' | 'ALL'>('24H');
+  const [timeframe, setTimeframe] = useState<'15M' | '24H' | '7D' | 'ALL'>('24H');
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
   const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
 
@@ -44,6 +44,9 @@ export function PriceChart({ tokenAddress, currentPriceUSD }: PriceChartProps) {
       let cutoffDate = new Date();
 
       switch (timeframe) {
+        case '15M':
+          cutoffDate.setMinutes(now.getMinutes() - 15);
+          break;
         case '24H':
           cutoffDate.setHours(now.getHours() - 24);
           break;
@@ -165,7 +168,7 @@ export function PriceChart({ tokenAddress, currentPriceUSD }: PriceChartProps) {
   const formatAxisTimestamp = (timestamp: string) => {
     const date = new Date(timestamp);
 
-    if (timeframe === '24H') {
+    if (timeframe === '15M' || timeframe === '24H') {
       return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
     } else if (timeframe === '7D') {
       return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -214,7 +217,7 @@ export function PriceChart({ tokenAddress, currentPriceUSD }: PriceChartProps) {
         </div>
 
         <div className="flex space-x-2">
-          {(['24H', '7D', 'ALL'] as const).map((tf) => (
+          {(['15M', '24H', '7D', 'ALL'] as const).map((tf) => (
             <button
               key={tf}
               onClick={() => setTimeframe(tf)}
