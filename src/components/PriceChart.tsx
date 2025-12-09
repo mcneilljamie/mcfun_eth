@@ -49,7 +49,11 @@ export function PriceChart({ tokenAddress, currentPriceUSD, ammAddress }: PriceC
       clearInterval(ethPriceInterval);
       clearInterval(livePriceInterval);
     };
-  }, [tokenAddress, timeframe, provider, ammAddress]);
+  }, [tokenAddress, provider, ammAddress]);
+
+  useEffect(() => {
+    loadPriceHistory(false);
+  }, [timeframe]);
 
   const loadEthPrice = async () => {
     const price = await getEthPriceUSD();
@@ -117,9 +121,12 @@ export function PriceChart({ tokenAddress, currentPriceUSD, ammAddress }: PriceC
     });
   };
 
-  const loadPriceHistory = async () => {
+  const loadPriceHistory = async (clearLocal = true) => {
     setIsLoading(true);
-    localSnapshotsRef.current = [];
+
+    if (clearLocal) {
+      localSnapshotsRef.current = [];
+    }
 
     try {
       let query = supabase
@@ -157,7 +164,9 @@ export function PriceChart({ tokenAddress, currentPriceUSD, ammAddress }: PriceC
         setSnapshots(data);
       }
 
-      if (provider && ammAddress) {
+      mergeSnapshots();
+
+      if (provider && ammAddress && clearLocal) {
         await captureLocalSnapshot();
       }
     } catch (err) {
