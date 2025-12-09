@@ -237,7 +237,6 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
           <PriceChart
             tokenAddress={token.token_address}
             tokenSymbol={token.symbol}
-            currentPriceUSD={calculateTokenPriceUSD()}
             ammAddress={token.amm_address}
           />
         </div>

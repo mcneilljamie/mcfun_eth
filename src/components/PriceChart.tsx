@@ -9,7 +9,6 @@ import { getPrice } from '../lib/contracts';
 interface PriceChartProps {
   tokenAddress: string;
   tokenSymbol: string;
-  currentPriceUSD: number;
   ammAddress: string;
 }
 
@@ -24,18 +23,23 @@ interface LocalSnapshot {
   is_local?: boolean;
 }
 
-export function PriceChart({ tokenAddress, currentPriceUSD, ammAddress }: PriceChartProps) {
+export function PriceChart({ tokenAddress, ammAddress }: PriceChartProps) {
   const [snapshots, setSnapshots] = useState<LocalSnapshot[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [timeframe, setTimeframe] = useState<'15M' | '24H' | '7D' | 'ALL'>('24H');
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
   const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
+  const [currentPriceETH, setCurrentPriceETH] = useState<number>(0);
   const { provider } = useWeb3();
   const localSnapshotsRef = useRef<LocalSnapshot[]>([]);
 
   useEffect(() => {
     loadPriceHistory();
     loadEthPrice();
+
+    if (provider && ammAddress) {
+      captureLocalSnapshot();
+    }
 
     const ethPriceInterval = setInterval(loadEthPrice, 60000);
 
@@ -65,6 +69,7 @@ export function PriceChart({ tokenAddress, currentPriceUSD, ammAddress }: PriceC
 
     try {
       const priceETH = await getPrice(provider, ammAddress);
+      setCurrentPriceETH(parseFloat(priceETH));
 
       const newSnapshot: LocalSnapshot = {
         created_at: new Date().toISOString(),
@@ -165,14 +170,14 @@ export function PriceChart({ tokenAddress, currentPriceUSD, ammAddress }: PriceC
       }
 
       mergeSnapshots();
-
-      if (provider && ammAddress && clearLocal) {
-        await captureLocalSnapshot();
-      }
     } catch (err) {
       console.error('Failed to load price history:', err);
     } finally {
       setIsLoading(false);
+    }
+
+    if (provider && ammAddress && clearLocal) {
+      await captureLocalSnapshot();
     }
   };
 
@@ -205,6 +210,9 @@ export function PriceChart({ tokenAddress, currentPriceUSD, ammAddress }: PriceC
     return priceETH * historicalEthPrice;
   });
 
+  const currentPriceUSD = currentPriceETH > 0
+    ? currentPriceETH * ethPriceUSD
+    : pricesUSD[pricesUSD.length - 1] || 0;
   pricesUSD.push(currentPriceUSD);
 
   const minPrice = Math.min(...pricesUSD);
