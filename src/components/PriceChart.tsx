@@ -1,37 +1,125 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 import { supabase, PriceSnapshot } from '../lib/supabase';
 import { formatUSD } from '../lib/utils';
 import { getEthPriceUSD } from '../lib/ethPrice';
+import { useWeb3 } from '../lib/web3';
+import { getPrice } from '../lib/contracts';
 
 interface PriceChartProps {
   tokenAddress: string;
   tokenSymbol: string;
   currentPriceUSD: number;
+  ammAddress: string;
 }
 
-export function PriceChart({ tokenAddress, currentPriceUSD }: PriceChartProps) {
-  const [snapshots, setSnapshots] = useState<PriceSnapshot[]>([]);
+interface LocalSnapshot {
+  created_at: string;
+  price_eth: string;
+  eth_reserve: string;
+  token_reserve: string;
+  id: string;
+  token_address: string;
+  eth_price_usd?: string;
+  is_local?: boolean;
+}
+
+export function PriceChart({ tokenAddress, currentPriceUSD, ammAddress }: PriceChartProps) {
+  const [snapshots, setSnapshots] = useState<LocalSnapshot[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [timeframe, setTimeframe] = useState<'15M' | '24H' | '7D' | 'ALL'>('24H');
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
   const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
+  const { provider } = useWeb3();
+  const localSnapshotsRef = useRef<LocalSnapshot[]>([]);
 
   useEffect(() => {
     loadPriceHistory();
     loadEthPrice();
 
-    const interval = setInterval(loadEthPrice, 60000);
-    return () => clearInterval(interval);
-  }, [tokenAddress, timeframe]);
+    const ethPriceInterval = setInterval(loadEthPrice, 60000);
+
+    const livePriceInterval = setInterval(async () => {
+      if (provider && ammAddress) {
+        await captureLocalSnapshot();
+      }
+    }, 10000);
+
+    return () => {
+      clearInterval(ethPriceInterval);
+      clearInterval(livePriceInterval);
+    };
+  }, [tokenAddress, timeframe, provider, ammAddress]);
 
   const loadEthPrice = async () => {
     const price = await getEthPriceUSD();
     setEthPriceUSD(price);
   };
 
+  const captureLocalSnapshot = async () => {
+    if (!provider || !ammAddress) return;
+
+    try {
+      const priceETH = await getPrice(provider, ammAddress);
+
+      const newSnapshot: LocalSnapshot = {
+        created_at: new Date().toISOString(),
+        price_eth: priceETH,
+        eth_reserve: '0',
+        token_reserve: '0',
+        id: `local-${Date.now()}`,
+        token_address: tokenAddress,
+        eth_price_usd: ethPriceUSD.toString(),
+        is_local: true,
+      };
+
+      localSnapshotsRef.current = [...localSnapshotsRef.current, newSnapshot];
+
+      if (localSnapshotsRef.current.length > 100) {
+        localSnapshotsRef.current = localSnapshotsRef.current.slice(-100);
+      }
+
+      mergeSnapshots();
+    } catch (err) {
+      console.error('Failed to capture local snapshot:', err);
+    }
+  };
+
+  const mergeSnapshots = () => {
+    const now = new Date();
+    let cutoffDate = new Date();
+
+    switch (timeframe) {
+      case '15M':
+        cutoffDate.setMinutes(now.getMinutes() - 15);
+        break;
+      case '24H':
+        cutoffDate.setHours(now.getHours() - 24);
+        break;
+      case '7D':
+        cutoffDate.setDate(now.getDate() - 7);
+        break;
+      case 'ALL':
+        cutoffDate = new Date(0);
+        break;
+    }
+
+    const filteredLocal = localSnapshotsRef.current.filter(
+      s => new Date(s.created_at) >= cutoffDate
+    );
+
+    setSnapshots(prev => {
+      const dbSnapshots = prev.filter(s => !s.is_local);
+      const allSnapshots = [...dbSnapshots, ...filteredLocal];
+      return allSnapshots.sort((a, b) =>
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+      );
+    });
+  };
+
   const loadPriceHistory = async () => {
     setIsLoading(true);
+    localSnapshotsRef.current = [];
 
     try {
       let query = supabase
@@ -67,6 +155,10 @@ export function PriceChart({ tokenAddress, currentPriceUSD }: PriceChartProps) {
 
       if (data) {
         setSnapshots(data);
+      }
+
+      if (provider && ammAddress) {
+        await captureLocalSnapshot();
       }
     } catch (err) {
       console.error('Failed to load price history:', err);
