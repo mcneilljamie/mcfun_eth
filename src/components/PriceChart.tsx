@@ -210,8 +210,8 @@ export function PriceChart({ tokenAddress, currentPriceUSD, ammAddress }: PriceC
   const minPrice = Math.min(...pricesUSD);
   const maxPrice = Math.max(...pricesUSD);
   const priceRange = maxPrice - minPrice;
-  const padding = priceRange * 0.1;
-  const chartMinPrice = minPrice - padding;
+  const padding = Math.max(priceRange * 0.15, minPrice * 0.05);
+  const chartMinPrice = Math.max(0, minPrice - padding);
   const chartMaxPrice = maxPrice + padding;
 
   const firstPrice = pricesUSD[0];
