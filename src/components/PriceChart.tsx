@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { createChart, IChartApi, ISeriesApi, LineData, Time } from 'lightweight-charts';
+import { createChart, IChartApi, ISeriesApi, LineData, Time, AreaSeries } from 'lightweight-charts';
 import { useChartData, TimeRange } from '../hooks/useChartData';
 import { TimeRangeSelector } from './TimeRangeSelector';
 import { TrendingUp, TrendingDown } from 'lucide-react';
@@ -53,7 +53,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
       },
     });
 
-    const areaSeries = chart.addAreaSeries({
+    const areaSeries = chart.addSeries(AreaSeries, {
       lineColor: priceChange >= 0 ? '#10b981' : '#ef4444',
       topColor: priceChange >= 0 ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)',
       bottomColor: priceChange >= 0 ? 'rgba(16, 185, 129, 0.0)' : 'rgba(239, 68, 68, 0.0)',
