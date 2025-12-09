@@ -56,20 +56,34 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   };
 
   useEffect(() => {
+    let result = tokens;
+
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      setFilteredTokens(
-        tokens.filter(
-          (token) =>
-            token.name.toLowerCase().includes(query) ||
-            token.symbol.toLowerCase().includes(query) ||
-            token.token_address.toLowerCase().includes(query)
-        )
+      result = tokens.filter(
+        (token) =>
+          token.name.toLowerCase().includes(query) ||
+          token.symbol.toLowerCase().includes(query) ||
+          token.token_address.toLowerCase().includes(query)
       );
-    } else {
-      setFilteredTokens(tokens);
     }
-  }, [searchQuery, tokens]);
+
+    const sorted = [...result].sort((a, b) => {
+      const aLiquidity = parseFloat(
+        liveReserves[a.token_address]?.reserveETH ||
+        a.current_eth_reserve?.toString() ||
+        a.initial_liquidity_eth.toString()
+      );
+      const bLiquidity = parseFloat(
+        liveReserves[b.token_address]?.reserveETH ||
+        b.current_eth_reserve?.toString() ||
+        b.initial_liquidity_eth.toString()
+      );
+      return bLiquidity - aLiquidity;
+    });
+
+    setFilteredTokens(sorted);
+  }, [searchQuery, tokens, liveReserves]);
 
   const loadTokens = async () => {
     setIsLoading(true);
