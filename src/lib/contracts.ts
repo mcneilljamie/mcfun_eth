@@ -1,6 +1,6 @@
 import { Contract, parseEther, formatEther, formatUnits } from 'ethers';
 import { MCFUN_FACTORY_ABI, MCFUN_AMM_ABI, ERC20_ABI } from '../contracts/abis';
-import { MCFUN_FACTORY_ADDRESS } from '../contracts/addresses';
+import { getFactoryAddress } from '../contracts/addresses';
 
 export interface TokenLaunchParams {
   name: string;
@@ -17,7 +17,9 @@ export interface SwapParams {
 }
 
 export async function createToken(signer: any, params: TokenLaunchParams) {
-  const factory = new Contract(MCFUN_FACTORY_ADDRESS, MCFUN_FACTORY_ABI, signer);
+  const network = await signer.provider.getNetwork();
+  const factoryAddress = getFactoryAddress(Number(network.chainId));
+  const factory = new Contract(factoryAddress, MCFUN_FACTORY_ABI, signer);
 
   const tx = await factory.createToken(
     params.name,

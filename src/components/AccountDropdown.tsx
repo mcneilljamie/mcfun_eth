@@ -3,6 +3,7 @@ import { Copy, LogOut, ExternalLink, Check } from 'lucide-react';
 import { formatAddress } from '../lib/utils';
 import { useWeb3 } from '../lib/web3';
 import { useTranslation } from 'react-i18next';
+import { getNetworkName, getExplorerUrl, isChainSupported } from '../contracts/addresses';
 
 interface AccountDropdownProps {
   account: string;
@@ -53,19 +54,12 @@ export function AccountDropdown({ account, chainId, onDisconnect }: AccountDropd
   };
 
   const openInExplorer = () => {
-    const explorerUrl = chainId === 1
-      ? `https://etherscan.io/address/${account}`
-      : `https://sepolia.etherscan.io/address/${account}`;
-    window.open(explorerUrl, '_blank');
+    const explorerUrl = getExplorerUrl(chainId || 1);
+    window.open(`${explorerUrl}/address/${account}`, '_blank');
   };
 
-  const getNetworkName = () => {
-    switch (chainId) {
-      case 1: return 'Ethereum';
-      case 11155111: return 'Sepolia';
-      default: return 'Unknown';
-    }
-  };
+  const isSupported = chainId ? isChainSupported(chainId) : true;
+  const networkName = chainId ? getNetworkName(chainId) : 'Unknown';
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -82,8 +76,10 @@ export function AccountDropdown({ account, chainId, onDisconnect }: AccountDropd
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-gray-500">{t('wallet.balance')}</span>
-              <span className="text-sm font-medium px-2 py-1 bg-gray-100 rounded-lg">
-                {getNetworkName()}
+              <span className={`text-sm font-medium px-2 py-1 rounded-lg ${
+                isSupported ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+              }`}>
+                {networkName}
               </span>
             </div>
             <div className="text-2xl font-bold text-gray-900">{balance} ETH</div>

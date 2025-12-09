@@ -280,5 +280,12 @@
     "disconnect": "Disconnect",
     "notInstalled": "Not installed - Click to download",
     "install": "Install"
+  },
+  "network": {
+    "warning": {
+      "title": "Wrong Network",
+      "description": "You're connected to {{current}}. Please switch to {{required}} to use this app.",
+      "switchButton": "Switch to {{network}}"
+    }
   }
 }

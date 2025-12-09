@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Web3Provider } from './lib/web3';
 import { Navigation } from './components/Navigation';
+import { NetworkWarning } from './components/NetworkWarning';
 import { Home } from './pages/Home';
 import { Launch } from './pages/Launch';
 import { Trade } from './pages/Trade';
@@ -44,6 +45,7 @@ function App() {
           currentPage={currentPage}
           onNavigate={handleNavigate}
         />
+        <NetworkWarning />
 
         <div>
           {currentPage === 'home' && <Home onNavigate={handleNavigate} />}
