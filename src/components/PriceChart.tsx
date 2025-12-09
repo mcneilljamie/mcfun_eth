@@ -25,6 +25,9 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
     if (!chartContainerRef.current) return;
 
     const isDark = theme === 'dark';
+    const containerWidth = chartContainerRef.current.clientWidth;
+
+    if (containerWidth === 0) return;
 
     const chart = createChart(chartContainerRef.current, {
       layout: {
@@ -35,7 +38,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
         vertLines: { color: isDark ? '#2a2a2a' : '#f3f4f6' },
         horzLines: { color: isDark ? '#2a2a2a' : '#f3f4f6' },
       },
-      width: chartContainerRef.current.clientWidth,
+      width: containerWidth,
       height: 400,
       rightPriceScale: {
         borderColor: isDark ? '#2a2a2a' : '#e5e7eb',
@@ -80,7 +83,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
       window.removeEventListener('resize', handleResize);
       chart.remove();
     };
-  }, []);
+  }, [theme, priceChange]);
 
   // Update chart colors when price change direction changes
   useEffect(() => {
@@ -198,7 +201,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
             </div>
           </div>
         ) : (
-          <div ref={chartContainerRef} className="rounded-lg overflow-hidden" />
+          <div ref={chartContainerRef} className="rounded-lg overflow-hidden w-full h-[400px]" />
         )}
       </div>
 
