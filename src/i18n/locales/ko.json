@@ -85,6 +85,13 @@
       "toLiquidity": "유동성 풀로 (소각됨):",
       "toWallet": "지갑으로:",
       "initialLiq": "초기 유동성:",
+      "estimatedGas": "예상 가스 수수료:",
+      "totalCost": "총 비용:",
+      "loadingBalance": "불러오는 중...",
+      "insufficientBalance": "잔액 부족",
+      "needMore": "{{amount}} ETH가 더 필요합니다",
+      "getEthTitle": "더 많은 ETH가 필요하신가요?",
+      "getEthDescription": "토큰을 출시하기 전에 지갑에 더 많은 ETH를 추가해야 합니다. 총 비용에는 유동성과 가스 수수료가 포함됩니다.",
       "launchButton": "토큰 출시",
       "launching": "토큰 출시 중...",
       "connectToLaunch": "출시하려면 지갑 연결"
@@ -98,7 +105,12 @@
     "errors": {
       "nameAndSymbol": "토큰 이름과 심볼을 입력해주세요",
       "minLiquidity": "최소 유동성은 {{min}} ETH입니다",
-      "liquidityRange": "유동성은 {{min}}%에서 100% 사이여야 합니다"
+      "liquidityRange": "유동성은 {{min}}%에서 100% 사이여야 합니다",
+      "insufficientBalance": "ETH 잔액 부족. {{balance}} ETH가 있지만 {{needed}} ETH가 필요합니다 (예상 가스 수수료 포함)",
+      "insufficientFunds": "거래 실패: 거래를 완료하기 위한 자금이 부족합니다",
+      "userRejected": "거래가 거부되었습니다. 준비되면 다시 시도하세요",
+      "gasError": "가스 추정 실패: {{message}}",
+      "generic": "토큰 출시 실패. 다시 시도해주세요"
     }
   },
   "trade": {

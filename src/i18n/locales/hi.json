@@ -87,7 +87,14 @@
       "initialLiq": "प्रारंभिक लिक्विडिटी:",
       "launchButton": "टोकन लॉन्च करें",
       "launching": "टोकन लॉन्च हो रहा है...",
-      "connectToLaunch": "लॉन्च करने के लिए वॉलेट कनेक्ट करें"
+      "connectToLaunch": "लॉन्च करने के लिए वॉलेट कनेक्ट करें",
+      "estimatedGas": "अनुमानित गैस शुल्क:",
+      "totalCost": "कुल लागत:",
+      "loadingBalance": "लोड हो रहा है...",
+      "insufficientBalance": "अपर्याप्त शेष",
+      "needMore": "आपको {{amount}} ETH और चाहिए",
+      "getEthTitle": "अधिक ETH चाहिए?",
+      "getEthDescription": "टोकन लॉन्च करने से पहले आपको अपने वॉलेट में अधिक ETH जोड़ना होगा। कुल लागत में तरलता और गैस शुल्क शामिल हैं।"
     },
     "notes": {
       "title": "महत्वपूर्ण नोट्स",
@@ -98,7 +105,12 @@
     "errors": {
       "nameAndSymbol": "कृपया टोकन का नाम और प्रतीक प्रदान करें",
       "minLiquidity": "न्यूनतम लिक्विडिटी {{min}} ETH है",
-      "liquidityRange": "लिक्विडिटी {{min}}% और 100% के बीच होनी चाहिए"
+      "liquidityRange": "लिक्विडिटी {{min}}% और 100% के बीच होनी चाहिए",
+      "insufficientBalance": "अपर्याप्त ETH शेष। आपके पास {{balance}} ETH है लेकिन {{needed}} ETH चाहिए (अनुमानित गैस शुल्क सहित)",
+      "insufficientFunds": "लेनदेन विफल: लेनदेन पूरा करने के लिए अपर्याप्त धनराशि",
+      "userRejected": "लेनदेन अस्वीकृत। जब तैयार हों तो पुनः प्रयास करें",
+      "gasError": "गैस अनुमान विफल: {{message}}",
+      "generic": "टोकन लॉन्च विफल। कृपया पुनः प्रयास करें"
     }
   },
   "trade": {

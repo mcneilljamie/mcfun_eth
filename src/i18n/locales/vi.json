@@ -87,7 +87,14 @@
       "initialLiq": "Thanh Khoản Ban Đầu:",
       "launchButton": "Ra Mắt Token",
       "launching": "Đang Ra Mắt Token...",
-      "connectToLaunch": "Kết Nối Ví Để Ra Mắt"
+      "connectToLaunch": "Kết Nối Ví Để Ra Mắt",
+      "estimatedGas": "Phí Gas Ước tính:",
+      "totalCost": "Tổng Chi phí:",
+      "loadingBalance": "Đang tải...",
+      "insufficientBalance": "Số dư Không đủ",
+      "needMore": "Bạn cần thêm {{amount}} ETH",
+      "getEthTitle": "Cần thêm ETH?",
+      "getEthDescription": "Bạn cần thêm ETH vào ví trước khi có thể khởi chạy token. Tổng chi phí bao gồm thanh khoản cộng với phí gas."
     },
     "notes": {
       "title": "Ghi Chú Quan Trọng",
@@ -98,7 +105,12 @@
     "errors": {
       "nameAndSymbol": "Vui lòng cung cấp tên và ký hiệu token",
       "minLiquidity": "Thanh khoản tối thiểu là {{min}} ETH",
-      "liquidityRange": "Thanh khoản phải từ {{min}}% đến 100%"
+      "liquidityRange": "Thanh khoản phải từ {{min}}% đến 100%",
+      "insufficientBalance": "Số dư ETH không đủ. Bạn có {{balance}} ETH nhưng cần {{needed}} ETH (bao gồm phí gas ước tính)",
+      "insufficientFunds": "Giao dịch thất bại: Không đủ tiền để hoàn thành giao dịch",
+      "userRejected": "Giao dịch bị từ chối. Vui lòng thử lại khi sẵn sàng",
+      "gasError": "Ước tính gas thất bại: {{message}}",
+      "generic": "Khởi chạy token thất bại. Vui lòng thử lại"
     }
   },
   "trade": {

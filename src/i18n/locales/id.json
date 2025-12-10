@@ -87,7 +87,14 @@
       "initialLiq": "Likuiditas Awal:",
       "launchButton": "Luncurkan Token",
       "launching": "Meluncurkan Token...",
-      "connectToLaunch": "Hubungkan Wallet untuk Meluncurkan"
+      "connectToLaunch": "Hubungkan Wallet untuk Meluncurkan",
+      "estimatedGas": "Biaya Gas Perkiraan:",
+      "totalCost": "Biaya Total:",
+      "loadingBalance": "Memuat...",
+      "insufficientBalance": "Saldo Tidak Mencukupi",
+      "needMore": "Anda membutuhkan {{amount}} ETH lagi",
+      "getEthTitle": "Butuh lebih banyak ETH?",
+      "getEthDescription": "Anda perlu menambahkan lebih banyak ETH ke dompet Anda sebelum dapat meluncurkan token. Biaya total termasuk likuiditas ditambah biaya gas."
     },
     "notes": {
       "title": "Catatan Penting",
@@ -98,7 +105,12 @@
     "errors": {
       "nameAndSymbol": "Harap berikan nama dan simbol token",
       "minLiquidity": "Likuiditas minimum adalah {{min}} ETH",
-      "liquidityRange": "Likuiditas harus antara {{min}}% dan 100%"
+      "liquidityRange": "Likuiditas harus antara {{min}}% dan 100%",
+      "insufficientBalance": "Saldo ETH tidak mencukupi. Anda memiliki {{balance}} ETH tetapi memerlukan {{needed}} ETH (termasuk biaya gas perkiraan)",
+      "insufficientFunds": "Transaksi gagal: Dana tidak mencukupi untuk menyelesaikan transaksi",
+      "userRejected": "Transaksi ditolak. Silakan coba lagi saat sudah siap",
+      "gasError": "Estimasi gas gagal: {{message}}",
+      "generic": "Gagal meluncurkan token. Silakan coba lagi"
     }
   },
   "trade": {

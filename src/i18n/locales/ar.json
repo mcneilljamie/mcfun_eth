@@ -87,7 +87,14 @@
       "initialLiq": "السيولة الأولية:",
       "launchButton": "إطلاق الرمز",
       "launching": "جارٍ إطلاق الرمز...",
-      "connectToLaunch": "اربط المحفظة للإطلاق"
+      "connectToLaunch": "اربط المحفظة للإطلاق",
+      "estimatedGas": "رسوم الغاز المقدرة:",
+      "totalCost": "التكلفة الإجمالية:",
+      "loadingBalance": "جارٍ التحميل...",
+      "insufficientBalance": "الرصيد غير كافٍ",
+      "needMore": "تحتاج {{amount}} ETH أكثر",
+      "getEthTitle": "هل تحتاج المزيد من ETH؟",
+      "getEthDescription": "ستحتاج إلى إضافة المزيد من ETH إلى محفظتك قبل أن تتمكن من إطلاق رمز. تتضمن التكلفة الإجمالية السيولة بالإضافة إلى رسوم الغاز."
     },
     "notes": {
       "title": "ملاحظات مهمة",
@@ -98,7 +105,12 @@
     "errors": {
       "nameAndSymbol": "يرجى تقديم اسم ورمز الرمز",
       "minLiquidity": "الحد الأدنى للسيولة هو {{min}} ETH",
-      "liquidityRange": "يجب أن تكون السيولة بين {{min}}% و100%"
+      "liquidityRange": "يجب أن تكون السيولة بين {{min}}% و100%",
+      "insufficientBalance": "رصيد ETH غير كافٍ. لديك {{balance}} ETH لكن تحتاج {{needed}} ETH (بما في ذلك رسوم الغاز المقدرة)",
+      "insufficientFunds": "فشلت المعاملة: أموال غير كافية لإكمال المعاملة",
+      "userRejected": "تم رفض المعاملة. يرجى المحاولة مرة أخرى عندما تكون جاهزًا",
+      "gasError": "فشل تقدير الغاز: {{message}}",
+      "generic": "فشل إطلاق الرمز. يرجى المحاولة مرة أخرى"
     }
   },
   "trade": {

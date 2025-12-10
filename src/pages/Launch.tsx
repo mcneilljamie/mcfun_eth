@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { Rocket, AlertCircle, Loader } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Rocket, AlertCircle, Loader, Wallet, Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '../lib/web3';
-import { createToken } from '../lib/contracts';
+import { createToken, getETHBalance } from '../lib/contracts';
 import { MIN_LIQUIDITY_ETH, MIN_LIQUIDITY_PERCENT, RECOMMENDED_LIQUIDITY_PERCENT, TOTAL_SUPPLY } from '../contracts/addresses';
 import { formatNumber } from '../lib/utils';
 import { LaunchCelebration } from '../components/LaunchCelebration';
@@ -13,13 +13,17 @@ interface LaunchProps {
 
 export function Launch({ onNavigate }: LaunchProps) {
   const { t } = useTranslation();
-  const { account, signer, connect } = useWeb3();
+  const { account, signer, connect, provider } = useWeb3();
 
   const [name, setName] = useState('');
   const [symbol, setSymbol] = useState('');
   const [website, setWebsite] = useState('');
   const [liquidityPercent, setLiquidityPercent] = useState(RECOMMENDED_LIQUIDITY_PERCENT);
   const [ethAmount, setEthAmount] = useState(MIN_LIQUIDITY_ETH);
+
+  const [ethBalance, setEthBalance] = useState<string>('0');
+  const [isLoadingBalance, setIsLoadingBalance] = useState(false);
+  const [estimatedGas, setEstimatedGas] = useState<string>('0.005');
 
   const [isLaunching, setIsLaunching] = useState(false);
   const [error, setError] = useState('');
@@ -33,6 +37,32 @@ export function Launch({ onNavigate }: LaunchProps) {
 
   const tokensToLiquidity = (TOTAL_SUPPLY * liquidityPercent) / 100;
   const tokensToCreator = TOTAL_SUPPLY - tokensToLiquidity;
+
+  useEffect(() => {
+    const fetchBalance = async () => {
+      if (account && provider) {
+        setIsLoadingBalance(true);
+        try {
+          const balance = await getETHBalance(provider, account);
+          setEthBalance(balance);
+        } catch (err) {
+          console.error('Failed to fetch balance:', err);
+        } finally {
+          setIsLoadingBalance(false);
+        }
+      } else {
+        setEthBalance('0');
+      }
+    };
+
+    fetchBalance();
+  }, [account, provider]);
+
+  const totalEthNeeded = parseFloat(ethAmount) + parseFloat(estimatedGas);
+  const hasInsufficientBalance = account && parseFloat(ethBalance) < totalEthNeeded;
+  const balanceShortfall = hasInsufficientBalance
+    ? (totalEthNeeded - parseFloat(ethBalance)).toFixed(4)
+    : '0';
 
   const handleLaunch = async () => {
     if (!signer || !account) {
@@ -50,6 +80,17 @@ export function Launch({ onNavigate }: LaunchProps) {
 
     if (parseFloat(ethAmount) < parseFloat(MIN_LIQUIDITY_ETH)) {
       setError(t('launch.errors.minLiquidity', { min: MIN_LIQUIDITY_ETH }));
+      return;
+    }
+
+    if (hasInsufficientBalance) {
+      setError(
+        t('launch.errors.insufficientBalance', {
+          balance: parseFloat(ethBalance).toFixed(4),
+          needed: totalEthNeeded.toFixed(4),
+          shortfall: balanceShortfall,
+        })
+      );
       return;
     }
 
@@ -123,7 +164,16 @@ export function Launch({ onNavigate }: LaunchProps) {
       setEthAmount(MIN_LIQUIDITY_ETH);
     } catch (err: any) {
       console.error('Failed to launch token:', err);
-      setError(err.message || 'Failed to launch token. Please try again.');
+
+      if (err.code === 'INSUFFICIENT_FUNDS' || err.message?.includes('insufficient funds')) {
+        setError(t('launch.errors.insufficientFunds'));
+      } else if (err.code === 'ACTION_REJECTED' || err.message?.includes('user rejected')) {
+        setError(t('launch.errors.userRejected'));
+      } else if (err.message?.includes('gas')) {
+        setError(t('launch.errors.gasError', { message: err.message }));
+      } else {
+        setError(err.message || t('launch.errors.generic'));
+      }
     } finally {
       setIsLaunching(false);
     }
@@ -228,9 +278,25 @@ export function Launch({ onNavigate }: LaunchProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('launch.form.initialLiquidity')}
-              </label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  {t('launch.form.initialLiquidity')}
+                </label>
+                {account && (
+                  <div className={`flex items-center space-x-1 text-sm ${hasInsufficientBalance ? 'text-red-600' : 'text-gray-600'}`}>
+                    <Wallet className="w-4 h-4" />
+                    <span>
+                      {isLoadingBalance ? (
+                        t('launch.form.loadingBalance')
+                      ) : (
+                        <>
+                          {parseFloat(ethBalance).toFixed(4)} ETH
+                        </>
+                      )}
+                    </span>
+                  </div>
+                )}
+              </div>
               <p className="text-sm text-gray-500 mb-3">
                 {t('launch.form.liquidityWarning', { min: MIN_LIQUIDITY_ETH })}
               </p>
@@ -241,9 +307,24 @@ export function Launch({ onNavigate }: LaunchProps) {
                 value={ethAmount}
                 onChange={(e) => setEthAmount(e.target.value)}
                 placeholder={MIN_LIQUIDITY_ETH}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent ${
+                  hasInsufficientBalance
+                    ? 'border-red-300 bg-red-50'
+                    : 'border-gray-300'
+                }`}
                 disabled={isLaunching}
               />
+              {hasInsufficientBalance && (
+                <div className="mt-2 flex items-start space-x-2 text-sm text-red-600">
+                  <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium">{t('launch.form.insufficientBalance')}</p>
+                    <p className="text-xs text-red-500 mt-1">
+                      {t('launch.form.needMore', { amount: balanceShortfall })}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="bg-gray-50 rounded-lg p-4 space-y-2">
@@ -265,12 +346,35 @@ export function Launch({ onNavigate }: LaunchProps) {
                   <span className="text-gray-600">{t('launch.form.initialLiq')}</span>
                   <span className="font-medium text-gray-900">{ethAmount} {t('common.eth')}</span>
                 </div>
+                <div className="flex justify-between text-sm mt-2">
+                  <div className="flex items-center space-x-1">
+                    <span className="text-gray-600">{t('launch.form.estimatedGas')}</span>
+                    <Info className="w-3 h-3 text-gray-400" />
+                  </div>
+                  <span className="text-gray-700">~{estimatedGas} {t('common.eth')}</span>
+                </div>
+                <div className="flex justify-between text-sm font-semibold mt-2 pt-2 border-t border-gray-200">
+                  <span className="text-gray-900">{t('launch.form.totalCost')}</span>
+                  <span className="text-gray-900">{totalEthNeeded.toFixed(4)} {t('common.eth')}</span>
+                </div>
               </div>
             </div>
 
+            {hasInsufficientBalance && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <div className="flex items-start space-x-3">
+                  <Info className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
+                  <div className="text-sm text-yellow-800">
+                    <p className="font-medium mb-1">{t('launch.form.getEthTitle')}</p>
+                    <p className="text-xs">{t('launch.form.getEthDescription')}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <button
               onClick={handleLaunch}
-              disabled={isLaunching || !signer}
+              disabled={isLaunching || !signer || hasInsufficientBalance}
               className="w-full bg-gray-900 text-white py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:bg-gray-800 transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2 touch-manipulation"
             >
               {isLaunching ? (

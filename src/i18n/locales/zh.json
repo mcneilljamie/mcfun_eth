@@ -85,6 +85,13 @@
       "toLiquidity": "到流动性池（已销毁）：",
       "toWallet": "到您的钱包：",
       "initialLiq": "初始流动性：",
+      "estimatedGas": "预估Gas费：",
+      "totalCost": "总成本：",
+      "loadingBalance": "加载中...",
+      "insufficientBalance": "余额不足",
+      "needMore": "您还需要{{amount}} ETH",
+      "getEthTitle": "需要更多ETH？",
+      "getEthDescription": "在发行代币之前，您需要向钱包添加更多ETH。总成本包括流动性加上gas费用。",
       "launchButton": "发行代币",
       "launching": "发行代币中...",
       "connectToLaunch": "连接钱包以发行"
@@ -98,7 +105,12 @@
     "errors": {
       "nameAndSymbol": "请提供代币名称和符号",
       "minLiquidity": "最低流动性为{{min}} ETH",
-      "liquidityRange": "流动性必须在{{min}}%到100%之间"
+      "liquidityRange": "流动性必须在{{min}}%到100%之间",
+      "insufficientBalance": "ETH余额不足。您有{{balance}} ETH但需要{{needed}} ETH（包括预估gas费）",
+      "insufficientFunds": "交易失败：资金不足无法完成交易",
+      "userRejected": "交易被拒绝。准备好后请重试",
+      "gasError": "Gas估算失败：{{message}}",
+      "generic": "代币发行失败。请重试"
     }
   },
   "trade": {

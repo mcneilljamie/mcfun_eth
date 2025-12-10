@@ -85,6 +85,13 @@
       "toLiquidity": "To Liquidity Pool (Burned):",
       "toWallet": "To Your Wallet:",
       "initialLiq": "Initial Liquidity:",
+      "estimatedGas": "Est. Gas Fee:",
+      "totalCost": "Total Cost:",
+      "loadingBalance": "Loading...",
+      "insufficientBalance": "Insufficient Balance",
+      "needMore": "You need {{amount}} ETH more",
+      "getEthTitle": "Need more ETH?",
+      "getEthDescription": "You'll need to add more ETH to your wallet before you can launch a token. The total cost includes liquidity plus gas fees.",
       "launchButton": "Launch Token",
       "launching": "Launching Token...",
       "connectToLaunch": "Connect Wallet to Launch"
@@ -98,7 +105,12 @@
     "errors": {
       "nameAndSymbol": "Please provide token name and symbol",
       "minLiquidity": "Minimum liquidity is {{min}} ETH",
-      "liquidityRange": "Liquidity must be between {{min}}% and 100%"
+      "liquidityRange": "Liquidity must be between {{min}}% and 100%",
+      "insufficientBalance": "Insufficient ETH balance. You have {{balance}} ETH but need {{needed}} ETH (including estimated gas fees)",
+      "insufficientFunds": "Transaction failed: Insufficient funds to complete the transaction",
+      "userRejected": "Transaction was rejected. Please try again when ready",
+      "gasError": "Gas estimation failed: {{message}}",
+      "generic": "Failed to launch token. Please try again"
     }
   },
   "trade": {

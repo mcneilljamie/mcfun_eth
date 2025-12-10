@@ -87,7 +87,14 @@
       "initialLiq": "İlk Likidite:",
       "launchButton": "Token Başlat",
       "launching": "Token Başlatılıyor...",
-      "connectToLaunch": "Başlatmak için Cüzdan Bağlayın"
+      "connectToLaunch": "Başlatmak için Cüzdan Bağlayın",
+      "estimatedGas": "Tahmini Gaz Ücreti:",
+      "totalCost": "Toplam Maliyet:",
+      "loadingBalance": "Yükleniyor...",
+      "insufficientBalance": "Yetersiz Bakiye",
+      "needMore": "{{amount}} ETH daha gerekli",
+      "getEthTitle": "Daha fazla ETH gerekli mi?",
+      "getEthDescription": "Token başlatabilmek için cüzdanınıza daha fazla ETH eklemeniz gerekecek. Toplam maliyet likidite artı gaz ücretlerini içerir."
     },
     "notes": {
       "title": "Önemli Notlar",
@@ -98,7 +105,12 @@
     "errors": {
       "nameAndSymbol": "Lütfen token adı ve sembolü girin",
       "minLiquidity": "Minimum likidite {{min}} ETH'dir",
-      "liquidityRange": "Likidite {{min}}% ile 100% arasında olmalıdır"
+      "liquidityRange": "Likidite {{min}}% ile 100% arasında olmalıdır",
+      "insufficientBalance": "Yetersiz ETH bakiyesi. {{balance}} ETH'niz var ancak {{needed}} ETH gerekli (tahmini gaz ücretleri dahil)",
+      "insufficientFunds": "İşlem başarısız: İşlemi tamamlamak için yetersiz fon",
+      "userRejected": "İşlem reddedildi. Hazır olduğunuzda tekrar deneyin",
+      "gasError": "Gaz tahmini başarısız: {{message}}",
+      "generic": "Token başlatma başarısız. Lütfen tekrar deneyin"
     }
   },
   "trade": {

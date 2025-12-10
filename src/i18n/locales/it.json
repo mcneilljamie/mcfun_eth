@@ -87,7 +87,14 @@
       "initialLiq": "Liquidità Iniziale:",
       "launchButton": "Lancia Token",
       "launching": "Lancio Token...",
-      "connectToLaunch": "Connetti Portafoglio per Lanciare"
+      "connectToLaunch": "Connetti Portafoglio per Lanciare",
+      "estimatedGas": "Commissione Gas Stimata:",
+      "totalCost": "Costo Totale:",
+      "loadingBalance": "Caricamento...",
+      "insufficientBalance": "Saldo Insufficiente",
+      "needMore": "Hai bisogno di altri {{amount}} ETH",
+      "getEthTitle": "Hai bisogno di più ETH?",
+      "getEthDescription": "Dovrai aggiungere più ETH al tuo portafoglio prima di poter lanciare un token. Il costo totale include la liquidità più le commissioni del gas."
     },
     "notes": {
       "title": "Note Importanti",
@@ -98,7 +105,12 @@
     "errors": {
       "nameAndSymbol": "Fornisci nome e simbolo del token",
       "minLiquidity": "La liquidità minima è {{min}} ETH",
-      "liquidityRange": "La liquidità deve essere tra {{min}}% e 100%"
+      "liquidityRange": "La liquidità deve essere tra {{min}}% e 100%",
+      "insufficientBalance": "Saldo ETH insufficiente. Hai {{balance}} ETH ma ne servono {{needed}} ETH (incluse le commissioni del gas stimate)",
+      "insufficientFunds": "Transazione fallita: Fondi insufficienti per completare la transazione",
+      "userRejected": "Transazione rifiutata. Riprova quando sei pronto",
+      "gasError": "Stima del gas fallita: {{message}}",
+      "generic": "Lancio del token fallito. Riprova"
     }
   },
   "trade": {

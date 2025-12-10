@@ -85,6 +85,13 @@
       "toLiquidity": "流動性プールへ (バーン済み):",
       "toWallet": "ウォレットへ:",
       "initialLiq": "初期流動性:",
+      "estimatedGas": "推定ガス代:",
+      "totalCost": "合計コスト:",
+      "loadingBalance": "読み込み中...",
+      "insufficientBalance": "残高不足",
+      "needMore": "あと{{amount}} ETH必要です",
+      "getEthTitle": "もっとETHが必要ですか？",
+      "getEthDescription": "トークンをローンチする前に、ウォレットにもっとETHを追加する必要があります。合計コストには流動性とガス代が含まれます。",
       "launchButton": "トークンをローンチ",
       "launching": "トークンをローンチ中...",
       "connectToLaunch": "ローンチするにはウォレットを接続"
@@ -98,7 +105,12 @@
     "errors": {
       "nameAndSymbol": "トークン名とシンボルを入力してください",
       "minLiquidity": "最小流動性は{{min}} ETHです",
-      "liquidityRange": "流動性は{{min}}%から100%の間である必要があります"
+      "liquidityRange": "流動性は{{min}}%から100%の間である必要があります",
+      "insufficientBalance": "ETH残高不足。{{balance}} ETHを持っていますが、{{needed}} ETH（推定ガス代を含む）が必要です",
+      "insufficientFunds": "トランザクション失敗：トランザクションを完了するための資金が不足しています",
+      "userRejected": "トランザクションが拒否されました。準備ができたら再試行してください",
+      "gasError": "ガス推定失敗：{{message}}",
+      "generic": "トークンのローンチに失敗しました。もう一度お試しください"
     }
   },
   "trade": {

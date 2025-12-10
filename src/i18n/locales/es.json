@@ -85,6 +85,13 @@
       "toLiquidity": "Al Pool de Liquidez (Quemado):",
       "toWallet": "A Tu Billetera:",
       "initialLiq": "Liquidez Inicial:",
+      "estimatedGas": "Tarifa de Gas Est.:",
+      "totalCost": "Costo Total:",
+      "loadingBalance": "Cargando...",
+      "insufficientBalance": "Saldo Insuficiente",
+      "needMore": "Necesitas {{amount}} ETH más",
+      "getEthTitle": "¿Necesitas más ETH?",
+      "getEthDescription": "Necesitarás agregar más ETH a tu billetera antes de poder lanzar un token. El costo total incluye liquidez más tarifas de gas.",
       "launchButton": "Lanzar Token",
       "launching": "Lanzando Token...",
       "connectToLaunch": "Conectar Billetera para Lanzar"
@@ -98,7 +105,12 @@
     "errors": {
       "nameAndSymbol": "Por favor proporciona nombre y símbolo del token",
       "minLiquidity": "La liquidez mínima es {{min}} ETH",
-      "liquidityRange": "La liquidez debe estar entre {{min}}% y 100%"
+      "liquidityRange": "La liquidez debe estar entre {{min}}% y 100%",
+      "insufficientBalance": "Saldo ETH insuficiente. Tienes {{balance}} ETH pero necesitas {{needed}} ETH (incluyendo tarifas de gas estimadas)",
+      "insufficientFunds": "Transacción fallida: Fondos insuficientes para completar la transacción",
+      "userRejected": "Transacción rechazada. Intenta de nuevo cuando estés listo",
+      "gasError": "Estimación de gas fallida: {{message}}",
+      "generic": "Error al lanzar token. Por favor intenta de nuevo"
     }
   },
   "trade": {
