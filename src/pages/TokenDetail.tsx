@@ -23,6 +23,7 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
   const [liveReserves, setLiveReserves] = useState<{ reserveETH: string; reserveToken: string } | null>(null);
+  const [snapshotCount, setSnapshotCount] = useState<number>(0);
 
   const ensureProtocol = (url: string): string => {
     if (!url) return url;
@@ -35,6 +36,7 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
   useEffect(() => {
     loadToken();
     loadEthPrice();
+    loadSnapshotCount();
 
     const ethPriceInterval = setInterval(loadEthPrice, 60000);
     return () => clearInterval(ethPriceInterval);
@@ -51,6 +53,20 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
   const loadEthPrice = async () => {
     const price = await getEthPriceUSD();
     setEthPriceUSD(price);
+  };
+
+  const loadSnapshotCount = async () => {
+    try {
+      const { count, error } = await supabase
+        .from('price_snapshots')
+        .select('*', { count: 'exact', head: true })
+        .eq('token_address', tokenAddress.toLowerCase());
+
+      if (error) throw error;
+      setSnapshotCount(count || 0);
+    } catch (err) {
+      console.error('Failed to load snapshot count:', err);
+    }
   };
 
   const loadToken = async () => {
@@ -248,12 +264,14 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
           </div>
         </div>
 
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 flex items-start space-x-3">
-          <Info className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
-          <p className="text-sm text-blue-800">
-            Chart data appears after at least 2 trades have been made with this token.
-          </p>
-        </div>
+        {snapshotCount < 2 && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 flex items-start space-x-3">
+            <Info className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+            <p className="text-sm text-blue-800">
+              Chart data appears after at least 2 trades have been made with this token.
+            </p>
+          </div>
+        )}
 
         <PriceChart
           tokenAddress={token.token_address}
