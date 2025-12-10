@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Rocket, AlertCircle, Loader, Wallet, Info } from 'lucide-react';
+import { Rocket, AlertCircle, Loader, Wallet } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '../lib/web3';
 import { createToken, getETHBalance } from '../lib/contracts';
@@ -23,7 +23,6 @@ export function Launch({ onNavigate }: LaunchProps) {
 
   const [ethBalance, setEthBalance] = useState<string>('0');
   const [isLoadingBalance, setIsLoadingBalance] = useState(false);
-  const [estimatedGas, setEstimatedGas] = useState<string>('0.005');
 
   const [isLaunching, setIsLaunching] = useState(false);
   const [error, setError] = useState('');
@@ -58,7 +57,7 @@ export function Launch({ onNavigate }: LaunchProps) {
     fetchBalance();
   }, [account, provider]);
 
-  const totalEthNeeded = parseFloat(ethAmount) + parseFloat(estimatedGas);
+  const totalEthNeeded = parseFloat(ethAmount);
   const hasInsufficientBalance = account && parseFloat(ethBalance) < totalEthNeeded;
   const balanceShortfall = hasInsufficientBalance
     ? (totalEthNeeded - parseFloat(ethBalance)).toFixed(4)
@@ -342,20 +341,9 @@ export function Launch({ onNavigate }: LaunchProps) {
                 <span className="font-medium text-gray-900">{formatNumber(tokensToCreator)} {t('common.tokens')}</span>
               </div>
               <div className="border-t border-gray-200 pt-2 mt-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">{t('launch.form.initialLiq')}</span>
-                  <span className="font-medium text-gray-900">{ethAmount} {t('common.eth')}</span>
-                </div>
-                <div className="flex justify-between text-sm mt-2">
-                  <div className="flex items-center space-x-1">
-                    <span className="text-gray-600">{t('launch.form.estimatedGas')}</span>
-                    <Info className="w-3 h-3 text-gray-400" />
-                  </div>
-                  <span className="text-gray-700">~{estimatedGas} {t('common.eth')}</span>
-                </div>
-                <div className="flex justify-between text-sm font-semibold mt-2 pt-2 border-t border-gray-200">
-                  <span className="text-gray-900">{t('launch.form.totalCost')}</span>
-                  <span className="text-gray-900">{totalEthNeeded.toFixed(4)} {t('common.eth')}</span>
+                <div className="flex justify-between text-sm font-semibold">
+                  <span className="text-gray-900">{t('launch.form.initialLiq')}</span>
+                  <span className="text-gray-900">{ethAmount} {t('common.eth')}</span>
                 </div>
               </div>
             </div>
