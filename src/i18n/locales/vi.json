@@ -181,7 +181,7 @@
       "description": "Mọi token được ra mắt qua McFun đều nhận được khả năng hiển thị vĩnh viễn trên nền tảng của chúng tôi, mang lại cho dự án của bạn sự tiếp xúc lâu dài với các nhà giao dịch và nhà đầu tư tiềm năng.",
       "ranking": {
         "title": "Niêm Yết & Xếp Hạng Tự Động",
-        "description": "Tất cả token được tự động niêm yết trên trang Token Phổ Biến và xếp hạng theo tổng thanh khoản ETH. Token của bạn có càng nhiều thanh khoản thì xếp hạng càng cao, mang lại khả năng hiển thị tối đa cho các dự án thành công."
+        "description": "Tất cả token được tự động niêm yết trên trang Token Phổ Biến và xếp hạng theo vốn hóa thị trường. Vốn hóa thị trường của token càng cao thì xếp hạng càng cao, mang lại khả năng hiển thị tối đa cho các dự án thành công."
       }
     },
     "why": {

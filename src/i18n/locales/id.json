@@ -181,7 +181,7 @@
       "description": "Setiap token yang diluncurkan melalui McFun menerima visibilitas permanen di platform kami, memberikan eksposur berkelanjutan kepada proyek Anda untuk calon trader dan investor.",
       "ranking": {
         "title": "Pencatatan & Peringkat Otomatis",
-        "description": "Semua token secara otomatis terdaftar di halaman Token Populer dan diperingkat berdasarkan total likuiditas ETH. Semakin banyak likuiditas yang dimiliki token Anda, semakin tinggi peringkatnya, memberikan visibilitas maksimum untuk proyek yang sukses."
+        "description": "Semua token secara otomatis terdaftar di halaman Token Populer dan diperingkat berdasarkan kapitalisasi pasar. Semakin tinggi kapitalisasi pasar token Anda, semakin tinggi peringkatnya, memberikan visibilitas maksimum untuk proyek yang sukses."
       }
     },
     "why": {

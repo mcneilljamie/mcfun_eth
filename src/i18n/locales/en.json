@@ -183,7 +183,7 @@
       "description": "Every token launched through McFun receives permanent visibility on our platform, giving your project lasting exposure to potential traders and investors.",
       "ranking": {
         "title": "Automatic Listing & Ranking",
-        "description": "All tokens are automatically listed on the Popular Tokens page and ranked by total ETH liquidity. The more liquidity your token has, the higher it ranks, giving successful projects maximum visibility."
+        "description": "All tokens are automatically listed on the Popular Tokens page and ranked by market cap. The higher your token's market cap, the higher it ranks, giving successful projects maximum visibility."
       }
     },
     "why": {

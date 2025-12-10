@@ -181,7 +181,7 @@
       "description": "Cada token lanzado a través de McFun recibe visibilidad permanente en nuestra plataforma, dando a tu proyecto exposición duradera a potenciales comerciantes e inversores.",
       "ranking": {
         "title": "Listado y Clasificación Automática",
-        "description": "Todos los tokens se listan automáticamente en la página de Tokens Populares y se clasifican por liquidez total de ETH. Cuanta más liquidez tenga tu token, más alto se clasifica, dando a los proyectos exitosos la máxima visibilidad."
+        "description": "Todos los tokens se listan automáticamente en la página de Tokens Populares y se clasifican por capitalización de mercado. Cuanto mayor sea la capitalización de mercado de tu token, más alto se clasifica, dando a los proyectos exitosos la máxima visibilidad."
       }
     },
     "why": {
