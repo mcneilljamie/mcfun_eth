@@ -8,6 +8,7 @@ import { getAMMReserves } from '../lib/contracts';
 import { useWeb3 } from '../lib/web3';
 import { getExplorerUrl } from '../contracts/addresses';
 import { PriceChart } from '../components/PriceChart';
+import RecentTrades from '../components/RecentTrades';
 
 interface TokenDetailProps {
   tokenAddress: string;
@@ -360,6 +361,14 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
               </div>
             </div>
           </div>
+        </div>
+
+        <div className="mt-6">
+          <RecentTrades
+            tokenAddress={token.token_address}
+            tokenSymbol={token.symbol}
+            chainId={chainId || 11155111}
+          />
         </div>
       </div>
     </div>
