@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Rocket, AlertCircle, Loader, Wallet } from 'lucide-react';
+import { Rocket, AlertCircle, Loader, Wallet, Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '../lib/web3';
 import { createToken, getETHBalance } from '../lib/contracts';
