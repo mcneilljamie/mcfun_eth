@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { createChart, IChartApi, ISeriesApi, LineData, Time, AreaSeries, TickMarkType } from 'lightweight-charts';
-import { useChartData, TimeRange } from '../hooks/useChartData';
-import { TimeRangeSelector } from './TimeRangeSelector';
+import React, { useEffect, useRef } from 'react';
+import { createChart, IChartApi, ISeriesApi, LineData, Time, AreaSeries } from 'lightweight-charts';
+import { useChartData } from '../hooks/useChartData';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 
 interface PriceChartProps {
@@ -10,71 +9,13 @@ interface PriceChartProps {
   theme?: 'light' | 'dark';
 }
 
-// Helper function to format time based on time range
-function formatTimeForRange(time: number, timeRange: TimeRange, tickMarkType: TickMarkType): string {
-  const date = new Date(time * 1000);
-
-  switch (timeRange) {
-    case '1H':
-      // For 1 hour: show HH:MM:SS format to differentiate close timestamps
-      return date.toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
-      });
-
-    case '24H':
-      // For 24 hours: show HH:MM:SS for time marks, dates for day boundaries
-      if (tickMarkType === TickMarkType.Time) {
-        return date.toLocaleTimeString('en-US', {
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: false
-        });
-      }
-      // For day boundary, show date
-      return date.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric'
-      });
-
-    case '7D':
-    case '30D':
-      // For 7-30 days: show date and time
-      return date.toLocaleString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-      });
-
-    case 'ALL':
-      // For all time: show month and day
-      return date.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric'
-      });
-
-    default:
-      return date.toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-      });
-  }
-}
-
 export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceChartProps) {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<'Area'> | null>(null);
-  const [timeRange, setTimeRange] = useState<TimeRange>('24H');
   const { data, loading, error, priceChange, currentPrice, refetch } = useChartData(
     tokenAddress,
-    timeRange
+    'ALL'
   );
 
   // Initialize chart
@@ -140,20 +81,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
       window.removeEventListener('resize', handleResize);
       chart.remove();
     };
-  }, [theme, priceChange, timeRange]);
-
-  // Update time scale formatter when time range changes
-  useEffect(() => {
-    if (!chartRef.current) return;
-
-    chartRef.current.applyOptions({
-      timeScale: {
-        tickMarkFormatter: (time: number, tickMarkType: TickMarkType) => {
-          return formatTimeForRange(time, timeRange, tickMarkType);
-        },
-      },
-    });
-  }, [timeRange]);
+  }, [theme, priceChange]);
 
   // Update chart colors when price change direction changes
   useEffect(() => {
@@ -242,14 +170,9 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
             )}
           </div>
           <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'} mt-1`}>
-            {timeRange === '1H' && 'Last Hour'}
-            {timeRange === '24H' && 'Last 24 Hours'}
-            {timeRange === '7D' && 'Last 7 Days'}
-            {timeRange === '30D' && 'Last 30 Days'}
-            {timeRange === 'ALL' && 'All Time'}
+            All Time
           </p>
         </div>
-        <TimeRangeSelector selected={timeRange} onChange={setTimeRange} theme={theme} />
       </div>
 
       {/* Chart */}
