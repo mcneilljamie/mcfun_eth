@@ -148,7 +148,7 @@ Deno.serve(async (req: Request) => {
 
                 const { error: swapError } = await supabase
                   .from("swaps")
-                  .insert({
+                  .upsert({
                     token_address: token.token_address,
                     amm_address: token.amm_address,
                     user_address: args.user.toLowerCase(),
@@ -158,6 +158,8 @@ Deno.serve(async (req: Request) => {
                     token_out: ethers.formatEther(args.tokenOut),
                     tx_hash: event.transactionHash,
                     created_at: new Date(block.timestamp * 1000).toISOString(),
+                  }, {
+                    onConflict: "tx_hash",
                   });
 
                 if (swapError) {
