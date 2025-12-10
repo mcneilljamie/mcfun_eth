@@ -46,7 +46,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
         borderColor: isDark ? '#2a2a2a' : '#e5e7eb',
         scaleMargins: {
           top: 0.2,
-          bottom: 0,
+          bottom: 0.1,
         },
         autoScale: true,
       },
