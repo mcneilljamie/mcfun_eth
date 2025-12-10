@@ -153,7 +153,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
           </div>
           <div className="mt-2 flex items-baseline gap-3">
             <span className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              ${currentPrice.toFixed(currentPrice < 0.01 ? 8 : 4)}
+              ${currentPrice.toFixed(4)}
             </span>
             {priceChange !== 0 && (
               <div className={`flex items-center gap-1 ${priceChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>

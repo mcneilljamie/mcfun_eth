@@ -76,13 +76,13 @@ export function formatUSD(value: number, abbreviated: boolean = false): string {
   }
 
   if (value < 0.01) {
-    return `$${value.toFixed(6)}`;
+    return `$${value.toFixed(4)}`;
   }
 
   return value.toLocaleString('en-US', {
     style: 'currency',
     currency: 'USD',
     minimumFractionDigits: 2,
-    maximumFractionDigits: value < 1 ? 4 : 2,
+    maximumFractionDigits: 4,
   });
 }
