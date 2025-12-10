@@ -24,6 +24,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
   const [liveReserves, setLiveReserves] = useState<Record<string, { reserveETH: string; reserveToken: string }>>({});
   const [liveVolumes, setLiveVolumes] = useState<Record<string, string>>({});
+  const [priceChanges, setPriceChanges] = useState<Record<string, number>>({});
 
   useEffect(() => {
     loadTokens();
@@ -48,9 +49,11 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     if (tokens.length > 0 && provider) {
       loadLiveReserves();
       loadLiveVolumes();
+      loadPriceChanges();
       const reservesInterval = setInterval(() => {
         loadLiveReserves();
         loadLiveVolumes();
+        loadPriceChanges();
       }, 10000);
       return () => clearInterval(reservesInterval);
     }
@@ -175,6 +178,30 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
       setLiveVolumes(newVolumes);
     } catch (err) {
       console.error('Failed to load live volumes:', err);
+    }
+  };
+
+  const loadPriceChanges = async () => {
+    if (tokens.length === 0) return;
+
+    try {
+      const { data, error } = await supabase
+        .rpc('get_24h_price_changes', {
+          p_token_addresses: tokens.map(t => t.token_address)
+        });
+
+      if (error) throw error;
+
+      const newChanges: Record<string, number> = {};
+      data?.forEach((item: any) => {
+        if (item.price_change_24h !== null) {
+          newChanges[item.token_address] = parseFloat(item.price_change_24h);
+        }
+      });
+
+      setPriceChanges(newChanges);
+    } catch (err) {
+      console.error('Failed to load price changes:', err);
     }
   };
 
@@ -317,8 +344,15 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                           </div>
                         </td>
                         <td className="py-4 px-4">
-                          <div className="font-semibold text-gray-900">
-                            {formatUSD(calculateTokenPriceUSD(token), false)}
+                          <div>
+                            <div className="font-semibold text-gray-900">
+                              {formatUSD(calculateTokenPriceUSD(token), false)}
+                            </div>
+                            {priceChanges[token.token_address] !== undefined && (
+                              <div className={`text-sm font-medium ${priceChanges[token.token_address] >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                {priceChanges[token.token_address] >= 0 ? '+' : ''}{priceChanges[token.token_address].toFixed(2)}%
+                              </div>
+                            )}
                           </div>
                         </td>
                         <td className="py-4 px-4">
@@ -397,9 +431,16 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                     <div className="space-y-2 mb-3">
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">{t('tokens.table.price')}:</span>
-                        <span className="font-semibold text-gray-900">
-                          {formatUSD(calculateTokenPriceUSD(token), false)}
-                        </span>
+                        <div className="text-right">
+                          <div className="font-semibold text-gray-900">
+                            {formatUSD(calculateTokenPriceUSD(token), false)}
+                          </div>
+                          {priceChanges[token.token_address] !== undefined && (
+                            <div className={`text-xs font-medium ${priceChanges[token.token_address] >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                              {priceChanges[token.token_address] >= 0 ? '+' : ''}{priceChanges[token.token_address].toFixed(2)}%
+                            </div>
+                          )}
+                        </div>
                       </div>
 
                       <div className="flex justify-between items-center">
