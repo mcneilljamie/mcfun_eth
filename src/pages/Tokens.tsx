@@ -286,6 +286,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.token')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.address')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.price')}</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700">24h Change</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.marketCap')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.liquidity')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.created')}</th>
@@ -347,21 +348,30 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                           </div>
                         </td>
                         <td className="py-4 px-4">
-                          <div>
-                            <div className="font-semibold text-gray-900">
-                              {formatUSD(calculateTokenPriceUSD(token), false)}
-                            </div>
-                            {priceChanges[token.token_address] !== undefined && (
-                              <div className="flex items-center gap-1">
-                                <span className={`text-sm font-medium ${priceChanges[token.token_address].change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                  {priceChanges[token.token_address].change >= 0 ? '+' : ''}{priceChanges[token.token_address].change.toFixed(2)}%
-                                </span>
-                                <span className="text-xs text-gray-500">
-                                  {priceChanges[token.token_address].isNew ? 'Since Launch' : '24h'}
-                                </span>
-                              </div>
-                            )}
+                          <div className="font-semibold text-gray-900">
+                            {formatUSD(calculateTokenPriceUSD(token), false)}
                           </div>
+                          <div className="text-xs text-gray-500 mt-0.5">
+                            ({formatCurrency(
+                              liveReserves[token.token_address]
+                                ? parseFloat(liveReserves[token.token_address].reserveETH) / parseFloat(liveReserves[token.token_address].reserveToken)
+                                : parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString()) / parseFloat(token.current_token_reserve?.toString() || '1000000')
+                            )})
+                          </div>
+                        </td>
+                        <td className="py-4 px-4">
+                          {priceChanges[token.token_address] !== undefined ? (
+                            <div>
+                              <div className={`font-semibold ${priceChanges[token.token_address].change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                {priceChanges[token.token_address].change >= 0 ? '+' : ''}{priceChanges[token.token_address].change.toFixed(2)}%
+                              </div>
+                              <div className="text-xs text-gray-500 mt-0.5">
+                                {priceChanges[token.token_address].isNew ? 'Since Launch' : '24h'}
+                              </div>
+                            </div>
+                          ) : (
+                            <span className="text-gray-400 text-sm">-</span>
+                          )}
                         </td>
                         <td className="py-4 px-4">
                           <div className="font-semibold text-gray-900">
