@@ -1,0 +1,226 @@
+import { useState } from 'react';
+import { X, Copy, CheckCircle, ExternalLink, CheckCheck } from 'lucide-react';
+import { useWeb3 } from '../lib/web3';
+import { getExplorerUrl } from '../contracts/addresses';
+import { formatNumber } from '../lib/utils';
+
+interface SwapConfirmationProps {
+  amountIn: string;
+  amountOut: string;
+  tokenSymbol: string;
+  tokenAddress: string;
+  ammAddress: string;
+  txHash: string;
+  isETHToToken: boolean;
+  onClose: () => void;
+}
+
+export function SwapConfirmation({
+  amountIn,
+  amountOut,
+  tokenSymbol,
+  tokenAddress,
+  ammAddress,
+  txHash,
+  isETHToToken,
+  onClose,
+}: SwapConfirmationProps) {
+  const { chainId } = useWeb3();
+  const [copiedItem, setCopiedItem] = useState<string | null>(null);
+
+  const copyToClipboard = async (text: string, item: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedItem(item);
+      setTimeout(() => setCopiedItem(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
+  const explorerUrl = getExplorerUrl(chainId || 11155111);
+  const txExplorerUrl = `${explorerUrl}/tx/${txHash}`;
+  const tokenExplorerUrl = `${explorerUrl}/token/${tokenAddress}`;
+  const poolExplorerUrl = `${explorerUrl}/address/${ammAddress}`;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative animate-scale-in">
+        <style>{`
+          @keyframes scale-in {
+            from {
+              transform: scale(0.9);
+              opacity: 0;
+            }
+            to {
+              transform: scale(1);
+              opacity: 1;
+            }
+          }
+          .animate-scale-in {
+            animation: scale-in 0.3s ease-out;
+          }
+        `}</style>
+
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+        >
+          <X className="w-5 h-5 text-gray-500" />
+        </button>
+
+        <div className="p-8">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full mb-4">
+              <CheckCheck className="w-10 h-10 text-white" />
+            </div>
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+              Swap Successful!
+            </h2>
+            <p className="text-lg text-gray-600">
+              Your transaction has been confirmed
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
+              <h3 className="font-semibold text-gray-900 mb-4">Swap Details</h3>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">You Paid</span>
+                  <span className="font-semibold text-gray-900">
+                    {formatNumber(amountIn)} {isETHToToken ? 'ETH' : tokenSymbol}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">You Received</span>
+                  <span className="font-semibold text-gray-900">
+                    {formatNumber(amountOut)} {isETHToToken ? tokenSymbol : 'ETH'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6">
+              <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
+                <ExternalLink className="w-5 h-5 mr-2" />
+                Transaction Information
+              </h3>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Transaction Hash
+                  </label>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="text"
+                      value={txHash}
+                      readOnly
+                      className="flex-1 px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm font-mono"
+                    />
+                    <button
+                      onClick={() => copyToClipboard(txHash, 'tx')}
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                      title="Copy transaction hash"
+                    >
+                      {copiedItem === 'tx' ? (
+                        <CheckCircle className="w-5 h-5 text-green-400" />
+                      ) : (
+                        <Copy className="w-5 h-5" />
+                      )}
+                    </button>
+                    <a
+                      href={txExplorerUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                      title="View on block explorer"
+                    >
+                      <ExternalLink className="w-5 h-5" />
+                    </a>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Token Contract Address
+                  </label>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="text"
+                      value={tokenAddress}
+                      readOnly
+                      className="flex-1 px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm font-mono"
+                    />
+                    <button
+                      onClick={() => copyToClipboard(tokenAddress, 'token')}
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                      title="Copy token address"
+                    >
+                      {copiedItem === 'token' ? (
+                        <CheckCircle className="w-5 h-5 text-green-400" />
+                      ) : (
+                        <Copy className="w-5 h-5" />
+                      )}
+                    </button>
+                    <a
+                      href={tokenExplorerUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                      title="View on Etherscan"
+                    >
+                      <ExternalLink className="w-5 h-5" />
+                    </a>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    DEX Pool Address
+                  </label>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="text"
+                      value={ammAddress}
+                      readOnly
+                      className="flex-1 px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm font-mono"
+                    />
+                    <button
+                      onClick={() => copyToClipboard(ammAddress, 'pool')}
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                      title="Copy pool address"
+                    >
+                      {copiedItem === 'pool' ? (
+                        <CheckCircle className="w-5 h-5 text-green-400" />
+                      ) : (
+                        <Copy className="w-5 h-5" />
+                      )}
+                    </button>
+                    <a
+                      href={poolExplorerUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                      title="View on Etherscan"
+                    >
+                      <ExternalLink className="w-5 h-5" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={onClose}
+              className="w-full bg-gray-900 text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
+            >
+              Make Another Swap
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

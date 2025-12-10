@@ -6,6 +6,7 @@ import { swapTokens, getQuote, getAMMReserves } from '../lib/contracts';
 import { formatNumber, formatCurrency, calculatePriceImpact } from '../lib/utils';
 import { Token } from '../lib/supabase';
 import { TokenSelector } from '../components/TokenSelector';
+import { SwapConfirmation } from '../components/SwapConfirmation';
 import { Contract, formatEther } from 'ethers';
 
 interface TradeProps {
@@ -26,7 +27,11 @@ export function Trade({ selectedToken }: TradeProps) {
   const [isSwapping, setIsSwapping] = useState(false);
   const [isLoadingQuote, setIsLoadingQuote] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [swapSuccess, setSwapSuccess] = useState<{
+    amountIn: string;
+    amountOut: string;
+    txHash: string;
+  } | null>(null);
 
   const [reserves, setReserves] = useState<{ reserveETH: string; reserveToken: string } | null>(null);
   const [ethBalance, setEthBalance] = useState<string>('0');
@@ -123,22 +128,25 @@ export function Trade({ selectedToken }: TradeProps) {
     }
 
     setError('');
-    setSuccess('');
+    setSwapSuccess(null);
     setIsSwapping(true);
 
     try {
       const minAmountOut = (parseFloat(amountOut) * (100 - slippage) / 100).toString();
 
-      await swapTokens(signer, {
+      const receipt = await swapTokens(signer, {
         ammAddress: selectedTokenData.amm_address,
         isETHToToken,
         amountIn,
         minAmountOut,
       });
 
-      setSuccess(t('trade.success'));
-      setAmountIn('');
-      setAmountOut('');
+      setSwapSuccess({
+        amountIn,
+        amountOut,
+        txHash: receipt.hash,
+      });
+
       loadReserves();
       loadBalances();
 
@@ -192,30 +200,42 @@ export function Trade({ selectedToken }: TradeProps) {
     : 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6 sm:py-12">
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-xl shadow-lg p-5 sm:p-8">
-          <div className="flex items-center space-x-3 mb-6">
-            <div className="bg-gray-900 p-2 rounded-lg">
-              <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('trade.title')}</h1>
-          </div>
+    <>
+      {swapSuccess && selectedTokenData && (
+        <SwapConfirmation
+          amountIn={swapSuccess.amountIn}
+          amountOut={swapSuccess.amountOut}
+          tokenSymbol={selectedTokenData.symbol}
+          tokenAddress={selectedTokenData.token_address}
+          ammAddress={selectedTokenData.amm_address}
+          txHash={swapSuccess.txHash}
+          isETHToToken={isETHToToken}
+          onClose={() => {
+            setSwapSuccess(null);
+            setAmountIn('');
+            setAmountOut('');
+          }}
+        />
+      )}
 
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <div className="flex items-start space-x-3">
-                <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
-                <p className="text-sm text-red-800">{error}</p>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6 sm:py-12">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-xl shadow-lg p-5 sm:p-8">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="bg-gray-900 p-2 rounded-lg">
+                <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('trade.title')}</h1>
             </div>
-          )}
 
-          {success && (
-            <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-              <p className="text-sm text-green-800">{success}</p>
-            </div>
-          )}
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div className="flex items-start space-x-3">
+                  <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-red-800">{error}</p>
+                </div>
+              </div>
+            )}
 
           <div className="space-y-6">
             <div>
@@ -429,8 +449,9 @@ export function Trade({ selectedToken }: TradeProps) {
               )}
             </button>
           </div>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
