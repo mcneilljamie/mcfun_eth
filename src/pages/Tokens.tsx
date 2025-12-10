@@ -284,7 +284,6 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                     <tr className="border-b border-gray-200">
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.rank')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.token')}</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.address')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.price')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">Price Change</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.marketCap')}</th>
@@ -323,40 +322,8 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                           </div>
                         </td>
                         <td className="py-4 px-4">
-                          <div className="flex items-center gap-3">
-                            <button
-                              onClick={() => copyToClipboard(token.token_address)}
-                              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
-                            >
-                              <span className="font-mono text-sm">{formatAddress(token.token_address)}</span>
-                              {copiedAddress === token.token_address ? (
-                                <CheckCircle className="w-4 h-4 text-green-600" />
-                              ) : (
-                                <Copy className="w-4 h-4" />
-                              )}
-                            </button>
-                            <a
-                              href={`${getExplorerUrl(chainId || 11155111)}/token/${token.token_address}#balances`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center space-x-1 text-gray-600 hover:text-gray-900 transition-colors text-sm"
-                              title="View top holders on block explorer"
-                            >
-                              <span>{t('tokens.table.holders')}</span>
-                              <ExternalLink className="w-3 h-3" />
-                            </a>
-                          </div>
-                        </td>
-                        <td className="py-4 px-4">
                           <div className="font-semibold text-gray-900">
                             {formatUSD(calculateTokenPriceUSD(token), false)}
-                          </div>
-                          <div className="text-xs text-gray-500 mt-0.5">
-                            ({formatCurrency(
-                              liveReserves[token.token_address]
-                                ? parseFloat(liveReserves[token.token_address].reserveETH) / parseFloat(liveReserves[token.token_address].reserveToken)
-                                : parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString()) / parseFloat(token.current_token_reserve?.toString() || '1000000')
-                            )})
                           </div>
                         </td>
                         <td className="py-4 px-4">
