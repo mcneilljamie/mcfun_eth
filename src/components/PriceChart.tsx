@@ -46,7 +46,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
         borderColor: isDark ? '#2a2a2a' : '#e5e7eb',
         scaleMargins: {
           top: 0.2,
-          bottom: 0.2,
+          bottom: 0,
         },
         autoScale: true,
       },
@@ -75,8 +75,10 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
       },
       autoscaleInfoProvider: (original) => {
         const res = original();
-        if (res !== null) {
-          res.priceRange.minValue = Math.max(0, res.priceRange.minValue);
+        if (res !== null && res.priceRange) {
+          if (res.priceRange.minValue < 0) {
+            res.priceRange.minValue = 0;
+          }
         }
         return res;
       },
