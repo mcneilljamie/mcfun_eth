@@ -75,21 +75,13 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     }
 
     const sorted = [...result].sort((a, b) => {
-      const aLiquidity = parseFloat(
-        liveReserves[a.token_address]?.reserveETH ||
-        a.current_eth_reserve?.toString() ||
-        a.initial_liquidity_eth.toString()
-      );
-      const bLiquidity = parseFloat(
-        liveReserves[b.token_address]?.reserveETH ||
-        b.current_eth_reserve?.toString() ||
-        b.initial_liquidity_eth.toString()
-      );
-      return bLiquidity - aLiquidity;
+      const aMarketCap = calculateMarketCap(a);
+      const bMarketCap = calculateMarketCap(b);
+      return bMarketCap - aMarketCap;
     });
 
     setFilteredTokens(sorted);
-  }, [searchQuery, tokens, liveReserves]);
+  }, [searchQuery, tokens, liveReserves, ethPriceUSD]);
 
   const loadTokens = async () => {
     setIsLoading(true);
@@ -114,7 +106,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
       const { data, error } = await supabase
         .from('tokens')
         .select('*')
-        .order('current_eth_reserve', { ascending: false });
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
 

@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Search, ChevronDown, X, Trophy } from 'lucide-react';
 import { supabase, Token } from '../lib/supabase';
-import { formatCurrency } from '../lib/utils';
+import { formatUSD } from '../lib/utils';
+import { getEthPriceUSD } from '../lib/ethPrice';
 
 interface TokenSelectorProps {
   selectedToken: Token | null;
@@ -15,32 +16,44 @@ export function TokenSelector({ selectedToken, onSelectToken, disabled = false }
   const [filteredTokens, setFilteredTokens] = useState<Token[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    loadEthPrice();
+  }, []);
+
+  useEffect(() => {
     if (isOpen) {
       loadTokens();
+      loadEthPrice();
       setTimeout(() => searchInputRef.current?.focus(), 100);
     }
   }, [isOpen]);
 
   useEffect(() => {
+    let result = tokens;
+
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      setFilteredTokens(
-        tokens.filter(
-          (token) =>
-            token.name.toLowerCase().includes(query) ||
-            token.symbol.toLowerCase().includes(query) ||
-            token.token_address.toLowerCase().includes(query)
-        )
+      result = tokens.filter(
+        (token) =>
+          token.name.toLowerCase().includes(query) ||
+          token.symbol.toLowerCase().includes(query) ||
+          token.token_address.toLowerCase().includes(query)
       );
-    } else {
-      setFilteredTokens(tokens);
     }
-  }, [searchQuery, tokens]);
+
+    const sorted = [...result].sort((a, b) => {
+      const aMarketCap = calculateMarketCap(a);
+      const bMarketCap = calculateMarketCap(b);
+      return bMarketCap - aMarketCap;
+    });
+
+    setFilteredTokens(sorted);
+  }, [searchQuery, tokens, ethPriceUSD]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -59,6 +72,11 @@ export function TokenSelector({ selectedToken, onSelectToken, disabled = false }
     };
   }, [isOpen]);
 
+  const loadEthPrice = async () => {
+    const price = await getEthPriceUSD();
+    setEthPriceUSD(price);
+  };
+
   const loadTokens = async () => {
     setIsLoading(true);
 
@@ -66,7 +84,7 @@ export function TokenSelector({ selectedToken, onSelectToken, disabled = false }
       const { data, error } = await supabase
         .from('tokens')
         .select('*')
-        .order('current_eth_reserve', { ascending: false })
+        .order('created_at', { ascending: false })
         .limit(50);
 
       if (error) throw error;
@@ -80,6 +98,22 @@ export function TokenSelector({ selectedToken, onSelectToken, disabled = false }
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const calculateTokenPriceUSD = (token: Token): number => {
+    const ethReserve = parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
+    const tokenReserve = parseFloat(token.current_token_reserve?.toString() || '1000000');
+
+    if (tokenReserve === 0) return 0;
+
+    const priceInEth = ethReserve / tokenReserve;
+    return priceInEth * ethPriceUSD;
+  };
+
+  const calculateMarketCap = (token: Token): number => {
+    const TOKEN_TOTAL_SUPPLY = 1000000;
+    const priceUSD = calculateTokenPriceUSD(token);
+    return priceUSD * TOKEN_TOTAL_SUPPLY;
   };
 
   const handleSelectToken = (token: Token) => {
@@ -186,9 +220,9 @@ export function TokenSelector({ selectedToken, onSelectToken, disabled = false }
                     </div>
                     <div className="flex flex-col items-end flex-shrink-0 ml-2">
                       <span className="text-xs font-medium text-gray-600">
-                        {formatCurrency(token.current_eth_reserve || token.initial_liquidity_eth)}
+                        {formatUSD(calculateMarketCap(token), true)}
                       </span>
-                      <span className="text-xs text-gray-400">liquidity</span>
+                      <span className="text-xs text-gray-400">market cap</span>
                     </div>
                   </button>
                 ))}
