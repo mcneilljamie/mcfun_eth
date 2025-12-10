@@ -286,7 +286,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.token')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.address')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.price')}</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">24h Change</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700">Price Change</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.marketCap')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.liquidity')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.created')}</th>
