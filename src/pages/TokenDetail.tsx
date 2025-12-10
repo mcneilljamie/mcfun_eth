@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Copy, CheckCircle, ExternalLink, TrendingUp } from 'lucide-react';
+import { ArrowLeft, Copy, CheckCircle, ExternalLink, TrendingUp, Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { supabase, Token } from '../lib/supabase';
 import { formatCurrency, formatAddress, formatTimeAgo, formatUSD, ethToUSD } from '../lib/utils';
@@ -246,6 +246,13 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
               </div>
             </div>
           </div>
+        </div>
+
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 flex items-start space-x-3">
+          <Info className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+          <p className="text-sm text-blue-800">
+            Chart data appears after at least 2 trades have been made with this token.
+          </p>
         </div>
 
         <PriceChart
