@@ -282,11 +282,11 @@ export function Trade({ selectedToken }: TradeProps) {
                 </div>
                 <div className="flex items-center space-x-2 sm:space-x-3">
                   <input
-                    type="number"
-                    step="0.000001"
-                    min="0"
+                    type="text"
+                    inputMode="decimal"
                     value={amountIn}
                     onChange={(e) => setAmountIn(e.target.value)}
+                    onInput={(e) => setAmountIn((e.target as HTMLInputElement).value)}
                     placeholder="0.0"
                     className="flex-1 bg-transparent text-xl sm:text-2xl font-semibold outline-none"
                     disabled={isSwapping || !selectedTokenData}
