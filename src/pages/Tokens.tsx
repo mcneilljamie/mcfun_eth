@@ -24,7 +24,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
   const [liveReserves, setLiveReserves] = useState<Record<string, { reserveETH: string; reserveToken: string }>>({});
   const [liveVolumes, setLiveVolumes] = useState<Record<string, string>>({});
-  const [priceChanges, setPriceChanges] = useState<Record<string, number>>({});
+  const [priceChanges, setPriceChanges] = useState<Record<string, { change: number; isNew: boolean }>>({});
 
   useEffect(() => {
     loadTokens();
@@ -192,10 +192,13 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
 
       if (error) throw error;
 
-      const newChanges: Record<string, number> = {};
+      const newChanges: Record<string, { change: number; isNew: boolean }> = {};
       data?.forEach((item: any) => {
-        if (item.price_change_24h !== null) {
-          newChanges[item.token_address] = parseFloat(item.price_change_24h);
+        if (item.price_change !== null) {
+          newChanges[item.token_address] = {
+            change: parseFloat(item.price_change),
+            isNew: item.is_new
+          };
         }
       });
 
@@ -349,8 +352,13 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                               {formatUSD(calculateTokenPriceUSD(token), false)}
                             </div>
                             {priceChanges[token.token_address] !== undefined && (
-                              <div className={`text-sm font-medium ${priceChanges[token.token_address] >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                {priceChanges[token.token_address] >= 0 ? '+' : ''}{priceChanges[token.token_address].toFixed(2)}%
+                              <div className="flex items-center gap-1">
+                                <span className={`text-sm font-medium ${priceChanges[token.token_address].change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                  {priceChanges[token.token_address].change >= 0 ? '+' : ''}{priceChanges[token.token_address].change.toFixed(2)}%
+                                </span>
+                                <span className="text-xs text-gray-500">
+                                  {priceChanges[token.token_address].isNew ? 'Since Launch' : '24h'}
+                                </span>
                               </div>
                             )}
                           </div>
@@ -436,8 +444,13 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                             {formatUSD(calculateTokenPriceUSD(token), false)}
                           </div>
                           {priceChanges[token.token_address] !== undefined && (
-                            <div className={`text-xs font-medium ${priceChanges[token.token_address] >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                              {priceChanges[token.token_address] >= 0 ? '+' : ''}{priceChanges[token.token_address].toFixed(2)}%
+                            <div className="flex items-center justify-end gap-1">
+                              <span className={`text-xs font-medium ${priceChanges[token.token_address].change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                {priceChanges[token.token_address].change >= 0 ? '+' : ''}{priceChanges[token.token_address].change.toFixed(2)}%
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                {priceChanges[token.token_address].isNew ? 'Launch' : '24h'}
+                              </span>
                             </div>
                           )}
                         </div>
