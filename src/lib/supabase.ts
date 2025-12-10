@@ -21,6 +21,7 @@ export interface Token {
   current_eth_reserve: string;
   current_token_reserve: string;
   total_volume_eth: string;
+  holder_count?: number;
   website?: string;
   created_at: string;
 }

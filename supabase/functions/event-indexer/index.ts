@@ -193,6 +193,13 @@ Deno.serve(async (req: Request) => {
                       total_volume_eth: newVolume,
                     })
                     .eq("token_address", token.token_address);
+
+                  // Update holder count if someone bought tokens
+                  if (parseFloat(ethers.formatEther(args.tokenOut)) > 0) {
+                    await supabase.rpc('refresh_token_holder_count', {
+                      p_token_address: token.token_address
+                    });
+                  }
                 }
               }
             } catch (err: any) {
