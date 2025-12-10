@@ -15,7 +15,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<'Area'> | null>(null);
-  const { data, loading, error, priceChange, currentPrice, refetch } = useChartData(
+  const { data, loading, error, priceChange, currentPrice, isNew, refetch } = useChartData(
     tokenAddress,
     'ALL'
   );
@@ -59,9 +59,9 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
     const minMove = displayPrice < 1 ? 0.0001 : 0.01;
 
     const areaSeries = chart.addSeries(AreaSeries, {
-      lineColor: priceChange >= 0 ? '#10b981' : '#ef4444',
-      topColor: priceChange >= 0 ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)',
-      bottomColor: priceChange >= 0 ? 'rgba(16, 185, 129, 0.0)' : 'rgba(239, 68, 68, 0.0)',
+      lineColor: (priceChange !== null && priceChange >= 0) ? '#10b981' : '#ef4444',
+      topColor: (priceChange !== null && priceChange >= 0) ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)',
+      bottomColor: (priceChange !== null && priceChange >= 0) ? 'rgba(16, 185, 129, 0.0)' : 'rgba(239, 68, 68, 0.0)',
       lineWidth: 2,
       priceFormat: {
         type: 'price',
@@ -94,9 +94,9 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
   useEffect(() => {
     if (!seriesRef.current) return;
 
-    const color = priceChange >= 0 ? '#10b981' : '#ef4444';
-    const topColor = priceChange >= 0 ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)';
-    const bottomColor = priceChange >= 0 ? 'rgba(16, 185, 129, 0.0)' : 'rgba(239, 68, 68, 0.0)';
+    const color = (priceChange !== null && priceChange >= 0) ? '#10b981' : '#ef4444';
+    const topColor = (priceChange !== null && priceChange >= 0) ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)';
+    const bottomColor = (priceChange !== null && priceChange >= 0) ? 'rgba(16, 185, 129, 0.0)' : 'rgba(239, 68, 68, 0.0)';
 
     seriesRef.current.applyOptions({
       lineColor: color,
@@ -162,7 +162,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
             <span className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
               ${formatPrice(displayPrice)}
             </span>
-            {priceChange !== 0 && (
+            {priceChange !== null && (
               <div className={`flex items-center gap-1 ${priceChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                 {priceChange >= 0 ? (
                   <TrendingUp className="w-4 h-4" />
@@ -176,9 +176,11 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
               </div>
             )}
           </div>
-          <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'} mt-1`}>
-            All Time
-          </p>
+          {priceChange !== null && (
+            <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'} mt-1`}>
+              {isNew ? 'Since Launch' : '24h'}
+            </p>
+          )}
         </div>
       </div>
 
