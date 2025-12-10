@@ -145,13 +145,20 @@
       "rank": "#",
       "token": "टोकन",
       "address": "पता",
+      "price": "कीमत",
+      "priceChange": "कीमत में परिवर्तन",
+      "marketCap": "मार्केट कैप",
       "liquidity": "लिक्विडिटी",
       "volume": "वॉल्यूम",
+      "allTimeVolume": "कुल वॉल्यूम",
       "created": "बनाया गया",
       "action": "कार्रवाई",
       "locked": "{{percent}}% लॉक किया गया",
       "trade": "ट्रेड",
-      "holders": "धारक"
+      "holders": "धारक",
+      "24h": "24 घंटे",
+      "sinceLaunch": "लॉन्च के बाद से",
+      "launch": "लॉन्च"
     }
   },
   "about": {

@@ -145,13 +145,20 @@
       "rank": "#",
       "token": "トークン",
       "address": "アドレス",
+      "price": "価格",
+      "priceChange": "価格変動",
+      "marketCap": "時価総額",
       "liquidity": "流動性",
       "volume": "取引高",
+      "allTimeVolume": "総取引量",
       "created": "作成日",
       "action": "アクション",
       "locked": "{{percent}}% ロック",
       "trade": "トレード",
-      "holders": "保有者"
+      "holders": "保有者",
+      "24h": "24時間",
+      "sinceLaunch": "ローンチからの変動",
+      "launch": "ローンチ"
     }
   },
   "about": {

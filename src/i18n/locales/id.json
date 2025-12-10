@@ -145,13 +145,20 @@
       "rank": "#",
       "token": "Token",
       "address": "Alamat",
+      "price": "Harga",
+      "priceChange": "Perubahan Harga",
+      "marketCap": "Kapitalisasi Pasar",
       "liquidity": "Likuiditas",
       "volume": "Volume",
+      "allTimeVolume": "Volume Total",
       "created": "Dibuat",
       "action": "Aksi",
       "locked": "{{percent}}% terkunci",
       "trade": "Trading",
-      "holders": "Pemegang"
+      "holders": "Pemegang",
+      "24h": "24j",
+      "sinceLaunch": "Sejak Peluncuran",
+      "launch": "Peluncuran"
     }
   },
   "about": {

@@ -145,13 +145,20 @@
       "rank": "#",
       "token": "توکن",
       "address": "آدرس",
+      "price": "قیمت",
+      "priceChange": "تغییر قیمت",
+      "marketCap": "ارزش بازار",
       "liquidity": "نقدینگی",
       "volume": "حجم",
+      "allTimeVolume": "حجم کل",
       "created": "ساخته شده",
       "action": "عملیات",
       "locked": "{{percent}}٪ قفل شده",
       "trade": "معامله",
-      "holders": "دارندگان"
+      "holders": "دارندگان",
+      "24h": "24 ساعت",
+      "sinceLaunch": "از زمان راه‌اندازی",
+      "launch": "راه‌اندازی"
     }
   },
   "about": {

@@ -145,13 +145,20 @@
       "rank": "#",
       "token": "Токен",
       "address": "Адрес",
+      "price": "Цена",
+      "priceChange": "Изменение Цены",
+      "marketCap": "Рыночная Капитализация",
       "liquidity": "Ликвидность",
       "volume": "Объём",
+      "allTimeVolume": "Общий объем",
       "created": "Создан",
       "action": "Действие",
       "locked": "{{percent}}% заблокировано",
       "trade": "Торговать",
-      "holders": "Владельцы"
+      "holders": "Владельцы",
+      "24h": "24ч",
+      "sinceLaunch": "С Запуска",
+      "launch": "Запуск"
     }
   },
   "about": {

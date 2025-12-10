@@ -145,13 +145,19 @@
       "rank": "#",
       "token": "رمز",
       "address": "العنوان",
+      "price": "السعر",
+      "priceChange": "تغير السعر",
+      "marketCap": "القيمة السوقية",
       "liquidity": "السيولة",
       "volume": "الحجم",
       "created": "تم الإنشاء",
       "action": "إجراء",
       "locked": "{{percent}}% مقفل",
       "trade": "تداول",
-      "holders": "الحاملون"
+      "holders": "الحاملون",
+      "24h": "24 ساعة",
+      "sinceLaunch": "منذ الإطلاق",
+      "launch": "الإطلاق"
     }
   },
   "about": {

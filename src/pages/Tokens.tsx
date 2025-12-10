@@ -285,7 +285,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.rank')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.token')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.price')}</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">Price Change</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.priceChange')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.marketCap')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.liquidity')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.created')}</th>
@@ -333,7 +333,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                                 {priceChanges[token.token_address].change >= 0 ? '+' : ''}{priceChanges[token.token_address].change.toFixed(2)}%
                               </div>
                               <div className="text-xs text-gray-500 mt-0.5">
-                                {priceChanges[token.token_address].isNew ? 'Since Launch' : '24h'}
+                                {priceChanges[token.token_address].isNew ? t('tokens.table.sinceLaunch') : t('tokens.table.24h')}
                               </div>
                             </div>
                           ) : (
@@ -426,7 +426,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                                 {priceChanges[token.token_address].change >= 0 ? '+' : ''}{priceChanges[token.token_address].change.toFixed(2)}%
                               </span>
                               <span className="text-xs text-gray-500">
-                                {priceChanges[token.token_address].isNew ? 'Launch' : '24h'}
+                                {priceChanges[token.token_address].isNew ? t('tokens.table.launch') : t('tokens.table.24h')}
                               </span>
                             </div>
                           )}

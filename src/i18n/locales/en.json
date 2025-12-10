@@ -145,6 +145,7 @@
       "token": "Token",
       "address": "Address",
       "price": "Price",
+      "priceChange": "Price Change",
       "marketCap": "Market Cap",
       "liquidity": "Liquidity",
       "volume": "Volume",
@@ -153,7 +154,10 @@
       "action": "Action",
       "locked": "{{percent}}% locked",
       "trade": "Trade",
-      "holders": "Holders"
+      "holders": "Holders",
+      "24h": "24h",
+      "sinceLaunch": "Since Launch",
+      "launch": "Launch"
     }
   },
   "about": {

@@ -145,13 +145,20 @@
       "rank": "#",
       "token": "ტოკენი",
       "address": "მისამართი",
+      "price": "ფასი",
+      "priceChange": "ფასის ცვლილება",
+      "marketCap": "საბაზრო კაპიტალიზაცია",
       "liquidity": "ლიკვიდობა",
       "volume": "მოცულობა",
+      "allTimeVolume": "მთლიანი მოცულობა",
       "created": "შექმნილი",
       "action": "მოქმედება",
       "locked": "{{percent}}% ჩაკეტილი",
       "trade": "ვაჭრობა",
-      "holders": "მფლობელები"
+      "holders": "მფლობელები",
+      "24h": "24სთ",
+      "sinceLaunch": "გაშვებიდან",
+      "launch": "გაშვება"
     }
   },
   "about": {

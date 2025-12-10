@@ -145,13 +145,20 @@
       "rank": "#",
       "token": "Token",
       "address": "Dirección",
+      "price": "Precio",
+      "priceChange": "Cambio de Precio",
+      "marketCap": "Capitalización de Mercado",
       "liquidity": "Liquidez",
       "volume": "Volumen",
+      "allTimeVolume": "Volumen Total",
       "created": "Creado",
       "action": "Acción",
       "locked": "{{percent}}% bloqueado",
       "trade": "Comerciar",
-      "holders": "Tenedores"
+      "holders": "Tenedores",
+      "24h": "24h",
+      "sinceLaunch": "Desde el Lanzamiento",
+      "launch": "Lanzamiento"
     }
   },
   "about": {

@@ -145,13 +145,20 @@
       "rank": "#",
       "token": "Token",
       "address": "Adres",
+      "price": "Fiyat",
+      "priceChange": "Fiyat Değişimi",
+      "marketCap": "Piyasa Değeri",
       "liquidity": "Likidite",
       "volume": "Hacim",
+      "allTimeVolume": "Toplam Hacim",
       "created": "Oluşturulma",
       "action": "İşlem",
       "locked": "%{{percent}} kilitli",
       "trade": "İşlem Yap",
-      "holders": "Sahipler"
+      "holders": "Sahipler",
+      "24h": "24s",
+      "sinceLaunch": "Başlatmadan Beri",
+      "launch": "Başlatma"
     }
   },
   "about": {

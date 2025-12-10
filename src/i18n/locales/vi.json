@@ -145,13 +145,20 @@
       "rank": "#",
       "token": "Token",
       "address": "Địa Chỉ",
+      "price": "Giá",
+      "priceChange": "Thay Đổi Giá",
+      "marketCap": "Vốn Hóa Thị Trường",
       "liquidity": "Thanh Khoản",
       "volume": "Khối Lượng",
+      "allTimeVolume": "Khối lượng tổng",
       "created": "Đã Tạo",
       "action": "Hành Động",
       "locked": "{{percent}}% đã khóa",
       "trade": "Giao Dịch",
-      "holders": "Người Nắm Giữ"
+      "holders": "Người Nắm Giữ",
+      "24h": "24h",
+      "sinceLaunch": "Kể Từ Ra Mắt",
+      "launch": "Ra Mắt"
     }
   },
   "about": {

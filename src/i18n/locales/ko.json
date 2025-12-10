@@ -145,13 +145,20 @@
       "rank": "#",
       "token": "토큰",
       "address": "주소",
+      "price": "가격",
+      "priceChange": "가격 변동",
+      "marketCap": "시가총액",
       "liquidity": "유동성",
       "volume": "거래량",
+      "allTimeVolume": "총 거래량",
       "created": "생성일",
       "action": "액션",
       "locked": "{{percent}}% 잠금",
       "trade": "거래",
-      "holders": "보유자"
+      "holders": "보유자",
+      "24h": "24시간",
+      "sinceLaunch": "출시 이후",
+      "launch": "출시"
     }
   },
   "about": {

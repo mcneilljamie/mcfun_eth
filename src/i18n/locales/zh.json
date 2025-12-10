@@ -145,13 +145,20 @@
       "rank": "#",
       "token": "代币",
       "address": "地址",
+      "price": "价格",
+      "priceChange": "价格变动",
+      "marketCap": "市值",
       "liquidity": "流动性",
       "volume": "交易量",
+      "allTimeVolume": "总交易量",
       "created": "创建",
       "action": "操作",
       "locked": "{{percent}}%已锁定",
       "trade": "交易",
-      "holders": "持有者"
+      "holders": "持有者",
+      "24h": "24小时",
+      "sinceLaunch": "自发行以来",
+      "launch": "发行"
     }
   },
   "about": {
