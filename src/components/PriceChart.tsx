@@ -76,8 +76,14 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
       autoscaleInfoProvider: (original) => {
         const res = original();
         if (res !== null && res.priceRange) {
-          if (res.priceRange.minValue < 0) {
-            res.priceRange.minValue = 0;
+          const { minValue, maxValue } = res.priceRange;
+          // With bottom margin of 0.1 (10%), the displayed minimum is:
+          // displayedMin = minValue - 0.1 * (maxValue - minValue)
+          // To ensure displayedMin >= 0, we need: minValue >= maxValue / 11
+          const minAllowed = maxValue / 11;
+
+          if (minValue < minAllowed) {
+            res.priceRange.minValue = minAllowed;
           }
         }
         return res;
