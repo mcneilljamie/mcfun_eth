@@ -243,7 +243,7 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
 
         <PriceChart tokenAddress={token.token_address} tokenSymbol={token.symbol} theme="light" />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
           <div className="bg-white rounded-xl shadow-lg p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-4">{t('tokenDetail.tokenInformation')}</h2>
             <div className="space-y-3">
