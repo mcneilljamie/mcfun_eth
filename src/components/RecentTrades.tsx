@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { ArrowUpRight, ArrowDownRight, ExternalLink } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 interface Swap {
   id: string;
+  token_address: string;
+  amm_address: string;
   user_address: string;
   eth_in: string;
   token_in: string;
@@ -23,30 +25,36 @@ export default function RecentTrades({ tokenAddress, tokenSymbol, chainId }: Rec
   const [trades, setTrades] = useState<Swap[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    loadTrades();
-
-    const interval = setInterval(loadTrades, 15000);
-    return () => clearInterval(interval);
-  }, [tokenAddress]);
-
-  const loadTrades = async () => {
+  const loadTrades = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('swaps')
-        .select('*')
+        .select('id, token_address, amm_address, user_address, eth_in, token_in, eth_out, token_out, tx_hash, created_at')
         .eq('token_address', tokenAddress.toLowerCase())
         .order('created_at', { ascending: false })
         .limit(10);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error loading trades:', error);
+        throw error;
+      }
+
+      console.log(`Loaded ${data?.length || 0} trades for token ${tokenAddress}`);
       setTrades(data || []);
     } catch (err) {
       console.error('Failed to load trades:', err);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [tokenAddress]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    loadTrades();
+
+    const interval = setInterval(loadTrades, 15000);
+    return () => clearInterval(interval);
+  }, [loadTrades]);
 
   const formatAddress = (address: string) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
@@ -125,9 +133,14 @@ export default function RecentTrades({ tokenAddress, tokenSymbol, chainId }: Rec
           </thead>
           <tbody className="divide-y divide-gray-100">
             {trades.map((trade) => {
-              const isBuy = parseFloat(trade.eth_in) > 0;
-              const ethAmount = isBuy ? trade.eth_in : trade.eth_out;
-              const tokenAmount = isBuy ? trade.token_out : trade.token_in;
+              const ethIn = parseFloat(trade.eth_in || '0');
+              const ethOut = parseFloat(trade.eth_out || '0');
+              const tokenIn = parseFloat(trade.token_in || '0');
+              const tokenOut = parseFloat(trade.token_out || '0');
+
+              const isBuy = ethIn > 0;
+              const ethAmount = isBuy ? ethIn.toString() : ethOut.toString();
+              const tokenAmount = isBuy ? tokenOut.toString() : tokenIn.toString();
 
               return (
                 <tr key={trade.id} className="text-sm hover:bg-gray-50">
