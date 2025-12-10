@@ -241,7 +241,12 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
           </div>
         </div>
 
-        <PriceChart tokenAddress={token.token_address} tokenSymbol={token.symbol} theme="light" />
+        <PriceChart
+          tokenAddress={token.token_address}
+          tokenSymbol={token.symbol}
+          theme="light"
+          livePrice={calculateTokenPriceUSD()}
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
           <div className="bg-white rounded-xl shadow-lg p-6">

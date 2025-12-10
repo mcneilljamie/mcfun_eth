@@ -2,14 +2,16 @@ import React, { useEffect, useRef } from 'react';
 import { createChart, IChartApi, ISeriesApi, LineData, Time, AreaSeries } from 'lightweight-charts';
 import { useChartData } from '../hooks/useChartData';
 import { TrendingUp, TrendingDown } from 'lucide-react';
+import { formatPrice, getPriceDecimals } from '../lib/utils';
 
 interface PriceChartProps {
   tokenAddress: string;
   tokenSymbol: string;
   theme?: 'light' | 'dark';
+  livePrice?: number;
 }
 
-export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceChartProps) {
+export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePrice }: PriceChartProps) {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<'Area'> | null>(null);
@@ -17,6 +19,8 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
     tokenAddress,
     'ALL'
   );
+
+  const displayPrice = livePrice !== undefined ? livePrice : currentPrice;
 
   // Initialize chart
   useEffect(() => {
@@ -51,6 +55,9 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
       },
     });
 
+    const precision = displayPrice < 1 ? 4 : 2;
+    const minMove = displayPrice < 1 ? 0.0001 : 0.01;
+
     const areaSeries = chart.addSeries(AreaSeries, {
       lineColor: priceChange >= 0 ? '#10b981' : '#ef4444',
       topColor: priceChange >= 0 ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)',
@@ -58,8 +65,8 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
       lineWidth: 2,
       priceFormat: {
         type: 'price',
-        precision: 8,
-        minMove: 0.00000001,
+        precision: precision,
+        minMove: minMove,
       },
     });
 
@@ -81,7 +88,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
       window.removeEventListener('resize', handleResize);
       chart.remove();
     };
-  }, [theme, priceChange]);
+  }, [theme, priceChange, displayPrice]);
 
   // Update chart colors when price change direction changes
   useEffect(() => {
@@ -153,7 +160,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
           </div>
           <div className="mt-2 flex items-baseline gap-3">
             <span className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              ${currentPrice.toFixed(4)}
+              ${formatPrice(displayPrice)}
             </span>
             {priceChange !== 0 && (
               <div className={`flex items-center gap-1 ${priceChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>

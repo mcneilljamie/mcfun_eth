@@ -75,14 +75,22 @@ export function formatUSD(value: number, abbreviated: boolean = false): string {
     }
   }
 
-  if (value < 0.01) {
-    return `$${value.toFixed(4)}`;
-  }
+  const decimals = value < 1 ? 4 : 2;
 
   return value.toLocaleString('en-US', {
     style: 'currency',
     currency: 'USD',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 4,
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
   });
+}
+
+export function formatPrice(value: number): string {
+  if (isNaN(value) || value === 0) return '0';
+  const decimals = value < 1 ? 4 : 2;
+  return value.toFixed(decimals);
+}
+
+export function getPriceDecimals(value: number): number {
+  return value < 1 ? 4 : 2;
 }
