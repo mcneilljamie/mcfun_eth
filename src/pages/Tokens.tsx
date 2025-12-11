@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Trophy, Search, TrendingUp, Copy, CheckCircle, ExternalLink } from 'lucide-react';
+import { Trophy, Search, TrendingUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { supabase, Token } from '../lib/supabase';
-import { formatCurrency, formatAddress, formatTimeAgo, formatUSD } from '../lib/utils';
+import { formatCurrency, formatTimeAgo, formatUSD } from '../lib/utils';
 import { getEthPriceUSD } from '../lib/ethPrice';
 import { getAMMReserves } from '../lib/contracts';
 import { useWeb3 } from '../lib/web3';
-import { getExplorerUrl } from '../contracts/addresses';
 import { ToastMessage } from '../App';
 
 interface TokensProps {
@@ -15,14 +14,13 @@ interface TokensProps {
   onShowToast: (toast: ToastMessage) => void;
 }
 
-export function Tokens({ onSelectToken, onViewToken, onShowToast }: TokensProps) {
+export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   const { t } = useTranslation();
-  const { provider, chainId } = useWeb3();
+  const { provider } = useWeb3();
   const [tokens, setTokens] = useState<Token[]>([]);
   const [filteredTokens, setFilteredTokens] = useState<Token[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
   const [liveReserves, setLiveReserves] = useState<Record<string, { reserveETH: string; reserveToken: string }>>({});
   const [, setLiveVolumes] = useState<Record<string, string>>({});
@@ -210,19 +208,6 @@ export function Tokens({ onSelectToken, onViewToken, onShowToast }: TokensProps)
     }
   };
 
-  const copyToClipboard = async (address: string) => {
-    try {
-      await navigator.clipboard.writeText(address);
-      setCopiedAddress(address);
-      setTimeout(() => setCopiedAddress(null), 2000);
-      onShowToast({
-        message: t('common.copiedToClipboard'),
-        type: 'success'
-      });
-    } catch (err) {
-      console.error('Failed to copy:', err);
-    }
-  };
 
   const calculateTokenPriceUSD = (token: Token): number => {
     const reserves = liveReserves[token.token_address];
@@ -458,32 +443,6 @@ export function Tokens({ onSelectToken, onViewToken, onShowToast }: TokensProps)
                         <span className="text-sm text-gray-900">
                           {formatTimeAgo(token.created_at)}
                         </span>
-                      </div>
-                    </div>
-
-                    <div className="pt-3 border-t border-gray-200">
-                      <div className="flex items-center justify-between gap-2">
-                        <button
-                          onClick={() => copyToClipboard(token.token_address)}
-                          className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors text-sm"
-                        >
-                          <span className="font-mono text-xs">{formatAddress(token.token_address)}</span>
-                          {copiedAddress === token.token_address ? (
-                            <CheckCircle className="w-4 h-4 text-green-600" />
-                          ) : (
-                            <Copy className="w-4 h-4" />
-                          )}
-                        </button>
-                        <a
-                          href={`${getExplorerUrl(chainId || 11155111)}/token/${token.token_address}#balances`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center space-x-1 text-gray-600 hover:text-gray-900 transition-colors text-sm"
-                          title="View top holders on block explorer"
-                        >
-                          <span>{t('tokens.table.holders')}</span>
-                          <ExternalLink className="w-3 h-3" />
-                        </a>
                       </div>
                     </div>
                   </div>
