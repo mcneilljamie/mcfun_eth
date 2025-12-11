@@ -4,18 +4,18 @@ import { useTranslation } from 'react-i18next';
 import { LanguageSelector } from './LanguageSelector';
 import { WalletModal } from './WalletModal';
 import { AccountDropdown } from './AccountDropdown';
-import { Toast } from './Toast';
+import { ToastMessage } from '../App';
 
 interface NavigationProps {
   currentPage: string;
   onNavigate: (page: string) => void;
+  setToast: (toast: ToastMessage | null) => void;
 }
 
-export function Navigation({ currentPage, onNavigate }: NavigationProps) {
+export function Navigation({ currentPage, onNavigate, setToast }: NavigationProps) {
   const { account, connect, disconnect, isConnecting, chainId, error } = useWeb3();
   const { t } = useTranslation();
   const [showWalletModal, setShowWalletModal] = useState(false);
-  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
   const handleConnect = async (walletType?: 'metamask' | 'rabby' | 'phantom') => {
     try {

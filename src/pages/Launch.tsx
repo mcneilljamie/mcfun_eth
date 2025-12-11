@@ -6,12 +6,14 @@ import { createToken, getETHBalance } from '../lib/contracts';
 import { MIN_LIQUIDITY_ETH, MIN_LIQUIDITY_PERCENT, RECOMMENDED_LIQUIDITY_PERCENT, TOTAL_SUPPLY } from '../contracts/addresses';
 import { formatNumber } from '../lib/utils';
 import { LaunchCelebration } from '../components/LaunchCelebration';
+import { ToastMessage } from '../App';
 
 interface LaunchProps {
   onNavigate: (page: string, tokenAddress?: string) => void;
+  onShowToast: (toast: ToastMessage) => void;
 }
 
-export function Launch({ onNavigate }: LaunchProps) {
+export function Launch({ onNavigate, onShowToast }: LaunchProps) {
   const { t } = useTranslation();
   const { account, signer, connect, provider } = useWeb3();
 
@@ -189,6 +191,7 @@ export function Launch({ onNavigate }: LaunchProps) {
           txHash={success.txHash}
           onClose={() => setSuccess(null)}
           onViewToken={() => onNavigate('token-detail', success.tokenAddress)}
+          onShowToast={onShowToast}
         />
       )}
 

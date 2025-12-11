@@ -8,12 +8,14 @@ import { Token } from '../lib/supabase';
 import { TokenSelector } from '../components/TokenSelector';
 import { SwapConfirmation } from '../components/SwapConfirmation';
 import { Contract, formatEther } from 'ethers';
+import { ToastMessage } from '../App';
 
 interface TradeProps {
   selectedToken?: Token;
+  onShowToast: (toast: ToastMessage) => void;
 }
 
-export function Trade({ selectedToken }: TradeProps) {
+export function Trade({ selectedToken, onShowToast }: TradeProps) {
   const { t } = useTranslation();
   const { account, signer, provider, connect } = useWeb3();
 
@@ -215,6 +217,7 @@ export function Trade({ selectedToken }: TradeProps) {
             setAmountIn('');
             setAmountOut('');
           }}
+          onShowToast={onShowToast}
         />
       )}
 
