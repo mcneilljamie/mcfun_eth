@@ -152,7 +152,9 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
     if (currentTokenReserve === 0) return 0;
 
     const currentPrice = currentEthReserve / currentTokenReserve;
-    const initialPrice = parseFloat(token.initial_liquidity_eth.toString()) / TOKEN_TOTAL_SUPPLY;
+
+    const initialTokensInPool = TOKEN_TOTAL_SUPPLY * (token.liquidity_percent / 100);
+    const initialPrice = parseFloat(token.initial_liquidity_eth.toString()) / initialTokensInPool;
 
     if (initialPrice === 0) return 0;
 
