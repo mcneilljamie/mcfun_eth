@@ -239,26 +239,6 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     return priceUSD * TOKEN_TOTAL_SUPPLY;
   };
 
-  const calculateReturnMultiple = (token: Token): number => {
-    const TOKEN_TOTAL_SUPPLY = 1000000;
-    const reserves = liveReserves[token.token_address];
-    const currentEthReserve = reserves
-      ? parseFloat(reserves.reserveETH)
-      : parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
-    const currentTokenReserve = reserves
-      ? parseFloat(reserves.reserveToken)
-      : parseFloat(token.current_token_reserve?.toString() || '1000000');
-
-    if (currentTokenReserve === 0) return 0;
-
-    const currentPrice = currentEthReserve / currentTokenReserve;
-    const initialPrice = parseFloat(token.initial_liquidity_eth.toString()) / TOKEN_TOTAL_SUPPLY;
-
-    if (initialPrice === 0) return 0;
-
-    return currentPrice / initialPrice;
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6 sm:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -306,7 +286,6 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.token')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.price')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.priceChange')}</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.returnMultiple')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.marketCap')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.liquidity')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.created')}</th>
@@ -360,16 +339,6 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                           ) : (
                             <span className="text-gray-400 text-sm">-</span>
                           )}
-                        </td>
-                        <td className="py-4 px-4">
-                          {(() => {
-                            const multiple = calculateReturnMultiple(token);
-                            return (
-                              <div className={`font-semibold ${multiple >= 1 ? 'text-green-600' : 'text-red-600'}`}>
-                                {multiple.toFixed(2)}x
-                              </div>
-                            );
-                          })()}
                         </td>
                         <td className="py-4 px-4">
                           <div className="font-semibold text-gray-900">
@@ -462,18 +431,6 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                             </div>
                           )}
                         </div>
-                      </div>
-
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">{t('tokens.table.returnMultiple')}:</span>
-                        {(() => {
-                          const multiple = calculateReturnMultiple(token);
-                          return (
-                            <span className={`font-semibold ${multiple >= 1 ? 'text-green-600' : 'text-red-600'}`}>
-                              {multiple.toFixed(2)}x
-                            </span>
-                          );
-                        })()}
                       </div>
 
                       <div className="flex justify-between items-center">

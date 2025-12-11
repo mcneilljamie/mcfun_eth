@@ -138,6 +138,27 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
     return priceUSD * TOKEN_TOTAL_SUPPLY;
   };
 
+  const calculateReturnMultiple = (): number => {
+    if (!token) return 0;
+
+    const TOKEN_TOTAL_SUPPLY = 1000000;
+    const currentEthReserve = liveReserves
+      ? parseFloat(liveReserves.reserveETH)
+      : parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
+    const currentTokenReserve = liveReserves
+      ? parseFloat(liveReserves.reserveToken)
+      : parseFloat(token.current_token_reserve?.toString() || '1000000');
+
+    if (currentTokenReserve === 0) return 0;
+
+    const currentPrice = currentEthReserve / currentTokenReserve;
+    const initialPrice = parseFloat(token.initial_liquidity_eth.toString()) / TOKEN_TOTAL_SUPPLY;
+
+    if (initialPrice === 0) return 0;
+
+    return currentPrice / initialPrice;
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6 sm:py-12">
@@ -231,7 +252,7 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
             </button>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 sm:gap-6">
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="text-sm text-gray-600 mb-1">{t('tokenDetail.price')}</div>
               <div className="text-xl sm:text-2xl font-bold text-gray-900">
@@ -254,6 +275,18 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
               <div className="text-xs text-gray-500 mt-1">
                 {formatCurrency(liveReserves?.reserveETH || token.current_eth_reserve || token.initial_liquidity_eth)}
               </div>
+            </div>
+
+            <div className="bg-gray-50 rounded-lg p-4">
+              <div className="text-sm text-gray-600 mb-1">{t('tokens.table.returnMultiple')}</div>
+              {(() => {
+                const multiple = calculateReturnMultiple();
+                return (
+                  <div className={`text-xl sm:text-2xl font-bold ${multiple >= 1 ? 'text-green-600' : 'text-red-600'}`}>
+                    {multiple.toFixed(2)}x
+                  </div>
+                );
+              })()}
             </div>
 
             <div className="bg-gray-50 rounded-lg p-4">
