@@ -18,7 +18,7 @@ export function About() {
 
   useEffect(() => {
     loadData();
-    const interval = setInterval(loadData, 10000);
+    const interval = setInterval(loadData, 5000);
     return () => clearInterval(interval);
   }, []);
 
@@ -79,7 +79,7 @@ export function About() {
             tokenCount: statsData.token_count || 0,
           });
         }
-      }, 2000);
+      }, 1000);
     } catch (err) {
       console.error('Failed to load data:', err);
     } finally {
