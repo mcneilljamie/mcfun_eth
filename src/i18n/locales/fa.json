@@ -259,7 +259,8 @@
   },
   "common": {
     "tokens": "توکن‌ها",
-    "eth": "ETH"
+    "eth": "ETH",
+    "copiedToClipboard": "در کلیپ‌بورد کپی شد!"
   },
   "tokenDetail": {
     "loadingToken": "در حال بارگذاری توکن...",

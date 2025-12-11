@@ -259,7 +259,8 @@
   },
   "common": {
     "tokens": "ტოკენები",
-    "eth": "ETH"
+    "eth": "ETH",
+    "copiedToClipboard": "დაკოპირებულია!"
   },
   "tokenDetail": {
     "loadingToken": "ტოკენის ჩატვირთვა...",

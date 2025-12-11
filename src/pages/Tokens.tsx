@@ -7,13 +7,15 @@ import { getEthPriceUSD } from '../lib/ethPrice';
 import { getAMMReserves } from '../lib/contracts';
 import { useWeb3 } from '../lib/web3';
 import { getExplorerUrl } from '../contracts/addresses';
+import { ToastMessage } from '../App';
 
 interface TokensProps {
   onSelectToken: (token: Token) => void;
   onViewToken: (tokenAddress: string) => void;
+  onShowToast: (toast: ToastMessage) => void;
 }
 
-export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
+export function Tokens({ onSelectToken, onViewToken, onShowToast }: TokensProps) {
   const { t } = useTranslation();
   const { provider, chainId } = useWeb3();
   const [tokens, setTokens] = useState<Token[]>([]);
@@ -213,6 +215,10 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
       await navigator.clipboard.writeText(address);
       setCopiedAddress(address);
       setTimeout(() => setCopiedAddress(null), 2000);
+      onShowToast({
+        message: t('common.copiedToClipboard'),
+        type: 'success'
+      });
     } catch (err) {
       console.error('Failed to copy:', err);
     }

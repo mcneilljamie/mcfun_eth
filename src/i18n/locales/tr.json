@@ -259,7 +259,8 @@
   },
   "common": {
     "tokens": "token",
-    "eth": "ETH"
+    "eth": "ETH",
+    "copiedToClipboard": "Panoya kopyalandı!"
   },
   "tokenDetail": {
     "loadingToken": "Token yükleniyor...",

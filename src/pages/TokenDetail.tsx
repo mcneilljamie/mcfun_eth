@@ -10,19 +10,21 @@ import { getExplorerUrl } from '../contracts/addresses';
 import { PriceChart } from '../components/PriceChart';
 import RecentTrades from '../components/RecentTrades';
 import { useChartData } from '../hooks/useChartData';
+import { ToastMessage } from '../App';
 
 interface TokenDetailProps {
   tokenAddress: string;
   onBack: () => void;
   onTrade: (token: Token) => void;
+  onShowToast: (toast: ToastMessage) => void;
 }
 
-export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps) {
+export function TokenDetail({ tokenAddress, onBack, onTrade, onShowToast }: TokenDetailProps) {
   const { t } = useTranslation();
   const { provider, chainId } = useWeb3();
   const [token, setToken] = useState<Token | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [copiedAddress, setCopiedAddress] = useState(false);
+  const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
   const [liveReserves, setLiveReserves] = useState<{ reserveETH: string; reserveToken: string } | null>(null);
   const [snapshotCount, setSnapshotCount] = useState<number>(0);
@@ -108,11 +110,15 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
     }
   };
 
-  const copyToClipboard = async (text: string) => {
+  const copyToClipboard = async (text: string, identifier: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      setCopiedAddress(true);
-      setTimeout(() => setCopiedAddress(false), 2000);
+      setCopiedAddress(identifier);
+      setTimeout(() => setCopiedAddress(null), 2000);
+      onShowToast({
+        message: t('common.copiedToClipboard'),
+        type: 'success'
+      });
     } catch (err) {
       console.error('Failed to copy:', err);
     }
@@ -191,11 +197,11 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
               <div className="flex items-center space-x-3">
                 <span className="text-xl text-gray-600">{token.symbol}</span>
                 <button
-                  onClick={() => copyToClipboard(token.token_address)}
+                  onClick={() => copyToClipboard(token.token_address, 'token')}
                   className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors text-sm"
                 >
                   <span className="font-mono">{formatAddress(token.token_address)}</span>
-                  {copiedAddress ? (
+                  {copiedAddress === 'token' ? (
                     <CheckCircle className="w-4 h-4 text-green-600" />
                   ) : (
                     <Copy className="w-4 h-4" />
@@ -302,11 +308,15 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
                 <span className="text-gray-600">{t('tokenDetail.creator')}</span>
                 <button
-                  onClick={() => copyToClipboard(token.creator_address)}
+                  onClick={() => copyToClipboard(token.creator_address, 'creator')}
                   className="flex items-center space-x-2 text-gray-900 hover:text-gray-700 transition-colors"
                 >
                   <span className="font-mono text-sm">{formatAddress(token.creator_address)}</span>
-                  <Copy className="w-4 h-4" />
+                  {copiedAddress === 'creator' ? (
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                  ) : (
+                    <Copy className="w-4 h-4" />
+                  )}
                 </button>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-gray-100">

@@ -259,7 +259,8 @@
   },
   "common": {
     "tokens": "tokens",
-    "eth": "ETH"
+    "eth": "ETH",
+    "copiedToClipboard": "Copié dans le presse-papiers !"
   },
   "tokenDetail": {
     "loadingToken": "Chargement du token...",

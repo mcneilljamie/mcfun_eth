@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { X, Copy, CheckCircle, ExternalLink, CheckCheck } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '../lib/web3';
 import { getExplorerUrl } from '../contracts/addresses';
 import { formatNumber } from '../lib/utils';
+import { ToastMessage } from '../App';
 
 interface SwapConfirmationProps {
   amountIn: string;
@@ -13,6 +15,7 @@ interface SwapConfirmationProps {
   txHash: string;
   isETHToToken: boolean;
   onClose: () => void;
+  onShowToast: (toast: ToastMessage) => void;
 }
 
 export function SwapConfirmation({
@@ -24,7 +27,9 @@ export function SwapConfirmation({
   txHash,
   isETHToToken,
   onClose,
+  onShowToast,
 }: SwapConfirmationProps) {
+  const { t } = useTranslation();
   const { chainId } = useWeb3();
   const [copiedItem, setCopiedItem] = useState<string | null>(null);
 
@@ -33,6 +38,10 @@ export function SwapConfirmation({
       await navigator.clipboard.writeText(text);
       setCopiedItem(item);
       setTimeout(() => setCopiedItem(null), 2000);
+      onShowToast({
+        message: t('common.copiedToClipboard'),
+        type: 'success'
+      });
     } catch (err) {
       console.error('Failed to copy:', err);
     }

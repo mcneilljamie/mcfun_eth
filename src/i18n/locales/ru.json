@@ -259,7 +259,8 @@
   },
   "common": {
     "tokens": "токенов",
-    "eth": "ETH"
+    "eth": "ETH",
+    "copiedToClipboard": "Скопировано в буфер обмена!"
   },
   "tokenDetail": {
     "loadingToken": "Загрузка токена...",

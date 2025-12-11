@@ -258,7 +258,8 @@
   },
   "common": {
     "tokens": "رموز",
-    "eth": "ETH"
+    "eth": "ETH",
+    "copiedToClipboard": "تم النسخ إلى الحافظة!"
   },
   "tokenDetail": {
     "loadingToken": "جارٍ تحميل الرمز...",

@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { X, Copy, CheckCircle, ExternalLink, Sparkles } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '../lib/web3';
 import { getExplorerUrl } from '../contracts/addresses';
+import { ToastMessage } from '../App';
 
 interface LaunchCelebrationProps {
   tokenName: string;
@@ -11,6 +13,7 @@ interface LaunchCelebrationProps {
   txHash: string;
   onClose: () => void;
   onViewToken: () => void;
+  onShowToast: (toast: ToastMessage) => void;
 }
 
 export function LaunchCelebration({
@@ -21,7 +24,9 @@ export function LaunchCelebration({
   txHash,
   onClose,
   onViewToken,
+  onShowToast,
 }: LaunchCelebrationProps) {
+  const { t } = useTranslation();
   const { chainId } = useWeb3();
   const [copiedItem, setCopiedItem] = useState<string | null>(null);
   const [fireworks, setFireworks] = useState<Array<{ id: number; x: number; y: number }>>([]);
@@ -49,6 +54,10 @@ export function LaunchCelebration({
       await navigator.clipboard.writeText(text);
       setCopiedItem(item);
       setTimeout(() => setCopiedItem(null), 2000);
+      onShowToast({
+        message: t('common.copiedToClipboard'),
+        type: 'success'
+      });
     } catch (err) {
       console.error('Failed to copy:', err);
     }

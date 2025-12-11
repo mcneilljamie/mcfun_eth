@@ -100,6 +100,7 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
                 account={account}
                 chainId={chainId}
                 onDisconnect={handleDisconnect}
+                onShowToast={setToast}
               />
             ) : (
               <button

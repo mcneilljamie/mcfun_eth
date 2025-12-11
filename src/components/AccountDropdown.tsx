@@ -9,9 +9,10 @@ interface AccountDropdownProps {
   account: string;
   chainId: number | null;
   onDisconnect: () => void;
+  onShowToast: (toast: { message: string; type: 'success' | 'error' | 'info' }) => void;
 }
 
-export function AccountDropdown({ account, chainId, onDisconnect }: AccountDropdownProps) {
+export function AccountDropdown({ account, chainId, onDisconnect, onShowToast }: AccountDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [balance, setBalance] = useState<string>('0');
@@ -51,6 +52,10 @@ export function AccountDropdown({ account, chainId, onDisconnect }: AccountDropd
     await navigator.clipboard.writeText(account);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+    onShowToast({
+      message: t('common.copiedToClipboard'),
+      type: 'success'
+    });
   };
 
   const openInExplorer = () => {
