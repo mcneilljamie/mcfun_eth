@@ -147,6 +147,7 @@
       "address": "주소",
       "price": "가격",
       "priceChange": "가격 변동",
+      "returnMultiple": "수익률",
       "marketCap": "시가총액",
       "liquidity": "유동성",
       "volume": "거래량",

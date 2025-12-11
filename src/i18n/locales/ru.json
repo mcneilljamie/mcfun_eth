@@ -147,6 +147,7 @@
       "address": "Адрес",
       "price": "Цена",
       "priceChange": "Изменение Цены",
+      "returnMultiple": "Доходность",
       "marketCap": "Рыночная Капитализация",
       "liquidity": "Ликвидность",
       "volume": "Объём",

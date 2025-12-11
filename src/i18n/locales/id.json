@@ -147,6 +147,7 @@
       "address": "Alamat",
       "price": "Harga",
       "priceChange": "Perubahan Harga",
+      "returnMultiple": "Pengembalian",
       "marketCap": "Kapitalisasi Pasar",
       "liquidity": "Likuiditas",
       "volume": "Volume",

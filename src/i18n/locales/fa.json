@@ -147,6 +147,7 @@
       "address": "آدرس",
       "price": "قیمت",
       "priceChange": "تغییر قیمت",
+      "returnMultiple": "بازده",
       "marketCap": "ارزش بازار",
       "liquidity": "نقدینگی",
       "volume": "حجم",

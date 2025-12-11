@@ -147,6 +147,7 @@
       "address": "მისამართი",
       "price": "ფასი",
       "priceChange": "ფასის ცვლილება",
+      "returnMultiple": "უკან დაბრუნება",
       "marketCap": "საბაზრო კაპიტალიზაცია",
       "liquidity": "ლიკვიდობა",
       "volume": "მოცულობა",

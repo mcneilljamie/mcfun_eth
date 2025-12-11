@@ -147,6 +147,7 @@
       "address": "العنوان",
       "price": "السعر",
       "priceChange": "تغير السعر",
+      "returnMultiple": "العائد",
       "marketCap": "القيمة السوقية",
       "liquidity": "السيولة",
       "volume": "الحجم",
