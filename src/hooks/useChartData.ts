@@ -19,6 +19,7 @@ export function useChartData(tokenAddress: string | undefined, timeRange: TimeRa
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [priceChange, setPriceChange] = useState<number | null>(null);
+  const [priceChangeSinceLaunch, setPriceChangeSinceLaunch] = useState<number | null>(null);
   const [currentPrice, setCurrentPrice] = useState<number>(0);
   const [isNew, setIsNew] = useState(false);
 
@@ -69,6 +70,7 @@ export function useChartData(tokenAddress: string | undefined, timeRange: TimeRa
           setData([]);
         }
         setPriceChange(null);
+        setPriceChangeSinceLaunch(null);
         setIsNew(false);
         setLoading(false);
         return;
@@ -99,7 +101,15 @@ export function useChartData(tokenAddress: string | undefined, timeRange: TimeRa
 
       setCurrentPrice(lastPriceUsd);
 
-      // Calculate price change based on token age
+      // Always calculate price change since launch
+      if (firstPriceUsd > 0 && lastPriceUsd > 0) {
+        const changeSinceLaunch = ((lastPriceUsd - firstPriceUsd) / firstPriceUsd) * 100;
+        setPriceChangeSinceLaunch(changeSinceLaunch);
+      } else {
+        setPriceChangeSinceLaunch(null);
+      }
+
+      // Calculate price change based on token age (for chart display)
       if (isTokenNew) {
         // For tokens < 24 hours old, show price change since inception
         if (firstPriceUsd > 0 && lastPriceUsd > 0) {
@@ -134,6 +144,7 @@ export function useChartData(tokenAddress: string | undefined, timeRange: TimeRa
     loading,
     error,
     priceChange,
+    priceChangeSinceLaunch,
     currentPrice,
     isNew,
     refetch: fetchChartData

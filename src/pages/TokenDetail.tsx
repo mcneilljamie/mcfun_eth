@@ -26,7 +26,7 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
   const [liveReserves, setLiveReserves] = useState<{ reserveETH: string; reserveToken: string } | null>(null);
   const [snapshotCount, setSnapshotCount] = useState<number>(0);
-  const { priceChange, isNew } = useChartData(tokenAddress, 'ALL');
+  const { priceChangeSinceLaunch } = useChartData(tokenAddress, 'ALL');
 
   const ensureProtocol = (url: string): string => {
     if (!url) return url;
@@ -262,10 +262,7 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="text-sm text-gray-600 mb-1">{t('tokens.table.returnMultiple')}</div>
               <div className="text-xl sm:text-2xl font-bold text-gray-900">
-                {priceChange !== null ? (1 + priceChange / 100).toFixed(2) : '1.00'}x
-              </div>
-              <div className="text-xs text-gray-500 mt-1">
-                {isNew ? 'Since Launch' : 'Last 24h'}
+                {priceChangeSinceLaunch !== null ? (1 + priceChangeSinceLaunch / 100).toFixed(2) : '1.00'}x
               </div>
             </div>
 
