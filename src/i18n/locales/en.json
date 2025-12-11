@@ -146,7 +146,7 @@
       "address": "Address",
       "price": "Price",
       "priceChange": "Price Change",
-      "returnMultiple": "Return",
+      "returnMultiple": "Return Since Launch",
       "marketCap": "Market Cap",
       "liquidity": "Liquidity",
       "volume": "Volume",

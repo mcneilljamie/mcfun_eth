@@ -147,7 +147,7 @@
       "address": "地址",
       "price": "价格",
       "priceChange": "价格变动",
-      "returnMultiple": "回报",
+      "returnMultiple": "发行以来回报",
       "marketCap": "市值",
       "liquidity": "流动性",
       "volume": "交易量",

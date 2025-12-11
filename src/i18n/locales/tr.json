@@ -147,7 +147,7 @@
       "address": "Adres",
       "price": "Fiyat",
       "priceChange": "Fiyat Değişimi",
-      "returnMultiple": "Getiri",
+      "returnMultiple": "Başlangıçtan Beri Getiri",
       "marketCap": "Piyasa Değeri",
       "liquidity": "Likidite",
       "volume": "Hacim",
