@@ -9,6 +9,7 @@ import { useWeb3 } from '../lib/web3';
 import { getExplorerUrl } from '../contracts/addresses';
 import { PriceChart } from '../components/PriceChart';
 import RecentTrades from '../components/RecentTrades';
+import { useChartData } from '../hooks/useChartData';
 
 interface TokenDetailProps {
   tokenAddress: string;
@@ -25,6 +26,7 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
   const [liveReserves, setLiveReserves] = useState<{ reserveETH: string; reserveToken: string } | null>(null);
   const [snapshotCount, setSnapshotCount] = useState<number>(0);
+  const { priceChange, isNew } = useChartData(tokenAddress, 'ALL');
 
   const ensureProtocol = (url: string): string => {
     if (!url) return url;
@@ -138,28 +140,6 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
     return priceUSD * TOKEN_TOTAL_SUPPLY;
   };
 
-  const calculateReturnMultiple = (): number => {
-    if (!token) return 0;
-
-    const TOKEN_TOTAL_SUPPLY = 1000000;
-    const currentEthReserve = liveReserves
-      ? parseFloat(liveReserves.reserveETH)
-      : parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
-    const currentTokenReserve = liveReserves
-      ? parseFloat(liveReserves.reserveToken)
-      : parseFloat(token.current_token_reserve?.toString() || '1000000');
-
-    if (currentTokenReserve === 0) return 0;
-
-    const currentPrice = currentEthReserve / currentTokenReserve;
-
-    const initialTokensInPool = TOKEN_TOTAL_SUPPLY * (token.liquidity_percent / 100);
-    const initialPrice = parseFloat(token.initial_liquidity_eth.toString()) / initialTokensInPool;
-
-    if (initialPrice === 0) return 0;
-
-    return currentPrice / initialPrice;
-  };
 
   if (isLoading) {
     return (
@@ -282,7 +262,10 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="text-sm text-gray-600 mb-1">{t('tokens.table.returnMultiple')}</div>
               <div className="text-xl sm:text-2xl font-bold text-gray-900">
-                {calculateReturnMultiple().toFixed(2)}x
+                {priceChange !== null ? (1 + priceChange / 100).toFixed(2) : '1.00'}x
+              </div>
+              <div className="text-xs text-gray-500 mt-1">
+                {isNew ? 'Since Launch' : 'Last 24h'}
               </div>
             </div>
 
