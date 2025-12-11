@@ -281,14 +281,9 @@ export function TokenDetail({ tokenAddress, onBack, onTrade }: TokenDetailProps)
 
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="text-sm text-gray-600 mb-1">{t('tokens.table.returnMultiple')}</div>
-              {(() => {
-                const multiple = calculateReturnMultiple();
-                return (
-                  <div className={`text-xl sm:text-2xl font-bold ${multiple >= 1 ? 'text-green-600' : 'text-red-600'}`}>
-                    {multiple.toFixed(2)}x
-                  </div>
-                );
-              })()}
+              <div className="text-xl sm:text-2xl font-bold text-gray-900">
+                {calculateReturnMultiple().toFixed(2)}x
+              </div>
             </div>
 
             <div className="bg-gray-50 rounded-lg p-4">
