@@ -13,7 +13,7 @@ interface NavigationProps {
 }
 
 export function Navigation({ currentPage, onNavigate, setToast }: NavigationProps) {
-  const { account, connect, disconnect, isConnecting, chainId, error } = useWeb3();
+  const { account, connect, disconnect, isConnecting, chainId } = useWeb3();
   const { t } = useTranslation();
   const [showWalletModal, setShowWalletModal] = useState(false);
 
@@ -165,14 +165,6 @@ export function Navigation({ currentPage, onNavigate, setToast }: NavigationProp
         onConnect={handleConnect}
         isConnecting={isConnecting}
       />
-
-      {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast(null)}
-        />
-      )}
     </nav>
   );
 }

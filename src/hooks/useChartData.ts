@@ -8,9 +8,13 @@ export interface ChartDataPoint {
   isInterpolated?: boolean;
 }
 
-export type TimeRange = 'ALL';
+export type TimeRange = '1H' | '24H' | '7D' | '30D' | 'ALL';
 
 const TIME_RANGE_HOURS: Record<TimeRange, number> = {
+  '1H': 1,
+  '24H': 24,
+  '7D': 168,
+  '30D': 720,
   'ALL': 8760,
 };
 

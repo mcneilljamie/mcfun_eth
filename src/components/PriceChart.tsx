@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { createChart, IChartApi, ISeriesApi, LineData, Time, AreaSeries } from 'lightweight-charts';
 import { useChartData } from '../hooks/useChartData';
 import { TrendingUp, TrendingDown } from 'lucide-react';
-import { formatPrice, getPriceDecimals } from '../lib/utils';
+import { formatPrice } from '../lib/utils';
 
 interface PriceChartProps {
   tokenAddress: string;
@@ -73,7 +73,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
         precision: precision,
         minMove: minMove,
       },
-      autoscaleInfoProvider: (original) => {
+      autoscaleInfoProvider: (original: () => any) => {
         const res = original();
         if (res !== null && res.priceRange) {
           const { minValue, maxValue } = res.priceRange;

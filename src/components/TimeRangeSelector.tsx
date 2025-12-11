@@ -1,4 +1,3 @@
-import React from 'react';
 import { TimeRange } from '../hooks/useChartData';
 
 interface TimeRangeSelectorProps {
@@ -7,7 +6,7 @@ interface TimeRangeSelectorProps {
   theme?: 'light' | 'dark';
 }
 
-const TIME_RANGES: TimeRange[] = ['1H', '24H', '7D', '30D', 'ALL'];
+const TIME_RANGES: readonly TimeRange[] = ['1H', '24H', '7D', '30D', 'ALL'] as const;
 
 export function TimeRangeSelector({ selected, onChange, theme = 'dark' }: TimeRangeSelectorProps) {
   const isDark = theme === 'dark';

@@ -25,7 +25,7 @@ export function Tokens({ onSelectToken, onViewToken, onShowToast }: TokensProps)
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
   const [liveReserves, setLiveReserves] = useState<Record<string, { reserveETH: string; reserveToken: string }>>({});
-  const [liveVolumes, setLiveVolumes] = useState<Record<string, string>>({});
+  const [, setLiveVolumes] = useState<Record<string, string>>({});
   const [priceChanges, setPriceChanges] = useState<Record<string, { change: number; isNew: boolean }>>({});
 
   useEffect(() => {

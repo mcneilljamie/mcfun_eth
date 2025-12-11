@@ -60,7 +60,7 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
   }, [account, provider]);
 
   const totalEthNeeded = parseFloat(ethAmount);
-  const hasInsufficientBalance = account && parseFloat(ethBalance) < totalEthNeeded;
+  const hasInsufficientBalance = !!(account && parseFloat(ethBalance) < totalEthNeeded);
   const balanceShortfall = hasInsufficientBalance
     ? (totalEthNeeded - parseFloat(ethBalance)).toFixed(4)
     : '0';

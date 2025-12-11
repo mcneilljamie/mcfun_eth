@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Wallet } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface WalletModalProps {

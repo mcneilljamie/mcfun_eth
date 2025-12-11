@@ -88,7 +88,7 @@ export function AccountDropdown({ account, chainId, onDisconnect, onShowToast }:
               </span>
             </div>
             <div className="text-2xl font-bold text-gray-900">{balance} ETH</div>
-            <div className="text-sm text-gray-500 mt-1">{formatAddress(account, 16)}</div>
+            <div className="text-sm text-gray-500 mt-1">{formatAddress(account)}</div>
           </div>
 
           <div className="p-2">
