@@ -25,6 +25,82 @@ interface IndexRequest {
   toBlock?: number;
   indexTokenLaunches?: boolean;
   indexSwaps?: boolean;
+  skipReorgCheck?: boolean;
+}
+
+async function detectAndHandleReorg(
+  supabase: any,
+  provider: ethers.JsonRpcProvider,
+  lastIndexedBlock: number,
+  lastBlockHash: string | null
+): Promise<{ reorgDetected: boolean; rollbackToBlock: number; error?: string }> {
+  if (!lastBlockHash || lastIndexedBlock === 0) {
+    return { reorgDetected: false, rollbackToBlock: lastIndexedBlock };
+  }
+
+  try {
+    const currentBlock = await provider.getBlock(lastIndexedBlock);
+
+    if (!currentBlock) {
+      console.warn(`Block ${lastIndexedBlock} not found, chain may have reorged`);
+      return { reorgDetected: true, rollbackToBlock: Math.max(0, lastIndexedBlock - 100) };
+    }
+
+    if (currentBlock.hash !== lastBlockHash) {
+      console.warn(`Reorg detected! Block ${lastIndexedBlock} hash mismatch`);
+      console.warn(`Stored: ${lastBlockHash}, Current: ${currentBlock.hash}`);
+
+      let rollbackBlock = lastIndexedBlock - 1;
+      while (rollbackBlock > Math.max(0, lastIndexedBlock - 100)) {
+        const { data: blockData } = await supabase
+          .from("tokens")
+          .select("block_hash")
+          .eq("block_number", rollbackBlock)
+          .limit(1)
+          .maybeSingle();
+
+        if (blockData?.block_hash) {
+          const chainBlock = await provider.getBlock(rollbackBlock);
+          if (chainBlock && chainBlock.hash === blockData.block_hash) {
+            return { reorgDetected: true, rollbackToBlock: rollbackBlock };
+          }
+        }
+        rollbackBlock--;
+      }
+
+      return { reorgDetected: true, rollbackToBlock: Math.max(0, lastIndexedBlock - 100) };
+    }
+
+    return { reorgDetected: false, rollbackToBlock: lastIndexedBlock };
+  } catch (err: any) {
+    console.error("Error detecting reorg:", err);
+    return { reorgDetected: false, rollbackToBlock: lastIndexedBlock, error: err.message };
+  }
+}
+
+async function rollbackToBlock(supabase: any, blockNumber: number): Promise<{ deletedTokens: number; deletedSwaps: number; deletedSnapshots: number }> {
+  console.log(`Rolling back data from blocks > ${blockNumber}`);
+
+  const { count: deletedTokens } = await supabase
+    .from("tokens")
+    .delete({ count: "exact" })
+    .gt("block_number", blockNumber);
+
+  const { count: deletedSwaps } = await supabase
+    .from("swaps")
+    .delete({ count: "exact" })
+    .gt("block_number", blockNumber);
+
+  const { count: deletedSnapshots } = await supabase
+    .from("price_snapshots")
+    .delete({ count: "exact" })
+    .gt("block_number", blockNumber);
+
+  return {
+    deletedTokens: deletedTokens || 0,
+    deletedSwaps: deletedSwaps || 0,
+    deletedSnapshots: deletedSnapshots || 0,
+  };
 }
 
 Deno.serve(async (req: Request) => {
@@ -43,22 +119,89 @@ Deno.serve(async (req: Request) => {
     const supabase = createClient(supabaseUrl, supabaseKey);
     const provider = new ethers.JsonRpcProvider(rpcUrl);
 
-    const { fromBlock, toBlock, indexTokenLaunches = true, indexSwaps = true }: IndexRequest = 
-      await req.json().catch(() => ({}));
+    const {
+      fromBlock,
+      toBlock,
+      indexTokenLaunches = true,
+      indexSwaps = true,
+      skipReorgCheck = false
+    }: IndexRequest = await req.json().catch(() => ({}));
 
-    const currentBlock = await provider.getBlockNumber();
-    const startBlock = fromBlock || Math.max(0, currentBlock - 1000);
-    const endBlock = toBlock || currentBlock;
+    const { data: indexerState } = await supabase
+      .from("indexer_state")
+      .select("*")
+      .limit(1)
+      .maybeSingle();
+
+    const lastIndexedBlock = indexerState?.last_indexed_block || 0;
+    const lastBlockHash = indexerState?.last_block_hash || null;
+    const confirmationDepth = indexerState?.confirmation_depth || 12;
 
     const results = {
       tokensIndexed: 0,
       swapsIndexed: 0,
       errors: [] as string[],
-      fromBlock: startBlock,
-      toBlock: endBlock,
+      reorgDetected: false,
+      rollbackData: null as any,
+      fromBlock: 0,
+      toBlock: 0,
     };
 
-    // Index token launches
+    if (!skipReorgCheck && lastIndexedBlock > 0) {
+      const reorgResult = await detectAndHandleReorg(supabase, provider, lastIndexedBlock, lastBlockHash);
+
+      if (reorgResult.error) {
+        results.errors.push(`Reorg detection error: ${reorgResult.error}`);
+      }
+
+      if (reorgResult.reorgDetected) {
+        results.reorgDetected = true;
+        const rollbackData = await rollbackToBlock(supabase, reorgResult.rollbackToBlock);
+        results.rollbackData = rollbackData;
+
+        await supabase
+          .from("indexer_state")
+          .update({
+            last_indexed_block: reorgResult.rollbackToBlock,
+            last_block_hash: null,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", indexerState.id);
+
+        console.log(`Rolled back to block ${reorgResult.rollbackToBlock}`, rollbackData);
+      }
+    }
+
+    const currentBlock = await provider.getBlockNumber();
+    const safeBlock = currentBlock - confirmationDepth;
+
+    const startBlock = fromBlock !== undefined ? fromBlock : Math.max(lastIndexedBlock + 1, 0);
+    const endBlock = toBlock !== undefined ? toBlock : safeBlock;
+
+    if (startBlock > endBlock) {
+      return new Response(
+        JSON.stringify({
+          ...results,
+          message: "No new blocks to index",
+          lastIndexedBlock,
+          currentBlock,
+          safeBlock,
+        }),
+        {
+          headers: {
+            ...corsHeaders,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    results.fromBlock = startBlock;
+    results.toBlock = endBlock;
+
+    let lastProcessedBlockNumber = startBlock;
+    let lastProcessedBlockHash: string | null = null;
+
     if (indexTokenLaunches && FACTORY_ADDRESS !== "0x0000000000000000000000000000000000000000") {
       try {
         const factory = new ethers.Contract(FACTORY_ADDRESS, FACTORY_ABI, provider);
@@ -83,6 +226,8 @@ Deno.serve(async (req: Request) => {
               current_token_reserve: "1000000",
               total_volume_eth: "0",
               created_at: new Date(block.timestamp * 1000).toISOString(),
+              block_number: block.number,
+              block_hash: block.hash,
             }, {
               onConflict: "token_address",
             });
@@ -91,8 +236,9 @@ Deno.serve(async (req: Request) => {
             results.errors.push(`Failed to insert token ${args.tokenAddress}: ${error.message}`);
           } else {
             results.tokensIndexed++;
+            lastProcessedBlockNumber = Math.max(lastProcessedBlockNumber, block.number);
+            lastProcessedBlockHash = block.hash;
 
-            // Generate initial price history for the new token
             try {
               const initialPriceETH = parseFloat(ethers.formatEther(args.initialLiquidityETH)) / 1000000;
               const historyResponse = await fetch(`${supabaseUrl}/functions/v1/generate-initial-history`, {
@@ -128,7 +274,6 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    // Index swaps
     if (indexSwaps) {
       try {
         const { data: tokens } = await supabase
@@ -158,6 +303,8 @@ Deno.serve(async (req: Request) => {
                     token_out: ethers.formatEther(args.tokenOut),
                     tx_hash: event.transactionHash,
                     created_at: new Date(block.timestamp * 1000).toISOString(),
+                    block_number: block.number,
+                    block_hash: block.hash,
                   }, {
                     onConflict: "tx_hash",
                   });
@@ -166,23 +313,22 @@ Deno.serve(async (req: Request) => {
                   results.errors.push(`Failed to insert swap: ${swapError.message}`);
                 } else {
                   results.swapsIndexed++;
+                  lastProcessedBlockNumber = Math.max(lastProcessedBlockNumber, block.number);
+                  lastProcessedBlockHash = block.hash;
 
-                  // Update token reserves and volume
                   const [reserveETH, reserveToken] = await Promise.all([
                     amm.reserveETH(),
                     amm.reserveToken(),
                   ]);
 
-                  // Calculate volume from this swap (sum of ETH in and out)
                   const ethVolume = parseFloat(ethers.formatEther(args.ethIn)) +
                                     parseFloat(ethers.formatEther(args.ethOut));
 
-                  // Get current volume
                   const { data: currentToken } = await supabase
                     .from("tokens")
                     .select("total_volume_eth")
                     .eq("token_address", token.token_address)
-                    .single();
+                    .maybeSingle();
 
                   const currentVolume = parseFloat(currentToken?.total_volume_eth || "0");
                   const newVolume = (currentVolume + ethVolume).toString();
@@ -196,7 +342,6 @@ Deno.serve(async (req: Request) => {
                     })
                     .eq("token_address", token.token_address);
 
-                  // Update holder count if someone bought tokens
                   if (parseFloat(ethers.formatEther(args.tokenOut)) > 0) {
                     await supabase.rpc('refresh_token_holder_count', {
                       p_token_address: token.token_address
@@ -214,13 +359,29 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    // Update platform stats after indexing
     if (results.swapsIndexed > 0 || results.tokensIndexed > 0) {
       try {
         await supabase.rpc('update_platform_stats');
       } catch (err: any) {
         results.errors.push(`Failed to update platform stats: ${err.message}`);
       }
+    }
+
+    if (lastProcessedBlockNumber >= startBlock) {
+      if (!lastProcessedBlockHash) {
+        const block = await provider.getBlock(lastProcessedBlockNumber);
+        lastProcessedBlockHash = block?.hash || null;
+      }
+
+      await supabase
+        .from("indexer_state")
+        .upsert({
+          id: indexerState?.id || undefined,
+          last_indexed_block: lastProcessedBlockNumber,
+          last_block_hash: lastProcessedBlockHash,
+          confirmation_depth: confirmationDepth,
+          updated_at: new Date().toISOString(),
+        });
     }
 
     return new Response(
