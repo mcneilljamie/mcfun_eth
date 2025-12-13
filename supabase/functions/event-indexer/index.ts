@@ -175,8 +175,18 @@ Deno.serve(async (req: Request) => {
     const currentBlock = await provider.getBlockNumber();
     const safeBlock = currentBlock - confirmationDepth;
 
-    const startBlock = fromBlock !== undefined ? fromBlock : Math.max(lastIndexedBlock + 1, 0);
-    const endBlock = toBlock !== undefined ? toBlock : safeBlock;
+    let startBlock = fromBlock !== undefined ? fromBlock : Math.max(lastIndexedBlock + 1, 0);
+
+    if (startBlock === 0 || startBlock < (safeBlock - 100000)) {
+      startBlock = Math.max(safeBlock - 10000, 0);
+    }
+
+    let endBlock = toBlock !== undefined ? toBlock : safeBlock;
+
+    const MAX_BLOCK_RANGE = 10000;
+    if (endBlock - startBlock > MAX_BLOCK_RANGE) {
+      endBlock = startBlock + MAX_BLOCK_RANGE;
+    }
 
     if (startBlock > endBlock) {
       return new Response(
