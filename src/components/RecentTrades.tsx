@@ -75,8 +75,8 @@ export default function RecentTrades({ tokenAddress, tokenSymbol, chainId }: Rec
       )
       .subscribe();
 
-    // Also poll every 2 seconds as a fallback
-    const interval = setInterval(loadTrades, 2000);
+    // Also poll every second as a fallback
+    const interval = setInterval(loadTrades, 1000);
 
     return () => {
       channel.unsubscribe();
