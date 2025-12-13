@@ -24,7 +24,7 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
   const [isETHToToken, setIsETHToToken] = useState(true);
   const [amountIn, setAmountIn] = useState('');
   const [amountOut, setAmountOut] = useState('');
-  const [slippage, setSlippage] = useState(0.5);
+  const [slippage, setSlippage] = useState(2);
 
   const [isSwapping, setIsSwapping] = useState(false);
   const [isLoadingQuote, setIsLoadingQuote] = useState(false);
