@@ -52,9 +52,37 @@ export default function RecentTrades({ tokenAddress, tokenSymbol, chainId }: Rec
     setIsLoading(true);
     loadTrades();
 
-    const interval = setInterval(loadTrades, 15000);
-    return () => clearInterval(interval);
-  }, [loadTrades]);
+    // Subscribe to real-time updates for new swaps
+    const channel = supabase
+      .channel(`swaps:${tokenAddress}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'swaps',
+          filter: `token_address=eq.${tokenAddress.toLowerCase()}`
+        },
+        (payload) => {
+          console.log('New swap received:', payload);
+          // Add new swap to the beginning of the list
+          setTrades((prev) => {
+            const newSwap = payload.new as Swap;
+            // Keep only the 10 most recent trades
+            return [newSwap, ...prev].slice(0, 10);
+          });
+        }
+      )
+      .subscribe();
+
+    // Also poll every 30 seconds as a fallback
+    const interval = setInterval(loadTrades, 30000);
+
+    return () => {
+      channel.unsubscribe();
+      clearInterval(interval);
+    };
+  }, [loadTrades, tokenAddress]);
 
   const formatAddress = (address: string) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
