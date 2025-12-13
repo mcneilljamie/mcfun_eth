@@ -27,44 +27,50 @@ export default function RecentTrades({ tokenAddress, tokenSymbol, chainId }: Rec
 
   const loadTrades = useCallback(async () => {
     try {
+      const normalizedAddress = tokenAddress.toLowerCase();
+      console.log('[RecentTrades] Loading trades for token:', normalizedAddress);
+
       const { data, error } = await supabase
         .from('swaps')
         .select('id, token_address, amm_address, user_address, eth_in, token_in, eth_out, token_out, tx_hash, created_at')
-        .eq('token_address', tokenAddress.toLowerCase())
+        .eq('token_address', normalizedAddress)
         .order('created_at', { ascending: false })
         .limit(10);
 
       if (error) {
-        console.error('Supabase error loading trades:', error);
+        console.error('[RecentTrades] Supabase error loading trades:', error);
         throw error;
       }
 
-      console.log(`Loaded ${data?.length || 0} trades for token ${tokenAddress}`);
+      console.log(`[RecentTrades] Loaded ${data?.length || 0} trades for token ${normalizedAddress}`, data);
       setTrades(data || []);
     } catch (err) {
-      console.error('Failed to load trades:', err);
+      console.error('[RecentTrades] Failed to load trades:', err);
     } finally {
       setIsLoading(false);
     }
   }, [tokenAddress]);
 
   useEffect(() => {
+    console.log('[RecentTrades] Component mounted/updated with tokenAddress:', tokenAddress);
     setIsLoading(true);
     loadTrades();
 
+    const normalizedAddress = tokenAddress.toLowerCase();
+
     // Subscribe to real-time updates for new swaps
     const channel = supabase
-      .channel(`swaps:${tokenAddress}`)
+      .channel(`swaps:${normalizedAddress}`)
       .on(
         'postgres_changes',
         {
           event: 'INSERT',
           schema: 'public',
           table: 'swaps',
-          filter: `token_address=eq.${tokenAddress.toLowerCase()}`
+          filter: `token_address=eq.${normalizedAddress}`
         },
         (payload) => {
-          console.log('New swap received:', payload);
+          console.log('[RecentTrades] New swap received via realtime:', payload);
           // Add new swap to the beginning of the list
           setTrades((prev) => {
             const newSwap = payload.new as Swap;
@@ -73,12 +79,15 @@ export default function RecentTrades({ tokenAddress, tokenSymbol, chainId }: Rec
           });
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log('[RecentTrades] Realtime subscription status:', status);
+      });
 
     // Also poll every second as a fallback
     const interval = setInterval(loadTrades, 1000);
 
     return () => {
+      console.log('[RecentTrades] Cleaning up subscriptions for:', normalizedAddress);
       channel.unsubscribe();
       clearInterval(interval);
     };
