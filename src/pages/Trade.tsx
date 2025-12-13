@@ -25,6 +25,8 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
   const [amountIn, setAmountIn] = useState('');
   const [amountOut, setAmountOut] = useState('');
   const [slippage, setSlippage] = useState(2);
+  const [customSlippage, setCustomSlippage] = useState('');
+  const [isCustomSlippage, setIsCustomSlippage] = useState(false);
 
   const [isSwapping, setIsSwapping] = useState(false);
   const [isLoadingQuote, setIsLoadingQuote] = useState(false);
@@ -374,7 +376,9 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">{t('trade.slippageTolerance')}</span>
-                    <span className="font-medium text-gray-900">{slippage === 100 ? 'Unlimited' : `${slippage}%`}</span>
+                    <span className="font-medium text-gray-900">
+                      {slippage === 100 ? 'Unlimited' : isCustomSlippage ? `${customSlippage}%` : `${slippage}%`}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">{t('trade.tradingFee')}</span>
@@ -385,7 +389,7 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
                   <div className="flex justify-between">
                     <span className="text-gray-600">{t('trade.minReceived')}</span>
                     <span className="font-medium text-gray-900">
-                      {slippage === 100 ? '0' : formatNumber(parseFloat(amountOut) * (100 - slippage) / 100)} {isETHToToken ? selectedTokenData?.symbol : t('common.eth')}
+                      {slippage === 100 ? '0' : formatNumber(parseFloat(amountOut) * (100 - (isCustomSlippage ? parseFloat(customSlippage || '0') : slippage)) / 100)} {isETHToToken ? selectedTokenData?.symbol : t('common.eth')}
                     </span>
                   </div>
                 </div>
@@ -394,15 +398,18 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
 
             <div>
               <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
-                {t('trade.slippageLabel', { percent: slippage === 100 ? 'Unlimited' : slippage })}
+                {t('trade.slippageLabel', { percent: slippage === 100 ? 'Unlimited' : isCustomSlippage ? customSlippage : slippage })}
               </label>
               <div className="grid grid-cols-5 gap-2">
-                {[0.5, 1, 2, 5].map((value) => (
+                {[1, 2, 5].map((value) => (
                   <button
                     key={value}
-                    onClick={() => setSlippage(value)}
+                    onClick={() => {
+                      setSlippage(value);
+                      setIsCustomSlippage(false);
+                    }}
                     className={`py-2 rounded-lg text-sm sm:text-base font-medium transition-colors touch-manipulation ${
-                      slippage === value
+                      slippage === value && !isCustomSlippage
                         ? 'bg-gray-900 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
@@ -412,9 +419,12 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
                   </button>
                 ))}
                 <button
-                  onClick={() => setSlippage(100)}
+                  onClick={() => {
+                    setSlippage(100);
+                    setIsCustomSlippage(false);
+                  }}
                   className={`py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors touch-manipulation ${
-                    slippage === 100
+                    slippage === 100 && !isCustomSlippage
                       ? 'bg-orange-600 text-white'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
@@ -423,8 +433,55 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
                 >
                   Unlimited
                 </button>
+                <button
+                  onClick={() => {
+                    setIsCustomSlippage(true);
+                    if (customSlippage) {
+                      setSlippage(parseFloat(customSlippage));
+                    }
+                  }}
+                  className={`py-2 rounded-lg text-sm sm:text-base font-medium transition-colors touch-manipulation ${
+                    isCustomSlippage
+                      ? 'bg-gray-900 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                  disabled={isSwapping}
+                >
+                  Custom
+                </button>
               </div>
-              {slippage === 100 && (
+              {isCustomSlippage && (
+                <div className="mt-3">
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      value={customSlippage}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (value === '' || /^\d*\.?\d*$/.test(value)) {
+                          setCustomSlippage(value);
+                          if (value && parseFloat(value) > 0) {
+                            setSlippage(parseFloat(value));
+                          }
+                        }
+                      }}
+                      placeholder="Enter slippage %"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                      disabled={isSwapping}
+                    />
+                    <span className="text-sm font-medium text-gray-700">%</span>
+                  </div>
+                  {customSlippage && parseFloat(customSlippage) > 10 && (
+                    <div className="mt-2 p-2 bg-orange-50 border border-orange-200 rounded-lg">
+                      <p className="text-xs text-orange-800">
+                        <span className="font-semibold">Warning:</span> High slippage may result in unfavorable trade prices.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+              {slippage === 100 && !isCustomSlippage && (
                 <div className="mt-2 p-2 bg-orange-50 border border-orange-200 rounded-lg">
                   <p className="text-xs text-orange-800">
                     <span className="font-semibold">Warning:</span> Unlimited slippage may result in unfavorable trade prices.
