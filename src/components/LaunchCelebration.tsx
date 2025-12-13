@@ -82,7 +82,7 @@ export function LaunchCelebration({
             {[...Array(12)].map((_, i) => (
               <div
                 key={i}
-                className="absolute w-2 h-2 rounded-full animate-firework"
+                className="absolute w-4 h-4 rounded-full animate-firework"
                 style={{
                   background: `hsl(${Math.random() * 360}, 100%, 60%)`,
                   transform: `rotate(${i * 30}deg) translateY(0)`,
@@ -102,7 +102,7 @@ export function LaunchCelebration({
             opacity: 1;
           }
           100% {
-            transform: rotate(var(--rotation, 0deg)) translateY(-60px);
+            transform: rotate(var(--rotation, 0deg)) translateY(-100px);
             opacity: 0;
           }
         }
