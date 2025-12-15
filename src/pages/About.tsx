@@ -382,7 +382,7 @@ export function About() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-5 sm:p-8 text-center">
+        <div className="bg-white rounded-xl shadow-lg p-5 sm:p-8 text-center mb-6 sm:mb-8">
           <p className="text-sm sm:text-base text-gray-700 sm:text-lg">
             McFun was founded and is maintained by{' '}
             <a
@@ -394,6 +394,46 @@ export function About() {
               Jamie McNeill
             </a>.
           </p>
+        </div>
+
+        <div className="bg-red-50 rounded-xl shadow-lg p-5 sm:p-8 border-2 border-red-200">
+          <h2 className="text-xl sm:text-2xl font-bold text-red-900 mb-4 text-center">
+            Risk Disclaimer & Terms of Use
+          </h2>
+          <div className="space-y-3 text-xs sm:text-sm text-red-900 leading-relaxed">
+            <p className="font-semibold">
+              IMPORTANT: Trading cryptocurrencies and tokens carries substantial risk. By using this platform, you acknowledge and accept the following:
+            </p>
+            <ul className="list-disc pl-5 space-y-2">
+              <li>
+                <strong>High Risk of Loss:</strong> Cryptocurrency trading is extremely volatile and speculative. You may lose some or all of your investment. Only invest what you can afford to lose completely.
+              </li>
+              <li>
+                <strong>No Guarantees:</strong> Past performance does not guarantee future results. Token prices can fluctuate dramatically and unpredictably.
+              </li>
+              <li>
+                <strong>No Financial Advice:</strong> Nothing on this platform constitutes financial, investment, legal, or tax advice. Always conduct your own research and consult with qualified professionals before making investment decisions.
+              </li>
+              <li>
+                <strong>Smart Contract Risks:</strong> While our contracts are designed to be secure and immutable, smart contracts may contain bugs or vulnerabilities. Use at your own risk.
+              </li>
+              <li>
+                <strong>No Responsibility for Losses:</strong> The platform operator, developers, and contributors accept no responsibility or liability for any losses, damages, or adverse outcomes resulting from your use of this platform, including but not limited to trading losses, smart contract failures, network issues, or any other technical problems.
+              </li>
+              <li>
+                <strong>Regulatory Uncertainty:</strong> Cryptocurrency regulations vary by jurisdiction and may change. You are responsible for ensuring your use of this platform complies with all applicable laws in your jurisdiction.
+              </li>
+              <li>
+                <strong>No Recourse:</strong> Blockchain transactions are irreversible. Once a transaction is confirmed, it cannot be undone. Double-check all transaction details before confirming.
+              </li>
+              <li>
+                <strong>Platform Availability:</strong> The platform is provided "as is" without warranties of any kind. We do not guarantee uninterrupted access or error-free operation.
+              </li>
+            </ul>
+            <p className="font-semibold pt-2">
+              By using this platform, you acknowledge that you have read, understood, and agreed to these terms. You accept full responsibility for your trading decisions and their outcomes.
+            </p>
+          </div>
         </div>
       </div>
     </div>
