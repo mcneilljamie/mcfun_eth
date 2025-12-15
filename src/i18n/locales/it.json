@@ -56,17 +56,17 @@
       "title": "Perché Scegliere McFun?",
       "description": "Abbiamo costruito la piattaforma più semplice, sicura ed economica per lanciare token su Ethereum. Nessun parametro complesso, nessuna commissione nascosta, nessuna truffa. Solo lanci di token puri ed equi.",
       "benefits": {
-        "noPresale": {
-          "title": "Nessuna Prevendita",
-          "description": "Tutti ottengono lo stesso prezzo equo dal primo giorno"
+        "simple": {
+          "title": "Semplice da Usare",
+          "description": "Lancia il tuo token in pochi secondi senza parametri complessi"
         },
-        "noRugs": {
-          "title": "Nessuna Truffa",
+        "safe": {
+          "title": "100% Sicuro",
           "description": "La liquidità è permanentemente bruciata e non può essere ritirata"
         },
-        "instantTrade": {
-          "title": "Scambio Istantaneo",
-          "description": "Scambia immediatamente dopo il lancio con liquidità integrata"
+        "lowCost": {
+          "title": "Basso Costo",
+          "description": "Nessuna commissione di piattaforma - paga solo le commissioni gas della rete"
         }
       }
     }

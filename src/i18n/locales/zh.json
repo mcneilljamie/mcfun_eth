@@ -56,17 +56,17 @@
       "title": "为什么选择McFun？",
       "description": "我们打造了最简单、最安全、最具成本效益的以太坊代币发行平台。无复杂参数、无隐藏费用、无跑路。只有纯粹、公平的代币发行。",
       "benefits": {
-        "noPresale": {
-          "title": "无预售",
-          "description": "从第一天起每个人都能获得相同的公平价格"
+        "simple": {
+          "title": "简单易用",
+          "description": "几秒钟内发行代币，无需复杂参数"
         },
-        "noRugs": {
-          "title": "无跑路",
+        "safe": {
+          "title": "100%安全",
           "description": "流动性永久销毁，无法提取"
         },
-        "instantTrade": {
-          "title": "即时交易",
-          "description": "发行后立即交易，内置流动性"
+        "lowCost": {
+          "title": "低成本",
+          "description": "无平台费用 - 仅需支付网络燃料费"
         }
       }
     }

@@ -56,17 +56,17 @@
       "title": "왜 McFun을 선택해야 할까요?",
       "description": "우리는 이더리움에서 토큰을 출시하기 위한 가장 간단하고, 가장 안전하며, 가장 비용 효율적인 플랫폼을 구축했습니다. 복잡한 매개변수도, 숨겨진 수수료도, 러그풀도 없습니다. 순수하고 공정한 토큰 출시만 있을 뿐입니다.",
       "benefits": {
-        "noPresale": {
-          "title": "사전 판매 없음",
-          "description": "첫날부터 모두가 동일한 공정한 가격 제공"
+        "simple": {
+          "title": "간편함",
+          "description": "복잡한 매개변수 없이 몇 초 만에 토큰 출시"
         },
-        "noRugs": {
-          "title": "러그풀 없음",
+        "safe": {
+          "title": "100% 안전",
           "description": "유동성이 영구적으로 소각되어 인출할 수 없습니다"
         },
-        "instantTrade": {
-          "title": "즉시 거래",
-          "description": "출시 직후 내장 유동성으로 즉시 거래 가능"
+        "lowCost": {
+          "title": "저렴한 비용",
+          "description": "플랫폼 수수료 없음 - 네트워크 가스비만 지불"
         }
       }
     }
