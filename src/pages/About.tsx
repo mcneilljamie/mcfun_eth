@@ -99,6 +99,42 @@ export function About() {
           </p>
         </div>
 
+        <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8 border-2 border-green-200">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 text-center mb-6">Platform Statistics</h2>
+
+          <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
+            <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <h3 className="text-sm sm:text-base font-bold text-gray-900">Total Market Cap</h3>
+              </div>
+              {isLoading ? (
+                <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
+              ) : (
+                <div className="text-2xl sm:text-3xl font-bold text-green-700">
+                  {platformStats ? formatUSD(platformStats.totalMarketCapUsd, true) : '$0'}
+                </div>
+              )}
+              <p className="text-xs text-gray-600 mt-1">Combined FDV of all tokens</p>
+            </div>
+
+            <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <h3 className="text-sm sm:text-base font-bold text-gray-900">Total Liquidity</h3>
+              </div>
+              {isLoading ? (
+                <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
+              ) : (
+                <div className="text-2xl sm:text-3xl font-bold text-green-700">
+                  {formatCurrency(totalLiquidity)}
+                </div>
+              )}
+              <p className="text-xs text-gray-600 mt-1">Total ETH in liquidity pools</p>
+            </div>
+          </div>
+        </div>
+
         <div className="bg-white rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
             <Zap className="w-6 h-6 sm:w-8 sm:h-8" />
@@ -342,42 +378,6 @@ export function About() {
                   {t('about.security.opensource.description')}
                 </p>
               </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8 border-2 border-green-200">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 text-center mb-6">Platform Statistics</h2>
-
-          <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
-            <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
-                <h3 className="text-sm sm:text-base font-bold text-gray-900">Total Market Cap</h3>
-              </div>
-              {isLoading ? (
-                <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
-              ) : (
-                <div className="text-2xl sm:text-3xl font-bold text-green-700">
-                  {platformStats ? formatUSD(platformStats.totalMarketCapUsd, true) : '$0'}
-                </div>
-              )}
-              <p className="text-xs text-gray-600 mt-1">Combined FDV of all tokens</p>
-            </div>
-
-            <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
-                <h3 className="text-sm sm:text-base font-bold text-gray-900">Total Liquidity</h3>
-              </div>
-              {isLoading ? (
-                <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
-              ) : (
-                <div className="text-2xl sm:text-3xl font-bold text-green-700">
-                  {formatCurrency(totalLiquidity)}
-                </div>
-              )}
-              <p className="text-xs text-gray-600 mt-1">Total ETH in liquidity pools</p>
             </div>
           </div>
         </div>
