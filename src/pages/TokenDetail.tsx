@@ -322,14 +322,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
             </button>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
-            <div className="bg-gray-50 rounded-lg p-4">
-              <div className="text-sm text-gray-600 mb-1">{t('tokenDetail.price')}</div>
-              <div className="text-xl sm:text-2xl font-bold text-gray-900">
-                {formatUSD(calculateTokenPriceUSD(), false)}
-              </div>
-            </div>
-
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6">
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="text-sm text-gray-600 mb-1">{t('tokenDetail.marketCap')}</div>
               <div className="text-xl sm:text-2xl font-bold text-gray-900">
@@ -341,9 +334,6 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
               <div className="text-sm text-gray-600 mb-1">{t('tokenDetail.liquidity')}</div>
               <div className="text-xl sm:text-2xl font-bold text-gray-900">
                 {formatUSD(ethToUSD(liveReserves?.reserveETH || token.current_eth_reserve || token.initial_liquidity_eth, ethPriceUSD), true)}
-              </div>
-              <div className="text-xs text-gray-500 mt-1">
-                {formatCurrency(liveReserves?.reserveETH || token.current_eth_reserve || token.initial_liquidity_eth)}
               </div>
             </div>
 
