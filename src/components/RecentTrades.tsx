@@ -35,7 +35,7 @@ export default function RecentTrades({ tokenAddress, tokenSymbol, chainId }: Rec
         .select('id, token_address, amm_address, user_address, eth_in, token_in, eth_out, token_out, tx_hash, created_at')
         .eq('token_address', normalizedAddress)
         .order('created_at', { ascending: false })
-        .limit(10);
+        .limit(50);
 
       if (error) {
         console.error('[RecentTrades] Supabase error loading trades:', error);
@@ -74,8 +74,8 @@ export default function RecentTrades({ tokenAddress, tokenSymbol, chainId }: Rec
           // Add new swap to the beginning of the list
           setTrades((prev) => {
             const newSwap = payload.new as Swap;
-            // Keep only the 10 most recent trades
-            return [newSwap, ...prev].slice(0, 10);
+            // Keep only the 50 most recent trades
+            return [newSwap, ...prev].slice(0, 50);
           });
         }
       )
