@@ -398,10 +398,10 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="text-sm text-gray-600 mb-1">{t('tokenDetail.change24h')}</div>
               <div className={`text-xl sm:text-2xl font-bold ${
-                priceChange24h === null ? 'text-gray-900' :
+                priceChange24h == null ? 'text-gray-900' :
                 priceChange24h >= 0 ? 'text-green-600' : 'text-red-600'
               }`}>
-                {priceChange24h === null ? 'N/A' : `${priceChange24h >= 0 ? '+' : ''}${priceChange24h.toFixed(2)}%`}
+                {priceChange24h == null ? 'N/A' : `${priceChange24h >= 0 ? '+' : ''}${priceChange24h.toFixed(2)}%`}
               </div>
             </div>
 
@@ -422,7 +422,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="text-sm text-gray-600 mb-1">{t('tokens.table.returnMultiple')}</div>
               <div className="text-xl sm:text-2xl font-bold text-gray-900">
-                {priceChangeSinceLaunch !== null ? (1 + priceChangeSinceLaunch / 100).toFixed(2) : '1.00'}x
+                {priceChangeSinceLaunch != null ? (1 + priceChangeSinceLaunch / 100).toFixed(2) : '1.00'}x
               </div>
             </div>
           </div>
