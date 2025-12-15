@@ -1,2 +1,30 @@
-Still need to complete: hi.json (Hindi), ka.json (Georgian), fa.json (Farsi)
-These are simplified translations that users can update later if needed.
+All translations completed!
+
+Hindi (hi.json), Georgian (ka.json), and Farsi (fa.json) have been fully translated.
+
+All language files now include:
+- Navigation and home sections
+- Launch, trade, and token sections
+- About page content
+- Portfolio section
+- Risk disclaimer and terms
+- Wallet connection UI
+- Network warning messages
+
+16 languages are now fully supported:
+- English (en)
+- Spanish (es)
+- French (fr)
+- Portuguese (pt)
+- Italian (it)
+- Russian (ru)
+- Chinese (zh)
+- Japanese (ja)
+- Korean (ko)
+- Arabic (ar)
+- Hindi (hi)
+- Vietnamese (vi)
+- Turkish (tr)
+- Indonesian (id)
+- Georgian (ka)
+- Farsi/Persian (fa)
