@@ -474,10 +474,10 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
                   <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="text-sm font-semibold text-blue-900">
-                      Two Transactions Required
+                      One-Time Token Approval Required
                     </p>
                     <p className="text-xs mt-1 text-blue-800">
-                      You'll need to approve the contract to spend your tokens first, then confirm the swap. This is a one-time approval per token.
+                      You'll need to approve unlimited access for this token first, then confirm the swap. This is standard practice and you'll only need to approve once. Future trades with this token won't require approval.
                     </p>
                   </div>
                 </div>
@@ -500,9 +500,9 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
                       )}
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">Approve Token</p>
+                      <p className="text-sm font-medium text-gray-900">Approve Unlimited Token Access</p>
                       <p className="text-xs text-gray-600">
-                        {swapStep === 'approving' ? 'Waiting for confirmation...' : swapStep === 'approved' || swapStep === 'swapping' ? 'Approved' : 'Pending'}
+                        {swapStep === 'approving' ? 'Waiting for confirmation...' : swapStep === 'approved' || swapStep === 'swapping' ? 'Approved (One-time only)' : 'Pending'}
                       </p>
                     </div>
                   </div>

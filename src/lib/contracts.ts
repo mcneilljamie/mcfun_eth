@@ -1,4 +1,4 @@
-import { Contract, parseEther, formatEther, formatUnits } from 'ethers';
+import { Contract, parseEther, formatEther, formatUnits, MaxUint256 } from 'ethers';
 import { MCFUN_FACTORY_ABI, MCFUN_AMM_ABI, ERC20_ABI } from '../contracts/abis';
 import { getFactoryAddress } from '../contracts/addresses';
 
@@ -70,7 +70,7 @@ export async function swapTokens(
     const amountIn = parseEther(params.amountIn);
 
     if (allowance < amountIn) {
-      const approveTx = await token.approve(params.ammAddress, amountIn);
+      const approveTx = await token.approve(params.ammAddress, MaxUint256);
       onApprovalSent?.();
       await approveTx.wait();
     }
@@ -94,7 +94,11 @@ export async function checkNeedsApproval(
     const allowance = await token.allowance(params.userAddress, params.ammAddress);
     const amountIn = parseEther(params.amountIn);
 
-    return allowance < amountIn;
+    // Consider unlimited approval as sufficient
+    // MaxUint256 / 2 is used as threshold to handle any potential decrease in allowance
+    const hasUnlimitedApproval = allowance > MaxUint256 / 2n;
+
+    return !hasUnlimitedApproval && allowance < amountIn;
   } catch (err) {
     console.error('Failed to check approval:', err);
     return true;
