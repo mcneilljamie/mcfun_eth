@@ -100,13 +100,13 @@ export function SwapConfirmation({
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">You Paid</span>
                   <span className="font-semibold text-gray-900">
-                    {formatNumber(amountIn)} {isETHToToken ? 'ETH' : tokenSymbol}
+                    {formatNumber(amountIn, isETHToToken ? 6 : 4)} {isETHToToken ? 'ETH' : tokenSymbol}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">You Received</span>
                   <span className="font-semibold text-gray-900">
-                    {formatNumber(amountOut)} {isETHToToken ? tokenSymbol : 'ETH'}
+                    {formatNumber(amountOut, isETHToToken ? 4 : 6)} {isETHToToken ? tokenSymbol : 'ETH'}
                   </span>
                 </div>
               </div>

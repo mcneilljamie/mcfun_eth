@@ -16,8 +16,8 @@ export function formatNumber(value: string | number, decimals: number = 4): stri
   });
 }
 
-export function formatCurrency(value: string | number, symbol: string = 'ETH'): string {
-  return `${formatNumber(value)} ${symbol}`;
+export function formatCurrency(value: string | number, symbol: string = 'ETH', decimals?: number): string {
+  return `${formatNumber(value, decimals)} ${symbol}`;
 }
 
 export function formatPercent(value: number): string {

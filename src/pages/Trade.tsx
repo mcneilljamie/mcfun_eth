@@ -311,7 +311,7 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
                     <div className="flex items-center space-x-1 text-xs text-gray-600">
                       <Wallet className="w-3 h-3" />
                       <span>
-                        {formatNumber(isETHToToken ? ethBalance : tokenBalance)} {isETHToToken ? t('common.eth') : selectedTokenData?.symbol}
+                        {formatNumber(isETHToToken ? ethBalance : tokenBalance, isETHToToken ? 6 : 4)} {isETHToToken ? t('common.eth') : selectedTokenData?.symbol}
                       </span>
                     </div>
                   )}
@@ -352,7 +352,7 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
                     <div className="flex items-center space-x-1 text-xs text-gray-600">
                       <Wallet className="w-3 h-3" />
                       <span>
-                        {formatNumber(isETHToToken ? tokenBalance : ethBalance)} {isETHToToken ? selectedTokenData?.symbol : t('common.eth')}
+                        {formatNumber(isETHToToken ? tokenBalance : ethBalance, isETHToToken ? 4 : 6)} {isETHToToken ? selectedTokenData?.symbol : t('common.eth')}
                       </span>
                     </div>
                   )}
@@ -414,7 +414,7 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
                   <div className="flex justify-between">
                     <span className="text-gray-600">{t('trade.minReceived')}</span>
                     <span className="font-medium text-gray-900">
-                      {slippage === 100 ? '0' : formatNumber(parseFloat(amountOut) * (100 - slippage) / 100)} {isETHToToken ? selectedTokenData?.symbol : t('common.eth')}
+                      {slippage === 100 ? '0' : formatNumber(parseFloat(amountOut) * (100 - slippage) / 100, isETHToToken ? 4 : 6)} {isETHToToken ? selectedTokenData?.symbol : t('common.eth')}
                     </span>
                   </div>
                 </div>
