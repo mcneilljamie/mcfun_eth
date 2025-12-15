@@ -3,7 +3,7 @@ import { useWeb3 } from '../lib/web3';
 import { supabase } from '../lib/supabase';
 import { ethers } from 'ethers';
 import { getEthPriceUSD } from '../lib/ethPrice';
-import { Loader2, TrendingUp, TrendingDown, Wallet } from 'lucide-react';
+import { Loader2, Wallet } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface TokenBalance {
@@ -135,6 +135,16 @@ export default function Portfolio() {
     }
   };
 
+  const formatPrice = (value: number) => {
+    if (value >= 1) {
+      return `$${value.toFixed(4)}`;
+    } else if (value >= 0.0001) {
+      return `$${value.toFixed(6)}`;
+    } else {
+      return `$${value.toFixed(8)}`;
+    }
+  };
+
   const formatNumber = (value: string | number) => {
     const num = typeof value === 'string' ? parseFloat(value) : value;
     if (num >= 1000000) {
@@ -198,6 +208,13 @@ export default function Portfolio() {
         </div>
       </div>
 
+      {/* Info Message */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+        <p className="text-sm text-blue-800">
+          This page tracks your ETH balance and tokens that are traded on McFun.
+        </p>
+      </div>
+
       {/* Token Holdings */}
       {tokens.length === 0 ? (
         <div className="text-center py-12">
@@ -223,9 +240,6 @@ export default function Portfolio() {
                   </th>
                   <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Price
-                  </th>
-                  <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    24h Change
                   </th>
                   <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Value
@@ -256,25 +270,7 @@ export default function Portfolio() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="font-medium text-gray-900">
-                        {formatCurrency(token.priceUsd)}
-                      </div>
-                      <div className="text-xs text-gray-500">
-                        {token.priceEth.toFixed(8)} ETH
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <div
-                        className={`inline-flex items-center font-medium ${
-                          token.change24h >= 0 ? 'text-green-600' : 'text-red-600'
-                        }`}
-                      >
-                        {token.change24h >= 0 ? (
-                          <TrendingUp className="w-4 h-4 mr-1" />
-                        ) : (
-                          <TrendingDown className="w-4 h-4 mr-1" />
-                        )}
-                        {token.change24h >= 0 ? '+' : ''}
-                        {token.change24h.toFixed(2)}%
+                        {formatPrice(token.priceUsd)}
                       </div>
                     </td>
                     <td className="px-6 py-4 text-right">
