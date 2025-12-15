@@ -343,15 +343,6 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('trade.title')}</h1>
             </div>
 
-            {error && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <div className="flex items-start space-x-3">
-                  <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
-                  <p className="text-sm text-red-800">{error}</p>
-                </div>
-              </div>
-            )}
-
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -596,6 +587,15 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
                       </p>
                     </div>
                   </div>
+                </div>
+              </div>
+            )}
+
+            {error && (
+              <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div className="flex items-start space-x-3">
+                  <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-red-800">{error}</p>
                 </div>
               </div>
             )}
