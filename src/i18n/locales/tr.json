@@ -58,7 +58,7 @@
       "benefits": {
         "simple": {
           "title": "Basit",
-          "description": "Karmaşık parametreler olmadan saniyeler içinde token başlatın"
+          "description": "Saniyeler içinde token başlatın"
         },
         "safe": {
           "title": "%100 Güvenli",
