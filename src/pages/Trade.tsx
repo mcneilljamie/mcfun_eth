@@ -412,12 +412,6 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">{t('trade.tradingFee')}</span>
-                    <span className="font-medium text-gray-900">
-                      {formatNumber(parseFloat(amountIn) * 0.004)} {isETHToToken ? t('common.eth') : selectedTokenData?.symbol}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
                     <span className="text-gray-600">{t('trade.minReceived')}</span>
                     <span className="font-medium text-gray-900">
                       {slippage === 100 ? '0' : formatNumber(parseFloat(amountOut) * (100 - slippage) / 100)} {isETHToToken ? selectedTokenData?.symbol : t('common.eth')}
