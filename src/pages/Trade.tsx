@@ -137,6 +137,61 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
     }
   };
 
+  const parseSwapError = (err: any): string => {
+    const errorString = err?.message || err?.toString() || '';
+    const errorCode = err?.code || '';
+
+    if (errorCode === 'ACTION_REJECTED' || errorString.includes('user rejected') || errorString.includes('User denied')) {
+      return 'Transaction cancelled. You rejected the transaction in your wallet.';
+    }
+
+    if (errorCode === 'INSUFFICIENT_FUNDS' || errorString.includes('insufficient funds')) {
+      if (isETHToToken) {
+        return `Insufficient ETH balance. You need at least ${amountIn} ETH plus gas fees (usually 0.001-0.003 ETH).`;
+      } else {
+        return 'Insufficient ETH for gas fees. You need a small amount of ETH (0.001-0.003 ETH) to pay for the transaction.';
+      }
+    }
+
+    if (errorString.includes('exceeds balance')) {
+      if (isETHToToken) {
+        return `Insufficient ETH balance. You're trying to spend ${amountIn} ETH but don't have enough.`;
+      } else {
+        return `Insufficient ${selectedTokenData?.symbol} balance. You're trying to sell more tokens than you own.`;
+      }
+    }
+
+    if (errorString.includes('INSUFFICIENT_OUTPUT_AMOUNT') || errorString.includes('slippage')) {
+      return `Slippage tolerance exceeded. The price moved unfavorably during your transaction. Try increasing slippage to ${slippage + 1}% or wait for price to stabilize.`;
+    }
+
+    if (errorString.includes('EXCESSIVE_SLIPPAGE')) {
+      return 'Trade would cause extreme price impact. Try reducing your trade size.';
+    }
+
+    if (errorString.includes('TRANSFER_FAILED') || errorString.includes('transfer amount exceeds')) {
+      return 'Token transfer failed. This may be due to insufficient balance or token restrictions.';
+    }
+
+    if (errorString.includes('EXPIRED')) {
+      return 'Transaction expired. Please try again.';
+    }
+
+    if (errorString.includes('network') || errorString.includes('timeout')) {
+      return 'Network error. Please check your connection and try again.';
+    }
+
+    if (errorString.includes('gas')) {
+      return 'Gas estimation failed. The transaction might fail, or gas prices are too high. Try again in a few moments.';
+    }
+
+    if (errorString.includes('nonce')) {
+      return 'Transaction nonce error. Please reset your wallet or try again.';
+    }
+
+    return 'Transaction failed. Please try again or contact support if the issue persists.';
+  };
+
   const handleSwap = async () => {
     if (!signer || !account) {
       connect();
@@ -146,6 +201,30 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
     if (!selectedTokenData || !amountIn || !amountOut) {
       setError(t('trade.error'));
       return;
+    }
+
+    const amountInNum = parseFloat(amountIn);
+    const ethBalanceNum = parseFloat(ethBalance);
+    const tokenBalanceNum = parseFloat(tokenBalance);
+
+    if (isETHToToken) {
+      if (amountInNum > ethBalanceNum) {
+        setError(`Insufficient ETH balance. You have ${formatNumber(ethBalance, 6)} ETH but are trying to spend ${amountIn} ETH.`);
+        return;
+      }
+      if (ethBalanceNum - amountInNum < 0.002) {
+        setError(`You need to keep at least 0.002 ETH for gas fees. Your swap amount plus gas would exceed your balance.`);
+        return;
+      }
+    } else {
+      if (amountInNum > tokenBalanceNum) {
+        setError(`Insufficient ${selectedTokenData.symbol} balance. You have ${formatNumber(tokenBalance, 4)} but are trying to sell ${amountIn}.`);
+        return;
+      }
+      if (ethBalanceNum < 0.002) {
+        setError('Insufficient ETH for gas fees. You need at least 0.002 ETH to pay for the transaction.');
+        return;
+      }
     }
 
     setError('');
@@ -208,7 +287,7 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
       }).catch(err => console.error('Failed to create snapshot:', err));
     } catch (err: any) {
       console.error('Failed to swap:', err);
-      setError(err.message || 'Failed to complete swap. Please try again.');
+      setError(parseSwapError(err));
     } finally {
       setIsSwapping(false);
       setSwapStep('idle');
