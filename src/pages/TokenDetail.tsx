@@ -323,7 +323,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
             </button>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="text-sm text-gray-600 mb-1">{t('tokenDetail.price')}</div>
               <div className="text-xl sm:text-2xl font-bold text-gray-900">
