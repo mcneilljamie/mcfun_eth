@@ -335,6 +335,11 @@ Deno.serve(async (req: Request) => {
                 }
               }
 
+              // Skip if token was created after the endBlock
+              if (queryStartBlock > endBlock) {
+                continue;
+              }
+
               const amm = new ethers.Contract(token.amm_address, AMM_ABI, provider);
               const filter = amm.filters.Swap();
               const events = await amm.queryFilter(filter, queryStartBlock, endBlock);
@@ -433,8 +438,7 @@ Deno.serve(async (req: Request) => {
           updated_at: new Date().toISOString(),
         });
     } else if (endBlock > lastIndexedBlock) {
-      const block = await provider.getBlock(endBlock);
-      await supabase
+      const block = await provider.getBlock(endBlock);      await supabase
         .from("indexer_state")
         .upsert({
           id: indexerState?.id || undefined,
