@@ -151,6 +151,7 @@
       "marketCap": "القيمة السوقية",
       "liquidity": "السيولة",
       "volume": "الحجم",
+      "allTimeVolume": "إجمالي الحجم",
       "created": "تم الإنشاء",
       "action": "إجراء",
       "locked": "{{percent}}% مقفل",
@@ -330,5 +331,29 @@
     "platformAvailability": "توفر المنصة:",
     "platformAvailabilityDescription": "يتم توفير المنصة \"كما هي\" دون ضمانات من أي نوع. لا نضمن الوصول دون انقطاع أو التشغيل الخالي من الأخطاء.",
     "acknowledgement": "باستخدامك لهذه المنصة، فإنك تقر بأنك قرأت وفهمت ووافقت على هذه الشروط. أنت تقبل المسؤولية الكاملة عن قراراتك التجارية ونتائجها."
+  },
+  "wallet": {
+    "connectWallet": "قم بتوصيل محفظتك",
+    "connectToMetaMask": "محفظة إيثريوم الأكثر شعبية",
+    "connectToRabby": "محفظة متعددة السلاسل لـ DeFi",
+    "connectToPhantom": "محفظة Web3 سريعة وآمنة",
+    "byConnecting": "من خلال توصيل محفظتك، فإنك توافق على شروط الخدمة الخاصة بنا",
+    "connected": "تم توصيل المحفظة بنجاح!",
+    "connectionFailed": "فشل توصيل المحفظة",
+    "disconnected": "تم قطع اتصال المحفظة",
+    "balance": "الرصيد",
+    "copyAddress": "نسخ العنوان",
+    "copied": "تم نسخ العنوان!",
+    "viewExplorer": "عرض على المستكشف",
+    "disconnect": "قطع الاتصال",
+    "notInstalled": "غير مثبت - انقر للتنزيل",
+    "install": "تثبيت"
+  },
+  "network": {
+    "warning": {
+      "title": "شبكة خاطئة",
+      "description": "أنت متصل بـ {{current}}. يرجى التبديل إلى {{required}} لاستخدام هذا التطبيق.",
+      "switchButton": "التبديل إلى {{network}}"
+    }
   }
 }

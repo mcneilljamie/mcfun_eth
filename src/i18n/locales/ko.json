@@ -331,5 +331,29 @@
     "platformAvailability": "플랫폼 가용성:",
     "platformAvailabilityDescription": "플랫폼은 어떠한 종류의 보증도 없이 \"있는 그대로\" 제공됩니다. 중단 없는 액세스나 오류 없는 작동을 보장하지 않습니다.",
     "acknowledgement": "이 플랫폼을 사용함으로써 귀하는 이 약관을 읽고 이해했으며 동의했음을 인정합니다. 귀하는 거래 결정과 그 결과에 대한 전적인 책임을 수락합니다."
+  },
+  "wallet": {
+    "connectWallet": "지갑 연결",
+    "connectToMetaMask": "가장 인기 있는 이더리움 지갑",
+    "connectToRabby": "DeFi를 위한 멀티체인 지갑",
+    "connectToPhantom": "빠르고 안전한 Web3 지갑",
+    "byConnecting": "지갑을 연결하면 서비스 약관에 동의하는 것입니다",
+    "connected": "지갑이 성공적으로 연결되었습니다!",
+    "connectionFailed": "지갑 연결 실패",
+    "disconnected": "지갑 연결 해제됨",
+    "balance": "잔액",
+    "copyAddress": "주소 복사",
+    "copied": "주소가 복사되었습니다!",
+    "viewExplorer": "탐색기에서 보기",
+    "disconnect": "연결 해제",
+    "notInstalled": "설치되지 않음 - 클릭하여 다운로드",
+    "install": "설치"
+  },
+  "network": {
+    "warning": {
+      "title": "잘못된 네트워크",
+      "description": "{{current}}에 연결되어 있습니다. 이 앱을 사용하려면 {{required}}로 전환하세요.",
+      "switchButton": "{{network}}로 전환"
+    }
   }
 }

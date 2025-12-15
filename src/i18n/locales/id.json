@@ -331,5 +331,29 @@
     "platformAvailability": "Ketersediaan Platform:",
     "platformAvailabilityDescription": "Platform disediakan apa adanya tanpa jaminan apa pun.",
     "acknowledgement": "Dengan menggunakan platform ini, Anda mengakui telah membaca, memahami, dan menyetujui persyaratan ini. Anda menerima tanggung jawab penuh atas keputusan perdagangan dan hasilnya."
+  },
+  "wallet": {
+    "connectWallet": "Hubungkan Dompet Anda",
+    "connectToMetaMask": "Dompet Ethereum paling populer",
+    "connectToRabby": "Dompet multi-rantai untuk DeFi",
+    "connectToPhantom": "Dompet Web3 cepat & aman",
+    "byConnecting": "Dengan menghubungkan dompet Anda, Anda menyetujui Ketentuan Layanan kami",
+    "connected": "Dompet berhasil terhubung!",
+    "connectionFailed": "Gagal menghubungkan dompet",
+    "disconnected": "Dompet terputus",
+    "balance": "Saldo",
+    "copyAddress": "Salin Alamat",
+    "copied": "Alamat Disalin!",
+    "viewExplorer": "Lihat di Explorer",
+    "disconnect": "Putuskan",
+    "notInstalled": "Tidak terpasang - Klik untuk mengunduh",
+    "install": "Pasang"
+  },
+  "network": {
+    "warning": {
+      "title": "Jaringan Salah",
+      "description": "Anda terhubung ke {{current}}. Harap beralih ke {{required}} untuk menggunakan aplikasi ini.",
+      "switchButton": "Beralih ke {{network}}"
+    }
   }
 }

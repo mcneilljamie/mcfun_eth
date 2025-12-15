@@ -331,5 +331,29 @@
     "platformAvailability": "Disponibilità della Piattaforma:",
     "platformAvailabilityDescription": "La piattaforma è fornita \"così com'è\" senza garanzie di alcun tipo.",
     "acknowledgement": "Utilizzando questa piattaforma, riconosci di aver letto, compreso e accettato questi termini. Accetti la piena responsabilità per le tue decisioni di trading e i loro risultati."
+  },
+  "wallet": {
+    "connectWallet": "Connetti il Tuo Portafoglio",
+    "connectToMetaMask": "Portafoglio Ethereum più popolare",
+    "connectToRabby": "Portafoglio multi-catena per DeFi",
+    "connectToPhantom": "Portafoglio Web3 veloce e sicuro",
+    "byConnecting": "Connettendo il tuo portafoglio, accetti i nostri Termini di Servizio",
+    "connected": "Portafoglio connesso con successo!",
+    "connectionFailed": "Connessione portafoglio fallita",
+    "disconnected": "Portafoglio disconnesso",
+    "balance": "Saldo",
+    "copyAddress": "Copia Indirizzo",
+    "copied": "Indirizzo Copiato!",
+    "viewExplorer": "Visualizza su Explorer",
+    "disconnect": "Disconnetti",
+    "notInstalled": "Non installato - Clicca per scaricare",
+    "install": "Installa"
+  },
+  "network": {
+    "warning": {
+      "title": "Rete Errata",
+      "description": "Sei connesso a {{current}}. Passa a {{required}} per utilizzare questa app.",
+      "switchButton": "Passa a {{network}}"
+    }
   }
 }

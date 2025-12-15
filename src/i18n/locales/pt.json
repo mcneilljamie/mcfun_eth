@@ -331,5 +331,29 @@
     "platformAvailability": "Disponibilidade da Plataforma:",
     "platformAvailabilityDescription": "A plataforma é fornecida \"como está\" sem garantias de qualquer tipo. Não garantimos acesso ininterrupto ou operação sem erros.",
     "acknowledgement": "Ao usar esta plataforma, você reconhece que leu, compreendeu e concordou com estes termos. Você aceita total responsabilidade pelas suas decisões de negociação e seus resultados."
+  },
+  "wallet": {
+    "connectWallet": "Conectar Sua Carteira",
+    "connectToMetaMask": "Carteira Ethereum mais popular",
+    "connectToRabby": "Carteira multi-cadeia para DeFi",
+    "connectToPhantom": "Carteira Web3 rápida e segura",
+    "byConnecting": "Ao conectar sua carteira, você concorda com nossos Termos de Serviço",
+    "connected": "Carteira conectada com sucesso!",
+    "connectionFailed": "Falha ao conectar carteira",
+    "disconnected": "Carteira desconectada",
+    "balance": "Saldo",
+    "copyAddress": "Copiar Endereço",
+    "copied": "Endereço Copiado!",
+    "viewExplorer": "Ver no Explorer",
+    "disconnect": "Desconectar",
+    "notInstalled": "Não instalado - Clique para baixar",
+    "install": "Instalar"
+  },
+  "network": {
+    "warning": {
+      "title": "Rede Incorreta",
+      "description": "Você está conectado a {{current}}. Por favor, mude para {{required}} para usar este aplicativo.",
+      "switchButton": "Mudar para {{network}}"
+    }
   }
 }

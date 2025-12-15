@@ -331,5 +331,29 @@
     "platformAvailability": "Tính khả dụng của Nền tảng:",
     "platformAvailabilityDescription": "Nền tảng được cung cấp \"như là\" không có bảo đảm dưới bất kỳ hình thức nào. Chúng tôi không đảm bảo truy cập không bị gián đoạn hoặc hoạt động không có lỗi.",
     "acknowledgement": "Bằng cách sử dụng nền tảng này, bạn xác nhận rằng bạn đã đọc, hiểu và đồng ý với các điều khoản này. Bạn chấp nhận toàn bộ trách nhiệm về quyết định giao dịch và kết quả của chúng."
+  },
+  "wallet": {
+    "connectWallet": "Kết Nối Ví Của Bạn",
+    "connectToMetaMask": "Ví Ethereum phổ biến nhất",
+    "connectToRabby": "Ví đa chuỗi cho DeFi",
+    "connectToPhantom": "Ví Web3 nhanh và an toàn",
+    "byConnecting": "Bằng cách kết nối ví của bạn, bạn đồng ý với Điều khoản Dịch vụ của chúng tôi",
+    "connected": "Kết nối ví thành công!",
+    "connectionFailed": "Kết nối ví thất bại",
+    "disconnected": "Ví đã ngắt kết nối",
+    "balance": "Số dư",
+    "copyAddress": "Sao chép Địa chỉ",
+    "copied": "Đã sao chép Địa chỉ!",
+    "viewExplorer": "Xem trên Explorer",
+    "disconnect": "Ngắt kết nối",
+    "notInstalled": "Chưa cài đặt - Nhấp để tải xuống",
+    "install": "Cài đặt"
+  },
+  "network": {
+    "warning": {
+      "title": "Mạng Sai",
+      "description": "Bạn đang kết nối với {{current}}. Vui lòng chuyển sang {{required}} để sử dụng ứng dụng này.",
+      "switchButton": "Chuyển sang {{network}}"
+    }
   }
 }

@@ -331,5 +331,29 @@
     "platformAvailability": "平台可用性：",
     "platformAvailabilityDescription": "平台按\"原样\"提供，不提供任何形式的保证。我们不保证不间断访问或无错误操作。",
     "acknowledgement": "使用本平台即表示您承认您已阅读、理解并同意这些条款。您对您的交易决策及其结果承担全部责任。"
+  },
+  "wallet": {
+    "connectWallet": "连接您的钱包",
+    "connectToMetaMask": "最受欢迎的以太坊钱包",
+    "connectToRabby": "用于DeFi的多链钱包",
+    "connectToPhantom": "快速安全的Web3钱包",
+    "byConnecting": "通过连接您的钱包，您同意我们的服务条款",
+    "connected": "钱包连接成功！",
+    "connectionFailed": "钱包连接失败",
+    "disconnected": "钱包已断开连接",
+    "balance": "余额",
+    "copyAddress": "复制地址",
+    "copied": "地址已复制！",
+    "viewExplorer": "在浏览器中查看",
+    "disconnect": "断开连接",
+    "notInstalled": "未安装 - 点击下载",
+    "install": "安装"
+  },
+  "network": {
+    "warning": {
+      "title": "网络错误",
+      "description": "您已连接到{{current}}。请切换到{{required}}以使用此应用。",
+      "switchButton": "切换到{{network}}"
+    }
   }
 }

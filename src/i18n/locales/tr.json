@@ -331,5 +331,29 @@
     "platformAvailability": "Platform Kullanılabilirliği:",
     "platformAvailabilityDescription": "Platform herhangi bir garanti olmaksızın \"olduğu gibi\" sağlanır. Kesintisiz erişim veya hatasız çalışma garantisi vermiyoruz.",
     "acknowledgement": "Bu platformu kullanarak, bu şartları okuduğunuzu, anladığınızı ve kabul ettiğinizi onaylıyorsunuz. Ticaret kararlarınız ve sonuçları için tam sorumluluk kabul ediyorsunuz."
+  },
+  "wallet": {
+    "connectWallet": "Cüzdanınızı Bağlayın",
+    "connectToMetaMask": "En popüler Ethereum cüzdanı",
+    "connectToRabby": "DeFi için çoklu zincir cüzdanı",
+    "connectToPhantom": "Hızlı ve güvenli Web3 cüzdanı",
+    "byConnecting": "Cüzdanınızı bağlayarak Hizmet Şartlarımızı kabul etmiş olursunuz",
+    "connected": "Cüzdan başarıyla bağlandı!",
+    "connectionFailed": "Cüzdan bağlantısı başarısız",
+    "disconnected": "Cüzdan bağlantısı kesildi",
+    "balance": "Bakiye",
+    "copyAddress": "Adresi Kopyala",
+    "copied": "Adres Kopyalandı!",
+    "viewExplorer": "Explorer'da Görüntüle",
+    "disconnect": "Bağlantıyı Kes",
+    "notInstalled": "Yüklü değil - İndirmek için tıklayın",
+    "install": "Yükle"
+  },
+  "network": {
+    "warning": {
+      "title": "Yanlış Ağ",
+      "description": "{{current}} ağına bağlısınız. Bu uygulamayı kullanmak için lütfen {{required}} ağına geçin.",
+      "switchButton": "{{network}} ağına geç"
+    }
   }
 }

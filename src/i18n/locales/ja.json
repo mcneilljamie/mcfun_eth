@@ -331,5 +331,29 @@
     "platformAvailability": "プラットフォームの可用性：",
     "platformAvailabilityDescription": "プラットフォームは「現状のまま」提供され、いかなる種類の保証もありません。中断のないアクセスやエラーのない動作を保証するものではありません。",
     "acknowledgement": "このプラットフォームを使用することにより、これらの条件を読み、理解し、同意したことを認めます。取引の決定とその結果について全責任を受け入れます。"
+  },
+  "wallet": {
+    "connectWallet": "ウォレットを接続",
+    "connectToMetaMask": "最も人気のあるEthereumウォレット",
+    "connectToRabby": "DeFi向けマルチチェーンウォレット",
+    "connectToPhantom": "高速で安全なWeb3ウォレット",
+    "byConnecting": "ウォレットを接続することで、利用規約に同意したことになります",
+    "connected": "ウォレットが正常に接続されました！",
+    "connectionFailed": "ウォレットの接続に失敗しました",
+    "disconnected": "ウォレットが切断されました",
+    "balance": "残高",
+    "copyAddress": "アドレスをコピー",
+    "copied": "アドレスがコピーされました！",
+    "viewExplorer": "エクスプローラーで表示",
+    "disconnect": "切断",
+    "notInstalled": "インストールされていません - クリックしてダウンロード",
+    "install": "インストール"
+  },
+  "network": {
+    "warning": {
+      "title": "ネットワークが正しくありません",
+      "description": "{{current}}に接続されています。このアプリを使用するには{{required}}に切り替えてください。",
+      "switchButton": "{{network}}に切り替える"
+    }
   }
 }
