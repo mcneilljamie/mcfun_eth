@@ -94,3 +94,29 @@ export function formatPrice(value: number): string {
 export function getPriceDecimals(value: number): number {
   return value < 1 ? 4 : 2;
 }
+
+export function limitDecimalPrecision(value: string | number, maxDecimals: number = 18): string {
+  const numStr = typeof value === 'number' ? value.toString() : value;
+  const num = parseFloat(numStr);
+
+  if (isNaN(num) || num === 0) return '0';
+
+  // Handle scientific notation for very small numbers
+  if (Math.abs(num) < 1e-18) return '0';
+
+  // Convert to fixed decimal representation to avoid scientific notation
+  // Use Math.floor to ensure we don't round up and exceed the actual value
+  const factor = Math.pow(10, maxDecimals);
+  const truncated = Math.floor(num * factor) / factor;
+
+  // Convert to string with fixed decimals, then remove trailing zeros
+  let result = truncated.toFixed(maxDecimals);
+
+  // Remove trailing zeros and unnecessary decimal point
+  result = result.replace(/\.?0+$/, '');
+
+  // If result is empty or just a decimal point, return '0'
+  if (result === '' || result === '.') return '0';
+
+  return result;
+}

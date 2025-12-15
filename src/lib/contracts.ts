@@ -1,6 +1,7 @@
 import { Contract, parseEther, formatEther, formatUnits, MaxUint256 } from 'ethers';
 import { MCFUN_FACTORY_ABI, MCFUN_AMM_ABI, ERC20_ABI } from '../contracts/abis';
 import { getFactoryAddress } from '../contracts/addresses';
+import { limitDecimalPrecision } from './utils';
 
 export interface TokenLaunchParams {
   name: string;
@@ -25,7 +26,7 @@ export async function createToken(signer: any, params: TokenLaunchParams) {
     params.name,
     params.symbol,
     params.liquidityPercent,
-    { value: parseEther(params.ethAmount) }
+    { value: parseEther(limitDecimalPrecision(params.ethAmount)) }
   );
 
   const receipt = await tx.wait();
@@ -58,8 +59,8 @@ export async function swapTokens(
   let tx;
   if (params.isETHToToken) {
     tx = await amm.swapETHForToken(
-      parseEther(params.minAmountOut),
-      { value: parseEther(params.amountIn) }
+      parseEther(limitDecimalPrecision(params.minAmountOut)),
+      { value: parseEther(limitDecimalPrecision(params.amountIn)) }
     );
     onSwapSent?.();
   } else {
@@ -67,7 +68,7 @@ export async function swapTokens(
     const token = new Contract(tokenAddress, ERC20_ABI, signer);
 
     const allowance = await token.allowance(await signer.getAddress(), params.ammAddress);
-    const amountIn = parseEther(params.amountIn);
+    const amountIn = parseEther(limitDecimalPrecision(params.amountIn));
 
     if (allowance < amountIn) {
       const approveTx = await token.approve(params.ammAddress, MaxUint256);
@@ -75,7 +76,7 @@ export async function swapTokens(
       await approveTx.wait();
     }
 
-    tx = await amm.swapTokenForETH(amountIn, parseEther(params.minAmountOut));
+    tx = await amm.swapTokenForETH(amountIn, parseEther(limitDecimalPrecision(params.minAmountOut)));
     onSwapSent?.();
   }
 
@@ -92,7 +93,7 @@ export async function checkNeedsApproval(
     const token = new Contract(tokenAddress, ERC20_ABI, provider);
 
     const allowance = await token.allowance(params.userAddress, params.ammAddress);
-    const amountIn = parseEther(params.amountIn);
+    const amountIn = parseEther(limitDecimalPrecision(params.amountIn));
 
     // Consider unlimited approval as sufficient
     // MaxUint256 / 2 is used as threshold to handle any potential decrease in allowance
@@ -136,10 +137,10 @@ export async function getQuote(
   const amm = new Contract(ammAddress, MCFUN_AMM_ABI, provider);
 
   if (isETHToToken) {
-    const tokenOut = await amm.getTokenOut(parseEther(amountIn));
+    const tokenOut = await amm.getTokenOut(parseEther(limitDecimalPrecision(amountIn)));
     return formatEther(tokenOut);
   } else {
-    const ethOut = await amm.getETHOut(parseEther(amountIn));
+    const ethOut = await amm.getETHOut(parseEther(limitDecimalPrecision(amountIn)));
     return formatEther(ethOut);
   }
 }

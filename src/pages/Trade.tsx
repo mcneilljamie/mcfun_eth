@@ -4,7 +4,7 @@ import { ArrowDownUp, AlertCircle, Loader, TrendingUp, Wallet, CheckCircle } fro
 import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '../lib/web3';
 import { swapTokens, getQuote, getAMMReserves, checkNeedsApproval } from '../lib/contracts';
-import { formatNumber, formatCurrency, calculatePriceImpact } from '../lib/utils';
+import { formatNumber, formatCurrency, calculatePriceImpact, limitDecimalPrecision } from '../lib/utils';
 import { Token } from '../lib/supabase';
 import { TokenSelector } from '../components/TokenSelector';
 import { SwapConfirmation } from '../components/SwapConfirmation';
@@ -154,7 +154,7 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
     setSwapStep('idle');
 
     try {
-      const minAmountOut = (parseFloat(amountOut) * (100 - slippage) / 100).toString();
+      const minAmountOut = limitDecimalPrecision(parseFloat(amountOut) * (100 - slippage) / 100);
 
       const receipt = await swapTokens(
         signer,
