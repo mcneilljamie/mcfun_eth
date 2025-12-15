@@ -268,6 +268,7 @@
     "tokenNotFound": "未找到代币",
     "trade": "交易",
     "price": "价格",
+    "change24h": "24小时变化",
     "marketCap": "市值",
     "liquidity": "流动性",
     "allTimeVolume": "总交易量",

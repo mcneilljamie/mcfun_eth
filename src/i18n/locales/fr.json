@@ -268,6 +268,7 @@
     "tokenNotFound": "Token non trouvé",
     "trade": "Échanger",
     "price": "Prix",
+    "change24h": "Variation 24h",
     "marketCap": "Capitalisation Boursière",
     "liquidity": "Liquidité",
     "allTimeVolume": "Volume Total",

@@ -29,6 +29,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
   const [liveReserves, setLiveReserves] = useState<{ reserveETH: string; reserveToken: string } | null>(null);
   const [snapshotCount, setSnapshotCount] = useState<number>(0);
   const { priceChangeSinceLaunch } = useChartData(tokenAddress || '', 'ALL');
+  const [priceChange24h, setPriceChange24h] = useState<number | null>(null);
 
   const ensureProtocol = (url: string): string => {
     if (!url) return url;
@@ -47,9 +48,14 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
     loadToken();
     loadEthPrice();
     loadSnapshotCount();
+    load24hPriceChange();
 
     const ethPriceInterval = setInterval(loadEthPrice, 60000);
-    return () => clearInterval(ethPriceInterval);
+    const priceChangeInterval = setInterval(load24hPriceChange, 60000);
+    return () => {
+      clearInterval(ethPriceInterval);
+      clearInterval(priceChangeInterval);
+    };
   }, [tokenAddress]);
 
   useEffect(() => {
@@ -78,6 +84,26 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
       setSnapshotCount(count || 0);
     } catch (err) {
       console.error('Failed to load snapshot count:', err);
+    }
+  };
+
+  const load24hPriceChange = async () => {
+    if (!tokenAddress) return;
+
+    try {
+      const { data, error } = await supabase.rpc('get_24h_price_changes');
+
+      if (error) throw error;
+
+      const priceChange = data?.find((pc: any) =>
+        pc.token_address.toLowerCase() === tokenAddress.toLowerCase()
+      );
+
+      if (priceChange) {
+        setPriceChange24h(priceChange.price_change_24h);
+      }
+    } catch (err) {
+      console.error('Failed to load 24h price change:', err);
     }
   };
 
@@ -322,7 +348,24 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
             </button>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
+            <div className="bg-gray-50 rounded-lg p-4">
+              <div className="text-sm text-gray-600 mb-1">{t('tokenDetail.price')}</div>
+              <div className="text-xl sm:text-2xl font-bold text-gray-900">
+                {formatUSD(calculateTokenPriceUSD())}
+              </div>
+            </div>
+
+            <div className="bg-gray-50 rounded-lg p-4">
+              <div className="text-sm text-gray-600 mb-1">{t('tokenDetail.change24h')}</div>
+              <div className={`text-xl sm:text-2xl font-bold ${
+                priceChange24h === null ? 'text-gray-900' :
+                priceChange24h >= 0 ? 'text-green-600' : 'text-red-600'
+              }`}>
+                {priceChange24h === null ? 'N/A' : `${priceChange24h >= 0 ? '+' : ''}${priceChange24h.toFixed(2)}%`}
+              </div>
+            </div>
+
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="text-sm text-gray-600 mb-1">{t('tokenDetail.marketCap')}</div>
               <div className="text-xl sm:text-2xl font-bold text-gray-900">

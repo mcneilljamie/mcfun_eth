@@ -268,6 +268,7 @@
     "tokenNotFound": "トークンが見つかりません",
     "trade": "取引",
     "price": "価格",
+    "change24h": "24時間変動",
     "marketCap": "時価総額",
     "liquidity": "流動性",
     "allTimeVolume": "総取引量",

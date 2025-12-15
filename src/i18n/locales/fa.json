@@ -268,6 +268,7 @@
     "tokenNotFound": "توکن یافت نشد",
     "trade": "معامله",
     "price": "قیمت",
+    "change24h": "تغییر 24 ساعته",
     "marketCap": "ارزش بازار",
     "liquidity": "نقدینگی",
     "allTimeVolume": "حجم کل",

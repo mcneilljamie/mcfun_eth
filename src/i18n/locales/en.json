@@ -268,6 +268,7 @@
     "tokenNotFound": "Token not found",
     "trade": "Trade",
     "price": "Price",
+    "change24h": "24h Change",
     "marketCap": "Market Cap",
     "liquidity": "Liquidity",
     "allTimeVolume": "All-Time Volume",

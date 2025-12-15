@@ -267,6 +267,7 @@
     "tokenNotFound": "لم يتم العثور على الرمز",
     "trade": "تداول",
     "price": "السعر",
+    "change24h": "التغيير خلال 24 ساعة",
     "marketCap": "القيمة السوقية",
     "liquidity": "السيولة",
     "allTimeVolume": "إجمالي الحجم",
