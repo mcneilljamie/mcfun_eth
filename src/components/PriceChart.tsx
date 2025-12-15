@@ -60,8 +60,8 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
       },
     });
 
-    const precision = displayPrice < 1 ? 4 : 2;
-    const minMove = displayPrice < 1 ? 0.0001 : 0.01;
+    const precision = displayPrice < 1 ? 5 : 3;
+    const minMove = displayPrice < 1 ? 0.00001 : 0.001;
 
     const areaSeries = chart.addSeries(AreaSeries, {
       lineColor: (priceChange !== null && priceChange >= 0) ? '#10b981' : '#ef4444',
