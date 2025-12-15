@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase';
 import { ethers } from 'ethers';
 import { getEthPriceUSD } from '../lib/ethPrice';
 import { Loader2, Wallet } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface TokenBalance {
   tokenAddress: string;
@@ -20,6 +20,7 @@ interface TokenBalance {
 
 export default function Portfolio() {
   const { account, provider } = useWeb3();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [tokens, setTokens] = useState<TokenBalance[]>([]);
   const [ethBalance, setEthBalance] = useState('0');
@@ -250,18 +251,14 @@ export default function Portfolio() {
                 {tokens.map((token) => (
                   <tr
                     key={token.tokenAddress}
-                    className="hover:bg-gray-50 transition-colors"
+                    onClick={() => navigate(`/token/${token.tokenAddress}`)}
+                    className="hover:bg-gray-50 transition-colors cursor-pointer"
                   >
                     <td className="px-6 py-4">
-                      <Link
-                        to={`/token/${token.tokenAddress}`}
-                        className="flex items-center hover:text-blue-600"
-                      >
-                        <div>
-                          <div className="font-semibold text-gray-900">{token.symbol}</div>
-                          <div className="text-sm text-gray-500">{token.name}</div>
-                        </div>
-                      </Link>
+                      <div>
+                        <div className="font-semibold text-gray-900">{token.symbol}</div>
+                        <div className="text-sm text-gray-500">{token.name}</div>
+                      </div>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="font-medium text-gray-900">
