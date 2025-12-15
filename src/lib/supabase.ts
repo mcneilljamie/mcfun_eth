@@ -23,6 +23,9 @@ export interface Token {
   total_volume_eth: string;
   holder_count?: number;
   website?: string;
+  telegram_url?: string;
+  discord_url?: string;
+  x_url?: string;
   created_at: string;
 }
 

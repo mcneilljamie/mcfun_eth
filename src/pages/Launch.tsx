@@ -20,6 +20,9 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
   const [name, setName] = useState('');
   const [symbol, setSymbol] = useState('');
   const [website, setWebsite] = useState('');
+  const [telegramUrl, setTelegramUrl] = useState('');
+  const [discordUrl, setDiscordUrl] = useState('');
+  const [xUrl, setXUrl] = useState('');
   const [liquidityPercent, setLiquidityPercent] = useState(RECOMMENDED_LIQUIDITY_PERCENT);
   const [ethAmount, setEthAmount] = useState(MIN_LIQUIDITY_ETH);
 
@@ -133,6 +136,9 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
           current_token_reserve: tokenReserve,
           total_volume_eth: '0',
           website: website.trim() || null,
+          telegram_url: telegramUrl.trim() || null,
+          discord_url: discordUrl.trim() || null,
+          x_url: xUrl.trim() || null,
           created_at: new Date().toISOString(),
         }, {
           onConflict: 'token_address',
@@ -161,6 +167,9 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
       setName('');
       setSymbol('');
       setWebsite('');
+      setTelegramUrl('');
+      setDiscordUrl('');
+      setXUrl('');
       setLiquidityPercent(RECOMMENDED_LIQUIDITY_PERCENT);
       setEthAmount(MIN_LIQUIDITY_ETH);
     } catch (err: any) {
@@ -255,6 +264,52 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                 disabled={isLaunching}
               />
+            </div>
+
+            <div className="bg-gray-50 rounded-lg p-4 space-y-4">
+              <h3 className="text-sm font-medium text-gray-900">Social Media Links <span className="text-gray-400 font-normal">(Optional)</span></h3>
+
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-2">
+                  Telegram
+                </label>
+                <input
+                  type="url"
+                  value={telegramUrl}
+                  onChange={(e) => setTelegramUrl(e.target.value)}
+                  placeholder="https://t.me/yourchannel"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                  disabled={isLaunching}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-2">
+                  Discord
+                </label>
+                <input
+                  type="url"
+                  value={discordUrl}
+                  onChange={(e) => setDiscordUrl(e.target.value)}
+                  placeholder="https://discord.gg/yourserver"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                  disabled={isLaunching}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-2">
+                  X (Twitter)
+                </label>
+                <input
+                  type="url"
+                  value={xUrl}
+                  onChange={(e) => setXUrl(e.target.value)}
+                  placeholder="https://x.com/yourhandle"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                  disabled={isLaunching}
+                />
+              </div>
             </div>
 
             <div>
