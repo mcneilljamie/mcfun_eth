@@ -382,25 +382,11 @@ export function About() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-5 sm:p-8 text-center mb-6 sm:mb-8">
-          <p className="text-sm sm:text-base text-gray-700 sm:text-lg">
-            McFun was founded and is maintained by{' '}
-            <a
-              href="https://jamiemcneill.substack.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-700 hover:text-gray-900 font-semibold underline"
-            >
-              Jamie McNeill
-            </a>.
-          </p>
-        </div>
-
-        <div className="bg-red-50 rounded-xl shadow-lg p-5 sm:p-8 border-2 border-red-200">
-          <h2 className="text-xl sm:text-2xl font-bold text-red-900 mb-4 text-center">
+        <div className="bg-gray-100 rounded-xl shadow-lg p-5 sm:p-8 border border-gray-300">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 text-center">
             Risk Disclaimer & Terms of Use
           </h2>
-          <div className="space-y-3 text-xs sm:text-sm text-red-900 leading-relaxed">
+          <div className="space-y-3 text-xs sm:text-sm text-gray-800 leading-relaxed">
             <p className="font-semibold">
               IMPORTANT: Trading cryptocurrencies and tokens carries substantial risk. By using this platform, you acknowledge and accept the following:
             </p>
