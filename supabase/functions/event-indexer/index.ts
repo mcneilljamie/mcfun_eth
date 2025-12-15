@@ -26,6 +26,7 @@ interface IndexRequest {
   indexTokenLaunches?: boolean;
   indexSwaps?: boolean;
   skipReorgCheck?: boolean;
+  backfillSwaps?: boolean;
 }
 
 async function detectAndHandleReorg(
@@ -124,7 +125,8 @@ Deno.serve(async (req: Request) => {
       toBlock,
       indexTokenLaunches = true,
       indexSwaps = true,
-      skipReorgCheck = false
+      skipReorgCheck = false,
+      backfillSwaps = false
     }: IndexRequest = await req.json().catch(() => ({}));
 
     const { data: indexerState } = await supabase
@@ -293,14 +295,30 @@ Deno.serve(async (req: Request) => {
       try {
         const { data: tokens } = await supabase
           .from("tokens")
-          .select("token_address, amm_address");
+          .select("token_address, amm_address, block_number");
 
         if (tokens && tokens.length > 0) {
           for (const token of tokens) {
             try {
+              let queryStartBlock = startBlock;
+
+              if (backfillSwaps) {
+                const { data: earliestSwap } = await supabase
+                  .from("swaps")
+                  .select("block_number")
+                  .eq("token_address", token.token_address)
+                  .order("block_number", { ascending: true })
+                  .limit(1)
+                  .maybeSingle();
+
+                if (!earliestSwap || earliestSwap.block_number > token.block_number + 1) {
+                  queryStartBlock = Math.max(token.block_number, startBlock);
+                }
+              }
+
               const amm = new ethers.Contract(token.amm_address, AMM_ABI, provider);
               const filter = amm.filters.Swap();
-              const events = await amm.queryFilter(filter, startBlock, endBlock);
+              const events = await amm.queryFilter(filter, queryStartBlock, endBlock);
 
               for (const event of events) {
                 const args = event.args!;
