@@ -223,7 +223,9 @@ Deno.serve(async (req: Request) => {
           const block = await event.getBlock();
 
           const initialLiquidityEth = parseFloat(ethers.formatEther(args.initialLiquidityETH));
-          const launchPriceEth = initialLiquidityEth / 1000000;
+          const liquidityPercent = Number(args.liquidityPercent);
+          const initialTokenReserve = 1000000 * liquidityPercent / 100;
+          const launchPriceEth = initialLiquidityEth / initialTokenReserve;
 
           const { error } = await supabase
             .from("tokens")
@@ -233,11 +235,11 @@ Deno.serve(async (req: Request) => {
               name: args.name,
               symbol: args.symbol,
               creator_address: args.creator.toLowerCase(),
-              liquidity_percent: Number(args.liquidityPercent),
+              liquidity_percent: liquidityPercent,
               initial_liquidity_eth: initialLiquidityEth.toString(),
               launch_price_eth: launchPriceEth.toString(),
               current_eth_reserve: initialLiquidityEth.toString(),
-              current_token_reserve: "1000000",
+              current_token_reserve: initialTokenReserve.toString(),
               total_volume_eth: "0",
               created_at: new Date(block.timestamp * 1000).toISOString(),
               block_number: block.number,
@@ -264,7 +266,7 @@ Deno.serve(async (req: Request) => {
                   tokenAddress: args.tokenAddress.toLowerCase(),
                   initialPriceETH: launchPriceEth,
                   initialEthReserve: initialLiquidityEth,
-                  initialTokenReserve: 1000000,
+                  initialTokenReserve: initialTokenReserve,
                   createdAt: new Date(block.timestamp * 1000).toISOString(),
                   hoursOfHistory: 24,
                 }),
