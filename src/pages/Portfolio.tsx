@@ -237,12 +237,6 @@ export default function Portfolio() {
                     Token
                   </th>
                   <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Balance
-                  </th>
-                  <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Price
-                  </th>
-                  <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Value
                   </th>
                 </tr>
@@ -258,16 +252,6 @@ export default function Portfolio() {
                       <div>
                         <div className="font-semibold text-gray-900">{token.symbol}</div>
                         <div className="text-sm text-gray-500">{token.name}</div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="font-medium text-gray-900">
-                        {formatNumber(token.balance)}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="font-medium text-gray-900">
-                        {formatPrice(token.priceUsd)}
                       </div>
                     </td>
                     <td className="px-6 py-4 text-right">
