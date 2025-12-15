@@ -46,15 +46,21 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   }, []);
 
   useEffect(() => {
-    if (tokens.length > 0 && provider) {
-      loadLiveReserves();
+    if (tokens.length > 0) {
       loadLiveVolumes();
       loadPriceChanges();
-      const reservesInterval = setInterval(() => {
-        loadLiveReserves();
+      const dataInterval = setInterval(() => {
         loadLiveVolumes();
         loadPriceChanges();
       }, 10000);
+      return () => clearInterval(dataInterval);
+    }
+  }, [tokens]);
+
+  useEffect(() => {
+    if (tokens.length > 0 && provider) {
+      loadLiveReserves();
+      const reservesInterval = setInterval(loadLiveReserves, 10000);
       return () => clearInterval(reservesInterval);
     }
   }, [tokens, provider]);
