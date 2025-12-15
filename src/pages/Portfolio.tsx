@@ -277,9 +277,6 @@ export default function Portfolio() {
                       <div className="font-semibold text-gray-900">
                         {formatCurrency(token.valueUsd)}
                       </div>
-                      <div className="text-xs text-gray-500">
-                        {token.valueEth.toFixed(4)} ETH
-                      </div>
                     </td>
                   </tr>
                 ))}
