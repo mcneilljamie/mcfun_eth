@@ -354,13 +354,6 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                 {priceChangeSinceLaunch !== null ? (1 + priceChangeSinceLaunch / 100).toFixed(2) : '1.00'}x
               </div>
             </div>
-
-            <div className="bg-gray-50 rounded-lg p-4">
-              <div className="text-sm text-gray-600 mb-1">Holders</div>
-              <div className="text-xl sm:text-2xl font-bold text-gray-900">
-                {token.holder_count?.toLocaleString() || '0'}
-              </div>
-            </div>
           </div>
         </div>
 
