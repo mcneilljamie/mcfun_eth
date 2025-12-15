@@ -222,6 +222,9 @@ Deno.serve(async (req: Request) => {
           const args = event.args!;
           const block = await event.getBlock();
 
+          const initialLiquidityEth = parseFloat(ethers.formatEther(args.initialLiquidityETH));
+          const launchPriceEth = initialLiquidityEth / 1000000;
+
           const { error } = await supabase
             .from("tokens")
             .upsert({
@@ -231,8 +234,9 @@ Deno.serve(async (req: Request) => {
               symbol: args.symbol,
               creator_address: args.creator.toLowerCase(),
               liquidity_percent: Number(args.liquidityPercent),
-              initial_liquidity_eth: ethers.formatEther(args.initialLiquidityETH),
-              current_eth_reserve: ethers.formatEther(args.initialLiquidityETH),
+              initial_liquidity_eth: initialLiquidityEth.toString(),
+              launch_price_eth: launchPriceEth.toString(),
+              current_eth_reserve: initialLiquidityEth.toString(),
               current_token_reserve: "1000000",
               total_volume_eth: "0",
               created_at: new Date(block.timestamp * 1000).toISOString(),
@@ -250,7 +254,6 @@ Deno.serve(async (req: Request) => {
             lastProcessedBlockHash = block.hash;
 
             try {
-              const initialPriceETH = parseFloat(ethers.formatEther(args.initialLiquidityETH)) / 1000000;
               const historyResponse = await fetch(`${supabaseUrl}/functions/v1/generate-initial-history`, {
                 method: 'POST',
                 headers: {
@@ -259,8 +262,8 @@ Deno.serve(async (req: Request) => {
                 },
                 body: JSON.stringify({
                   tokenAddress: args.tokenAddress.toLowerCase(),
-                  initialPriceETH: initialPriceETH,
-                  initialEthReserve: parseFloat(ethers.formatEther(args.initialLiquidityETH)),
+                  initialPriceETH: launchPriceEth,
+                  initialEthReserve: initialLiquidityEth,
                   initialTokenReserve: 1000000,
                   createdAt: new Date(block.timestamp * 1000).toISOString(),
                   hoursOfHistory: 24,

@@ -99,15 +99,15 @@ export function useChartData(tokenAddress: string | undefined, timeRange: TimeRa
       setData(transformedData);
 
       // Use metadata from query for price calculations
-      const firstPriceUsd = parseFloat(firstRow.first_price_usd);
+      const launchPriceUsd = parseFloat(firstRow.launch_price_usd);
       const lastPriceUsd = parseFloat(firstRow.last_price_usd);
       const price24hAgoUsd = parseFloat(firstRow.price_24h_ago_usd);
 
       setCurrentPrice(lastPriceUsd);
 
-      // Always calculate price change since launch
-      if (firstPriceUsd > 0 && lastPriceUsd > 0) {
-        const changeSinceLaunch = ((lastPriceUsd - firstPriceUsd) / firstPriceUsd) * 100;
+      // Always calculate price change since launch (using actual launch price)
+      if (launchPriceUsd > 0 && lastPriceUsd > 0) {
+        const changeSinceLaunch = ((lastPriceUsd - launchPriceUsd) / launchPriceUsd) * 100;
         setPriceChangeSinceLaunch(changeSinceLaunch);
       } else {
         setPriceChangeSinceLaunch(null);
@@ -115,9 +115,9 @@ export function useChartData(tokenAddress: string | undefined, timeRange: TimeRa
 
       // Calculate price change based on token age (for chart display)
       if (isTokenNew) {
-        // For tokens < 24 hours old, show price change since inception
-        if (firstPriceUsd > 0 && lastPriceUsd > 0) {
-          const change = ((lastPriceUsd - firstPriceUsd) / firstPriceUsd) * 100;
+        // For tokens < 24 hours old, show price change since inception (using actual launch price)
+        if (launchPriceUsd > 0 && lastPriceUsd > 0) {
+          const change = ((lastPriceUsd - launchPriceUsd) / launchPriceUsd) * 100;
           setPriceChange(change);
         } else {
           setPriceChange(null);
