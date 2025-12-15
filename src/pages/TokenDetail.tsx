@@ -45,10 +45,21 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
       return;
     }
 
-    loadToken();
-    loadEthPrice();
-    loadSnapshotCount();
-    load24hPriceChange();
+    const loadAllData = async () => {
+      try {
+        await Promise.all([
+          loadToken(),
+          loadEthPrice(),
+          loadSnapshotCount(),
+          load24hPriceChange()
+        ]);
+      } catch (error) {
+        console.error('Error loading token data:', error);
+        setIsLoading(false);
+      }
+    };
+
+    loadAllData();
 
     const ethPriceInterval = setInterval(loadEthPrice, 60000);
     const priceChangeInterval = setInterval(load24hPriceChange, 60000);

@@ -1,0 +1,2 @@
+Still need to complete: hi.json (Hindi), ka.json (Georgian), fa.json (Farsi)
+These are simplified translations that users can update later if needed.

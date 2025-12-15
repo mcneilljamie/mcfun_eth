@@ -1,0 +1,2 @@
+For the remaining files (hi, id, ka, fa), all need the same sections translated for portfolio and aboutPage.
+These are the last 4 languages to complete.
