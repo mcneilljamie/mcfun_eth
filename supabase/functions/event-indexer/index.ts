@@ -380,9 +380,7 @@ Deno.serve(async (req: Request) => {
       } catch (err: any) {
         results.errors.push(`Failed to update platform stats: ${err.message}`);
       }
-    }
 
-    if (lastProcessedBlockNumber >= startBlock) {
       if (!lastProcessedBlockHash) {
         const block = await provider.getBlock(lastProcessedBlockNumber);
         lastProcessedBlockHash = block?.hash || null;
@@ -394,6 +392,17 @@ Deno.serve(async (req: Request) => {
           id: indexerState?.id || undefined,
           last_indexed_block: lastProcessedBlockNumber,
           last_block_hash: lastProcessedBlockHash,
+          confirmation_depth: confirmationDepth,
+          updated_at: new Date().toISOString(),
+        });
+    } else if (endBlock > lastIndexedBlock) {
+      const block = await provider.getBlock(endBlock);
+      await supabase
+        .from("indexer_state")
+        .upsert({
+          id: indexerState?.id || undefined,
+          last_indexed_block: endBlock,
+          last_block_hash: block?.hash || null,
           confirmation_depth: confirmationDepth,
           updated_at: new Date().toISOString(),
         });
