@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowDownUp, AlertCircle, Loader, TrendingUp, Wallet } from 'lucide-react';
+import { ArrowDownUp, AlertCircle, Loader, TrendingUp, Wallet, CheckCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '../lib/web3';
-import { swapTokens, getQuote, getAMMReserves } from '../lib/contracts';
+import { swapTokens, getQuote, getAMMReserves, checkNeedsApproval } from '../lib/contracts';
 import { formatNumber, formatCurrency, calculatePriceImpact } from '../lib/utils';
 import { Token } from '../lib/supabase';
 import { TokenSelector } from '../components/TokenSelector';
@@ -40,6 +40,8 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
   const [reserves, setReserves] = useState<{ reserveETH: string; reserveToken: string } | null>(null);
   const [ethBalance, setEthBalance] = useState<string>('0');
   const [tokenBalance, setTokenBalance] = useState<string>('0');
+  const [needsApproval, setNeedsApproval] = useState<boolean>(false);
+  const [swapStep, setSwapStep] = useState<'idle' | 'approving' | 'approved' | 'swapping'>('idle');
 
   useEffect(() => {
     if (selectedToken) {
@@ -62,10 +64,25 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
   useEffect(() => {
     if (amountIn && selectedTokenData && provider) {
       loadQuote();
+      checkApproval();
     } else {
       setAmountOut('');
+      setNeedsApproval(false);
     }
-  }, [amountIn, isETHToToken, selectedTokenData, provider]);
+  }, [amountIn, isETHToToken, selectedTokenData, provider, account]);
+
+  const checkApproval = async () => {
+    if (!isETHToToken && selectedTokenData && provider && account && amountIn && parseFloat(amountIn) > 0) {
+      const needsApprovalCheck = await checkNeedsApproval(provider, {
+        ammAddress: selectedTokenData.amm_address,
+        amountIn,
+        userAddress: account,
+      });
+      setNeedsApproval(needsApprovalCheck);
+    } else {
+      setNeedsApproval(false);
+    }
+  };
 
   const loadReserves = async () => {
     if (!selectedTokenData || !provider) return;
@@ -134,16 +151,26 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
     setError('');
     setSwapSuccess(null);
     setIsSwapping(true);
+    setSwapStep('idle');
 
     try {
       const minAmountOut = (parseFloat(amountOut) * (100 - slippage) / 100).toString();
 
-      const receipt = await swapTokens(signer, {
-        ammAddress: selectedTokenData.amm_address,
-        isETHToToken,
-        amountIn,
-        minAmountOut,
-      });
+      const receipt = await swapTokens(
+        signer,
+        {
+          ammAddress: selectedTokenData.amm_address,
+          isETHToToken,
+          amountIn,
+          minAmountOut,
+        },
+        () => {
+          setSwapStep('approving');
+        },
+        () => {
+          setSwapStep('swapping');
+        }
+      );
 
       setSwapSuccess({
         amountIn,
@@ -184,6 +211,7 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
       setError(err.message || 'Failed to complete swap. Please try again.');
     } finally {
       setIsSwapping(false);
+      setSwapStep('idle');
     }
   };
 
@@ -191,6 +219,8 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
     setIsETHToToken(!isETHToToken);
     setAmountIn('');
     setAmountOut('');
+    setSwapStep('idle');
+    setNeedsApproval(false);
   };
 
   const priceImpact = reserves && amountIn && amountOut
@@ -437,6 +467,65 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
                 </div>
               )}
             </div>
+
+            {!isETHToToken && needsApproval && amountIn && amountOut && !isSwapping && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4">
+                <div className="flex items-start space-x-2">
+                  <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-semibold text-blue-900">
+                      Two Transactions Required
+                    </p>
+                    <p className="text-xs mt-1 text-blue-800">
+                      You'll need to approve the contract to spend your tokens first, then confirm the swap. This is a one-time approval per token.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {isSwapping && !isETHToToken && (
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 sm:p-4">
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-3">
+                    <div className={`flex items-center justify-center w-6 h-6 rounded-full ${
+                      swapStep === 'approving' ? 'bg-blue-600' : swapStep === 'approved' || swapStep === 'swapping' ? 'bg-green-600' : 'bg-gray-300'
+                    }`}>
+                      {swapStep === 'approving' ? (
+                        <Loader className="w-4 h-4 text-white animate-spin" />
+                      ) : swapStep === 'approved' || swapStep === 'swapping' ? (
+                        <CheckCircle className="w-4 h-4 text-white" />
+                      ) : (
+                        <span className="text-xs text-white font-semibold">1</span>
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900">Approve Token</p>
+                      <p className="text-xs text-gray-600">
+                        {swapStep === 'approving' ? 'Waiting for confirmation...' : swapStep === 'approved' || swapStep === 'swapping' ? 'Approved' : 'Pending'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <div className={`flex items-center justify-center w-6 h-6 rounded-full ${
+                      swapStep === 'swapping' ? 'bg-blue-600' : 'bg-gray-300'
+                    }`}>
+                      {swapStep === 'swapping' ? (
+                        <Loader className="w-4 h-4 text-white animate-spin" />
+                      ) : (
+                        <span className="text-xs text-white font-semibold">2</span>
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900">Confirm Swap</p>
+                      <p className="text-xs text-gray-600">
+                        {swapStep === 'swapping' ? 'Waiting for confirmation...' : 'Pending'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <button
               onClick={handleSwap}

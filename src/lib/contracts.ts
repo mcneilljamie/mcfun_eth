@@ -47,7 +47,12 @@ export async function createToken(signer: any, params: TokenLaunchParams) {
   };
 }
 
-export async function swapTokens(signer: any, params: SwapParams) {
+export async function swapTokens(
+  signer: any,
+  params: SwapParams,
+  onApprovalSent?: () => void,
+  onSwapSent?: () => void
+) {
   const amm = new Contract(params.ammAddress, MCFUN_AMM_ABI, signer);
 
   let tx;
@@ -56,6 +61,7 @@ export async function swapTokens(signer: any, params: SwapParams) {
       parseEther(params.minAmountOut),
       { value: parseEther(params.amountIn) }
     );
+    onSwapSent?.();
   } else {
     const tokenAddress = await amm.token();
     const token = new Contract(tokenAddress, ERC20_ABI, signer);
@@ -65,13 +71,34 @@ export async function swapTokens(signer: any, params: SwapParams) {
 
     if (allowance < amountIn) {
       const approveTx = await token.approve(params.ammAddress, amountIn);
+      onApprovalSent?.();
       await approveTx.wait();
     }
 
     tx = await amm.swapTokenForETH(amountIn, parseEther(params.minAmountOut));
+    onSwapSent?.();
   }
 
   return await tx.wait();
+}
+
+export async function checkNeedsApproval(
+  provider: any,
+  params: { ammAddress: string; amountIn: string; userAddress: string }
+): Promise<boolean> {
+  try {
+    const amm = new Contract(params.ammAddress, MCFUN_AMM_ABI, provider);
+    const tokenAddress = await amm.token();
+    const token = new Contract(tokenAddress, ERC20_ABI, provider);
+
+    const allowance = await token.allowance(params.userAddress, params.ammAddress);
+    const amountIn = parseEther(params.amountIn);
+
+    return allowance < amountIn;
+  } catch (err) {
+    console.error('Failed to check approval:', err);
+    return true;
+  }
 }
 
 export async function getAMMReserves(provider: any, ammAddress: string) {
