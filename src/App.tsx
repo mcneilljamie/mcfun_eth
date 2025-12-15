@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { Web3Provider } from './lib/web3';
 import { Navigation } from './components/Navigation';
 import { NetworkWarning } from './components/NetworkWarning';
@@ -11,70 +12,76 @@ import { TokenDetail } from './pages/TokenDetail';
 import { About } from './pages/About';
 import { Token } from './lib/supabase';
 
-type Page = 'home' | 'launch' | 'trade' | 'tokens' | 'token-detail' | 'about';
-
 export interface ToastMessage {
   message: string;
   type: 'success' | 'error' | 'info';
 }
 
-function App() {
-  const [currentPage, setCurrentPage] = useState<Page>('home');
+function AppContent() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [selectedToken, setSelectedToken] = useState<Token | undefined>(undefined);
-  const [selectedTokenAddress, setSelectedTokenAddress] = useState<string | undefined>(undefined);
   const [toast, setToast] = useState<ToastMessage | null>(null);
 
   const handleNavigate = (page: string, tokenAddress?: string) => {
-    setCurrentPage(page as Page);
-    if (tokenAddress) {
-      setSelectedTokenAddress(tokenAddress);
-    }
+    if (page === 'home') navigate('/');
+    else if (page === 'launch') navigate('/launch');
+    else if (page === 'trade') navigate('/trade');
+    else if (page === 'tokens') navigate('/tokens');
+    else if (page === 'token-detail' && tokenAddress) navigate(`/token/${tokenAddress}`);
+    else if (page === 'about') navigate('/about');
   };
 
   const handleSelectToken = (token: Token) => {
     setSelectedToken(token);
-    setCurrentPage('trade');
+    navigate('/trade');
   };
 
   const handleViewTokenDetail = (tokenAddress: string) => {
-    setSelectedTokenAddress(tokenAddress);
-    setCurrentPage('token-detail');
+    navigate(`/token/${tokenAddress}`);
   };
 
-  const handleBackToTokens = () => {
-    setCurrentPage('tokens');
+  const getCurrentPage = () => {
+    const path = location.pathname;
+    if (path === '/') return 'home';
+    if (path === '/launch') return 'launch';
+    if (path === '/trade') return 'trade';
+    if (path === '/tokens') return 'tokens';
+    if (path.startsWith('/token/')) return 'token-detail';
+    if (path === '/about') return 'about';
+    return 'home';
   };
 
   return (
     <Web3Provider>
       <div className="min-h-screen bg-gray-100">
         <Navigation
-          currentPage={currentPage}
+          currentPage={getCurrentPage()}
           onNavigate={handleNavigate}
           setToast={setToast}
         />
         <NetworkWarning />
 
         <div>
-          {currentPage === 'home' && <Home onNavigate={handleNavigate} />}
-          {currentPage === 'launch' && <Launch onNavigate={handleNavigate} onShowToast={setToast} />}
-          {currentPage === 'trade' && <Trade selectedToken={selectedToken} onShowToast={setToast} />}
-          {currentPage === 'tokens' && (
-            <Tokens
-              onSelectToken={handleSelectToken}
-              onViewToken={handleViewTokenDetail}
-              onShowToast={setToast}
-            />
-          )}
-          {currentPage === 'token-detail' && selectedTokenAddress && (
-            <TokenDetail
-              tokenAddress={selectedTokenAddress}
-              onBack={handleBackToTokens}
-              onTrade={handleSelectToken}
-              onShowToast={setToast}
-            />
-          )}
-          {currentPage === 'about' && <About />}
+          <Routes>
+            <Route path="/" element={<Home onNavigate={handleNavigate} />} />
+            <Route path="/launch" element={<Launch onNavigate={handleNavigate} onShowToast={setToast} />} />
+            <Route path="/trade" element={<Trade selectedToken={selectedToken} onShowToast={setToast} />} />
+            <Route path="/tokens" element={
+              <Tokens
+                onSelectToken={handleSelectToken}
+                onViewToken={handleViewTokenDetail}
+                onShowToast={setToast}
+              />
+            } />
+            <Route path="/token/:tokenAddress" element={
+              <TokenDetail
+                onTrade={handleSelectToken}
+                onShowToast={setToast}
+              />
+            } />
+            <Route path="/about" element={<About />} />
+          </Routes>
         </div>
 
         {toast && (
@@ -86,6 +93,14 @@ function App() {
         )}
       </div>
     </Web3Provider>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
   );
 }
 

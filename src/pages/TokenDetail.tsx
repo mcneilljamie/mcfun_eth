@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Copy, CheckCircle, ExternalLink, TrendingUp, Info } from 'lucide-react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { ArrowLeft, Copy, CheckCircle, ExternalLink, TrendingUp, Info, Share2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { supabase, Token } from '../lib/supabase';
 import { formatCurrency, formatAddress, formatTimeAgo, formatUSD, ethToUSD } from '../lib/utils';
@@ -13,13 +14,13 @@ import { useChartData } from '../hooks/useChartData';
 import { ToastMessage } from '../App';
 
 interface TokenDetailProps {
-  tokenAddress: string;
-  onBack: () => void;
   onTrade: (token: Token) => void;
   onShowToast: (toast: ToastMessage) => void;
 }
 
-export function TokenDetail({ tokenAddress, onBack, onTrade, onShowToast }: TokenDetailProps) {
+export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
+  const { tokenAddress } = useParams<{ tokenAddress: string }>();
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const { provider, chainId } = useWeb3();
   const [token, setToken] = useState<Token | null>(null);
@@ -28,7 +29,7 @@ export function TokenDetail({ tokenAddress, onBack, onTrade, onShowToast }: Toke
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
   const [liveReserves, setLiveReserves] = useState<{ reserveETH: string; reserveToken: string } | null>(null);
   const [snapshotCount, setSnapshotCount] = useState<number>(0);
-  const { priceChangeSinceLaunch } = useChartData(tokenAddress, 'ALL');
+  const { priceChangeSinceLaunch } = useChartData(tokenAddress || '', 'ALL');
 
   const ensureProtocol = (url: string): string => {
     if (!url) return url;
@@ -39,6 +40,11 @@ export function TokenDetail({ tokenAddress, onBack, onTrade, onShowToast }: Toke
   };
 
   useEffect(() => {
+    if (!tokenAddress) {
+      setIsLoading(false);
+      return;
+    }
+
     loadToken();
     loadEthPrice();
     loadSnapshotCount();
@@ -61,6 +67,8 @@ export function TokenDetail({ tokenAddress, onBack, onTrade, onShowToast }: Toke
   };
 
   const loadSnapshotCount = async () => {
+    if (!tokenAddress) return;
+
     try {
       const { count, error } = await supabase
         .from('price_snapshots')
@@ -75,6 +83,8 @@ export function TokenDetail({ tokenAddress, onBack, onTrade, onShowToast }: Toke
   };
 
   const loadToken = async () => {
+    if (!tokenAddress) return;
+
     setIsLoading(true);
 
     try {
@@ -124,6 +134,23 @@ export function TokenDetail({ tokenAddress, onBack, onTrade, onShowToast }: Toke
     }
   };
 
+  const shareLink = async () => {
+    const url = window.location.href;
+    try {
+      await navigator.clipboard.writeText(url);
+      onShowToast({
+        message: 'Link copied to clipboard!',
+        type: 'success'
+      });
+    } catch (err) {
+      console.error('Failed to copy link:', err);
+      onShowToast({
+        message: 'Failed to copy link',
+        type: 'error'
+      });
+    }
+  };
+
   const calculateTokenPriceUSD = (): number => {
     if (!token) return 0;
 
@@ -165,7 +192,7 @@ export function TokenDetail({ tokenAddress, onBack, onTrade, onShowToast }: Toke
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6 sm:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <button
-            onClick={onBack}
+            onClick={() => navigate('/tokens')}
             className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors mb-6"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -182,13 +209,23 @@ export function TokenDetail({ tokenAddress, onBack, onTrade, onShowToast }: Toke
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6 sm:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <button
-          onClick={onBack}
-          className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors mb-6"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          <span>{t('tokenDetail.backToTokens')}</span>
-        </button>
+        <div className="flex items-center justify-between mb-6">
+          <button
+            onClick={() => navigate('/tokens')}
+            className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span>{t('tokenDetail.backToTokens')}</span>
+          </button>
+
+          <button
+            onClick={shareLink}
+            className="flex items-center space-x-2 px-4 py-2 bg-white text-gray-700 rounded-lg hover:bg-gray-50 transition-colors shadow-sm border border-gray-200"
+          >
+            <Share2 className="w-4 h-4" />
+            <span className="text-sm font-medium">Share</span>
+          </button>
+        </div>
 
         <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8 mb-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
