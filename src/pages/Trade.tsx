@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ArrowDownUp, AlertCircle, Loader, TrendingUp, Wallet } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '../lib/web3';
@@ -17,6 +18,7 @@ interface TradeProps {
 
 export function Trade({ selectedToken, onShowToast }: TradeProps) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { account, signer, provider, connect } = useWeb3();
 
   const [selectedTokenData, setSelectedTokenData] = useState<Token | null>(selectedToken || null);
@@ -217,6 +219,7 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
             setAmountIn('');
             setAmountOut('');
           }}
+          onViewToken={() => navigate(`/token/${selectedTokenData.token_address}`)}
           onShowToast={onShowToast}
         />
       )}

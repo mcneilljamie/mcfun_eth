@@ -15,6 +15,7 @@ interface SwapConfirmationProps {
   txHash: string;
   isETHToToken: boolean;
   onClose: () => void;
+  onViewToken: () => void;
   onShowToast: (toast: ToastMessage) => void;
 }
 
@@ -27,6 +28,7 @@ export function SwapConfirmation({
   txHash,
   isETHToToken,
   onClose,
+  onViewToken,
   onShowToast,
 }: SwapConfirmationProps) {
   const { t } = useTranslation();
@@ -221,12 +223,20 @@ export function SwapConfirmation({
               </div>
             </div>
 
-            <button
-              onClick={onClose}
-              className="w-full bg-gray-900 text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
-            >
-              Make Another Swap
-            </button>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={onViewToken}
+                className="flex-1 bg-gray-900 text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
+              >
+                Go to Token
+              </button>
+              <button
+                onClick={onClose}
+                className="flex-1 bg-gray-100 text-gray-900 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
+              >
+                Make Another Swap
+              </button>
+            </div>
           </div>
         </div>
       </div>
