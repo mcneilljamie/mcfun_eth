@@ -56,10 +56,19 @@
     "why": {
       "title": "Why Choose McFun?",
       "description": "We've built the simplest, safest, and most cost-effective platform for launching tokens on Ethereum. No complex parameters, no hidden fees, no rug pulls. Just pure, fair token launches.",
-      "stats": {
-        "supply": "Fixed Supply",
-        "liquidity": "Min Liquidity",
-        "fee": "Trading Fee"
+      "benefits": {
+        "noPresale": {
+          "title": "No Presale",
+          "description": "Everyone gets the same fair price from day one"
+        },
+        "noRugs": {
+          "title": "No Rug Pulls",
+          "description": "Liquidity is permanently burned and cannot be withdrawn"
+        },
+        "instantTrade": {
+          "title": "Instant Trading",
+          "description": "Trade immediately after launch with built-in liquidity"
+        }
       }
     }
   },

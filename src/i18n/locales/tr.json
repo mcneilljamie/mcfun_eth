@@ -55,10 +55,19 @@
     "why": {
       "title": "Neden McFun?",
       "description": "Ethereum'da token başlatmak için en basit, en güvenli ve en uygun maliyetli platformu oluşturduk. Karmaşık parametreler yok, gizli ücretler yok, rug pull yok. Sadece saf, adil token başlatmaları.",
-      "stats": {
-        "supply": "Sabit Arz",
-        "liquidity": "Min Likidite",
-        "fee": "İşlem Ücreti"
+      "benefits": {
+        "noPresale": {
+          "title": "Ön Satış Yok",
+          "description": "Herkes ilk günden itibaren aynı adil fiyatı alır"
+        },
+        "noRugs": {
+          "title": "Rug Pull Yok",
+          "description": "Likidite kalıcı olarak yakılır ve çekilemez"
+        },
+        "instantTrade": {
+          "title": "Anında İşlem",
+          "description": "Başlatmadan hemen sonra yerleşik likidite ile işlem yapın"
+        }
       }
     }
   },

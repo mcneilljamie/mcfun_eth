@@ -55,10 +55,19 @@
     "why": {
       "title": "Mengapa Memilih McFun?",
       "description": "Kami telah membangun platform paling sederhana, paling aman, dan paling hemat biaya untuk meluncurkan token di Ethereum. Tanpa parameter rumit, tanpa biaya tersembunyi, tanpa rug pull. Hanya peluncuran token yang murni dan adil.",
-      "stats": {
-        "supply": "Pasokan Tetap",
-        "liquidity": "Likuiditas Min",
-        "fee": "Biaya Trading"
+      "benefits": {
+        "noPresale": {
+          "title": "Tanpa Presale",
+          "description": "Semua orang mendapat harga yang sama dan adil sejak hari pertama"
+        },
+        "noRugs": {
+          "title": "Tanpa Rug Pull",
+          "description": "Likuiditas dibakar secara permanen dan tidak dapat ditarik"
+        },
+        "instantTrade": {
+          "title": "Trading Instan",
+          "description": "Trading segera setelah peluncuran dengan likuiditas bawaan"
+        }
       }
     }
   },

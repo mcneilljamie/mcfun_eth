@@ -118,18 +118,18 @@ export function Home({ onNavigate }: HomeProps) {
           <p className="text-base sm:text-lg text-gray-300 mb-5 sm:mb-6 max-w-3xl mx-auto px-2">
             {t('home.why.description')}
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-            <div className="bg-white/10 backdrop-blur-sm px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg">
-              <div className="text-xl sm:text-2xl font-bold">1M</div>
-              <div className="text-xs sm:text-sm text-gray-300">{t('home.why.stats.supply')}</div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 max-w-4xl mx-auto">
+            <div className="bg-white/10 backdrop-blur-sm px-5 sm:px-6 py-4 rounded-lg">
+              <div className="text-xl sm:text-2xl font-bold mb-1">{t('home.why.benefits.noPresale.title')}</div>
+              <div className="text-xs sm:text-sm text-gray-300">{t('home.why.benefits.noPresale.description')}</div>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg">
-              <div className="text-xl sm:text-2xl font-bold">0.1 ETH</div>
-              <div className="text-xs sm:text-sm text-gray-300">{t('home.why.stats.liquidity')}</div>
+            <div className="bg-white/10 backdrop-blur-sm px-5 sm:px-6 py-4 rounded-lg">
+              <div className="text-xl sm:text-2xl font-bold mb-1">{t('home.why.benefits.noRugs.title')}</div>
+              <div className="text-xs sm:text-sm text-gray-300">{t('home.why.benefits.noRugs.description')}</div>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg">
-              <div className="text-xl sm:text-2xl font-bold">0.4%</div>
-              <div className="text-xs sm:text-sm text-gray-300">{t('home.why.stats.fee')}</div>
+            <div className="bg-white/10 backdrop-blur-sm px-5 sm:px-6 py-4 rounded-lg">
+              <div className="text-xl sm:text-2xl font-bold mb-1">{t('home.why.benefits.instantTrade.title')}</div>
+              <div className="text-xs sm:text-sm text-gray-300">{t('home.why.benefits.instantTrade.description')}</div>
             </div>
           </div>
         </div>

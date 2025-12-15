@@ -55,10 +55,19 @@
     "why": {
       "title": "Tại Sao Chọn McFun?",
       "description": "Chúng tôi đã xây dựng nền tảng đơn giản nhất, an toàn nhất và hiệu quả về chi phí nhất để ra mắt token trên Ethereum. Không có tham số phức tạp, không có phí ẩn, không có rug pull. Chỉ ra mắt token thuần túy và công bằng.",
-      "stats": {
-        "supply": "Nguồn Cung Cố Định",
-        "liquidity": "Thanh Khoản Tối Thiểu",
-        "fee": "Phí Giao Dịch"
+      "benefits": {
+        "noPresale": {
+          "title": "Không Bán Trước",
+          "description": "Mọi người nhận cùng giá công bằng ngay từ ngày đầu tiên"
+        },
+        "noRugs": {
+          "title": "Không Rug Pull",
+          "description": "Thanh khoản được đốt vĩnh viễn và không thể rút"
+        },
+        "instantTrade": {
+          "title": "Giao Dịch Ngay Lập Tức",
+          "description": "Giao dịch ngay sau khi ra mắt với thanh khoản tích hợp"
+        }
       }
     }
   },
