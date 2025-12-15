@@ -45,6 +45,8 @@ export async function createToken(signer: any, params: TokenLaunchParams) {
     tokenAddress: event?.args.tokenAddress,
     ammAddress: event?.args.ammAddress,
     txHash: receipt?.hash,
+    blockNumber: receipt?.blockNumber,
+    blockHash: receipt?.blockHash,
   };
 }
 

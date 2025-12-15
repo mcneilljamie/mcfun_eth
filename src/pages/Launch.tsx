@@ -140,6 +140,8 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
           discord_url: discordUrl.trim() || null,
           x_url: xUrl.trim() || null,
           created_at: new Date().toISOString(),
+          block_number: result.blockNumber,
+          block_hash: result.blockHash,
         }, {
           onConflict: 'token_address',
         });
