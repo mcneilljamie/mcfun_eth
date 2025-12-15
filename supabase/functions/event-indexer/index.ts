@@ -135,7 +135,7 @@ Deno.serve(async (req: Request) => {
 
     const lastIndexedBlock = indexerState?.last_indexed_block || 0;
     const lastBlockHash = indexerState?.last_block_hash || null;
-    const confirmationDepth = indexerState?.confirmation_depth || 12;
+    const confirmationDepth = indexerState?.confirmation_depth || 2;
 
     const results = {
       tokensIndexed: 0,
