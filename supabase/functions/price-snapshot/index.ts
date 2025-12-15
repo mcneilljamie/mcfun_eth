@@ -55,6 +55,9 @@ Deno.serve(async (req: Request) => {
     const supabase = createClient(supabaseUrl, supabaseKey);
     const provider = new ethers.JsonRpcProvider(rpcUrl);
 
+    // Get current block number for reorg protection
+    const currentBlockNumber = await provider.getBlockNumber();
+
     // Get ETH price from historical data or API
     const ethPriceUSD = await fetchEthPriceUSD(supabase);
 
@@ -145,6 +148,7 @@ Deno.serve(async (req: Request) => {
               token_reserve: tokenReserveFormatted,
               eth_price_usd: ethPriceUSD,
               is_interpolated: false,
+              block_number: currentBlockNumber,
               created_at: new Date().toISOString(),
             },
             update: {

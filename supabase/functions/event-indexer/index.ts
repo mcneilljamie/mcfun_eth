@@ -82,6 +82,14 @@ async function detectAndHandleReorg(
 async function rollbackToBlock(supabase: any, blockNumber: number): Promise<{ deletedTokens: number; deletedSwaps: number; deletedSnapshots: number }> {
   console.log(`Rolling back data from blocks > ${blockNumber}`);
 
+  // Get token addresses that will be deleted
+  const { data: tokensToDelete } = await supabase
+    .from("tokens")
+    .select("token_address")
+    .gt("block_number", blockNumber);
+
+  const deletedTokenAddresses = tokensToDelete?.map((t: any) => t.token_address) || [];
+
   const { count: deletedTokens } = await supabase
     .from("tokens")
     .delete({ count: "exact" })
@@ -92,15 +100,26 @@ async function rollbackToBlock(supabase: any, blockNumber: number): Promise<{ de
     .delete({ count: "exact" })
     .gt("block_number", blockNumber);
 
-  const { count: deletedSnapshots } = await supabase
+  // Delete snapshots with block_number > rollback point
+  const { count: deletedSnapshots1 } = await supabase
     .from("price_snapshots")
     .delete({ count: "exact" })
     .gt("block_number", blockNumber);
 
+  // Also delete snapshots for deleted tokens (handles NULL block_number case)
+  let deletedSnapshots2 = 0;
+  if (deletedTokenAddresses.length > 0) {
+    const { count: orphanedSnapshots } = await supabase
+      .from("price_snapshots")
+      .delete({ count: "exact" })
+      .in("token_address", deletedTokenAddresses);
+    deletedSnapshots2 = orphanedSnapshots || 0;
+  }
+
   return {
     deletedTokens: deletedTokens || 0,
     deletedSwaps: deletedSwaps || 0,
-    deletedSnapshots: deletedSnapshots || 0,
+    deletedSnapshots: (deletedSnapshots1 || 0) + deletedSnapshots2,
   };
 }
 
