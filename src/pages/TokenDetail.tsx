@@ -24,6 +24,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
   const { provider, chainId } = useWeb3();
   const [token, setToken] = useState<Token | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
   const [liveReserves, setLiveReserves] = useState<{ reserveETH: string; reserveToken: string } | null>(null);
@@ -47,14 +48,16 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
 
     const loadAllData = async () => {
       try {
+        await loadToken();
+        // Load other data after token is loaded
         await Promise.all([
-          loadToken(),
           loadEthPrice(),
           loadSnapshotCount(),
           load24hPriceChange()
         ]);
       } catch (error) {
         console.error('Error loading token data:', error);
+        setError('Failed to load token data');
         setIsLoading(false);
       }
     };
@@ -122,6 +125,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
     if (!tokenAddress) return;
 
     setIsLoading(true);
+    setError(null);
 
     try {
       const { data, error } = await supabase
@@ -130,13 +134,19 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
         .eq('token_address', tokenAddress.toLowerCase())
         .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
 
       if (data) {
         setToken(data);
+      } else {
+        setError('Token not found');
       }
     } catch (err) {
       console.error('Failed to load token:', err);
+      setError('Failed to load token data');
     } finally {
       setIsLoading(false);
     }
@@ -214,6 +224,13 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6 sm:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <button
+            onClick={() => navigate('/tokens')}
+            className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors mb-6"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span>{t('tokenDetail.backToTokens')}</span>
+          </button>
           <div className="text-center py-12">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
             <p className="mt-4 text-gray-600">{t('tokenDetail.loadingToken')}</p>
@@ -223,7 +240,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
     );
   }
 
-  if (!token) {
+  if (error || !token) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6 sm:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -235,7 +252,18 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
             <span>{t('tokenDetail.backToTokens')}</span>
           </button>
           <div className="bg-white rounded-xl shadow-lg p-8 text-center">
-            <p className="text-gray-600">{t('tokenDetail.tokenNotFound')}</p>
+            <p className="text-gray-600 mb-4">{error || t('tokenDetail.tokenNotFound')}</p>
+            {tokenAddress && (
+              <p className="text-sm text-gray-500 font-mono">
+                Address: {tokenAddress}
+              </p>
+            )}
+            <button
+              onClick={() => navigate('/tokens')}
+              className="mt-6 px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+            >
+              Back to Tokens
+            </button>
           </div>
         </div>
       </div>
