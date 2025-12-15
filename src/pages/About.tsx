@@ -100,13 +100,13 @@ export function About() {
         </div>
 
         <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8 border-2 border-green-200">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 text-center mb-6">Platform Statistics</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 text-center mb-6">{t('aboutPage.platformStats')}</h2>
 
           <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
             <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
-                <h3 className="text-sm sm:text-base font-bold text-gray-900">Total Market Cap</h3>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900">{t('aboutPage.totalMarketCap')}</h3>
               </div>
               {isLoading ? (
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
@@ -115,13 +115,13 @@ export function About() {
                   {platformStats ? formatUSD(platformStats.totalMarketCapUsd, true) : '$0'}
                 </div>
               )}
-              <p className="text-xs text-gray-600 mt-1">Combined FDV of all tokens</p>
+              <p className="text-xs text-gray-600 mt-1">{t('aboutPage.combinedFDV')}</p>
             </div>
 
             <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
-                <h3 className="text-sm sm:text-base font-bold text-gray-900">Total Liquidity</h3>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900">{t('aboutPage.totalLiquidity')}</h3>
               </div>
               {isLoading ? (
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
@@ -130,7 +130,7 @@ export function About() {
                   {formatCurrency(totalLiquidity)}
                 </div>
               )}
-              <p className="text-xs text-gray-600 mt-1">Total ETH in liquidity pools</p>
+              <p className="text-xs text-gray-600 mt-1">{t('aboutPage.totalEthInPools')}</p>
             </div>
           </div>
         </div>
@@ -289,18 +289,18 @@ export function About() {
         <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8 border-2 border-purple-200">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
             <Wallet className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600" />
-            Track Your Holdings
+            {t('aboutPage.trackHoldings')}
           </h2>
           <p className="text-sm sm:text-base text-gray-700 leading-relaxed mb-4">
-            The Portfolio page makes it effortless to monitor the value of all your McFun token holdings in one place. Simply connect your wallet to see real-time values of your ETH balance and all tokens you own that are traded on McFun.
+            {t('aboutPage.trackHoldingsDescription')}
           </p>
           <div className="bg-white/80 backdrop-blur rounded-lg p-4 border border-purple-200">
             <div className="flex items-start gap-3">
               <BarChart3 className="w-5 h-5 text-purple-600 flex-shrink-0 mt-1" />
               <div>
-                <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">Real-Time Portfolio Tracking</h3>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('aboutPage.realtimeTracking')}</h3>
                 <p className="text-xs sm:text-sm text-gray-700">
-                  View your total portfolio value, individual token balances, current prices, and the USD value of each position. Everything updates automatically so you always know exactly what your holdings are worth.
+                  {t('aboutPage.realtimeTrackingDescription')}
                 </p>
               </div>
             </div>
@@ -405,40 +405,40 @@ export function About() {
 
         <div className="bg-gray-100 rounded-xl shadow-lg p-5 sm:p-8 border border-gray-300">
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 text-center">
-            Risk Disclaimer & Terms of Use
+            {t('aboutPage.riskDisclaimer')}
           </h2>
           <div className="space-y-3 text-xs sm:text-sm text-gray-800 leading-relaxed">
             <p className="font-semibold">
-              IMPORTANT: Trading cryptocurrencies and tokens carries substantial risk. By using this platform, you acknowledge and accept the following:
+              {t('aboutPage.disclaimerImportant')}
             </p>
             <ul className="list-disc pl-5 space-y-2">
               <li>
-                <strong>High Risk of Loss:</strong> Cryptocurrency trading is extremely volatile and speculative. You may lose some or all of your investment. Only invest what you can afford to lose completely.
+                <strong>{t('aboutPage.riskOfLoss')}</strong> {t('aboutPage.riskOfLossDescription')}
               </li>
               <li>
-                <strong>No Guarantees:</strong> Past performance does not guarantee future results. Token prices can fluctuate dramatically and unpredictably.
+                <strong>{t('aboutPage.noGuarantees')}</strong> {t('aboutPage.noGuaranteesDescription')}
               </li>
               <li>
-                <strong>No Financial Advice:</strong> Nothing on this platform constitutes financial, investment, legal, or tax advice. Always conduct your own research and consult with qualified professionals before making investment decisions.
+                <strong>{t('aboutPage.noFinancialAdvice')}</strong> {t('aboutPage.noFinancialAdviceDescription')}
               </li>
               <li>
-                <strong>Smart Contract Risks:</strong> While our contracts are designed to be secure and immutable, smart contracts may contain bugs or vulnerabilities. Use at your own risk.
+                <strong>{t('aboutPage.smartContractRisks')}</strong> {t('aboutPage.smartContractRisksDescription')}
               </li>
               <li>
-                <strong>No Responsibility for Losses:</strong> The platform operator, developers, and contributors accept no responsibility or liability for any losses, damages, or adverse outcomes resulting from your use of this platform, including but not limited to trading losses, smart contract failures, network issues, or any other technical problems.
+                <strong>{t('aboutPage.noResponsibility')}</strong> {t('aboutPage.noResponsibilityDescription')}
               </li>
               <li>
-                <strong>Regulatory Uncertainty:</strong> Cryptocurrency regulations vary by jurisdiction and may change. You are responsible for ensuring your use of this platform complies with all applicable laws in your jurisdiction.
+                <strong>{t('aboutPage.regulatoryUncertainty')}</strong> {t('aboutPage.regulatoryUncertaintyDescription')}
               </li>
               <li>
-                <strong>No Recourse:</strong> Blockchain transactions are irreversible. Once a transaction is confirmed, it cannot be undone. Double-check all transaction details before confirming.
+                <strong>{t('aboutPage.noRecourse')}</strong> {t('aboutPage.noRecourseDescription')}
               </li>
               <li>
-                <strong>Platform Availability:</strong> The platform is provided "as is" without warranties of any kind. We do not guarantee uninterrupted access or error-free operation.
+                <strong>{t('aboutPage.platformAvailability')}</strong> {t('aboutPage.platformAvailabilityDescription')}
               </li>
             </ul>
             <p className="font-semibold pt-2">
-              By using this platform, you acknowledge that you have read, understood, and agreed to these terms. You accept full responsibility for your trading decisions and their outcomes.
+              {t('aboutPage.acknowledgement')}
             </p>
           </div>
         </div>

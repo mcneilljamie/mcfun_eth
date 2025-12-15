@@ -5,6 +5,7 @@ import { ethers } from 'ethers';
 import { getEthPriceUSD } from '../lib/ethPrice';
 import { Loader2, Wallet } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 interface TokenBalance {
   tokenAddress: string;
@@ -19,6 +20,7 @@ interface TokenBalance {
 }
 
 export default function Portfolio() {
+  const { t } = useTranslation();
   const { account, provider } = useWeb3();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -164,9 +166,9 @@ export default function Portfolio() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center">
           <Wallet className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Connect Your Wallet</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('portfolio.connectWallet')}</h2>
           <p className="text-gray-600">
-            Connect your wallet to view your portfolio
+            {t('portfolio.connectWalletDescription')}
           </p>
         </div>
       </div>
@@ -178,7 +180,7 @@ export default function Portfolio() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center justify-center">
           <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-          <span className="ml-3 text-gray-600">Loading portfolio...</span>
+          <span className="ml-3 text-gray-600">{t('portfolio.loading')}</span>
         </div>
       </div>
     );
@@ -188,21 +190,21 @@ export default function Portfolio() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Portfolio Summary */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-8 mb-8 text-white">
-        <h1 className="text-3xl font-bold mb-2">Portfolio Value</h1>
-        <div className="text-5xl font-bold mb-4">{formatCurrency(totalValueUsd)}</div>
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <div>
-            <div className="text-blue-100 mb-1">ETH Balance</div>
-            <div className="font-semibold">
+        <h1 className="text-3xl font-bold mb-2">{t('portfolio.portfolioValue')}</h1>
+        <div className="text-5xl font-bold mb-6">{formatCurrency(totalValueUsd)}</div>
+        <div className="grid grid-cols-2 gap-6">
+          <div className="bg-white/10 backdrop-blur rounded-lg p-4">
+            <div className="text-blue-100 text-sm mb-2">{t('portfolio.ethBalance')}</div>
+            <div className="text-2xl font-bold mb-1">
               {parseFloat(ethBalance).toFixed(4)} ETH
-              <span className="text-blue-100 ml-2">
-                ({formatCurrency(parseFloat(ethBalance) * ethPriceUsd)})
-              </span>
+            </div>
+            <div className="text-blue-100 text-sm">
+              {formatCurrency(parseFloat(ethBalance) * ethPriceUsd)}
             </div>
           </div>
-          <div>
-            <div className="text-blue-100 mb-1">Tokens Value</div>
-            <div className="font-semibold">
+          <div className="bg-white/10 backdrop-blur rounded-lg p-4">
+            <div className="text-blue-100 text-sm mb-2">{t('portfolio.tokensValue')}</div>
+            <div className="text-2xl font-bold">
               {formatCurrency(tokens.reduce((sum, t) => sum + t.valueUsd, 0))}
             </div>
           </div>
@@ -212,58 +214,51 @@ export default function Portfolio() {
       {/* Info Message */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
         <p className="text-sm text-blue-800">
-          This page tracks your ETH balance and tokens that are traded on McFun.
+          {t('portfolio.infoMessage')}
         </p>
       </div>
 
       {/* Token Holdings */}
       {tokens.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-gray-600 mb-4">No token holdings found</p>
+        <div className="bg-white rounded-xl shadow-lg p-12 text-center">
+          <p className="text-gray-600 text-lg mb-6">{t('portfolio.noHoldings')}</p>
           <Link
             to="/tokens"
-            className="inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+            className="inline-block px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-md"
           >
-            Browse Tokens
+            {t('portfolio.browseTokens')}
           </Link>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Token
-                  </th>
-                  <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Value
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {tokens.map((token) => (
-                  <tr
-                    key={token.tokenAddress}
-                    onClick={() => navigate(`/token/${token.tokenAddress}`)}
-                    className="hover:bg-gray-50 transition-colors cursor-pointer"
-                  >
-                    <td className="px-6 py-4">
-                      <div>
-                        <div className="font-semibold text-gray-900">{token.symbol}</div>
-                        <div className="text-sm text-gray-500">{token.name}</div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="font-semibold text-gray-900">
-                        {formatCurrency(token.valueUsd)}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="space-y-3">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">{t('portfolio.yourHoldings')}</h2>
+          {tokens.map((token) => (
+            <div
+              key={token.tokenAddress}
+              onClick={() => navigate(`/token/${token.tokenAddress}`)}
+              className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg hover:border-blue-300 transition-all cursor-pointer"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <h3 className="text-xl font-bold text-gray-900">{token.symbol}</h3>
+                    <span className="text-sm text-gray-500">{token.name}</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    {t('portfolio.balance')}: {formatNumber(token.balance)} {token.symbol}
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-gray-900 mb-1">
+                    {formatCurrency(token.valueUsd)}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    {formatPrice(token.priceUsd)} {t('portfolio.perToken')}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>
