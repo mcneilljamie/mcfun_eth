@@ -158,6 +158,41 @@ export function LaunchCelebration({
           </div>
 
           <div className="space-y-6">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border-2 border-blue-300">
+              <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
+                <Sparkles className="w-5 h-5 mr-2 text-blue-600" />
+                Share Your Token
+              </h3>
+
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Shareable Link
+                </label>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="text"
+                    value={`${window.location.origin}/token/${tokenAddress}`}
+                    readOnly
+                    className="flex-1 px-3 py-2 bg-white border border-blue-300 rounded-lg text-sm font-mono"
+                  />
+                  <button
+                    onClick={() => copyToClipboard(`${window.location.origin}/token/${tokenAddress}`, 'link')}
+                    className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    title="Copy shareable link"
+                  >
+                    {copiedItem === 'link' ? (
+                      <CheckCircle className="w-5 h-5 text-white" />
+                    ) : (
+                      <Copy className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
+                <p className="text-xs text-gray-600 mt-1">
+                  Share this link with anyone to show them your token
+                </p>
+              </div>
+            </div>
+
             <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6">
               <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
                 <ExternalLink className="w-5 h-5 mr-2" />
