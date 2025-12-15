@@ -58,12 +58,12 @@
       "description": "We've built the simplest, safest, and most cost-effective platform for launching tokens on Ethereum. No complex parameters, no hidden fees, no rug pulls. Just pure, fair token launches.",
       "benefits": {
         "simple": {
-          "title": "Simple to Use",
+          "title": "Simple",
           "description": "Launch your token in seconds with no complex parameters"
         },
         "safe": {
           "title": "100% Safe",
-          "description": "Liquidity is permanently burned and cannot be withdrawn"
+          "description": "Rugs are impossible because liquidity is permanently burned"
         },
         "lowCost": {
           "title": "Low Cost",

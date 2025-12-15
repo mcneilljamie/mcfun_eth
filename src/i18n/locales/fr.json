@@ -57,12 +57,12 @@
       "description": "Nous avons construit la plateforme la plus simple, la plus sûre et la plus rentable pour lancer des tokens sur Ethereum. Pas de paramètres complexes, pas de frais cachés, pas d'arnaques. Juste des lancements de tokens purs et équitables.",
       "benefits": {
         "simple": {
-          "title": "Simple à Utiliser",
+          "title": "Simple",
           "description": "Lancez votre token en quelques secondes sans paramètres complexes"
         },
         "safe": {
           "title": "100% Sûr",
-          "description": "La liquidité est brûlée en permanence et ne peut être retirée"
+          "description": "Les arnaques sont impossibles car la liquidité est brûlée en permanence"
         },
         "lowCost": {
           "title": "Faible Coût",

@@ -62,7 +62,7 @@
         },
         "safe": {
           "title": "An Toàn 100%",
-          "description": "Thanh khoản được đốt vĩnh viễn và không thể rút"
+          "description": "Rug pull là không thể vì thanh khoản được đốt vĩnh viễn"
         },
         "lowCost": {
           "title": "Chi Phí Thấp",

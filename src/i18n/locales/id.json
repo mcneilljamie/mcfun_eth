@@ -57,12 +57,12 @@
       "description": "Kami telah membangun platform paling sederhana, paling aman, dan paling hemat biaya untuk meluncurkan token di Ethereum. Tanpa parameter rumit, tanpa biaya tersembunyi, tanpa rug pull. Hanya peluncuran token yang murni dan adil.",
       "benefits": {
         "simple": {
-          "title": "Mudah Digunakan",
+          "title": "Sederhana",
           "description": "Luncurkan token Anda dalam hitungan detik tanpa parameter rumit"
         },
         "safe": {
           "title": "100% Aman",
-          "description": "Likuiditas dibakar secara permanen dan tidak dapat ditarik"
+          "description": "Rug pull tidak mungkin karena likuiditas dibakar secara permanen"
         },
         "lowCost": {
           "title": "Biaya Rendah",

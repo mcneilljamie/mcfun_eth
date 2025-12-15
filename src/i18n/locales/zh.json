@@ -57,12 +57,12 @@
       "description": "我们打造了最简单、最安全、最具成本效益的以太坊代币发行平台。无复杂参数、无隐藏费用、无跑路。只有纯粹、公平的代币发行。",
       "benefits": {
         "simple": {
-          "title": "简单易用",
+          "title": "简单",
           "description": "几秒钟内发行代币，无需复杂参数"
         },
         "safe": {
           "title": "100%安全",
-          "description": "流动性永久销毁，无法提取"
+          "description": "因流动性永久销毁，跑路不可能发生"
         },
         "lowCost": {
           "title": "低成本",

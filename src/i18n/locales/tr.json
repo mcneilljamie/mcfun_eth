@@ -57,12 +57,12 @@
       "description": "Ethereum'da token başlatmak için en basit, en güvenli ve en uygun maliyetli platformu oluşturduk. Karmaşık parametreler yok, gizli ücretler yok, rug pull yok. Sadece saf, adil token başlatmaları.",
       "benefits": {
         "simple": {
-          "title": "Kullanımı Kolay",
+          "title": "Basit",
           "description": "Karmaşık parametreler olmadan saniyeler içinde token başlatın"
         },
         "safe": {
           "title": "%100 Güvenli",
-          "description": "Likidite kalıcı olarak yakılır ve çekilemez"
+          "description": "Likidite kalıcı olarak yakıldığı için rug pull imkansız"
         },
         "lowCost": {
           "title": "Düşük Maliyet",
