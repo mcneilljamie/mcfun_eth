@@ -134,11 +134,24 @@ export function Web3Provider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (window.ethereum) {
-      const handleAccountsChanged = (accounts: string[]) => {
+      const handleAccountsChanged = async (accounts: string[]) => {
         if (accounts.length === 0) {
           disconnect();
         } else {
-          setAccount(accounts[0]);
+          try {
+            const currentProvider = window.ethereum;
+            const newProvider = new BrowserProvider(currentProvider);
+            const newSigner = await newProvider.getSigner();
+            const network = await newProvider.getNetwork();
+
+            setProvider(newProvider);
+            setSigner(newSigner);
+            setAccount(accounts[0]);
+            setChainId(Number(network.chainId));
+          } catch (err) {
+            console.error('Failed to update account:', err);
+            disconnect();
+          }
         }
       };
 
