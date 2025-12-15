@@ -287,7 +287,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
             className="flex items-center space-x-2 px-4 py-2 bg-white text-gray-700 rounded-lg hover:bg-gray-50 transition-colors shadow-sm border border-gray-200"
           >
             <Share2 className="w-4 h-4" />
-            <span className="text-sm font-medium">Share</span>
+            <span className="text-sm font-medium">{t('tokenDetail.share')}</span>
           </button>
         </div>
 
