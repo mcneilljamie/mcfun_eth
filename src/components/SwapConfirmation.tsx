@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Copy, CheckCircle, ExternalLink, CheckCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '../lib/web3';
@@ -34,6 +34,25 @@ export function SwapConfirmation({
   const { t } = useTranslation();
   const { chainId } = useWeb3();
   const [copiedItem, setCopiedItem] = useState<string | null>(null);
+  const [fireworks, setFireworks] = useState<Array<{ id: number; x: number; y: number }>>([]);
+
+  useEffect(() => {
+    const fireworkInterval = setInterval(() => {
+      const newFirework = {
+        id: Date.now() + Math.random(),
+        x: Math.random() * 100,
+        y: Math.random() * 60 + 20,
+      };
+      setFireworks((prev) => [...prev, newFirework]);
+      setTimeout(() => {
+        setFireworks((prev) => prev.filter((fw) => fw.id !== newFirework.id));
+      }, 2000);
+    }, 300);
+
+    setTimeout(() => clearInterval(fireworkInterval), 4000);
+
+    return () => clearInterval(fireworkInterval);
+  }, []);
 
   const copyToClipboard = async (text: string, item: string) => {
     try {
@@ -56,6 +75,32 @@ export function SwapConfirmation({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+      {fireworks.map((fw) => (
+        <div
+          key={fw.id}
+          className="absolute pointer-events-none"
+          style={{
+            left: `${fw.x}%`,
+            top: `${fw.y}%`,
+          }}
+        >
+          <div className="relative">
+            {[...Array(12)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute w-3 h-3 rounded-full animate-firework"
+                style={{
+                  background: `hsl(${Math.random() * 360}, 100%, 60%)`,
+                  transform: `rotate(${i * 30}deg) translateY(0)`,
+                  animation: `firework 1.2s ease-out forwards`,
+                  animationDelay: `${Math.random() * 0.15}s`,
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      ))}
+
       <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative animate-scale-in">
         <style>{`
           @keyframes scale-in {
@@ -71,6 +116,28 @@ export function SwapConfirmation({
           .animate-scale-in {
             animation: scale-in 0.3s ease-out;
           }
+          @keyframes firework {
+            0% {
+              transform: rotate(var(--rotation, 0deg)) translateY(0);
+              opacity: 1;
+            }
+            100% {
+              transform: rotate(var(--rotation, 0deg)) translateY(-120px);
+              opacity: 0;
+            }
+          }
+          .animate-firework:nth-child(1) { --rotation: 0deg; }
+          .animate-firework:nth-child(2) { --rotation: 30deg; }
+          .animate-firework:nth-child(3) { --rotation: 60deg; }
+          .animate-firework:nth-child(4) { --rotation: 90deg; }
+          .animate-firework:nth-child(5) { --rotation: 120deg; }
+          .animate-firework:nth-child(6) { --rotation: 150deg; }
+          .animate-firework:nth-child(7) { --rotation: 180deg; }
+          .animate-firework:nth-child(8) { --rotation: 210deg; }
+          .animate-firework:nth-child(9) { --rotation: 240deg; }
+          .animate-firework:nth-child(10) { --rotation: 270deg; }
+          .animate-firework:nth-child(11) { --rotation: 300deg; }
+          .animate-firework:nth-child(12) { --rotation: 330deg; }
         `}</style>
 
         <button
