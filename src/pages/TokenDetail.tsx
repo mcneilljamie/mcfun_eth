@@ -387,21 +387,11 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
             </button>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="text-sm text-gray-600 mb-1">{t('tokenDetail.price')}</div>
               <div className="text-xl sm:text-2xl font-bold text-gray-900">
                 {formatUSD(calculateTokenPriceUSD())}
-              </div>
-            </div>
-
-            <div className="bg-gray-50 rounded-lg p-4">
-              <div className="text-sm text-gray-600 mb-1">{t('tokenDetail.change24h')}</div>
-              <div className={`text-xl sm:text-2xl font-bold ${
-                priceChange24h == null ? 'text-gray-900' :
-                priceChange24h >= 0 ? 'text-green-600' : 'text-red-600'
-              }`}>
-                {priceChange24h == null ? 'N/A' : `${priceChange24h >= 0 ? '+' : ''}${priceChange24h.toFixed(2)}%`}
               </div>
             </div>
 
@@ -416,6 +406,9 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
               <div className="text-sm text-gray-600 mb-1">{t('tokenDetail.liquidity')}</div>
               <div className="text-xl sm:text-2xl font-bold text-gray-900">
                 {formatUSD(ethToUSD(liveReserves?.reserveETH || token.current_eth_reserve || token.initial_liquidity_eth, ethPriceUSD), true)}
+              </div>
+              <div className="text-sm text-gray-500 mt-1">
+                {formatCurrency(liveReserves?.reserveETH || token.current_eth_reserve || token.initial_liquidity_eth)}
               </div>
             </div>
 
@@ -514,7 +507,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                   {parseFloat(liveReserves?.reserveToken || token.current_token_reserve?.toString() || '0').toLocaleString()} {token.symbol}
                 </span>
               </div>
-              <div className="flex justify-between items-center py-2 border-b border-gray-100">
+              <div className="flex justify-between items-center py-2">
                 <span className="text-gray-600">{t('tokenDetail.ammContract')}</span>
                 <a
                   href={`${getExplorerUrl(chainId || 11155111)}/address/${token.amm_address}`}
@@ -523,18 +516,6 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                   className="flex items-center space-x-2 text-gray-900 hover:text-gray-700 transition-colors"
                 >
                   <span className="font-mono text-sm">{formatAddress(token.amm_address)}</span>
-                  <ExternalLink className="w-4 h-4" />
-                </a>
-              </div>
-              <div className="flex justify-between items-center py-2">
-                <span className="text-gray-600">{t('tokenDetail.recentTrades')}</span>
-                <a
-                  href={`${getExplorerUrl(chainId || 11155111)}/address/${token.amm_address}#events`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center space-x-2 text-blue-600 hover:text-blue-700 transition-colors font-medium"
-                >
-                  <span className="text-sm">{t('tokenDetail.viewOnExplorer')}</span>
                   <ExternalLink className="w-4 h-4" />
                 </a>
               </div>
