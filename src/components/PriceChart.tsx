@@ -218,7 +218,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
             <div className="text-center">
               <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'} mb-2`}>No price data available yet</p>
               <p className={`text-sm ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
-                Price history will appear after the first trade
+                Chart appears after the first trade (1-2 minutes for snapshots)
               </p>
             </div>
           </div>
