@@ -41,4 +41,4 @@ export const RECOMMENDED_LIQUIDITY_PERCENT = 75;
 export const TOTAL_SUPPLY = 1_000_000;
 export const FEE_PERCENT = 0.4;
 export const MAX_NAME_LENGTH = 20;
-export const MAX_SYMBOL_LENGTH = 5;
+export const MAX_SYMBOL_LENGTH = 7;
