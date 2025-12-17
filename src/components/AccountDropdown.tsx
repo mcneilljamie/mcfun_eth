@@ -4,6 +4,7 @@ import { formatAddress } from '../lib/utils';
 import { useWeb3 } from '../lib/web3';
 import { useTranslation } from 'react-i18next';
 import { getNetworkName, getExplorerUrl, isChainSupported } from '../contracts/addresses';
+import { ethers } from 'ethers';
 
 interface AccountDropdownProps {
   account: string;
@@ -36,7 +37,8 @@ export function AccountDropdown({ account, chainId, onDisconnect, onShowToast }:
       if (provider && account) {
         try {
           const bal = await provider.getBalance(account);
-          setBalance((Number(bal) / 1e18).toFixed(4));
+          const formatted = ethers.formatEther(bal);
+          setBalance(parseFloat(formatted).toFixed(4));
         } catch (error) {
           console.error('Failed to fetch balance:', error);
         }
