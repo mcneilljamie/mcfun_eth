@@ -217,10 +217,10 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
             </div>
 
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
               <div className="flex items-start space-x-3">
-                <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
-                <p className="text-sm text-red-800">{error}</p>
+                <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-blue-800">{error}</p>
               </div>
             </div>
           )}
@@ -342,7 +342,7 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                   {t('launch.form.initialLiquidity')}
                 </label>
                 {account && (
-                  <div className={`flex items-center space-x-1 text-sm ${hasInsufficientBalance ? 'text-red-600' : 'text-gray-600'}`}>
+                  <div className={`flex items-center space-x-1 text-sm ${hasInsufficientBalance ? 'text-blue-600' : 'text-gray-600'}`}>
                     <Wallet className="w-4 h-4" />
                     <span>
                       {isLoadingBalance ? (
@@ -368,17 +368,17 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                 placeholder={MIN_LIQUIDITY_ETH}
                 className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent ${
                   hasInsufficientBalance
-                    ? 'border-red-300 bg-red-50'
+                    ? 'border-blue-300 bg-blue-50'
                     : 'border-gray-300'
                 }`}
                 disabled={isLaunching}
               />
               {hasInsufficientBalance && (
-                <div className="mt-2 flex items-start space-x-2 text-sm text-red-600">
+                <div className="mt-2 flex items-start space-x-2 text-sm text-blue-600">
                   <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="font-medium">{t('launch.form.insufficientBalance')}</p>
-                    <p className="text-xs text-red-500 mt-1">
+                    <p className="text-xs text-blue-500 mt-1">
                       {t('launch.form.needMore', { amount: balanceShortfall })}
                     </p>
                   </div>
