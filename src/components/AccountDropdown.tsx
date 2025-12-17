@@ -34,14 +34,28 @@ export function AccountDropdown({ account, chainId, onDisconnect, onShowToast }:
 
   useEffect(() => {
     const fetchBalance = async () => {
+      console.log('=== Balance Fetch Debug ===');
+      console.log('Provider exists:', !!provider);
+      console.log('Account:', account);
+
       if (provider && account) {
         try {
+          console.log('Calling getBalance...');
           const bal = await provider.getBalance(account);
+          console.log('Raw balance (wei):', bal.toString());
           const formatted = ethers.formatEther(bal);
-          setBalance(parseFloat(formatted).toFixed(4));
+          console.log('Formatted balance (ETH):', formatted);
+          const final = parseFloat(formatted).toFixed(4);
+          console.log('Final balance:', final);
+          setBalance(final);
         } catch (error) {
           console.error('Failed to fetch balance:', error);
+          setBalance('Error');
         }
+      } else {
+        console.log('Skipping fetch - missing provider or account');
+        if (!provider) console.log('Provider is null');
+        if (!account) console.log('Account is null');
       }
     };
 
