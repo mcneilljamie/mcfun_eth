@@ -1,122 +1,9 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "/tmp/cc-agent/61154910/project/src/contracts/JammAMM.sol": {
-      "lastModificationDate": 1765976515580,
-      "contentHash": "9be35c185fd57bb78f9817f16d4154b8",
-      "sourceName": "src/contracts/JammAMM.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "IERC20",
-        "JammAMM"
-      ]
-    },
-    "/tmp/cc-agent/61154910/project/src/contracts/JammFactory.sol": {
-      "lastModificationDate": 1765976523404,
-      "contentHash": "1701bf85ffb563ae9e37cf9de049c59d",
-      "sourceName": "src/contracts/JammFactory.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "IERC20",
-        "IJammAMM",
-        "JammAMM",
-        "JammFactory",
-        "JammToken"
-      ]
-    },
-    "/tmp/cc-agent/61154910/project/src/contracts/JammToken.sol": {
-      "lastModificationDate": 1765969567819,
-      "contentHash": "470324b2a6584ce17cb84b22a8dd1edf",
-      "sourceName": "src/contracts/JammToken.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "JammToken"
-      ]
-    },
     "/tmp/cc-agent/61154910/project/src/contracts/McFunAMM.sol": {
-      "lastModificationDate": 1765976472492,
-      "contentHash": "e2b06e37cbc76ca5e61675d0ae11def2",
+      "lastModificationDate": 1765976954221,
+      "contentHash": "e544cda425b50b952aaf0da3dbe8e59a",
       "sourceName": "src/contracts/McFunAMM.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -152,8 +39,8 @@
       ]
     },
     "/tmp/cc-agent/61154910/project/src/contracts/McFunFactory.sol": {
-      "lastModificationDate": 1765976479624,
-      "contentHash": "95a983437e502f2e71764b8c8e44dbd9",
+      "lastModificationDate": 1765976941033,
+      "contentHash": "d3ce14b69a60a10785e238f605ea96b5",
       "sourceName": "src/contracts/McFunFactory.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -188,42 +75,6 @@
       "artifacts": [
         "IMcFunAMM",
         "McFunFactory",
-        "McFunToken"
-      ]
-    },
-    "/tmp/cc-agent/61154910/project/src/contracts/McFunToken.sol": {
-      "lastModificationDate": 1765261594562,
-      "contentHash": "e8cab158256867fe0b9b57e2ebf2fe0b",
-      "sourceName": "src/contracts/McFunToken.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
         "McFunToken"
       ]
     }

@@ -14,6 +14,13 @@ interface IERC20 {
  * @dev CRITICAL: First MINIMUM_LIQUIDITY (1000 wei) is PERMANENTLY BURNED to address(0)
  *      This ensures every token launched through this platform has liquidity that can NEVER be removed
  *      SECURITY: addLiquidity() can ONLY be called ONCE by the factory during token launch
+ *
+ * @dev NOTE: Reserves are tracked in state variables (reserveETH, reserveToken) rather than
+ *      reading contract balances. If ETH or tokens are sent directly to this contract outside
+ *      of swap/liquidity functions, the reserves will desync from actual balances. This is a
+ *      known behavior in simple AMMs and does not affect security, but may affect pricing if
+ *      significant amounts are transferred directly. Users should ONLY interact through the
+ *      provided swap and liquidity functions.
  */
 contract McFunAMM {
     error ZeroAddress();

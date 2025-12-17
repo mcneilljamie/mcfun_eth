@@ -100,8 +100,8 @@ contract McFunFactory {
         }));
 
         // INTERACTIONS: External calls after state updates
-        IERC20(tokenAddress).transfer(msg.sender, creatorTokens);
-        IERC20(tokenAddress).approve(ammAddress, liquidityTokens);
+        require(IERC20(tokenAddress).transfer(msg.sender, creatorTokens), "Creator transfer failed");
+        require(IERC20(tokenAddress).approve(ammAddress, liquidityTokens), "Approval failed");
 
         // Add liquidity - LP tokens are minted directly to DEAD_ADDRESS inside AMM
         IMcFunAMM(ammAddress).addLiquidity{value: msg.value}(liquidityTokens);
