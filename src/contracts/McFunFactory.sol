@@ -19,8 +19,8 @@ contract McFunFactory {
     uint256 public constant MIN_LIQUIDITY_ETH = 0.1 ether;
     uint256 public constant MIN_LIQUIDITY_PERCENT = 50;
     uint256 public constant TOTAL_SUPPLY = 1_000_000 * 10**18;
-    uint256 public constant MAX_NAME_LENGTH = 32;
-    uint256 public constant MAX_SYMBOL_LENGTH = 10;
+    uint256 public constant MAX_NAME_LENGTH = 20;
+    uint256 public constant MAX_SYMBOL_LENGTH = 5;
 
     struct TokenInfo {
         address tokenAddress;
