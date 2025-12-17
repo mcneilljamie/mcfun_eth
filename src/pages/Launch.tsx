@@ -249,8 +249,8 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                 disabled={isLaunching}
               />
-              <p className={`text-xs mt-1 ${name.length > MAX_NAME_LENGTH * 0.8 ? 'text-orange-600' : 'text-gray-500'}`}>
-                {name.length}/{MAX_NAME_LENGTH} characters
+              <p className="text-xs mt-1 text-gray-500">
+                {name.length}/{MAX_NAME_LENGTH} {t(`common.${name.length === 1 ? 'character' : 'characters'}`)}
               </p>
             </div>
 
@@ -267,8 +267,8 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent uppercase"
                 disabled={isLaunching}
               />
-              <p className={`text-xs mt-1 ${symbol.length > MAX_SYMBOL_LENGTH * 0.8 ? 'text-orange-600' : 'text-gray-500'}`}>
-                {symbol.length}/{MAX_SYMBOL_LENGTH} characters
+              <p className="text-xs mt-1 text-gray-500">
+                {symbol.length}/{MAX_SYMBOL_LENGTH} {t(`common.${symbol.length === 1 ? 'character' : 'characters'}`)}
               </p>
             </div>
 

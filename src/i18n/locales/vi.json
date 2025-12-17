@@ -281,7 +281,9 @@
   "common": {
     "tokens": "token",
     "eth": "ETH",
-    "copiedToClipboard": "Đã sao chép vào clipboard!"
+    "copiedToClipboard": "Đã sao chép vào clipboard!",
+    "character": "ký tự",
+    "characters": "ký tự"
   },
   "tokenDetail": {
     "loadingToken": "Đang tải token...",

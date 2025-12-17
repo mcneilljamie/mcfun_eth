@@ -281,7 +281,9 @@
   "common": {
     "tokens": "token",
     "eth": "ETH",
-    "copiedToClipboard": "Disalin ke clipboard!"
+    "copiedToClipboard": "Disalin ke clipboard!",
+    "character": "karakter",
+    "characters": "karakter"
   },
   "tokenDetail": {
     "loadingToken": "Memuat token...",

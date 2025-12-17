@@ -281,7 +281,9 @@
   "common": {
     "tokens": "token",
     "eth": "ETH",
-    "copiedToClipboard": "Copiato negli appunti!"
+    "copiedToClipboard": "Copiato negli appunti!",
+    "character": "carattere",
+    "characters": "caratteri"
   },
   "tokenDetail": {
     "loadingToken": "Caricamento token...",

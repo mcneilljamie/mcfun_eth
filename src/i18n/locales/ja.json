@@ -281,7 +281,9 @@
   "common": {
     "tokens": "トークン",
     "eth": "ETH",
-    "copiedToClipboard": "クリップボードにコピーしました！"
+    "copiedToClipboard": "クリップボードにコピーしました!",
+    "character": "文字",
+    "characters": "文字"
   },
   "tokenDetail": {
     "loadingToken": "トークンを読み込んでいます...",

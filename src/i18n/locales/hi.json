@@ -281,7 +281,9 @@
   "common": {
     "tokens": "टोकन",
     "eth": "ETH",
-    "copiedToClipboard": "क्लिपबोर्ड पर कॉपी किया गया!"
+    "copiedToClipboard": "क्लिपबोर्ड पर कॉपी किया गया!",
+    "character": "अक्षर",
+    "characters": "अक्षर"
   },
   "tokenDetail": {
     "loadingToken": "टोकन लोड हो रहा है...",

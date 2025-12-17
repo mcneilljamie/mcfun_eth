@@ -281,7 +281,9 @@
   "common": {
     "tokens": "ტოკენები",
     "eth": "ETH",
-    "copiedToClipboard": "დაკოპირებულია!"
+    "copiedToClipboard": "დაკოპირებულია!",
+    "character": "სიმბოლო",
+    "characters": "სიმბოლო"
   },
   "tokenDetail": {
     "loadingToken": "ტოკენის ჩატვირთვა...",

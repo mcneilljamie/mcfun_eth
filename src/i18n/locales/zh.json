@@ -281,7 +281,9 @@
   "common": {
     "tokens": "代币",
     "eth": "ETH",
-    "copiedToClipboard": "已复制到剪贴板！"
+    "copiedToClipboard": "已复制到剪贴板！",
+    "character": "字符",
+    "characters": "字符"
   },
   "tokenDetail": {
     "loadingToken": "加载代币中...",

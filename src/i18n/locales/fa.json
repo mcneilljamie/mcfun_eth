@@ -281,7 +281,9 @@
   "common": {
     "tokens": "توکن‌ها",
     "eth": "ETH",
-    "copiedToClipboard": "در کلیپ‌بورد کپی شد!"
+    "copiedToClipboard": "در کلیپ‌بورد کپی شد!",
+    "character": "کاراکتر",
+    "characters": "کاراکتر"
   },
   "tokenDetail": {
     "loadingToken": "در حال بارگذاری توکن...",

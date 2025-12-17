@@ -281,7 +281,9 @@
   "common": {
     "tokens": "토큰",
     "eth": "ETH",
-    "copiedToClipboard": "클립보드에 복사되었습니다!"
+    "copiedToClipboard": "클립보드에 복사되었습니다!",
+    "character": "자",
+    "characters": "자"
   },
   "tokenDetail": {
     "loadingToken": "토큰 로딩 중...",

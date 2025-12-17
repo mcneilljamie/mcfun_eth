@@ -281,7 +281,9 @@
   "common": {
     "tokens": "token",
     "eth": "ETH",
-    "copiedToClipboard": "Panoya kopyalandı!"
+    "copiedToClipboard": "Panoya kopyalandı!",
+    "character": "karakter",
+    "characters": "karakter"
   },
   "tokenDetail": {
     "loadingToken": "Token yükleniyor...",

@@ -281,7 +281,9 @@
   "common": {
     "tokens": "tokens",
     "eth": "ETH",
-    "copiedToClipboard": "Copié dans le presse-papiers !"
+    "copiedToClipboard": "Copié dans le presse-papiers !",
+    "character": "caractère",
+    "characters": "caractères"
   },
   "tokenDetail": {
     "loadingToken": "Chargement du token...",
