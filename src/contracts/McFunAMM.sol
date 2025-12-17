@@ -29,6 +29,7 @@ contract McFunAMM {
     address public immutable factory;
     address public token;
     address public constant feeRecipient = 0x227D5F29bAb4Cec30f511169886b86fAeF61C6bc;
+    address public constant DEAD_ADDRESS = 0x000000000000000000000000000000000000dEaD;
     uint256 public constant FEE_PERCENT = 4;
     uint256 public constant FEE_DENOMINATOR = 1000;
     uint256 public constant MINIMUM_LIQUIDITY = 1000;
@@ -81,10 +82,11 @@ contract McFunAMM {
 
         if (!IERC20(token).transferFrom(msg.sender, address(this), tokenAmount)) revert TransferFailed();
 
-        liquidity[msg.sender] += liquidityMinted;
+        // Mint remaining LP tokens directly to DEAD_ADDRESS for permanent lock
+        liquidity[DEAD_ADDRESS] += liquidityMinted;
         totalLiquidity += liquidityMinted;
 
-        emit LiquidityAdded(msg.sender, msg.value, tokenAmount, liquidityMinted);
+        emit LiquidityAdded(DEAD_ADDRESS, msg.value, tokenAmount, liquidityMinted);
 
         return liquidityMinted;
     }

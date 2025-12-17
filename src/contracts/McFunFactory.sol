@@ -103,12 +103,8 @@ contract McFunFactory {
         IERC20(tokenAddress).transfer(msg.sender, creatorTokens);
         IERC20(tokenAddress).approve(ammAddress, liquidityTokens);
 
+        // Add liquidity - LP tokens are minted directly to DEAD_ADDRESS inside AMM
         IMcFunAMM(ammAddress).addLiquidity{value: msg.value}(liquidityTokens);
-
-        uint256 lpTokens = IERC20(ammAddress).balanceOf(address(this));
-        if (lpTokens > 0) {
-            IERC20(ammAddress).transfer(DEAD_ADDRESS, lpTokens);
-        }
 
         emit TokenLaunched(tokenAddress, ammAddress, name, symbol, msg.sender, liquidityPercent, msg.value);
 

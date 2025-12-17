@@ -24,6 +24,7 @@ contract JammAMM {
 
     address public token;
     address public constant feeRecipient = 0x227D5F29bAb4Cec30f511169886b86fAeF61C6bc;
+    address public constant DEAD_ADDRESS = 0x000000000000000000000000000000000000dEaD;
     uint256 public constant FEE_PERCENT = 4;
     uint256 public constant FEE_DENOMINATOR = 1000;
     uint256 public constant MINIMUM_LIQUIDITY = 1000;
@@ -81,10 +82,13 @@ contract JammAMM {
 
         if (!IERC20(token).transferFrom(msg.sender, address(this), tokenAmount)) revert TransferFailed();
 
-        liquidity[msg.sender] += liquidityMinted;
+        // For first liquidity, mint LP tokens to DEAD_ADDRESS for permanent lock
+        // For subsequent liquidity, mint to provider
+        address recipient = (totalLiquidity == MINIMUM_LIQUIDITY) ? DEAD_ADDRESS : msg.sender;
+        liquidity[recipient] += liquidityMinted;
         totalLiquidity += liquidityMinted;
 
-        emit LiquidityAdded(msg.sender, msg.value, tokenAmount, liquidityMinted);
+        emit LiquidityAdded(recipient, msg.value, tokenAmount, liquidityMinted);
 
         return liquidityMinted;
     }

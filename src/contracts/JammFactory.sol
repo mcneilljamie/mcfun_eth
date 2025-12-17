@@ -109,12 +109,8 @@ contract JammFactory {
         if (!IERC20(tokenAddress).transfer(msg.sender, creatorTokens)) revert TransferFailed();
         if (!IERC20(tokenAddress).approve(ammAddress, liquidityTokens)) revert TransferFailed();
 
+        // Add liquidity - LP tokens are minted directly to DEAD_ADDRESS inside AMM
         IJammAMM(ammAddress).addLiquidity{value: msg.value}(liquidityTokens);
-
-        uint256 lpTokens = IERC20(ammAddress).balanceOf(address(this));
-        if (lpTokens > 0) {
-            if (!IERC20(ammAddress).transfer(DEAD_ADDRESS, lpTokens)) revert TransferFailed();
-        }
 
         emit TokenLaunched(tokenAddress, ammAddress, name, symbol, msg.sender, liquidityPercent, msg.value);
 
