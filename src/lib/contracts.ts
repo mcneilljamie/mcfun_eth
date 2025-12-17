@@ -17,34 +17,6 @@ export interface SwapParams {
   minAmountOut: string;
 }
 
-export async function estimateCreateTokenGas(signer: any, params: TokenLaunchParams): Promise<string> {
-  try {
-    const network = await signer.provider.getNetwork();
-    const factoryAddress = getFactoryAddress(Number(network.chainId));
-    const factory = new Contract(factoryAddress, MCFUN_FACTORY_ABI, signer);
-
-    const gasEstimate = await factory.createToken.estimateGas(
-      params.name,
-      params.symbol,
-      params.liquidityPercent,
-      { value: parseEther(limitDecimalPrecision(params.ethAmount)) }
-    );
-
-    // Get current gas price
-    const feeData = await signer.provider.getFeeData();
-    const gasPrice = feeData.gasPrice || feeData.maxFeePerGas || parseEther('0.00000001'); // fallback
-
-    // Calculate total gas cost with 20% buffer for safety
-    const gasCost = (gasEstimate * gasPrice * 120n) / 100n;
-
-    return formatEther(gasCost);
-  } catch (err) {
-    console.error('Failed to estimate gas:', err);
-    // Return a conservative estimate as fallback (0.015 ETH)
-    return '0.015';
-  }
-}
-
 export async function createToken(signer: any, params: TokenLaunchParams) {
   const network = await signer.provider.getNetwork();
   const factoryAddress = getFactoryAddress(Number(network.chainId));

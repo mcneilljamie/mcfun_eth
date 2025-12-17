@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Rocket, AlertCircle, Loader, Wallet, Info, Fuel } from 'lucide-react';
+import { Rocket, AlertCircle, Loader, Wallet, Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '../lib/web3';
-import { createToken, getETHBalance, estimateCreateTokenGas } from '../lib/contracts';
+import { createToken, getETHBalance } from '../lib/contracts';
 import { MIN_LIQUIDITY_ETH, MIN_LIQUIDITY_PERCENT, RECOMMENDED_LIQUIDITY_PERCENT, TOTAL_SUPPLY } from '../contracts/addresses';
 import { formatNumber } from '../lib/utils';
 import { LaunchCelebration } from '../components/LaunchCelebration';
@@ -28,8 +28,6 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
 
   const [ethBalance, setEthBalance] = useState<string>('0');
   const [isLoadingBalance, setIsLoadingBalance] = useState(false);
-  const [estimatedGas, setEstimatedGas] = useState<string>('0.015'); // Conservative default
-  const [isEstimatingGas, setIsEstimatingGas] = useState(false);
 
   const [isLaunching, setIsLaunching] = useState(false);
   const [error, setError] = useState('');
@@ -64,42 +62,11 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
     fetchBalance();
   }, [account, provider]);
 
-  // Estimate gas when parameters change
-  useEffect(() => {
-    const estimateGas = async () => {
-      if (!signer || !name.trim() || !symbol.trim() || !ethAmount) {
-        setEstimatedGas('0.015'); // Conservative default
-        return;
-      }
-
-      setIsEstimatingGas(true);
-      try {
-        const gas = await estimateCreateTokenGas(signer, {
-          name: name.trim(),
-          symbol: symbol.trim().toUpperCase(),
-          liquidityPercent,
-          ethAmount,
-        });
-        setEstimatedGas(gas);
-      } catch (err) {
-        console.error('Failed to estimate gas:', err);
-        setEstimatedGas('0.015'); // Fallback
-      } finally {
-        setIsEstimatingGas(false);
-      }
-    };
-
-    // Debounce gas estimation to avoid too many requests
-    const timer = setTimeout(estimateGas, 500);
-    return () => clearTimeout(timer);
-  }, [signer, name, symbol, liquidityPercent, ethAmount]);
-
-  const totalEthNeeded = parseFloat(ethAmount) + parseFloat(estimatedGas);
+  const totalEthNeeded = parseFloat(ethAmount);
   const hasInsufficientBalance = !!(account && parseFloat(ethBalance) < totalEthNeeded);
   const balanceShortfall = hasInsufficientBalance
     ? (totalEthNeeded - parseFloat(ethBalance)).toFixed(4)
     : '0';
-  const hasInsufficientForGas = !!(account && parseFloat(ethBalance) >= parseFloat(ethAmount) && parseFloat(ethBalance) < totalEthNeeded);
 
   const handleLaunch = async () => {
     if (!signer || !account) {
@@ -121,19 +88,13 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
     }
 
     if (hasInsufficientBalance) {
-      if (hasInsufficientForGas) {
-        setError(
-          `Insufficient balance for gas fees. You have ${parseFloat(ethBalance).toFixed(4)} ETH but need ${parseFloat(ethAmount).toFixed(4)} ETH + ~${parseFloat(estimatedGas).toFixed(4)} ETH for gas = ${totalEthNeeded.toFixed(4)} ETH total. You need ${balanceShortfall} ETH more.`
-        );
-      } else {
-        setError(
-          t('launch.errors.insufficientBalance', {
-            balance: parseFloat(ethBalance).toFixed(4),
-            needed: totalEthNeeded.toFixed(4),
-            shortfall: balanceShortfall,
-          })
-        );
-      }
+      setError(
+        t('launch.errors.insufficientBalance', {
+          balance: parseFloat(ethBalance).toFixed(4),
+          needed: totalEthNeeded.toFixed(4),
+          shortfall: balanceShortfall,
+        })
+      );
       return;
     }
 
@@ -416,15 +377,9 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                 <div className="mt-2 flex items-start space-x-2 text-sm text-blue-600">
                   <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="font-medium">
-                      {hasInsufficientForGas
-                        ? 'Insufficient Balance for Gas Fees'
-                        : t('launch.form.insufficientBalance')}
-                    </p>
+                    <p className="font-medium">{t('launch.form.insufficientBalance')}</p>
                     <p className="text-xs text-blue-500 mt-1">
-                      {hasInsufficientForGas
-                        ? `You need ${parseFloat(ethAmount).toFixed(4)} ETH + ~${parseFloat(estimatedGas).toFixed(4)} ETH gas = ${totalEthNeeded.toFixed(4)} ETH total (${balanceShortfall} ETH more)`
-                        : t('launch.form.needMore', { amount: balanceShortfall })}
+                      {t('launch.form.needMore', { amount: balanceShortfall })}
                     </p>
                   </div>
                 </div>
@@ -445,27 +400,10 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                 <span className="text-gray-600">{t('launch.form.toWallet')}</span>
                 <span className="font-medium text-gray-900">{formatNumber(tokensToCreator)} {t('common.tokens')}</span>
               </div>
-              <div className="border-t border-gray-200 pt-2 mt-2 space-y-2">
+              <div className="border-t border-gray-200 pt-2 mt-2">
                 <div className="flex justify-between text-sm font-semibold">
                   <span className="text-gray-900">{t('launch.form.initialLiq')}</span>
                   <span className="text-gray-900">{ethAmount} {t('common.eth')}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600 flex items-center gap-1">
-                    <Fuel className="w-3.5 h-3.5" />
-                    Estimated Gas
-                  </span>
-                  <span className="text-gray-700">
-                    {isEstimatingGas ? (
-                      <span className="text-xs">Estimating...</span>
-                    ) : (
-                      `~${parseFloat(estimatedGas).toFixed(4)} ETH`
-                    )}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm font-bold border-t border-gray-300 pt-2">
-                  <span className="text-gray-900">Total Cost</span>
-                  <span className="text-gray-900">{totalEthNeeded.toFixed(4)} ETH</span>
                 </div>
               </div>
             </div>
@@ -475,14 +413,8 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                 <div className="flex items-start space-x-3">
                   <Info className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
                   <div className="text-sm text-yellow-800">
-                    <p className="font-medium mb-1">
-                      {hasInsufficientForGas ? 'Need More ETH for Gas Fees' : t('launch.form.getEthTitle')}
-                    </p>
-                    <p className="text-xs">
-                      {hasInsufficientForGas
-                        ? `You'll need to add more ETH to cover both the liquidity (${parseFloat(ethAmount).toFixed(4)} ETH) and the transaction gas fees (~${parseFloat(estimatedGas).toFixed(4)} ETH). The total cost is ${totalEthNeeded.toFixed(4)} ETH.`
-                        : t('launch.form.getEthDescription')}
-                    </p>
+                    <p className="font-medium mb-1">{t('launch.form.getEthTitle')}</p>
+                    <p className="text-xs">{t('launch.form.getEthDescription')}</p>
                   </div>
                 </div>
               </div>
