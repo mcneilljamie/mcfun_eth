@@ -31,15 +31,59 @@ async function main() {
 
   console.log("\n📝 Updating addresses.ts...");
   const addressesPath = path.join(__dirname, "../src/contracts/addresses.ts");
-  const addressesContent = `export const MCFUN_FACTORY_ADDRESS = "${factoryAddress}";
 
-export const FEE_RECIPIENT = "${feeRecipient}";
-export const MIN_LIQUIDITY_ETH = "0.1";
-export const MIN_LIQUIDITY_PERCENT = 50;
-export const RECOMMENDED_LIQUIDITY_PERCENT = 75;
-export const TOTAL_SUPPLY = 1_000_000;
-export const FEE_PERCENT = 0.4;
+  // Read the current addresses.ts file
+  let addressesContent = fs.readFileSync(addressesPath, 'utf8');
+
+  // Update the factory address for the deployed network
+  const chainId = Number(network.chainId);
+  const factoryAddressRegex = new RegExp(
+    `(${chainId}:\\s*{[^}]*factoryAddress:\\s*['"])([^'"]*)(["'][^}]*})`,
+    's'
+  );
+
+  if (factoryAddressRegex.test(addressesContent)) {
+    // Update existing chain config
+    addressesContent = addressesContent.replace(
+      factoryAddressRegex,
+      `$1${factoryAddress}$3`
+    );
+    console.log(`✅ Updated factoryAddress for chain ${chainId}`);
+  } else {
+    // Add new chain config if it doesn't exist
+    const networkConfigMatch = addressesContent.match(/(export const NETWORK_CONFIG[^{]*{)([^}]*)(}\s*as const;?)/s);
+    if (networkConfigMatch) {
+      const newChainConfig = `  ${chainId}: {
+    name: '${network.name}',
+    factoryAddress: '${factoryAddress}',
+    explorerUrl: 'https://${network.name === 'mainnet' ? '' : network.name + '.'}etherscan.io',
+  },
 `;
+      addressesContent = addressesContent.replace(
+        networkConfigMatch[0],
+        `${networkConfigMatch[1]}${networkConfigMatch[2]}${newChainConfig}${networkConfigMatch[3]}`
+      );
+      console.log(`✅ Added new chain config for ${network.name} (${chainId})`);
+    }
+  }
+
+  // Update SUPPORTED_CHAIN_IDS if the new chain isn't listed
+  const supportedChainIdsMatch = addressesContent.match(/export const SUPPORTED_CHAIN_IDS = \[([^\]]*)\]/);
+  if (supportedChainIdsMatch) {
+    const supportedChainIds = supportedChainIdsMatch[1]
+      .split(',')
+      .map(id => id.trim())
+      .filter(id => id.length > 0);
+
+    if (!supportedChainIds.includes(String(chainId))) {
+      const newSupportedChainIds = [...supportedChainIds, String(chainId)].sort((a, b) => Number(a) - Number(b));
+      addressesContent = addressesContent.replace(
+        /export const SUPPORTED_CHAIN_IDS = \[([^\]]*)\]/,
+        `export const SUPPORTED_CHAIN_IDS = [${newSupportedChainIds.join(', ')}]`
+      );
+      console.log(`✅ Added chain ${chainId} to SUPPORTED_CHAIN_IDS`);
+    }
+  }
 
   fs.writeFileSync(addressesPath, addressesContent);
   console.log("✅ Updated src/contracts/addresses.ts");
