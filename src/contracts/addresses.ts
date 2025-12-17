@@ -40,3 +40,5 @@ export const MIN_LIQUIDITY_PERCENT = 50;
 export const RECOMMENDED_LIQUIDITY_PERCENT = 75;
 export const TOTAL_SUPPLY = 1_000_000;
 export const FEE_PERCENT = 0.4;
+export const MAX_NAME_LENGTH = 32;
+export const MAX_SYMBOL_LENGTH = 10;

@@ -19,6 +19,8 @@ contract McFunFactory {
     uint256 public constant MIN_LIQUIDITY_ETH = 0.1 ether;
     uint256 public constant MIN_LIQUIDITY_PERCENT = 50;
     uint256 public constant TOTAL_SUPPLY = 1_000_000 * 10**18;
+    uint256 public constant MAX_NAME_LENGTH = 32;
+    uint256 public constant MAX_SYMBOL_LENGTH = 10;
 
     struct TokenInfo {
         address tokenAddress;
@@ -61,6 +63,7 @@ contract McFunFactory {
         if (msg.value < MIN_LIQUIDITY_ETH) revert InvalidETHAmount();
         if (liquidityPercent < MIN_LIQUIDITY_PERCENT || liquidityPercent > 100) revert InvalidLiquidityPercent();
         if (bytes(name).length == 0 || bytes(symbol).length == 0) revert InvalidNameOrSymbol();
+        if (bytes(name).length > MAX_NAME_LENGTH || bytes(symbol).length > MAX_SYMBOL_LENGTH) revert InvalidNameOrSymbol();
 
         bytes memory tokenBytecode = abi.encodePacked(
             type(McFunToken).creationCode,

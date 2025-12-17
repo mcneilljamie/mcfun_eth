@@ -3,7 +3,7 @@ import { Rocket, AlertCircle, Loader, Wallet, Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '../lib/web3';
 import { createToken, getETHBalance } from '../lib/contracts';
-import { MIN_LIQUIDITY_ETH, MIN_LIQUIDITY_PERCENT, RECOMMENDED_LIQUIDITY_PERCENT, TOTAL_SUPPLY } from '../contracts/addresses';
+import { MIN_LIQUIDITY_ETH, MIN_LIQUIDITY_PERCENT, RECOMMENDED_LIQUIDITY_PERCENT, TOTAL_SUPPLY, MAX_NAME_LENGTH, MAX_SYMBOL_LENGTH } from '../contracts/addresses';
 import { formatNumber } from '../lib/utils';
 import { LaunchCelebration } from '../components/LaunchCelebration';
 import { ToastMessage } from '../App';
@@ -79,6 +79,16 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
 
     if (!name.trim() || !symbol.trim()) {
       setError(t('launch.errors.nameAndSymbol'));
+      return;
+    }
+
+    if (name.trim().length > MAX_NAME_LENGTH) {
+      setError(`Token name must be ${MAX_NAME_LENGTH} characters or less`);
+      return;
+    }
+
+    if (symbol.trim().length > MAX_SYMBOL_LENGTH) {
+      setError(`Token symbol must be ${MAX_SYMBOL_LENGTH} characters or less`);
       return;
     }
 
@@ -235,9 +245,13 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder={t('launch.form.tokenNamePlaceholder')}
+                maxLength={MAX_NAME_LENGTH}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                 disabled={isLaunching}
               />
+              <p className={`text-xs mt-1 ${name.length > MAX_NAME_LENGTH * 0.8 ? 'text-orange-600' : 'text-gray-500'}`}>
+                {name.length}/{MAX_NAME_LENGTH} characters
+              </p>
             </div>
 
             <div>
@@ -249,9 +263,13 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                 value={symbol}
                 onChange={(e) => setSymbol(e.target.value.toUpperCase())}
                 placeholder={t('launch.form.tokenSymbolPlaceholder')}
+                maxLength={MAX_SYMBOL_LENGTH}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent uppercase"
                 disabled={isLaunching}
               />
+              <p className={`text-xs mt-1 ${symbol.length > MAX_SYMBOL_LENGTH * 0.8 ? 'text-orange-600' : 'text-gray-500'}`}>
+                {symbol.length}/{MAX_SYMBOL_LENGTH} characters
+              </p>
             </div>
 
             <div>
