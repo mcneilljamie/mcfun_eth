@@ -2,6 +2,10 @@
 pragma solidity ^0.8.20;
 
 contract JammToken {
+    error ZeroAddress();
+    error InsufficientBalance();
+    error InsufficientAllowance();
+
     string public name;
     string public symbol;
     uint8 public constant decimals = 18;
@@ -22,7 +26,9 @@ contract JammToken {
     }
 
     function transfer(address to, uint256 value) external returns (bool) {
-        require(balanceOf[msg.sender] >= value, "Insufficient balance");
+        if (to == address(0)) revert ZeroAddress();
+        if (balanceOf[msg.sender] < value) revert InsufficientBalance();
+
         balanceOf[msg.sender] -= value;
         balanceOf[to] += value;
         emit Transfer(msg.sender, to, value);
@@ -36,8 +42,10 @@ contract JammToken {
     }
 
     function transferFrom(address from, address to, uint256 value) external returns (bool) {
-        require(balanceOf[from] >= value, "Insufficient balance");
-        require(allowance[from][msg.sender] >= value, "Insufficient allowance");
+        if (to == address(0)) revert ZeroAddress();
+        if (balanceOf[from] < value) revert InsufficientBalance();
+        if (allowance[from][msg.sender] < value) revert InsufficientAllowance();
+
         balanceOf[from] -= value;
         balanceOf[to] += value;
         allowance[from][msg.sender] -= value;
