@@ -90,16 +90,7 @@ contract McFunFactory {
         uint256 liquidityTokens = (TOTAL_SUPPLY * liquidityPercent) / 100;
         uint256 creatorTokens = TOTAL_SUPPLY - liquidityTokens;
 
-        IERC20(tokenAddress).transfer(msg.sender, creatorTokens);
-        IERC20(tokenAddress).approve(ammAddress, liquidityTokens);
-
-        IMcFunAMM(ammAddress).addLiquidity{value: msg.value}(liquidityTokens);
-
-        uint256 lpTokens = IERC20(ammAddress).balanceOf(address(this));
-        if (lpTokens > 0) {
-            IERC20(ammAddress).transfer(DEAD_ADDRESS, lpTokens);
-        }
-
+        // EFFECTS: Update state before external calls
         tokenToAMM[tokenAddress] = ammAddress;
 
         tokens.push(TokenInfo({
@@ -112,6 +103,17 @@ contract McFunFactory {
             initialLiquidityETH: msg.value,
             liquidityPercent: liquidityPercent
         }));
+
+        // INTERACTIONS: External calls after state updates
+        IERC20(tokenAddress).transfer(msg.sender, creatorTokens);
+        IERC20(tokenAddress).approve(ammAddress, liquidityTokens);
+
+        IMcFunAMM(ammAddress).addLiquidity{value: msg.value}(liquidityTokens);
+
+        uint256 lpTokens = IERC20(ammAddress).balanceOf(address(this));
+        if (lpTokens > 0) {
+            IERC20(ammAddress).transfer(DEAD_ADDRESS, lpTokens);
+        }
 
         emit TokenLaunched(tokenAddress, ammAddress, name, symbol, msg.sender, liquidityPercent, msg.value);
 

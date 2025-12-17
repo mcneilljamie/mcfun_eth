@@ -90,20 +90,24 @@ contract McFunAMM {
     }
 
     function removeLiquidity(uint256 liquidityAmount) external nonReentrant returns (uint256 ethAmount, uint256 tokenAmount) {
+        // CHECKS: Validate inputs
         if (liquidityAmount == 0) revert ZeroAmount();
         if (liquidity[msg.sender] < liquidityAmount) revert InsufficientLiquidity();
         if (totalLiquidity == 0) revert InsufficientLiquidity();
 
+        // Calculate withdrawal amounts
         ethAmount = (liquidityAmount * reserveETH) / totalLiquidity;
         tokenAmount = (liquidityAmount * reserveToken) / totalLiquidity;
 
         if (ethAmount == 0 || tokenAmount == 0) revert InvalidLiquidityAmount();
 
+        // EFFECTS: Update state before external calls
         liquidity[msg.sender] -= liquidityAmount;
         totalLiquidity -= liquidityAmount;
         reserveETH -= ethAmount;
         reserveToken -= tokenAmount;
 
+        // INTERACTIONS: External calls after state updates
         if (!IERC20(token).transfer(msg.sender, tokenAmount)) revert TransferFailed();
 
         (bool success, ) = payable(msg.sender).call{value: ethAmount}("");
@@ -115,9 +119,11 @@ contract McFunAMM {
     }
 
     function swapETHForToken(uint256 minTokenOut) external payable nonReentrant returns (uint256 tokenOut) {
+        // CHECKS: Validate inputs
         if (msg.value == 0) revert ZeroAmount();
         if (reserveToken == 0 || reserveETH == 0) revert InsufficientLiquidity();
 
+        // Calculate swap amounts before state changes
         uint256 fee = (msg.value * FEE_PERCENT) / FEE_DENOMINATOR;
         uint256 ethAfterFee = msg.value - fee;
 
@@ -125,9 +131,11 @@ contract McFunAMM {
         if (tokenOut < minTokenOut) revert SlippageExceeded();
         if (tokenOut > reserveToken) revert InsufficientLiquidity();
 
+        // EFFECTS: Update state before external calls
         reserveETH += ethAfterFee;
         reserveToken -= tokenOut;
 
+        // INTERACTIONS: External calls after state updates
         (bool feeSuccess, ) = payable(feeRecipient).call{value: fee}("");
         if (!feeSuccess) revert TransferFailed();
 
@@ -139,11 +147,11 @@ contract McFunAMM {
     }
 
     function swapTokenForETH(uint256 tokenIn, uint256 minETHOut) external nonReentrant returns (uint256 ethOut) {
+        // CHECKS: Validate inputs
         if (tokenIn == 0) revert ZeroAmount();
         if (reserveToken == 0 || reserveETH == 0) revert InsufficientLiquidity();
 
-        if (!IERC20(token).transferFrom(msg.sender, address(this), tokenIn)) revert TransferFailed();
-
+        // Calculate swap amounts before state changes
         uint256 ethBeforeFee = (tokenIn * reserveETH) / (reserveToken + tokenIn);
         uint256 fee = (ethBeforeFee * FEE_PERCENT) / FEE_DENOMINATOR;
         ethOut = ethBeforeFee - fee;
@@ -151,8 +159,12 @@ contract McFunAMM {
         if (ethOut < minETHOut) revert SlippageExceeded();
         if (ethOut > reserveETH) revert InsufficientLiquidity();
 
+        // EFFECTS: Update state before external calls
         reserveToken += tokenIn;
         reserveETH -= ethBeforeFee;
+
+        // INTERACTIONS: External calls after state updates
+        if (!IERC20(token).transferFrom(msg.sender, address(this), tokenIn)) revert TransferFailed();
 
         (bool feeSuccess, ) = payable(feeRecipient).call{value: fee}("");
         if (!feeSuccess) revert TransferFailed();

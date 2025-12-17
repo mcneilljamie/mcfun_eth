@@ -13,6 +13,13 @@ interface IJammAMM {
 }
 
 contract JammFactory {
+    error ReentrancyGuard();
+    error InvalidETHAmount();
+    error InvalidLiquidityPercent();
+    error InvalidNameOrSymbol();
+    error TokenCreationFailed();
+    error AMMCreationFailed();
+
     address public constant DEAD_ADDRESS = 0x000000000000000000000000000000000000dEaD;
     uint256 public constant MIN_LIQUIDITY_ETH = 0.1 ether;
     uint256 public constant MIN_LIQUIDITY_PERCENT = 50;
@@ -32,6 +39,15 @@ contract JammFactory {
     TokenInfo[] public tokens;
     mapping(address => address) public tokenToAMM;
 
+    uint256 private locked = 1;
+
+    modifier nonReentrant() {
+        if (locked != 1) revert ReentrancyGuard();
+        locked = 2;
+        _;
+        locked = 1;
+    }
+
     event TokenLaunched(
         address indexed tokenAddress,
         address indexed ammAddress,
@@ -46,9 +62,10 @@ contract JammFactory {
         string memory name,
         string memory symbol,
         uint256 liquidityPercent
-    ) external payable returns (address tokenAddress, address ammAddress) {
-        require(msg.value >= MIN_LIQUIDITY_ETH, "Minimum 0.1 ETH required");
-        require(liquidityPercent >= MIN_LIQUIDITY_PERCENT && liquidityPercent <= 100, "Liquidity must be 50-100%");
+    ) external payable nonReentrant returns (address tokenAddress, address ammAddress) {
+        if (msg.value < MIN_LIQUIDITY_ETH) revert InvalidETHAmount();
+        if (liquidityPercent < MIN_LIQUIDITY_PERCENT || liquidityPercent > 100) revert InvalidLiquidityPercent();
+        if (bytes(name).length == 0 || bytes(symbol).length == 0) revert InvalidNameOrSymbol();
 
         bytes memory tokenBytecode = abi.encodePacked(
             type(JammToken).creationCode,
@@ -58,7 +75,7 @@ contract JammFactory {
         assembly {
             tokenAddress := create(0, add(tokenBytecode, 0x20), mload(tokenBytecode))
         }
-        require(tokenAddress != address(0), "Token creation failed");
+        if (tokenAddress == address(0)) revert TokenCreationFailed();
 
         bytes memory ammBytecode = abi.encodePacked(
             type(JammAMM).creationCode,
@@ -68,21 +85,12 @@ contract JammFactory {
         assembly {
             ammAddress := create(0, add(ammBytecode, 0x20), mload(ammBytecode))
         }
-        require(ammAddress != address(0), "AMM creation failed");
+        if (ammAddress == address(0)) revert AMMCreationFailed();
 
         uint256 liquidityTokens = (TOTAL_SUPPLY * liquidityPercent) / 100;
         uint256 creatorTokens = TOTAL_SUPPLY - liquidityTokens;
 
-        IERC20(tokenAddress).transfer(msg.sender, creatorTokens);
-        IERC20(tokenAddress).approve(ammAddress, liquidityTokens);
-
-        IJammAMM(ammAddress).addLiquidity{value: msg.value}(liquidityTokens);
-
-        uint256 lpTokens = IERC20(ammAddress).balanceOf(address(this));
-        if (lpTokens > 0) {
-            IERC20(ammAddress).transfer(DEAD_ADDRESS, lpTokens);
-        }
-
+        // EFFECTS: Update state before external calls
         tokenToAMM[tokenAddress] = ammAddress;
 
         tokens.push(TokenInfo({
@@ -95,6 +103,17 @@ contract JammFactory {
             initialLiquidityETH: msg.value,
             liquidityPercent: liquidityPercent
         }));
+
+        // INTERACTIONS: External calls after state updates
+        IERC20(tokenAddress).transfer(msg.sender, creatorTokens);
+        IERC20(tokenAddress).approve(ammAddress, liquidityTokens);
+
+        IJammAMM(ammAddress).addLiquidity{value: msg.value}(liquidityTokens);
+
+        uint256 lpTokens = IERC20(ammAddress).balanceOf(address(this));
+        if (lpTokens > 0) {
+            IERC20(ammAddress).transfer(DEAD_ADDRESS, lpTokens);
+        }
 
         emit TokenLaunched(tokenAddress, ammAddress, name, symbol, msg.sender, liquidityPercent, msg.value);
 
