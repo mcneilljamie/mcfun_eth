@@ -14,9 +14,10 @@ module.exports = {
   },
   networks: {
     sepolia: {
-      url: process.env.SEPOLIA_RPC_URL || "https://rpc.sepolia.org",
+      url: process.env.SEPOLIA_RPC_URL || "https://rpc2.sepolia.org",
       accounts: process.env.DEPLOYER_PRIVATE_KEY ? [process.env.DEPLOYER_PRIVATE_KEY] : [],
       chainId: 11155111,
+      timeout: 120000,
     },
     mainnet: {
       url: process.env.MAINNET_RPC_URL || "https://eth.llamarpc.com",

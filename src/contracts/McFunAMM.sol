@@ -4,6 +4,7 @@ pragma solidity ^0.8.20;
 interface IERC20 {
     function transfer(address to, uint256 value) external returns (bool);
     function transferFrom(address from, address to, uint256 value) external returns (bool);
+    function approve(address spender, uint256 value) external returns (bool);
     function balanceOf(address account) external view returns (uint256);
 }
 
@@ -12,6 +13,7 @@ interface IERC20 {
  * @notice Automated Market Maker with PERMANENT liquidity lock
  * @dev CRITICAL: First MINIMUM_LIQUIDITY (1000 wei) is PERMANENTLY BURNED to address(0)
  *      This ensures every token launched through this platform has liquidity that can NEVER be removed
+ *      SECURITY: addLiquidity() can ONLY be called ONCE by the factory during token launch
  */
 contract McFunAMM {
     error ZeroAddress();
@@ -21,7 +23,10 @@ contract McFunAMM {
     error TransferFailed();
     error ReentrancyDetected();
     error InvalidLiquidityAmount();
+    error OnlyFactory();
+    error AlreadyLaunched();
 
+    address public immutable factory;
     address public token;
     address public constant feeRecipient = 0x227D5F29bAb4Cec30f511169886b86fAeF61C6bc;
     uint256 public constant FEE_PERCENT = 4;
@@ -31,6 +36,7 @@ contract McFunAMM {
     uint256 public reserveToken;
     uint256 public reserveETH;
     uint256 public totalLiquidity;
+    bool private launched;
 
     mapping(address => uint256) public liquidity;
 
@@ -49,35 +55,29 @@ contract McFunAMM {
 
     constructor(address _token) {
         if (_token == address(0)) revert ZeroAddress();
+        factory = msg.sender;
         token = _token;
     }
 
     function addLiquidity(uint256 tokenAmount) external payable nonReentrant returns (uint256 liquidityMinted) {
+        if (msg.sender != factory) revert OnlyFactory();
+        if (launched) revert AlreadyLaunched();
         if (msg.value == 0 || tokenAmount == 0) revert ZeroAmount();
 
-        if (totalLiquidity == 0) {
-            liquidityMinted = msg.value;
-            if (liquidityMinted <= MINIMUM_LIQUIDITY) revert InvalidLiquidityAmount();
+        launched = true;
 
-            reserveETH = msg.value;
-            reserveToken = tokenAmount;
+        liquidityMinted = msg.value;
+        if (liquidityMinted <= MINIMUM_LIQUIDITY) revert InvalidLiquidityAmount();
 
-            // PERMANENT LIQUIDITY LOCK: First MINIMUM_LIQUIDITY is burned to address(0)
-            // This ensures liquidity can NEVER be fully removed from the pool
-            // This is a critical security feature for all tokens on this platform
-            liquidity[address(0)] = MINIMUM_LIQUIDITY;
-            totalLiquidity = MINIMUM_LIQUIDITY;
-            liquidityMinted -= MINIMUM_LIQUIDITY;
-        } else {
-            uint256 ethLiquidity = (msg.value * totalLiquidity) / reserveETH;
-            uint256 tokenLiquidity = (tokenAmount * totalLiquidity) / reserveToken;
-            liquidityMinted = ethLiquidity < tokenLiquidity ? ethLiquidity : tokenLiquidity;
+        reserveETH = msg.value;
+        reserveToken = tokenAmount;
 
-            if (liquidityMinted == 0) revert InvalidLiquidityAmount();
-
-            reserveETH += msg.value;
-            reserveToken += tokenAmount;
-        }
+        // PERMANENT LIQUIDITY LOCK: First MINIMUM_LIQUIDITY is burned to address(0)
+        // This ensures liquidity can NEVER be fully removed from the pool
+        // This is a critical security feature for all tokens on this platform
+        liquidity[address(0)] = MINIMUM_LIQUIDITY;
+        totalLiquidity = MINIMUM_LIQUIDITY;
+        liquidityMinted -= MINIMUM_LIQUIDITY;
 
         if (!IERC20(token).transferFrom(msg.sender, address(this), tokenAmount)) revert TransferFailed();
 

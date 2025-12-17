@@ -115,8 +115,8 @@
       ]
     },
     "/tmp/cc-agent/61154910/project/src/contracts/McFunAMM.sol": {
-      "lastModificationDate": 1765969446171,
-      "contentHash": "1bc67f5002bfbcea552f33c9121d2bf4",
+      "lastModificationDate": 1765973931920,
+      "contentHash": "0ff0d41c3cb5cefaf2bf91e0b7c6c73b",
       "sourceName": "src/contracts/McFunAMM.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -152,8 +152,8 @@
       ]
     },
     "/tmp/cc-agent/61154910/project/src/contracts/McFunFactory.sol": {
-      "lastModificationDate": 1765969446171,
-      "contentHash": "49944a247f96cc9b8a39d3dcc05da40c",
+      "lastModificationDate": 1765973924024,
+      "contentHash": "0dc41321929c2c8cdf5f15e657a3799d",
       "sourceName": "src/contracts/McFunFactory.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -179,14 +179,14 @@
           }
         }
       },
-      "imports": [],
+      "imports": [
+        "./McFunAMM.sol"
+      ],
       "versionPragmas": [
         "^0.8.20"
       ],
       "artifacts": [
-        "IERC20",
         "IMcFunAMM",
-        "McFunAMM",
         "McFunFactory",
         "McFunToken"
       ]
