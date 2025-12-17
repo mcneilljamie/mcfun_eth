@@ -26,6 +26,9 @@ export function Web3Provider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
 
   const connect = async (walletType?: 'metamask' | 'rabby' | 'phantom') => {
+    console.log('=== WEB3 CONNECT START ===');
+    console.log('Wallet type:', walletType);
+
     try {
       setIsConnecting(true);
       setError(null);
@@ -33,16 +36,20 @@ export function Web3Provider({ children }: { children: ReactNode }) {
       let provider: any = null;
 
       if (walletType === 'rabby' && window.rabby) {
+        console.log('Using Rabby wallet');
         provider = window.rabby;
       } else if (walletType === 'phantom' && window.phantom?.ethereum) {
+        console.log('Using Phantom wallet');
         provider = window.phantom.ethereum;
       } else if (walletType === 'metamask' && window.ethereum) {
         if (window.ethereum.isMetaMask && !window.ethereum.isRabby) {
+          console.log('Using MetaMask wallet');
           provider = window.ethereum;
         } else {
           throw new Error('MetaMask not detected. Please install MetaMask extension.');
         }
       } else if (!walletType && window.ethereum) {
+        console.log('Using default wallet provider');
         provider = window.ethereum;
       }
 
@@ -50,15 +57,33 @@ export function Web3Provider({ children }: { children: ReactNode }) {
         throw new Error('Please install a Web3 wallet');
       }
 
+      console.log('Creating BrowserProvider...');
       const newProvider = new BrowserProvider(provider);
-      const accounts = await newProvider.send('eth_requestAccounts', []);
-      const newSigner = await newProvider.getSigner();
-      const network = await newProvider.getNetwork();
+      console.log('BrowserProvider created:', newProvider);
 
+      console.log('Requesting accounts...');
+      const accounts = await newProvider.send('eth_requestAccounts', []);
+      console.log('Accounts:', accounts);
+
+      console.log('Getting signer...');
+      const newSigner = await newProvider.getSigner();
+      console.log('Signer:', newSigner);
+
+      console.log('Getting network...');
+      const network = await newProvider.getNetwork();
+      console.log('Network:', network);
+      console.log('Chain ID:', Number(network.chainId));
+
+      console.log('Setting state...');
       setProvider(newProvider);
       setSigner(newSigner);
       setAccount(accounts[0]);
       setChainId(Number(network.chainId));
+
+      console.log('=== WEB3 CONNECT COMPLETE ===');
+      console.log('Provider set:', !!newProvider);
+      console.log('Account set:', accounts[0]);
+      console.log('Chain ID set:', Number(network.chainId));
 
       localStorage.setItem(STORAGE_KEY, 'true');
     } catch (err) {
@@ -98,7 +123,10 @@ export function Web3Provider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const attemptReconnect = async () => {
+      console.log('=== ATTEMPTING AUTO-RECONNECT ===');
       const wasConnected = localStorage.getItem(STORAGE_KEY);
+      console.log('Was previously connected:', wasConnected);
+
       if (wasConnected) {
         const providers = [
           window.rabby,
@@ -106,12 +134,17 @@ export function Web3Provider({ children }: { children: ReactNode }) {
           window.ethereum,
         ].filter(Boolean);
 
+        console.log('Found', providers.length, 'available providers');
+
         for (const provider of providers) {
           try {
+            console.log('Trying provider...');
             const newProvider = new BrowserProvider(provider);
             const accounts = await newProvider.send('eth_accounts', []);
+            console.log('Accounts found:', accounts);
 
             if (accounts.length > 0) {
+              console.log('Reconnecting with account:', accounts[0]);
               const newSigner = await newProvider.getSigner();
               const network = await newProvider.getNetwork();
 
@@ -119,13 +152,22 @@ export function Web3Provider({ children }: { children: ReactNode }) {
               setSigner(newSigner);
               setAccount(accounts[0]);
               setChainId(Number(network.chainId));
+
+              console.log('=== AUTO-RECONNECT SUCCESS ===');
+              console.log('Provider:', !!newProvider);
+              console.log('Account:', accounts[0]);
+              console.log('Chain ID:', Number(network.chainId));
               return;
             }
           } catch (err) {
+            console.log('Provider failed, trying next...', err);
             continue;
           }
         }
+        console.log('No providers had accounts, clearing storage');
         localStorage.removeItem(STORAGE_KEY);
+      } else {
+        console.log('Not previously connected, skipping auto-reconnect');
       }
     };
 

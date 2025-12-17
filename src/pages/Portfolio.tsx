@@ -40,24 +40,37 @@ export default function Portfolio() {
   const loadPortfolio = async () => {
     if (!account || !provider) return;
 
+    console.log('=== PORTFOLIO LOAD DEBUG ===');
+    console.log('Account:', account);
+    console.log('Provider:', provider);
+
     try {
       setLoading(true);
 
       // Get ETH price
+      console.log('Fetching ETH price...');
       const ethPrice = await getEthPriceUSD();
+      console.log('ETH price USD:', ethPrice);
       setEthPriceUsd(ethPrice);
 
       // Get ETH balance
+      console.log('Fetching ETH balance for account:', account);
       const balance = await provider.getBalance(account);
+      console.log('Raw ETH balance (wei):', balance.toString());
       const ethBal = ethers.formatEther(balance);
+      console.log('Formatted ETH balance:', ethBal);
       setEthBalance(ethBal);
 
       // Get all tokens from the platform
+      console.log('Fetching all tokens from database...');
       const { data: allTokens } = await supabase
         .from('tokens')
         .select('token_address, symbol, name, current_eth_reserve, current_token_reserve');
 
+      console.log('Found tokens:', allTokens?.length || 0);
+
       if (!allTokens || allTokens.length === 0) {
+        console.log('No tokens found in database');
         setLoading(false);
         return;
       }
@@ -76,17 +89,25 @@ export default function Portfolio() {
         'function decimals() view returns (uint8)',
       ];
 
+      console.log(`Checking balances for ${allTokens.length} tokens...`);
+
       for (const token of allTokens) {
         try {
+          console.log(`Checking ${token.symbol} (${token.token_address})...`);
           const contract = new ethers.Contract(token.token_address, ERC20_ABI, provider);
           const [balance, decimals] = await Promise.all([
             contract.balanceOf(account),
             contract.decimals(),
           ]);
 
+          console.log(`  Raw balance: ${balance.toString()}`);
+          console.log(`  Decimals: ${decimals}`);
+
           const balanceFormatted = ethers.formatUnits(balance, decimals);
+          console.log(`  Formatted balance: ${balanceFormatted}`);
 
           if (parseFloat(balanceFormatted) > 0) {
+            console.log(`  ✓ User has ${balanceFormatted} ${token.symbol}`);
             const ethReserve = parseFloat(token.current_eth_reserve);
             const tokenReserve = parseFloat(token.current_token_reserve);
             const priceEth = ethReserve / tokenReserve;
@@ -106,11 +127,15 @@ export default function Portfolio() {
               valueUsd,
               change24h,
             });
+          } else {
+            console.log(`  ✗ User has 0 ${token.symbol}`);
           }
         } catch (err) {
           console.error(`Error loading balance for ${token.symbol}:`, err);
         }
       }
+
+      console.log(`Found ${tokenBalances.length} tokens with balance > 0`);
 
       // Sort by value USD descending
       tokenBalances.sort((a, b) => b.valueUsd - a.valueUsd);
@@ -119,9 +144,14 @@ export default function Portfolio() {
       // Calculate total value
       const ethValue = parseFloat(ethBal) * ethPrice;
       const tokensValue = tokenBalances.reduce((sum, t) => sum + t.valueUsd, 0);
-      setTotalValueUsd(ethValue + tokensValue);
+      const totalValue = ethValue + tokensValue;
+      console.log('ETH value:', ethValue);
+      console.log('Tokens value:', tokensValue);
+      console.log('Total portfolio value:', totalValue);
+      setTotalValueUsd(totalValue);
 
       setLoading(false);
+      console.log('=== PORTFOLIO LOAD COMPLETE ===');
     } catch (err) {
       console.error('Error loading portfolio:', err);
       setLoading(false);
