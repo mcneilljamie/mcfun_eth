@@ -141,7 +141,18 @@
     "connectToTrade": "Kết Nối Ví Để Giao Dịch",
     "selectAToken": "Chọn Token",
     "success": "Hoán đổi hoàn tất thành công!",
-    "error": "Vui lòng nhập số lượng"
+    "error": "Vui lòng nhập số lượng",
+    "unlimited": "Không Giới Hạn",
+    "unlimitedWarning": "Độ trượt không giới hạn có thể dẫn đến giá giao dịch không thuận lợi.",
+    "warning": "Cảnh báo:",
+    "approvalRequired": "Cần Phê Duyệt Token Một Lần",
+    "approvalDescription": "Bạn sẽ cần phê duyệt quyền truy cập không giới hạn cho token này trước, sau đó xác nhận hoán đổi. Đây là thông lệ tiêu chuẩn và bạn chỉ cần phê duyệt một lần. Các giao dịch trong tương lai với token này sẽ không yêu cầu phê duyệt.",
+    "approveUnlimited": "Phê Duyệt Truy Cập Token Không Giới Hạn",
+    "waitingConfirmation": "Đang chờ xác nhận...",
+    "approvedOneTime": "Đã phê duyệt (Chỉ một lần)",
+    "pending": "Đang chờ",
+    "confirmSwap": "Xác Nhận Hoán Đổi",
+    "transactionCancelled": "Giao dịch đã bị hủy. Bạn đã từ chối giao dịch trong ví của mình."
   },
   "tokens": {
     "title": "Token Phổ Biến",

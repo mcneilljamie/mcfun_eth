@@ -141,7 +141,18 @@
     "connectToTrade": "Hubungkan Wallet untuk Trading",
     "selectAToken": "Pilih Token",
     "success": "Swap berhasil diselesaikan!",
-    "error": "Harap masukkan jumlah"
+    "error": "Harap masukkan jumlah",
+    "unlimited": "Tidak Terbatas",
+    "unlimitedWarning": "Slippage tanpa batas dapat menghasilkan harga perdagangan yang tidak menguntungkan.",
+    "warning": "Peringatan:",
+    "approvalRequired": "Persetujuan Token Sekali Waktu Diperlukan",
+    "approvalDescription": "Anda perlu menyetujui akses tanpa batas untuk token ini terlebih dahulu, kemudian konfirmasi swap. Ini adalah praktik standar dan Anda hanya perlu menyetujui sekali. Perdagangan di masa mendatang dengan token ini tidak akan memerlukan persetujuan.",
+    "approveUnlimited": "Setujui Akses Token Tanpa Batas",
+    "waitingConfirmation": "Menunggu konfirmasi...",
+    "approvedOneTime": "Disetujui (Hanya sekali)",
+    "pending": "Tertunda",
+    "confirmSwap": "Konfirmasi Swap",
+    "transactionCancelled": "Transaksi dibatalkan. Anda menolak transaksi di dompet Anda."
   },
   "tokens": {
     "title": "Token Populer",

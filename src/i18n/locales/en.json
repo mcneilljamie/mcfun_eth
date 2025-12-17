@@ -141,7 +141,18 @@
     "connectToTrade": "Connect Wallet to Trade",
     "selectAToken": "Select a Token",
     "success": "Swap completed successfully!",
-    "error": "Please enter an amount"
+    "error": "Please enter an amount",
+    "unlimited": "Unlimited",
+    "unlimitedWarning": "Unlimited slippage may result in unfavorable trade prices.",
+    "warning": "Warning:",
+    "approvalRequired": "One-Time Token Approval Required",
+    "approvalDescription": "You'll need to approve unlimited access for this token first, then confirm the swap. This is standard practice and you'll only need to approve once. Future trades with this token won't require approval.",
+    "approveUnlimited": "Approve Unlimited Token Access",
+    "waitingConfirmation": "Waiting for confirmation...",
+    "approvedOneTime": "Approved (One-time only)",
+    "pending": "Pending",
+    "confirmSwap": "Confirm Swap",
+    "transactionCancelled": "Transaction cancelled. You rejected the transaction in your wallet."
   },
   "tokens": {
     "title": "Popular Tokens",

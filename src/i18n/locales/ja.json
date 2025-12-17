@@ -141,7 +141,18 @@
     "connectToTrade": "トレードするにはウォレットを接続",
     "selectAToken": "トークンを選択",
     "success": "スワップが正常に完了しました！",
-    "error": "金額を入力してください"
+    "error": "金額を入力してください",
+    "unlimited": "無制限",
+    "unlimitedWarning": "無制限のスリッページは不利な取引価格をもたらす可能性があります。",
+    "warning": "警告:",
+    "approvalRequired": "ワンタイムトークン承認が必要",
+    "approvalDescription": "まずこのトークンの無制限アクセスを承認し、次にスワップを確認する必要があります。これは標準的な手順で、承認は一度だけ必要です。このトークンとの今後の取引では承認は不要です。",
+    "approveUnlimited": "無制限トークンアクセスを承認",
+    "waitingConfirmation": "確認待ち...",
+    "approvedOneTime": "承認済み（一度のみ）",
+    "pending": "保留中",
+    "confirmSwap": "スワップを確認",
+    "transactionCancelled": "トランザクションがキャンセルされました。ウォレットでトランザクションを拒否しました。"
   },
   "tokens": {
     "title": "人気トークン",

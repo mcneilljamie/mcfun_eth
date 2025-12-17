@@ -141,7 +141,18 @@
     "connectToTrade": "Connetti Portafoglio per Scambiare",
     "selectAToken": "Seleziona un Token",
     "success": "Scambio completato con successo!",
-    "error": "Inserisci un importo"
+    "error": "Inserisci un importo",
+    "unlimited": "Illimitato",
+    "unlimitedWarning": "Lo slippage illimitato può comportare prezzi di scambio sfavorevoli.",
+    "warning": "Avviso:",
+    "approvalRequired": "Richiesta Approvazione Token Una Tantum",
+    "approvalDescription": "Dovrai prima approvare l'accesso illimitato per questo token, quindi confermare lo swap. Questa è una pratica standard e dovrai approvare solo una volta. Gli scambi futuri con questo token non richiederanno l'approvazione.",
+    "approveUnlimited": "Approva Accesso Illimitato al Token",
+    "waitingConfirmation": "In attesa di conferma...",
+    "approvedOneTime": "Approvato (Solo una volta)",
+    "pending": "In attesa",
+    "confirmSwap": "Conferma Swap",
+    "transactionCancelled": "Transazione annullata. Hai rifiutato la transazione nel tuo portafoglio."
   },
   "tokens": {
     "title": "Token Popolari",

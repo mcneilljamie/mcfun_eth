@@ -141,7 +141,18 @@
     "connectToTrade": "Conectar Billetera para Comerciar",
     "selectAToken": "Selecciona un Token",
     "success": "¡Intercambio completado exitosamente!",
-    "error": "Por favor ingresa una cantidad"
+    "error": "Por favor ingresa una cantidad",
+    "unlimited": "Ilimitado",
+    "unlimitedWarning": "El deslizamiento ilimitado puede resultar en precios de negociación desfavorables.",
+    "warning": "Advertencia:",
+    "approvalRequired": "Se Requiere Aprobación Única del Token",
+    "approvalDescription": "Primero deberá aprobar el acceso ilimitado para este token, luego confirmar el intercambio. Esta es una práctica estándar y solo necesitará aprobar una vez. Las futuras operaciones con este token no requerirán aprobación.",
+    "approveUnlimited": "Aprobar Acceso Ilimitado al Token",
+    "waitingConfirmation": "Esperando confirmación...",
+    "approvedOneTime": "Aprobado (Solo una vez)",
+    "pending": "Pendiente",
+    "confirmSwap": "Confirmar Intercambio",
+    "transactionCancelled": "Transacción cancelada. Rechazó la transacción en su billetera."
   },
   "tokens": {
     "title": "Tokens Populares",

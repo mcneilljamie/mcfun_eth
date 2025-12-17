@@ -141,7 +141,18 @@
     "connectToTrade": "İşlem Yapmak için Cüzdan Bağlayın",
     "selectAToken": "Bir Token Seçin",
     "success": "Takas başarıyla tamamlandı!",
-    "error": "Lütfen bir miktar girin"
+    "error": "Lütfen bir miktar girin",
+    "unlimited": "Sınırsız",
+    "unlimitedWarning": "Sınırsız kayma olumsuz işlem fiyatlarına neden olabilir.",
+    "warning": "Uyarı:",
+    "approvalRequired": "Tek Seferlik Token Onayı Gerekli",
+    "approvalDescription": "Önce bu token için sınırsız erişimi onaylamanız, ardından swap'ı onaylamanız gerekecek. Bu standart bir uygulamadır ve yalnızca bir kez onaylamanız gerekecektir. Bu tokenla gelecekteki işlemler onay gerektirmeyecektir.",
+    "approveUnlimited": "Sınırsız Token Erişimini Onayla",
+    "waitingConfirmation": "Onay bekleniyor...",
+    "approvedOneTime": "Onaylandı (Yalnızca bir kez)",
+    "pending": "Beklemede",
+    "confirmSwap": "Swap'ı Onayla",
+    "transactionCancelled": "İşlem iptal edildi. Cüzdanınızda işlemi reddettiniz."
   },
   "tokens": {
     "title": "Popüler Tokenlar",

@@ -141,7 +141,18 @@
     "connectToTrade": "连接钱包以交易",
     "selectAToken": "选择一个代币",
     "success": "交换成功完成！",
-    "error": "请输入金额"
+    "error": "请输入金额",
+    "unlimited": "无限制",
+    "unlimitedWarning": "无限滑点可能导致不利的交易价格。",
+    "warning": "警告：",
+    "approvalRequired": "需要一次性代币批准",
+    "approvalDescription": "您需要先批准此代币的无限访问权限，然后确认兑换。这是标准做法，您只需批准一次。未来使用此代币的交易将不需要批准。",
+    "approveUnlimited": "批准无限代币访问",
+    "waitingConfirmation": "等待确认...",
+    "approvedOneTime": "已批准（仅一次）",
+    "pending": "待处理",
+    "confirmSwap": "确认兑换",
+    "transactionCancelled": "交易已取消。您在钱包中拒绝了交易。"
   },
   "tokens": {
     "title": "热门代币",

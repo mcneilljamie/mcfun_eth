@@ -141,7 +141,18 @@
     "connectToTrade": "Conectar Carteira para Negociar",
     "selectAToken": "Selecione um Token",
     "success": "Troca concluída com sucesso!",
-    "error": "Por favor, insira um valor"
+    "error": "Por favor, insira um valor",
+    "unlimited": "Ilimitado",
+    "unlimitedWarning": "O deslizamento ilimitado pode resultar em preços de negociação desfavoráveis.",
+    "warning": "Aviso:",
+    "approvalRequired": "Aprovação Única do Token Necessária",
+    "approvalDescription": "Você precisará aprovar acesso ilimitado para este token primeiro, depois confirmar a troca. Esta é uma prática padrão e você só precisará aprovar uma vez. Negociações futuras com este token não exigirão aprovação.",
+    "approveUnlimited": "Aprovar Acesso Ilimitado ao Token",
+    "waitingConfirmation": "Aguardando confirmação...",
+    "approvedOneTime": "Aprovado (Apenas uma vez)",
+    "pending": "Pendente",
+    "confirmSwap": "Confirmar Troca",
+    "transactionCancelled": "Transação cancelada. Você rejeitou a transação em sua carteira."
   },
   "tokens": {
     "title": "Tokens Populares",

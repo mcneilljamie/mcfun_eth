@@ -141,7 +141,18 @@
     "connectToTrade": "거래하려면 지갑 연결",
     "selectAToken": "토큰 선택",
     "success": "스왑이 성공적으로 완료되었습니다!",
-    "error": "금액을 입력해주세요"
+    "error": "금액을 입력해주세요",
+    "unlimited": "무제한",
+    "unlimitedWarning": "무제한 슬리피지는 불리한 거래 가격을 초래할 수 있습니다.",
+    "warning": "경고:",
+    "approvalRequired": "일회성 토큰 승인 필요",
+    "approvalDescription": "먼저 이 토큰에 대한 무제한 액세스를 승인한 다음 스왑을 확인해야 합니다. 이는 표준 관행이며 한 번만 승인하면 됩니다. 이 토큰을 사용한 향후 거래에는 승인이 필요하지 않습니다.",
+    "approveUnlimited": "무제한 토큰 액세스 승인",
+    "waitingConfirmation": "확인 대기 중...",
+    "approvedOneTime": "승인됨 (한 번만)",
+    "pending": "대기 중",
+    "confirmSwap": "스왑 확인",
+    "transactionCancelled": "거래가 취소되었습니다. 지갑에서 거래를 거부했습니다."
   },
   "tokens": {
     "title": "인기 토큰",

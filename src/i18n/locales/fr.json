@@ -141,7 +141,18 @@
     "connectToTrade": "Connecter Portefeuille pour Échanger",
     "selectAToken": "Sélectionnez un Token",
     "success": "Échange terminé avec succès!",
-    "error": "Veuillez entrer un montant"
+    "error": "Veuillez entrer un montant",
+    "unlimited": "Illimité",
+    "unlimitedWarning": "Un glissement illimité peut entraîner des prix de transaction défavorables.",
+    "warning": "Avertissement:",
+    "approvalRequired": "Approbation Unique du Token Requise",
+    "approvalDescription": "Vous devrez d'abord approuver l'accès illimité pour ce token, puis confirmer l'échange. C'est une pratique standard et vous n'aurez besoin d'approuver qu'une seule fois. Les futures transactions avec ce token ne nécessiteront pas d'approbation.",
+    "approveUnlimited": "Approuver l'Accès Illimité au Token",
+    "waitingConfirmation": "En attente de confirmation...",
+    "approvedOneTime": "Approuvé (Une seule fois)",
+    "pending": "En attente",
+    "confirmSwap": "Confirmer l'Échange",
+    "transactionCancelled": "Transaction annulée. Vous avez rejeté la transaction dans votre portefeuille."
   },
   "tokens": {
     "title": "Tokens Populaires",

@@ -142,7 +142,7 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
     const errorCode = err?.code || '';
 
     if (errorCode === 'ACTION_REJECTED' || errorString.includes('user rejected') || errorString.includes('User denied')) {
-      return 'Transaction cancelled. You rejected the transaction in your wallet.';
+      return t('trade.transactionCancelled');
     }
 
     if (errorCode === 'INSUFFICIENT_FUNDS' || errorString.includes('insufficient funds')) {
@@ -478,7 +478,7 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
                   <div className="flex justify-between">
                     <span className="text-gray-600">{t('trade.slippageTolerance')}</span>
                     <span className="font-medium text-gray-900">
-                      {slippage === 100 ? 'Unlimited' : `${slippage}%`}
+                      {slippage === 100 ? t('trade.unlimited') : `${slippage}%`}
                     </span>
                   </div>
                   <div className="flex justify-between">
@@ -493,7 +493,7 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
 
             <div>
               <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
-                {t('trade.slippageLabel', { percent: slippage === 100 ? 'Unlimited' : slippage })}
+                {t('trade.slippageLabel', { percent: slippage === 100 ? t('trade.unlimited') : slippage })}
               </label>
               <div className="grid grid-cols-5 gap-2">
                 {[0.5, 1, 2, 5].map((value) => (
@@ -520,13 +520,13 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
                   disabled={isSwapping}
                   title="No slippage limit - use with caution"
                 >
-                  Unlimited
+                  {t('trade.unlimited')}
                 </button>
               </div>
               {slippage === 100 && (
                 <div className="mt-2 p-2 bg-orange-50 border border-orange-200 rounded-lg">
                   <p className="text-xs text-orange-800">
-                    <span className="font-semibold">Warning:</span> Unlimited slippage may result in unfavorable trade prices.
+                    <span className="font-semibold">{t('trade.warning')}</span> {t('trade.unlimitedWarning')}
                   </p>
                 </div>
               )}
@@ -538,10 +538,10 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
                   <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="text-sm font-semibold text-blue-900">
-                      One-Time Token Approval Required
+                      {t('trade.approvalRequired')}
                     </p>
                     <p className="text-xs mt-1 text-blue-800">
-                      You'll need to approve unlimited access for this token first, then confirm the swap. This is standard practice and you'll only need to approve once. Future trades with this token won't require approval.
+                      {t('trade.approvalDescription')}
                     </p>
                   </div>
                 </div>
@@ -564,9 +564,9 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
                       )}
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">Approve Unlimited Token Access</p>
+                      <p className="text-sm font-medium text-gray-900">{t('trade.approveUnlimited')}</p>
                       <p className="text-xs text-gray-600">
-                        {swapStep === 'approving' ? 'Waiting for confirmation...' : swapStep === 'approved' || swapStep === 'swapping' ? 'Approved (One-time only)' : 'Pending'}
+                        {swapStep === 'approving' ? t('trade.waitingConfirmation') : swapStep === 'approved' || swapStep === 'swapping' ? t('trade.approvedOneTime') : t('trade.pending')}
                       </p>
                     </div>
                   </div>
@@ -581,9 +581,9 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
                       )}
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">Confirm Swap</p>
+                      <p className="text-sm font-medium text-gray-900">{t('trade.confirmSwap')}</p>
                       <p className="text-xs text-gray-600">
-                        {swapStep === 'swapping' ? 'Waiting for confirmation...' : 'Pending'}
+                        {swapStep === 'swapping' ? t('trade.waitingConfirmation') : t('trade.pending')}
                       </p>
                     </div>
                   </div>
