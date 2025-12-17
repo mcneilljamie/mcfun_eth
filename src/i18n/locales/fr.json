@@ -364,5 +364,42 @@
       "description": "Vous êtes connecté à {{current}}. Veuillez basculer vers {{required}} pour utiliser cette application.",
       "switchButton": "Basculer vers {{network}}"
     }
+  },
+  "swapConfirmation": {
+    "title": "Échange Réussi!",
+    "subtitle": "Votre transaction a été confirmée",
+    "swapDetails": "Détails de l'Échange",
+    "youPaid": "Vous avez Payé",
+    "youReceived": "Vous avez Reçu",
+    "transactionInfo": "Informations sur la Transaction",
+    "transactionHash": "Hash de Transaction",
+    "tokenContract": "Adresse du Contrat du Token",
+    "dexPool": "Adresse du Pool DEX",
+    "copyTxHash": "Copier le hash de transaction",
+    "copyTokenAddress": "Copier l'adresse du token",
+    "copyPoolAddress": "Copier l'adresse du pool",
+    "viewOnExplorer": "Voir sur l'explorateur de blocs",
+    "viewOnEtherscan": "Voir sur Etherscan",
+    "goToToken": "Aller au Token",
+    "makeAnotherSwap": "Faire un Autre Échange"
+  },
+  "launchCelebration": {
+    "title": "Félicitations!",
+    "subtitle": "Votre token {{name}} ({{symbol}}) a été lancé avec succès!",
+    "shareToken": "Partagez Votre Token",
+    "shareableLink": "Lien Partageable",
+    "shareDescription": "Partagez ce lien avec n'importe qui pour leur montrer votre token",
+    "copyLink": "Copier le lien partageable",
+    "contractAddresses": "Adresses des Contrats",
+    "tokenContract": "Adresse du Contrat du Token",
+    "dexPool": "Adresse du Pool DEX",
+    "transactionHash": "Hash de Transaction",
+    "copyTokenAddress": "Copier l'adresse du token",
+    "copyPoolAddress": "Copier l'adresse du pool",
+    "copyTxHash": "Copier le hash de transaction",
+    "viewOnExplorer": "Voir sur l'explorateur de blocs",
+    "viewOnEtherscan": "Voir sur Etherscan",
+    "viewYourToken": "Voir Votre Token",
+    "launchAnother": "Lancer un Autre Token"
   }
 }

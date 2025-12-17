@@ -153,25 +153,25 @@ export function SwapConfirmation({
               <CheckCheck className="w-10 h-10 text-white" />
             </div>
             <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              Swap Successful!
+              {t('swapConfirmation.title')}
             </h2>
             <p className="text-lg text-gray-600">
-              Your transaction has been confirmed
+              {t('swapConfirmation.subtitle')}
             </p>
           </div>
 
           <div className="space-y-6">
             <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
-              <h3 className="font-semibold text-gray-900 mb-4">Swap Details</h3>
+              <h3 className="font-semibold text-gray-900 mb-4">{t('swapConfirmation.swapDetails')}</h3>
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">You Paid</span>
+                  <span className="text-gray-600">{t('swapConfirmation.youPaid')}</span>
                   <span className="font-semibold text-gray-900">
                     {formatNumber(amountIn, isETHToToken ? 6 : 4)} {isETHToToken ? 'ETH' : tokenSymbol}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">You Received</span>
+                  <span className="text-gray-600">{t('swapConfirmation.youReceived')}</span>
                   <span className="font-semibold text-gray-900">
                     {formatNumber(amountOut, isETHToToken ? 4 : 6)} {isETHToToken ? tokenSymbol : 'ETH'}
                   </span>
@@ -182,13 +182,13 @@ export function SwapConfirmation({
             <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6">
               <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
                 <ExternalLink className="w-5 h-5 mr-2" />
-                Transaction Information
+                {t('swapConfirmation.transactionInfo')}
               </h3>
 
               <div className="space-y-3">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Transaction Hash
+                    {t('swapConfirmation.transactionHash')}
                   </label>
                   <div className="flex items-center space-x-2">
                     <input
@@ -200,7 +200,7 @@ export function SwapConfirmation({
                     <button
                       onClick={() => copyToClipboard(txHash, 'tx')}
                       className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
-                      title="Copy transaction hash"
+                      title={t('swapConfirmation.copyTxHash')}
                     >
                       {copiedItem === 'tx' ? (
                         <CheckCircle className="w-5 h-5 text-green-400" />
@@ -213,7 +213,7 @@ export function SwapConfirmation({
                       target="_blank"
                       rel="noopener noreferrer"
                       className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
-                      title="View on block explorer"
+                      title={t('swapConfirmation.viewOnExplorer')}
                     >
                       <ExternalLink className="w-5 h-5" />
                     </a>
@@ -222,7 +222,7 @@ export function SwapConfirmation({
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Token Contract Address
+                    {t('swapConfirmation.tokenContract')}
                   </label>
                   <div className="flex items-center space-x-2">
                     <input
@@ -234,7 +234,7 @@ export function SwapConfirmation({
                     <button
                       onClick={() => copyToClipboard(tokenAddress, 'token')}
                       className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
-                      title="Copy token address"
+                      title={t('swapConfirmation.copyTokenAddress')}
                     >
                       {copiedItem === 'token' ? (
                         <CheckCircle className="w-5 h-5 text-green-400" />
@@ -247,7 +247,7 @@ export function SwapConfirmation({
                       target="_blank"
                       rel="noopener noreferrer"
                       className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
-                      title="View on Etherscan"
+                      title={t('swapConfirmation.viewOnEtherscan')}
                     >
                       <ExternalLink className="w-5 h-5" />
                     </a>
@@ -256,7 +256,7 @@ export function SwapConfirmation({
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    DEX Pool Address
+                    {t('swapConfirmation.dexPool')}
                   </label>
                   <div className="flex items-center space-x-2">
                     <input
@@ -268,7 +268,7 @@ export function SwapConfirmation({
                     <button
                       onClick={() => copyToClipboard(ammAddress, 'pool')}
                       className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
-                      title="Copy pool address"
+                      title={t('swapConfirmation.copyPoolAddress')}
                     >
                       {copiedItem === 'pool' ? (
                         <CheckCircle className="w-5 h-5 text-green-400" />
@@ -281,7 +281,7 @@ export function SwapConfirmation({
                       target="_blank"
                       rel="noopener noreferrer"
                       className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
-                      title="View on Etherscan"
+                      title={t('swapConfirmation.viewOnEtherscan')}
                     >
                       <ExternalLink className="w-5 h-5" />
                     </a>
@@ -295,13 +295,13 @@ export function SwapConfirmation({
                 onClick={onViewToken}
                 className="flex-1 bg-gray-900 text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
               >
-                Go to Token
+                {t('swapConfirmation.goToToken')}
               </button>
               <button
                 onClick={onClose}
                 className="flex-1 bg-gray-100 text-gray-900 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
               >
-                Make Another Swap
+                {t('swapConfirmation.makeAnotherSwap')}
               </button>
             </div>
           </div>

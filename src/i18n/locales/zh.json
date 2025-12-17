@@ -364,5 +364,42 @@
       "description": "您已连接到{{current}}。请切换到{{required}}以使用此应用。",
       "switchButton": "切换到{{network}}"
     }
+  },
+  "swapConfirmation": {
+    "title": "Swap Successful!",
+    "subtitle": "Your transaction has been confirmed",
+    "swapDetails": "Swap Details",
+    "youPaid": "You Paid",
+    "youReceived": "You Received",
+    "transactionInfo": "Transaction Information",
+    "transactionHash": "Transaction Hash",
+    "tokenContract": "Token Contract Address",
+    "dexPool": "DEX Pool Address",
+    "copyTxHash": "Copy transaction hash",
+    "copyTokenAddress": "Copy token address",
+    "copyPoolAddress": "Copy pool address",
+    "viewOnExplorer": "View on block explorer",
+    "viewOnEtherscan": "View on Etherscan",
+    "goToToken": "Go to Token",
+    "makeAnotherSwap": "Make Another Swap"
+  },
+  "launchCelebration": {
+    "title": "Congratulations!",
+    "subtitle": "Your token {{name}} ({{symbol}}) has been successfully launched!",
+    "shareToken": "Share Your Token",
+    "shareableLink": "Shareable Link",
+    "shareDescription": "Share this link with anyone to show them your token",
+    "copyLink": "Copy shareable link",
+    "contractAddresses": "Contract Addresses",
+    "tokenContract": "Token Contract Address",
+    "dexPool": "DEX Pool Address",
+    "transactionHash": "Transaction Hash",
+    "copyTokenAddress": "Copy token address",
+    "copyPoolAddress": "Copy pool address",
+    "copyTxHash": "Copy transaction hash",
+    "viewOnExplorer": "View on block explorer",
+    "viewOnEtherscan": "View on Etherscan",
+    "viewYourToken": "View Your Token",
+    "launchAnother": "Launch Another Token"
   }
 }

@@ -150,10 +150,10 @@ export function LaunchCelebration({
               <CheckCircle className="w-10 h-10 text-white" />
             </div>
             <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              Congratulations!
+              {t('launchCelebration.title')}
             </h2>
             <p className="text-lg text-gray-600">
-              Your token <span className="font-semibold text-gray-900">{tokenName}</span> ({tokenSymbol}) has been successfully launched!
+              {t('launchCelebration.subtitle', { name: tokenName, symbol: tokenSymbol })}
             </p>
           </div>
 
@@ -161,12 +161,12 @@ export function LaunchCelebration({
             <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border-2 border-blue-300">
               <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
                 <Sparkles className="w-5 h-5 mr-2 text-blue-600" />
-                Share Your Token
+                {t('launchCelebration.shareToken')}
               </h3>
 
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Shareable Link
+                  {t('launchCelebration.shareableLink')}
                 </label>
                 <div className="flex items-center space-x-2">
                   <input
@@ -178,7 +178,7 @@ export function LaunchCelebration({
                   <button
                     onClick={() => copyToClipboard(`${window.location.origin}/token/${tokenAddress}`, 'link')}
                     className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                    title="Copy shareable link"
+                    title={t('launchCelebration.copyLink')}
                   >
                     {copiedItem === 'link' ? (
                       <CheckCircle className="w-5 h-5 text-white" />
@@ -188,7 +188,7 @@ export function LaunchCelebration({
                   </button>
                 </div>
                 <p className="text-xs text-gray-600 mt-1">
-                  Share this link with anyone to show them your token
+                  {t('launchCelebration.shareDescription')}
                 </p>
               </div>
             </div>
@@ -196,13 +196,13 @@ export function LaunchCelebration({
             <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6">
               <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
                 <ExternalLink className="w-5 h-5 mr-2" />
-                Contract Addresses
+                {t('launchCelebration.contractAddresses')}
               </h3>
 
               <div className="space-y-3">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Token Contract Address
+                    {t('launchCelebration.tokenContract')}
                   </label>
                   <div className="flex items-center space-x-2">
                     <input
@@ -214,7 +214,7 @@ export function LaunchCelebration({
                     <button
                       onClick={() => copyToClipboard(tokenAddress, 'token')}
                       className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
-                      title="Copy token address"
+                      title={t('launchCelebration.copyTokenAddress')}
                     >
                       {copiedItem === 'token' ? (
                         <CheckCircle className="w-5 h-5 text-green-400" />
@@ -227,7 +227,7 @@ export function LaunchCelebration({
                       target="_blank"
                       rel="noopener noreferrer"
                       className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
-                      title="View on Etherscan"
+                      title={t('launchCelebration.viewOnEtherscan')}
                     >
                       <ExternalLink className="w-5 h-5" />
                     </a>
@@ -236,7 +236,7 @@ export function LaunchCelebration({
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    DEX Pool Address
+                    {t('launchCelebration.dexPool')}
                   </label>
                   <div className="flex items-center space-x-2">
                     <input
@@ -248,7 +248,7 @@ export function LaunchCelebration({
                     <button
                       onClick={() => copyToClipboard(ammAddress, 'amm')}
                       className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
-                      title="Copy pool address"
+                      title={t('launchCelebration.copyPoolAddress')}
                     >
                       {copiedItem === 'amm' ? (
                         <CheckCircle className="w-5 h-5 text-green-400" />
@@ -261,7 +261,7 @@ export function LaunchCelebration({
                       target="_blank"
                       rel="noopener noreferrer"
                       className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
-                      title="View on Etherscan"
+                      title={t('launchCelebration.viewOnEtherscan')}
                     >
                       <ExternalLink className="w-5 h-5" />
                     </a>
@@ -270,7 +270,7 @@ export function LaunchCelebration({
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Transaction Hash
+                    {t('launchCelebration.transactionHash')}
                   </label>
                   <div className="flex items-center space-x-2">
                     <input
@@ -282,7 +282,7 @@ export function LaunchCelebration({
                     <button
                       onClick={() => copyToClipboard(txHash, 'tx')}
                       className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
-                      title="Copy transaction hash"
+                      title={t('launchCelebration.copyTxHash')}
                     >
                       {copiedItem === 'tx' ? (
                         <CheckCircle className="w-5 h-5 text-green-400" />
@@ -295,7 +295,7 @@ export function LaunchCelebration({
                       target="_blank"
                       rel="noopener noreferrer"
                       className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
-                      title="View on block explorer"
+                      title={t('launchCelebration.viewOnExplorer')}
                     >
                       <ExternalLink className="w-5 h-5" />
                     </a>
@@ -309,13 +309,13 @@ export function LaunchCelebration({
                 onClick={onViewToken}
                 className="flex-1 bg-gray-900 text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
               >
-                View Your Token
+                {t('launchCelebration.viewYourToken')}
               </button>
               <button
                 onClick={onClose}
                 className="flex-1 bg-gray-100 text-gray-900 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
               >
-                Launch Another Token
+                {t('launchCelebration.launchAnother')}
               </button>
             </div>
           </div>
