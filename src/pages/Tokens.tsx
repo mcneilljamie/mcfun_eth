@@ -25,6 +25,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   const [liveReserves, setLiveReserves] = useState<Record<string, { reserveETH: string; reserveToken: string }>>({});
   const [, setLiveVolumes] = useState<Record<string, string>>({});
   const [priceChanges, setPriceChanges] = useState<Record<string, { change: number; isNew: boolean }>>({});
+  const [rankingMethod, setRankingMethod] = useState<'marketCap' | 'liquidity'>('marketCap');
 
   useEffect(() => {
     loadTokens();
@@ -84,13 +85,19 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     }
 
     const sorted = [...result].sort((a, b) => {
-      const aMarketCap = calculateMarketCap(a);
-      const bMarketCap = calculateMarketCap(b);
-      return bMarketCap - aMarketCap;
+      if (rankingMethod === 'marketCap') {
+        const aMarketCap = calculateMarketCap(a);
+        const bMarketCap = calculateMarketCap(b);
+        return bMarketCap - aMarketCap;
+      } else {
+        const aLiquidity = calculateLiquidity(a);
+        const bLiquidity = calculateLiquidity(b);
+        return bLiquidity - aLiquidity;
+      }
     });
 
     setFilteredTokens(sorted);
-  }, [searchQuery, tokens, liveReserves, ethPriceUSD]);
+  }, [searchQuery, tokens, liveReserves, ethPriceUSD, rankingMethod]);
 
   const loadTokens = async () => {
     setIsLoading(true);
@@ -234,6 +241,15 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     const TOKEN_TOTAL_SUPPLY = 1000000;
     const priceUSD = calculateTokenPriceUSD(token);
     return priceUSD * TOKEN_TOTAL_SUPPLY;
+  };
+
+  const calculateLiquidity = (token: Token): number => {
+    const reserves = liveReserves[token.token_address];
+    const ethReserve = reserves
+      ? parseFloat(reserves.reserveETH)
+      : parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
+
+    return ethReserve * ethPriceUSD * 2;
   };
 
   return (
