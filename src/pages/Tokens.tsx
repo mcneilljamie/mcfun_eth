@@ -277,7 +277,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
           </div>
 
           <div className="flex items-center space-x-2 mb-6">
-            <span className="text-sm text-gray-600">{t('tokens.rankBy')}:</span>
+            <span className="text-sm text-gray-600">Rank tokens by:</span>
             <div className="inline-flex rounded-lg border border-gray-300 p-1 bg-gray-50">
               <button
                 onClick={() => setRankingMethod('marketCap')}
