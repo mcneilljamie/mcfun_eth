@@ -25,7 +25,6 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   const [liveReserves, setLiveReserves] = useState<Record<string, { reserveETH: string; reserveToken: string }>>({});
   const [, setLiveVolumes] = useState<Record<string, string>>({});
   const [priceChanges, setPriceChanges] = useState<Record<string, { change: number; isNew: boolean }>>({});
-  const [rankingMethod, setRankingMethod] = useState<'marketCap' | 'liquidity'>('marketCap');
 
   useEffect(() => {
     loadTokens();
@@ -85,19 +84,13 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     }
 
     const sorted = [...result].sort((a, b) => {
-      if (rankingMethod === 'marketCap') {
-        const aMarketCap = calculateMarketCap(a);
-        const bMarketCap = calculateMarketCap(b);
-        return bMarketCap - aMarketCap;
-      } else {
-        const aLiquidity = calculateLiquidity(a);
-        const bLiquidity = calculateLiquidity(b);
-        return bLiquidity - aLiquidity;
-      }
+      const aMarketCap = calculateMarketCap(a);
+      const bMarketCap = calculateMarketCap(b);
+      return bMarketCap - aMarketCap;
     });
 
     setFilteredTokens(sorted);
-  }, [searchQuery, tokens, liveReserves, ethPriceUSD, rankingMethod]);
+  }, [searchQuery, tokens, liveReserves, ethPriceUSD]);
 
   const loadTokens = async () => {
     setIsLoading(true);
@@ -243,20 +236,11 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     return priceUSD * TOKEN_TOTAL_SUPPLY;
   };
 
-  const calculateLiquidity = (token: Token): number => {
-    const reserves = liveReserves[token.token_address];
-    const ethReserve = reserves
-      ? parseFloat(reserves.reserveETH)
-      : parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
-
-    return ethReserve * ethPriceUSD * 2;
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6 sm:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-xl shadow-lg p-4 sm:p-8">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
             <div className="flex items-center space-x-3">
               <div className="bg-gray-900 p-2 rounded-lg">
                 <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
@@ -273,32 +257,6 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
               />
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-2 mb-6">
-            <span className="text-sm text-gray-600">Rank tokens by:</span>
-            <div className="inline-flex rounded-lg border border-gray-300 p-1 bg-gray-50">
-              <button
-                onClick={() => setRankingMethod('marketCap')}
-                className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
-                  rankingMethod === 'marketCap'
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-700 hover:text-gray-900'
-                }`}
-              >
-                {t('tokens.table.marketCap')}
-              </button>
-              <button
-                onClick={() => setRankingMethod('liquidity')}
-                className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
-                  rankingMethod === 'liquidity'
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-700 hover:text-gray-900'
-                }`}
-              >
-                {t('tokens.table.liquidity')}
-              </button>
             </div>
           </div>
 
