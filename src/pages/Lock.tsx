@@ -539,8 +539,8 @@ export function Lock({ onShowToast }: LockPageProps) {
                   <div className="text-2xl font-bold">{formatCurrency(tokenStats.total_value_usd)}</div>
                 </div>
                 <div className="bg-white/10 backdrop-blur rounded-lg p-4">
-                  <div className="text-blue-100 text-sm mb-1">{t('lock.lockCount')}</div>
-                  <div className="text-2xl font-bold">{tokenStats.total_locks_count}</div>
+                  <div className="text-blue-100 text-sm mb-1">{t('lock.priceUsd')}</div>
+                  <div className="text-2xl font-bold">${tokenStats.current_price_usd.toFixed(6)}</div>
                 </div>
                 <div className="bg-white/10 backdrop-blur rounded-lg p-4">
                   <div className="text-blue-100 text-sm mb-1">{t('lock.activeLocks')}</div>
