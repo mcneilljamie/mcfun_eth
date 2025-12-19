@@ -62,11 +62,11 @@ Deno.serve(async (req: Request) => {
 
     // If custom start block provided, use it
     // Otherwise, if first run, start from block 0 to catch ALL historical locks
-    // Subsequent runs will start from last indexed block
+    // Subsequent runs will start from last indexed block (not +1, to catch any missed events in that block)
     const fromBlock = requestedStartBlock !== null
       ? requestedStartBlock
       : (lastIndexedLock?.block_number
-        ? Number(lastIndexedLock.block_number) + 1
+        ? Math.max(0, Number(lastIndexedLock.block_number) - 10) // Scan last 10 blocks to catch any missed events
         : 0);
 
     const toBlock = currentBlock;
