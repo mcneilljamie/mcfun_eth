@@ -813,9 +813,6 @@ export function Lock({ onShowToast }: LockPageProps) {
                           <div className="flex items-center gap-2 mb-1">
                             <h3 className="text-lg font-bold text-gray-900">{aggLock.token_symbol}</h3>
                             <span className="text-sm text-gray-500">{aggLock.token_name || 'Unknown'}</span>
-                            <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                              McFun
-                            </span>
                           </div>
                           <div className="grid grid-cols-3 gap-4 text-sm">
                             <div>
