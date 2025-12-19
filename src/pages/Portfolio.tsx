@@ -347,6 +347,50 @@ export default function Portfolio() {
         </p>
       </div>
 
+      {/* Token Holdings */}
+      {tokens.length === 0 && aggregatedLockedTokens.length === 0 ? (
+        <div className="bg-white rounded-xl shadow-lg p-12 text-center">
+          <p className="text-gray-600 text-lg mb-6">{t('portfolio.noHoldings')}</p>
+          <Link
+            to="/tokens"
+            className="inline-block px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-md"
+          >
+            {t('portfolio.browseTokens')}
+          </Link>
+        </div>
+      ) : tokens.length > 0 ? (
+        <div className="space-y-3 mb-8">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">{t('portfolio.yourHoldings')}</h2>
+          {tokens.map((token) => (
+            <div
+              key={token.tokenAddress}
+              onClick={() => navigate(`/token/${token.tokenAddress}`)}
+              className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg hover:border-blue-300 transition-all cursor-pointer"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <h3 className="text-xl font-bold text-gray-900">{token.symbol}</h3>
+                    <span className="text-sm text-gray-500">{token.name}</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    {t('portfolio.balance')}: {formatNumber(token.balance)} {token.symbol}
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-gray-900 mb-1">
+                    {formatCurrency(token.valueUsd)}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    {formatPrice(token.priceUsd)} {t('portfolio.perToken')}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : null}
+
       {/* Locked Tokens Section */}
       {aggregatedLockedTokens.length > 0 && (
         <div className="mb-8">
@@ -415,50 +459,6 @@ export default function Portfolio() {
           </div>
         </div>
       )}
-
-      {/* Token Holdings */}
-      {tokens.length === 0 && aggregatedLockedTokens.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-lg p-12 text-center">
-          <p className="text-gray-600 text-lg mb-6">{t('portfolio.noHoldings')}</p>
-          <Link
-            to="/tokens"
-            className="inline-block px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-md"
-          >
-            {t('portfolio.browseTokens')}
-          </Link>
-        </div>
-      ) : tokens.length > 0 ? (
-        <div className="space-y-3">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">{t('portfolio.yourHoldings')}</h2>
-          {tokens.map((token) => (
-            <div
-              key={token.tokenAddress}
-              onClick={() => navigate(`/token/${token.tokenAddress}`)}
-              className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg hover:border-blue-300 transition-all cursor-pointer"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h3 className="text-xl font-bold text-gray-900">{token.symbol}</h3>
-                    <span className="text-sm text-gray-500">{token.name}</span>
-                  </div>
-                  <div className="text-sm text-gray-600">
-                    {t('portfolio.balance')}: {formatNumber(token.balance)} {token.symbol}
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-2xl font-bold text-gray-900 mb-1">
-                    {formatCurrency(token.valueUsd)}
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    {formatPrice(token.priceUsd)} {t('portfolio.perToken')}
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : null}
     </div>
   );
 }

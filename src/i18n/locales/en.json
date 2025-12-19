@@ -329,7 +329,7 @@
     "infoMessage": "This page tracks your ETH balance and tokens that are traded on McFun.",
     "noHoldings": "No token holdings found",
     "browseTokens": "Browse Tokens",
-    "yourHoldings": "Your Unlocked Tokens",
+    "yourHoldings": "Unlocked Tokens",
     "balance": "Balance",
     "perToken": "per token"
   },
