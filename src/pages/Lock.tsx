@@ -380,7 +380,9 @@ export function Lock({ onShowToast }: LockPageProps) {
     ? filteredLocks.filter((lock) => lock.user_address.toLowerCase() === account.toLowerCase())
     : [];
 
-  const mcfunLockedTokens = aggregatedLocks.filter((lock) => lock.is_mcfun_token);
+  const mcfunLockedTokens = aggregatedLocks
+    .filter((lock) => lock.is_mcfun_token)
+    .sort((a, b) => (b.total_value_usd || 0) - (a.total_value_usd || 0));
 
   const formatTimeRemaining = (unlockTimestamp: string) => {
     const now = new Date();
@@ -837,9 +839,6 @@ export function Lock({ onShowToast }: LockPageProps) {
                         <div className="text-sm text-gray-500 mb-1">{t('lock.totalValue')}</div>
                         <div className="text-2xl font-bold text-gray-900">
                           {formatCurrency(totalValueUsd)}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {totalValueEth.toFixed(4)} ETH
                         </div>
                       </div>
                     </div>
