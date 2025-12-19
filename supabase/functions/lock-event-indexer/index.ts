@@ -38,6 +38,19 @@ Deno.serve(async (req: Request) => {
     const provider = new ethers.JsonRpcProvider(RPC_URL);
     const lockerContract = new ethers.Contract(LOCKER_ADDRESS, LOCKER_ABI, provider);
 
+    // Check for custom start block from request body
+    let requestedStartBlock: number | null = null;
+    if (req.method === "POST") {
+      try {
+        const body = await req.json();
+        if (body.fromBlock !== undefined) {
+          requestedStartBlock = Number(body.fromBlock);
+        }
+      } catch {
+        // Ignore parsing errors
+      }
+    }
+
     const { data: lastIndexedLock } = await supabase
       .from("token_locks")
       .select("block_number")
@@ -47,23 +60,40 @@ Deno.serve(async (req: Request) => {
 
     const currentBlock = await provider.getBlockNumber();
 
-    // If first run, start from 200k blocks ago to catch all historical locks
+    // If custom start block provided, use it
+    // Otherwise, if first run, start from block 0 to catch ALL historical locks
     // Subsequent runs will start from last indexed block
-    const defaultStartBlock = Math.max(0, currentBlock - 200000);
-    const fromBlock = lastIndexedLock?.block_number
-      ? Number(lastIndexedLock.block_number) + 1
-      : defaultStartBlock;
+    const fromBlock = requestedStartBlock !== null
+      ? requestedStartBlock
+      : (lastIndexedLock?.block_number
+        ? Number(lastIndexedLock.block_number) + 1
+        : 0);
 
     const toBlock = currentBlock;
 
     console.log(`Indexing locks from block ${fromBlock} to ${toBlock}`);
 
-    const lockedFilter = lockerContract.filters.TokensLocked();
-    const lockedEvents = await lockerContract.queryFilter(lockedFilter, fromBlock, toBlock);
+    // Query in chunks to avoid RPC limits (50k blocks per chunk)
+    const CHUNK_SIZE = 50000;
+    const allLockedEvents = [];
+    const allUnlockedEvents = [];
 
-    console.log(`Found ${lockedEvents.length} TokensLocked events`);
+    for (let chunkStart = fromBlock; chunkStart <= toBlock; chunkStart += CHUNK_SIZE) {
+      const chunkEnd = Math.min(chunkStart + CHUNK_SIZE - 1, toBlock);
+      console.log(`Querying chunk: ${chunkStart} to ${chunkEnd}`);
 
-    for (const event of lockedEvents) {
+      const lockedFilter = lockerContract.filters.TokensLocked();
+      const lockedEvents = await lockerContract.queryFilter(lockedFilter, chunkStart, chunkEnd);
+      allLockedEvents.push(...lockedEvents);
+
+      const unlockedFilter = lockerContract.filters.TokensUnlocked();
+      const unlockedEvents = await lockerContract.queryFilter(unlockedFilter, chunkStart, chunkEnd);
+      allUnlockedEvents.push(...unlockedEvents);
+    }
+
+    console.log(`Found ${allLockedEvents.length} TokensLocked events`);
+
+    for (const event of allLockedEvents) {
       try {
         const lockId = Number(event.args[0]);
         const owner = event.args[1];
@@ -119,12 +149,9 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    const unlockedFilter = lockerContract.filters.TokensUnlocked();
-    const unlockedEvents = await lockerContract.queryFilter(unlockedFilter, fromBlock, toBlock);
+    console.log(`Found ${allUnlockedEvents.length} TokensUnlocked events`);
 
-    console.log(`Found ${unlockedEvents.length} TokensUnlocked events`);
-
-    for (const event of unlockedEvents) {
+    for (const event of allUnlockedEvents) {
       try {
         const lockId = Number(event.args[0]);
 
@@ -147,8 +174,8 @@ Deno.serve(async (req: Request) => {
       JSON.stringify({
         success: true,
         indexed: {
-          locked: lockedEvents.length,
-          unlocked: unlockedEvents.length,
+          locked: allLockedEvents.length,
+          unlocked: allUnlockedEvents.length,
         },
         fromBlock,
         toBlock,
