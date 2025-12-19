@@ -317,7 +317,7 @@
     "loading": "पोर्टफोलियो लोड हो रहा है...",
     "portfolioValue": "पोर्टफोलियो मूल्य",
     "ethBalance": "ETH बैलेंस",
-    "tokensValue": "टोकन मूल्य",
+    "tokensValue": "अनलॉक किए गए टोकन मूल्य",
     "lockedValue": "लॉक किए गए टोकन मूल्य",
     "lockedTokens": "लॉक किए गए टोकन",
     "viewAllLocks": "मेरे सभी लॉक देखें",
@@ -329,7 +329,7 @@
     "infoMessage": "यह पेज आपके ETH बैलेंस और McFun पर ट्रेड किए गए टोकन को ट्रैक करता है।",
     "noHoldings": "कोई टोकन होल्डिंग नहीं मिली",
     "browseTokens": "टोकन ब्राउज़ करें",
-    "yourHoldings": "आपकी टोकन होल्डिंग्स",
+    "yourHoldings": "अनलॉक किए गए टोकन होल्डिंग्स",
     "balance": "बैलेंस",
     "perToken": "प्रति टोकन"
   },

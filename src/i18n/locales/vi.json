@@ -317,7 +317,7 @@
     "loading": "Đang tải danh mục...",
     "portfolioValue": "Giá trị Danh mục",
     "ethBalance": "Số dư ETH",
-    "tokensValue": "Giá trị Token",
+    "tokensValue": "Giá trị Token Đã Mở Khóa",
     "lockedValue": "Giá trị Token Bị Khóa",
     "lockedTokens": "Token Bị Khóa",
     "viewAllLocks": "Xem Tất Cả Khóa Của Tôi",
@@ -329,7 +329,7 @@
     "infoMessage": "Trang này theo dõi số dư ETH và các token được giao dịch trên McFun.",
     "noHoldings": "Không tìm thấy token",
     "browseTokens": "Duyệt Token",
-    "yourHoldings": "Token của bạn",
+    "yourHoldings": "Token Đã Mở Khóa của bạn",
     "balance": "Số dư",
     "perToken": "mỗi token"
   },

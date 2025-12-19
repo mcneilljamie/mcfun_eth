@@ -317,7 +317,7 @@
     "loading": "جاري تحميل المحفظة...",
     "portfolioValue": "قيمة المحفظة",
     "ethBalance": "رصيد ETH",
-    "tokensValue": "قيمة الرموز",
+    "tokensValue": "قيمة الرموز غير المقفلة",
     "lockedValue": "قيمة الرموز المقفلة",
     "lockedTokens": "الرموز المقفلة",
     "viewAllLocks": "عرض جميع أقفالي",
@@ -329,7 +329,7 @@
     "infoMessage": "تتتبع هذه الصفحة رصيد ETH والرموز المتداولة على McFun.",
     "noHoldings": "لم يتم العثور على رموز",
     "browseTokens": "تصفح الرموز",
-    "yourHoldings": "رموزك",
+    "yourHoldings": "رموزك غير المقفلة",
     "balance": "الرصيد",
     "perToken": "لكل رمز"
   },

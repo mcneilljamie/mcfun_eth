@@ -317,7 +317,7 @@
     "loading": "Cargando portafolio...",
     "portfolioValue": "Valor del Portafolio",
     "ethBalance": "Balance ETH",
-    "tokensValue": "Valor de Tokens",
+    "tokensValue": "Valor de Tokens Desbloqueados",
     "lockedValue": "Valor de Tokens Bloqueados",
     "lockedTokens": "Tokens Bloqueados",
     "viewAllLocks": "Ver Todos Mis Bloqueos",
@@ -329,7 +329,7 @@
     "infoMessage": "Esta página rastrea tu balance de ETH y los tokens que se comercian en McFun.",
     "noHoldings": "No se encontraron tenencias de tokens",
     "browseTokens": "Explorar Tokens",
-    "yourHoldings": "Tus Tenencias de Tokens",
+    "yourHoldings": "Tenencias de Tokens Desbloqueados",
     "balance": "Balance",
     "perToken": "por token"
   },

@@ -317,7 +317,7 @@
     "loading": "Chargement du portefeuille...",
     "portfolioValue": "Valeur du Portefeuille",
     "ethBalance": "Solde ETH",
-    "tokensValue": "Valeur des Tokens",
+    "tokensValue": "Valeur des Tokens Débloqués",
     "lockedValue": "Valeur des Tokens Verrouillés",
     "lockedTokens": "Tokens Verrouillés",
     "viewAllLocks": "Voir Tous Mes Verrous",
@@ -329,7 +329,7 @@
     "infoMessage": "Cette page suit votre solde ETH et les tokens échangés sur McFun.",
     "noHoldings": "Aucun token trouvé",
     "browseTokens": "Parcourir les Tokens",
-    "yourHoldings": "Vos Tokens",
+    "yourHoldings": "Vos Tokens Débloqués",
     "balance": "Solde",
     "perToken": "par token"
   },

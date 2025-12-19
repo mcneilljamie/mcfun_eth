@@ -317,7 +317,7 @@
     "loading": "포트폴리오 로딩 중...",
     "portfolioValue": "포트폴리오 가치",
     "ethBalance": "ETH 잔액",
-    "tokensValue": "토큰 가치",
+    "tokensValue": "잠금 해제된 토큰 가치",
     "lockedValue": "잠긴 토큰 가치",
     "lockedTokens": "잠긴 토큰",
     "viewAllLocks": "내 모든 잠금 보기",
@@ -329,7 +329,7 @@
     "infoMessage": "이 페이지는 McFun에서 거래되는 ETH 잔액과 토큰을 추적합니다.",
     "noHoldings": "토큰 보유량이 없습니다",
     "browseTokens": "토큰 둘러보기",
-    "yourHoldings": "보유 토큰",
+    "yourHoldings": "잠금 해제된 보유 토큰",
     "balance": "잔액",
     "perToken": "토큰당"
   },

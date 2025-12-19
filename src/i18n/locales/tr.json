@@ -317,7 +317,7 @@
     "loading": "Portföy yükleniyor...",
     "portfolioValue": "Portföy Değeri",
     "ethBalance": "ETH Bakiyesi",
-    "tokensValue": "Token Değeri",
+    "tokensValue": "Kilidi Açılmış Token Değeri",
     "lockedValue": "Kilitli Token Değeri",
     "lockedTokens": "Kilitli Tokenler",
     "viewAllLocks": "Tüm Kilitlerimi Gör",
@@ -329,7 +329,7 @@
     "infoMessage": "Bu sayfa McFun'da işlem gören ETH bakiyenizi ve tokenleri takip eder.",
     "noHoldings": "Token bulunamadı",
     "browseTokens": "Tokenlere Göz At",
-    "yourHoldings": "Tokenleriniz",
+    "yourHoldings": "Kilidi Açılmış Tokenleriniz",
     "balance": "Bakiye",
     "perToken": "token başına"
   },

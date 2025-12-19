@@ -317,7 +317,7 @@
     "loading": "加载投资组合中...",
     "portfolioValue": "投资组合价值",
     "ethBalance": "ETH余额",
-    "tokensValue": "代币价值",
+    "tokensValue": "未锁定代币价值",
     "lockedValue": "锁定代币价值",
     "lockedTokens": "锁定的代币",
     "viewAllLocks": "查看我的所有锁定",
@@ -329,7 +329,7 @@
     "infoMessage": "此页面跟踪您的ETH余额和在McFun上交易的代币。",
     "noHoldings": "未找到代币持仓",
     "browseTokens": "浏览代币",
-    "yourHoldings": "您的代币持仓",
+    "yourHoldings": "未锁定代币持仓",
     "balance": "余额",
     "perToken": "每个代币"
   },
