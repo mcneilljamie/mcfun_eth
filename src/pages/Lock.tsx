@@ -79,6 +79,7 @@ export function Lock({ onShowToast }: LockPageProps) {
   } | null>(null);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     loadLocks();
     if (!urlTokenAddress) {
       loadAggregatedLocks();
