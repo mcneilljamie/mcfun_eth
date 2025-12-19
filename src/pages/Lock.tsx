@@ -382,8 +382,7 @@ export function Lock({ onShowToast }: LockPageProps) {
     ? filteredLocks.filter((lock) => lock.user_address.toLowerCase() === account.toLowerCase())
     : [];
 
-  const mcfunLockedTokens = aggregatedLocks
-    .filter((lock) => lock.is_mcfun_token)
+  const topLockedTokens = aggregatedLocks
     .sort((a, b) => (b.total_value_usd || 0) - (a.total_value_usd || 0));
 
   const formatTimeRemaining = (unlockTimestamp: string) => {
@@ -529,7 +528,7 @@ export function Lock({ onShowToast }: LockPageProps) {
                 </div>
                 {tokenStats.is_mcfun_token && (
                   <span className="px-4 py-2 text-sm font-semibold rounded-full bg-white/20 backdrop-blur">
-                    McFun Token
+                    Platform Token
                   </span>
                 )}
               </div>
@@ -774,14 +773,14 @@ export function Lock({ onShowToast }: LockPageProps) {
           </div>
         )}
 
-        {!urlTokenAddress && mcfunLockedTokens.length > 0 && (
+        {!urlTokenAddress && topLockedTokens.length > 0 && (
           <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
               <Trophy className="w-6 h-6 mr-2 text-yellow-500" />
               {t('lock.topLockedTokens')}
             </h2>
             <div className="space-y-3">
-              {mcfunLockedTokens.map((aggLock, index) => {
+              {topLockedTokens.map((aggLock, index) => {
                 const lockCount = aggLock.lock_count || 0;
                 const totalValueUsd = aggLock.total_value_usd || 0;
                 const totalValueEth = aggLock.total_value_eth || 0;
@@ -813,6 +812,11 @@ export function Lock({ onShowToast }: LockPageProps) {
                           <div className="flex items-center gap-2 mb-1">
                             <h3 className="text-lg font-bold text-gray-900">{aggLock.token_symbol}</h3>
                             <span className="text-sm text-gray-500">{aggLock.token_name || 'Unknown'}</span>
+                            {aggLock.is_mcfun_token && (
+                              <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                Platform Token
+                              </span>
+                            )}
                           </div>
                           <div className="grid grid-cols-3 gap-4 text-sm">
                             <div>
