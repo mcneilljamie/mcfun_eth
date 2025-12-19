@@ -423,5 +423,10 @@
     "viewOnEtherscan": "Посмотреть в Etherscan",
     "viewYourToken": "Посмотреть ваш токен",
     "launchAnother": "Запустить другой токен"
+  },
+  "lock": {
+    "totalValue": "Общая стоимость",
+    "activeLocks": "Активные блокировки",
+    "unlockableValue": "Стоимость разблокированных токенов"
   }
 }

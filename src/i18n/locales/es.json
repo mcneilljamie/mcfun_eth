@@ -423,5 +423,10 @@
     "viewOnEtherscan": "Ver en Etherscan",
     "viewYourToken": "Ver Tu Token",
     "launchAnother": "Lanzar Otro Token"
+  },
+  "lock": {
+    "totalValue": "Valor Total",
+    "activeLocks": "Bloqueos activos",
+    "unlockableValue": "Valor de tokens desbloqueados"
   }
 }

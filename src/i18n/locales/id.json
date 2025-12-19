@@ -423,5 +423,10 @@
     "viewOnEtherscan": "Lihat di Etherscan",
     "viewYourToken": "Lihat Token Anda",
     "launchAnother": "Luncurkan Token Lain"
+  },
+  "lock": {
+    "totalValue": "Nilai Total",
+    "activeLocks": "Kunci aktif",
+    "unlockableValue": "Nilai token yang dibuka"
   }
 }

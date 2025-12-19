@@ -423,5 +423,10 @@
     "viewOnEtherscan": "Xem trên Etherscan",
     "viewYourToken": "Xem Token Của Bạn",
     "launchAnother": "Ra Mắt Token Khác"
+  },
+  "lock": {
+    "totalValue": "Tổng Giá Trị",
+    "activeLocks": "Khóa hoạt động",
+    "unlockableValue": "Giá trị token đã mở khóa"
   }
 }

@@ -423,5 +423,10 @@
     "viewOnEtherscan": "Etherscan'de görüntüle",
     "viewYourToken": "Token'ınızı Görüntüleyin",
     "launchAnother": "Başka Bir Token Başlat"
+  },
+  "lock": {
+    "totalValue": "Toplam Değer",
+    "activeLocks": "Aktif kilitler",
+    "unlockableValue": "Kilidi açılmış token değeri"
   }
 }

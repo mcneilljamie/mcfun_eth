@@ -423,5 +423,10 @@
     "viewOnEtherscan": "在 Etherscan 上查看",
     "viewYourToken": "查看您的代币",
     "launchAnother": "发行另一个代币"
+  },
+  "lock": {
+    "totalValue": "总价值",
+    "activeLocks": "活跃锁定",
+    "unlockableValue": "已解锁代币价值"
   }
 }

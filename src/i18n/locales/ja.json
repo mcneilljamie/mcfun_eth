@@ -423,5 +423,10 @@
     "viewOnEtherscan": "Etherscanで表示",
     "viewYourToken": "トークンを表示",
     "launchAnother": "別のトークンをローンチ"
+  },
+  "lock": {
+    "totalValue": "合計価値",
+    "activeLocks": "アクティブなロック",
+    "unlockableValue": "ロック解除されたトークンの価値"
   }
 }

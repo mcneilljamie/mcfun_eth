@@ -423,5 +423,10 @@
     "viewOnEtherscan": "Etherscan에서 보기",
     "viewYourToken": "토큰 보기",
     "launchAnother": "다른 토큰 출시하기"
+  },
+  "lock": {
+    "totalValue": "총 가치",
+    "activeLocks": "활성 잠금",
+    "unlockableValue": "잠금 해제된 토큰 가치"
   }
 }

@@ -423,5 +423,10 @@
     "viewOnEtherscan": "مشاهده در Etherscan",
     "viewYourToken": "مشاهده توکن شما",
     "launchAnother": "راه‌اندازی توکن دیگر"
+  },
+  "lock": {
+    "totalValue": "ارزش کل",
+    "activeLocks": "قفل‌های فعال",
+    "unlockableValue": "ارزش توکن‌های باز شده"
   }
 }

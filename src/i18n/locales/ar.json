@@ -423,5 +423,10 @@
     "viewOnEtherscan": "عرض على Etherscan",
     "viewYourToken": "عرض توكنك",
     "launchAnother": "إطلاق توكن آخر"
+  },
+  "lock": {
+    "totalValue": "القيمة الإجمالية",
+    "activeLocks": "الأقفال النشطة",
+    "unlockableValue": "قيمة الرموز المفتوحة"
   }
 }

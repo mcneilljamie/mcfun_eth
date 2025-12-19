@@ -423,5 +423,10 @@
     "viewOnEtherscan": "Etherscan पर देखें",
     "viewYourToken": "अपना टोकन देखें",
     "launchAnother": "एक और टोकन लॉन्च करें"
+  },
+  "lock": {
+    "totalValue": "कुल मूल्य",
+    "activeLocks": "सक्रिय लॉक",
+    "unlockableValue": "अनलॉक किए गए टोकन का मूल्य"
   }
 }

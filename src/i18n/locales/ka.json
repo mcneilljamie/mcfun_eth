@@ -423,5 +423,10 @@
     "viewOnEtherscan": "Etherscan-ზე ნახვა",
     "viewYourToken": "თქვენი ტოკენის ნახვა",
     "launchAnother": "სხვა ტოკენის გაშვება"
+  },
+  "lock": {
+    "totalValue": "სრული ღირებულება",
+    "activeLocks": "აქტიური ბლოკები",
+    "unlockableValue": "განბლოკილი ტოკენების ღირებულება"
   }
 }
