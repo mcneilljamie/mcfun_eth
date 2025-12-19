@@ -16,7 +16,7 @@ export const NETWORK_CONFIG: Record<number, {
   11155111: {
     name: 'Sepolia Testnet',
     factoryAddress: '0xDE377c1C3280C2De18479Acbe40a06a79E0B3831',
-    lockerAddress: '0x0000000000000000000000000000000000000000',
+    lockerAddress: '0x1277b6E3f4407AD44A9b33641b51848c0098368f',
     explorerUrl: 'https://sepolia.etherscan.io',
   },
 };

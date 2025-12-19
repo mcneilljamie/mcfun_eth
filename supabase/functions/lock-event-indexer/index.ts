@@ -8,8 +8,8 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-const LOCKER_ADDRESS = "0x0000000000000000000000000000000000000000";
-const RPC_URL = Deno.env.get("RPC_URL") || "https://eth-sepolia.public.blastapi.io";
+const LOCKER_ADDRESS = "0x1277b6E3f4407AD44A9b33641b51848c0098368f";
+const RPC_URL = Deno.env.get("RPC_URL") || "https://ethereum-sepolia-rpc.publicnode.com";
 
 const LOCKER_ABI = [
   "event TokensLocked(uint256 indexed lockId, address indexed owner, address indexed tokenAddress, uint256 amount, uint256 unlockTime)",

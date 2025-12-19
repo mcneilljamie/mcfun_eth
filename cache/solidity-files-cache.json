@@ -77,6 +77,43 @@
         "McFunFactory",
         "McFunToken"
       ]
+    },
+    "/tmp/cc-agent/61154910/project/src/contracts/TokenLocker.sol": {
+      "lastModificationDate": 1766150932648,
+      "contentHash": "d6dfa2cb98ef39dc3ffbaf014401141c",
+      "sourceName": "src/contracts/TokenLocker.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.19"
+      ],
+      "artifacts": [
+        "IERC20",
+        "TokenLocker"
+      ]
     }
   }
 }
