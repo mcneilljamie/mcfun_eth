@@ -10,6 +10,7 @@ import { Trade } from './pages/Trade';
 import { Tokens } from './pages/Tokens';
 import { TokenDetail } from './pages/TokenDetail';
 import Portfolio from './pages/Portfolio';
+import { Lock } from './pages/Lock';
 import { About } from './pages/About';
 import { Token } from './lib/supabase';
 
@@ -30,6 +31,7 @@ function AppContent() {
     else if (page === 'trade') navigate('/trade');
     else if (page === 'tokens') navigate('/tokens');
     else if (page === 'portfolio') navigate('/portfolio');
+    else if (page === 'lock') navigate('/lock');
     else if (page === 'token-detail' && tokenAddress) navigate(`/token/${tokenAddress}`);
     else if (page === 'about') navigate('/about');
   };
@@ -50,6 +52,7 @@ function AppContent() {
     if (path === '/trade') return 'trade';
     if (path === '/tokens') return 'tokens';
     if (path === '/portfolio') return 'portfolio';
+    if (path === '/lock') return 'lock';
     if (path.startsWith('/token/')) return 'token-detail';
     if (path === '/about') return 'about';
     return 'home';
@@ -84,6 +87,7 @@ function AppContent() {
               />
             } />
             <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/lock" element={<Lock onShowToast={setToast} />} />
             <Route path="/about" element={<About />} />
           </Routes>
         </div>

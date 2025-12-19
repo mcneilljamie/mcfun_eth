@@ -38,3 +38,14 @@ export const ERC20_ABI = [
   "event Transfer(address indexed from, address indexed to, uint256 value)",
   "event Approval(address indexed owner, address indexed spender, uint256 value)"
 ];
+
+export const TOKEN_LOCKER_ABI = [
+  "function lockTokens(address tokenAddress, uint256 amount, uint256 durationDays) external returns (uint256)",
+  "function unlockTokens(uint256 lockId) external",
+  "function getLock(uint256 lockId) external view returns (address owner, address tokenAddress, uint256 amount, uint256 unlockTime, bool withdrawn)",
+  "function getTimeUntilUnlock(uint256 lockId) external view returns (uint256)",
+  "function locks(uint256 lockId) external view returns (address owner, address tokenAddress, uint256 amount, uint256 unlockTime, bool withdrawn)",
+  "function nextLockId() external view returns (uint256)",
+  "event TokensLocked(uint256 indexed lockId, address indexed owner, address indexed tokenAddress, uint256 amount, uint256 unlockTime)",
+  "event TokensUnlocked(uint256 indexed lockId, address indexed owner, address indexed tokenAddress, uint256 amount)"
+];

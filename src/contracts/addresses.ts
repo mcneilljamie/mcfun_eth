@@ -4,22 +4,29 @@ export const DEFAULT_CHAIN_ID = 11155111;
 export const NETWORK_CONFIG: Record<number, {
   name: string;
   factoryAddress: string;
+  lockerAddress: string;
   explorerUrl: string;
 }> = {
   1: {
     name: 'Ethereum Mainnet',
     factoryAddress: '0x0000000000000000000000000000000000000000',
+    lockerAddress: '0x0000000000000000000000000000000000000000',
     explorerUrl: 'https://etherscan.io',
   },
   11155111: {
     name: 'Sepolia Testnet',
     factoryAddress: '0xDE377c1C3280C2De18479Acbe40a06a79E0B3831',
+    lockerAddress: '0x0000000000000000000000000000000000000000',
     explorerUrl: 'https://sepolia.etherscan.io',
   },
 };
 
 export function getFactoryAddress(chainId: number): string {
   return NETWORK_CONFIG[chainId]?.factoryAddress || NETWORK_CONFIG[DEFAULT_CHAIN_ID].factoryAddress;
+}
+
+export function getLockerAddress(chainId: number): string {
+  return NETWORK_CONFIG[chainId]?.lockerAddress || NETWORK_CONFIG[DEFAULT_CHAIN_ID].lockerAddress;
 }
 
 export function isChainSupported(chainId: number): boolean {

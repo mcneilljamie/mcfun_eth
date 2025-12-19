@@ -51,3 +51,21 @@ export interface PriceSnapshot {
   eth_price_usd?: string;
   created_at: string;
 }
+
+export interface TokenLock {
+  id: string;
+  lock_id: number;
+  user_address: string;
+  token_address: string;
+  token_symbol: string;
+  token_name: string;
+  token_decimals: number;
+  amount_locked: string;
+  lock_duration_days: number;
+  lock_timestamp: string;
+  unlock_timestamp: string;
+  is_withdrawn: boolean;
+  tx_hash: string;
+  block_number: number;
+  created_at: string;
+}
