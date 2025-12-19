@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { X, Copy, CheckCircle, ExternalLink, Lock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '../lib/web3';
@@ -32,8 +33,16 @@ export function LockCelebration({
 }: LockCelebrationProps) {
   const { t } = useTranslation();
   const { chainId } = useWeb3();
+  const navigate = useNavigate();
   const [copiedItem, setCopiedItem] = useState<string | null>(null);
   const [fireworks, setFireworks] = useState<Array<{ id: number; x: number; y: number }>>([]);
+
+  const formatNumber = (value: string) => {
+    const num = parseFloat(value);
+    return num.toLocaleString('en-US', { maximumFractionDigits: 6 });
+  };
+
+  const formattedAmount = formatNumber(amountLocked);
 
   useEffect(() => {
     const fireworkInterval = setInterval(() => {
@@ -157,7 +166,7 @@ export function LockCelebration({
               {t('lockCelebration.lockSuccessful')}
             </h2>
             <p className="text-lg text-gray-600">
-              {t('lockCelebration.subtitle', { amount: amountLocked, symbol: tokenSymbol, days: durationDays })}
+              {t('lockCelebration.subtitle', { amount: formattedAmount, symbol: tokenSymbol, days: durationDays })}
             </p>
           </div>
 
@@ -175,7 +184,7 @@ export function LockCelebration({
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">{t('lockCelebration.amount')}:</span>
-                  <span className="font-semibold text-gray-900">{amountLocked} {tokenSymbol}</span>
+                  <span className="font-semibold text-gray-900">{formattedAmount} {tokenSymbol}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">{t('lockCelebration.duration')}:</span>
@@ -301,6 +310,16 @@ export function LockCelebration({
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={() => {
+                  navigate('/my-locks');
+                  onClose();
+                }}
+                className="flex-1 bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors flex items-center justify-center"
+              >
+                <Lock className="w-5 h-5 mr-2" />
+                {t('lockCelebration.goToMyLocks')}
+              </button>
               <button
                 onClick={onClose}
                 className="flex-1 bg-gray-900 text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors"

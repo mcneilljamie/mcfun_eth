@@ -524,6 +524,7 @@
     "copyTxHash": "Copy transaction hash",
     "viewOnExplorer": "View on block explorer",
     "viewOnEtherscan": "View on Etherscan",
+    "goToMyLocks": "Go to My Locks",
     "close": "Close"
   }
 }
