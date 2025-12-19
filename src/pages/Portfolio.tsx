@@ -168,18 +168,20 @@ export default function Portfolio() {
       const { data: lockedData, error: lockedError } = await supabase
         .rpc('get_user_locked_tokens', { user_addr: account });
 
+      let lockedValue = 0;
       if (!lockedError && lockedData) {
         setLockedTokens(lockedData);
-        const lockedValue = lockedData.reduce((sum: number, lock: any) => sum + parseFloat(lock.value_usd || '0'), 0);
+        lockedValue = lockedData.reduce((sum: number, lock: any) => sum + parseFloat(lock.value_usd || '0'), 0);
         setTotalLockedValueUsd(lockedValue);
       }
 
-      // Calculate total value
+      // Calculate total value (including locked tokens)
       const ethValue = parseFloat(ethBal) * ethPrice;
       const tokensValue = tokenBalances.reduce((sum, t) => sum + t.valueUsd, 0);
-      const totalValue = ethValue + tokensValue;
+      const totalValue = ethValue + tokensValue + lockedValue;
       console.log('ETH value:', ethValue);
       console.log('Tokens value:', tokensValue);
+      console.log('Locked value:', lockedValue);
       console.log('Total portfolio value:', totalValue);
       setTotalValueUsd(totalValue);
 

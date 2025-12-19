@@ -447,6 +447,11 @@
     "withdrawn": "Withdrawn",
     "unlockable": "Unlockable",
     "locked": "Locked",
+    "status": {
+      "active": "Active",
+      "unlockable": "Ready to Unlock",
+      "withdrawn": "Withdrawn"
+    },
     "days": "days",
     "hours": "hours",
     "howItWorks": "How Token Locking Works",
@@ -467,6 +472,8 @@
     "activeOnly": "Show Active Only",
     "searchPlaceholder": "Search by token name, symbol, address, or locker address...",
     "noLocks": "No token locks found",
+    "backToAllLocks": "Back to All Locks",
+    "priceUsd": "Price (USD)",
     "amount": "Amount",
     "timeRemaining": "Time Remaining",
     "table": {

@@ -52,7 +52,7 @@ function AppContent() {
     if (path === '/trade') return 'trade';
     if (path === '/tokens') return 'tokens';
     if (path === '/portfolio') return 'portfolio';
-    if (path === '/lock') return 'lock';
+    if (path === '/lock' || path.startsWith('/lock/')) return 'lock';
     if (path.startsWith('/token/')) return 'token-detail';
     if (path === '/about') return 'about';
     return 'home';
@@ -88,6 +88,7 @@ function AppContent() {
             } />
             <Route path="/portfolio" element={<Portfolio />} />
             <Route path="/lock" element={<Lock onShowToast={setToast} />} />
+            <Route path="/lock/:tokenAddress" element={<Lock onShowToast={setToast} />} />
             <Route path="/about" element={<About />} />
           </Routes>
         </div>

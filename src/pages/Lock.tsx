@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useWeb3 } from '../lib/web3';
 import { supabase } from '../lib/supabase';
 import { ethers } from 'ethers';
-import { Loader2, Lock as LockIcon, Search, Clock, User, Coins, AlertCircle, ExternalLink, TrendingUp, Trophy } from 'lucide-react';
+import { Loader2, Lock as LockIcon, Search, Clock, User, Coins, AlertCircle, ExternalLink, TrendingUp, Trophy, ArrowLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { LockCelebration } from '../components/LockCelebration';
 import { ToastMessage } from '../App';
@@ -45,12 +46,14 @@ interface LockPageProps {
 
 export function Lock({ onShowToast }: LockPageProps) {
   const { t } = useTranslation();
+  const { tokenAddress: urlTokenAddress } = useParams<{ tokenAddress: string }>();
+  const navigate = useNavigate();
   const { account, provider, signer, chainId } = useWeb3();
   const [loading, setLoading] = useState(false);
   const [allLocks, setAllLocks] = useState<TokenLock[]>([]);
   const [aggregatedLocks, setAggregatedLocks] = useState<AggregatedLock[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [showActiveOnly, setShowActiveOnly] = useState(false);
+  const [tokenStats, setTokenStats] = useState<any>(null);
 
   const [tokenAddress, setTokenAddress] = useState('');
   const [amount, setAmount] = useState('');
@@ -73,8 +76,12 @@ export function Lock({ onShowToast }: LockPageProps) {
 
   useEffect(() => {
     loadLocks();
-    loadAggregatedLocks();
-  }, []);
+    if (!urlTokenAddress) {
+      loadAggregatedLocks();
+    } else {
+      loadTokenStats();
+    }
+  }, [urlTokenAddress]);
 
   useEffect(() => {
     if (tokenAddress && ethers.isAddress(tokenAddress) && provider) {
@@ -95,16 +102,42 @@ export function Lock({ onShowToast }: LockPageProps) {
 
   const loadLocks = async () => {
     try {
-      const { data, error } = await supabase
-        .from('token_locks')
-        .select('*')
-        .order('created_at', { ascending: false });
+      if (urlTokenAddress) {
+        const { data, error } = await supabase.rpc('get_locks_by_token_address', {
+          token_addr: urlTokenAddress
+        });
 
-      if (!error && data) {
-        setAllLocks(data);
+        if (!error && data) {
+          setAllLocks(data);
+        }
+      } else {
+        const { data, error } = await supabase
+          .from('token_locks')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (!error && data) {
+          setAllLocks(data);
+        }
       }
     } catch (err) {
       console.error('Failed to load locks:', err);
+    }
+  };
+
+  const loadTokenStats = async () => {
+    if (!urlTokenAddress) return;
+
+    try {
+      const { data, error } = await supabase.rpc('get_token_lock_stats', {
+        token_addr: urlTokenAddress
+      });
+
+      if (!error && data && data.length > 0) {
+        setTokenStats(data[0]);
+      }
+    } catch (err) {
+      console.error('Failed to load token stats:', err);
     }
   };
 
@@ -329,10 +362,6 @@ export function Lock({ onShowToast }: LockPageProps) {
   };
 
   const filteredLocks = allLocks.filter((lock) => {
-    if (showActiveOnly && (lock.is_withdrawn || new Date(lock.unlock_timestamp) < new Date())) {
-      return false;
-    }
-
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       return (
@@ -366,6 +395,40 @@ export function Lock({ onShowToast }: LockPageProps) {
       return `${days} ${t('lock.days')} ${hours} ${t('lock.hours')}`;
     }
     return `${hours} ${t('lock.hours')}`;
+  };
+
+  const getLockStatus = (lock: TokenLock): 'active' | 'unlockable' | 'withdrawn' => {
+    if (lock.is_withdrawn) {
+      return 'withdrawn';
+    }
+    const now = new Date();
+    const unlock = new Date(lock.unlock_timestamp);
+    if (unlock <= now) {
+      return 'unlockable';
+    }
+    return 'active';
+  };
+
+  const getStatusBadge = (status: 'active' | 'unlockable' | 'withdrawn') => {
+    if (status === 'unlockable') {
+      return (
+        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 border border-green-200">
+          {t('lock.status.unlockable')}
+        </span>
+      );
+    } else if (status === 'active') {
+      return (
+        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 border border-blue-200">
+          {t('lock.status.active')}
+        </span>
+      );
+    } else {
+      return (
+        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-600 border border-gray-200">
+          {t('lock.status.withdrawn')}
+        </span>
+      );
+    }
   };
 
   const formatCurrency = (value: number) => {
@@ -440,13 +503,59 @@ export function Lock({ onShowToast }: LockPageProps) {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">{t('lock.title')}</h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            {t('lock.subtitle')}
-          </p>
-        </div>
+        {urlTokenAddress && tokenStats ? (
+          <div className="mb-8">
+            <button
+              onClick={() => navigate('/lock')}
+              className="flex items-center text-blue-600 hover:text-blue-700 mb-4 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5 mr-2" />
+              {t('lock.backToAllLocks')}
+            </button>
+            <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-8 text-white">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h1 className="text-4xl font-bold mb-2">
+                    {tokenStats.token_symbol} {t('lock.locks')}
+                  </h1>
+                  <p className="text-blue-100 text-lg">{tokenStats.token_name}</p>
+                </div>
+                {tokenStats.is_mcfun_token && (
+                  <span className="px-4 py-2 text-sm font-semibold rounded-full bg-white/20 backdrop-blur">
+                    McFun Token
+                  </span>
+                )}
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="bg-white/10 backdrop-blur rounded-lg p-4">
+                  <div className="text-blue-100 text-sm mb-1">{t('lock.totalValue')}</div>
+                  <div className="text-2xl font-bold">{formatCurrency(tokenStats.total_value_usd)}</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur rounded-lg p-4">
+                  <div className="text-blue-100 text-sm mb-1">{t('lock.lockCount')}</div>
+                  <div className="text-2xl font-bold">{tokenStats.total_locks_count}</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur rounded-lg p-4">
+                  <div className="text-blue-100 text-sm mb-1">{t('lock.status.active')}</div>
+                  <div className="text-2xl font-bold">{tokenStats.active_locks_count}</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur rounded-lg p-4">
+                  <div className="text-blue-100 text-sm mb-1">{t('lock.priceUsd')}</div>
+                  <div className="text-2xl font-bold">${tokenStats.current_price_usd.toFixed(6)}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">{t('lock.title')}</h1>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              {t('lock.subtitle')}
+            </p>
+          </div>
+        )}
 
+        {!urlTokenAddress && (
         <div className="grid lg:grid-cols-2 gap-8 mb-12">
           <div className="bg-white rounded-xl shadow-lg p-6">
             <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
@@ -600,6 +709,7 @@ export function Lock({ onShowToast }: LockPageProps) {
             </div>
           </div>
         </div>
+        )}
 
         {account && userLocks.length > 0 && (
           <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
@@ -653,17 +763,6 @@ export function Lock({ onShowToast }: LockPageProps) {
         <div className="bg-white rounded-xl shadow-lg p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-900">{t('lock.allLocks')}</h2>
-            <div className="flex items-center gap-4">
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={showActiveOnly}
-                  onChange={(e) => setShowActiveOnly(e.target.checked)}
-                  className="mr-2"
-                />
-                <span className="text-sm text-gray-700">{t('lock.activeOnly')}</span>
-              </label>
-            </div>
           </div>
 
           <div className="mb-4">
@@ -736,19 +835,18 @@ export function Lock({ onShowToast }: LockPageProps) {
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        {lock.is_withdrawn ? (
-                          <span className="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
-                            {t('lock.withdrawn')}
-                          </span>
-                        ) : new Date(lock.unlock_timestamp) <= new Date() ? (
-                          <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                            {t('lock.unlockable')}
-                          </span>
-                        ) : (
-                          <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                            {t('lock.locked')}
-                          </span>
-                        )}
+                        <div className="flex items-center gap-2">
+                          {getStatusBadge(getLockStatus(lock))}
+                          {getLockStatus(lock) === 'unlockable' && account && lock.user_address.toLowerCase() === account.toLowerCase() && (
+                            <button
+                              onClick={() => handleUnlock(lock.lock_id)}
+                              disabled={loading}
+                              className="px-3 py-1 bg-green-600 text-white text-xs font-semibold rounded hover:bg-green-700 transition-colors disabled:opacity-50"
+                            >
+                              {t('lock.unlock')}
+                            </button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -758,7 +856,7 @@ export function Lock({ onShowToast }: LockPageProps) {
           )}
         </div>
 
-        {aggregatedLocks.length > 0 && (
+        {!urlTokenAddress && aggregatedLocks.length > 0 && (
           <div className="bg-white rounded-xl shadow-lg p-6 mt-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
               <Trophy className="w-6 h-6 mr-2 text-yellow-500" />
@@ -780,7 +878,8 @@ export function Lock({ onShowToast }: LockPageProps) {
                 return (
                   <div
                     key={aggLock.token_address}
-                    className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors"
+                    onClick={() => navigate(`/lock/${aggLock.token_address}`)}
+                    className="border border-gray-200 rounded-lg p-4 hover:border-blue-400 hover:shadow-md transition-all cursor-pointer"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3 flex-1">
