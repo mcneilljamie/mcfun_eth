@@ -362,19 +362,21 @@ export function Lock({ onShowToast }: LockPageProps) {
     }
   };
 
-  const filteredLocks = allLocks.filter((lock) => {
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      return (
-        lock.token_symbol.toLowerCase().includes(query) ||
-        lock.token_name.toLowerCase().includes(query) ||
-        lock.token_address.toLowerCase().includes(query) ||
-        lock.user_address.toLowerCase().includes(query)
-      );
-    }
+  const filteredLocks = allLocks
+    .filter((lock) => {
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        return (
+          lock.token_symbol.toLowerCase().includes(query) ||
+          lock.token_name.toLowerCase().includes(query) ||
+          lock.token_address.toLowerCase().includes(query) ||
+          lock.user_address.toLowerCase().includes(query)
+        );
+      }
 
-    return true;
-  });
+      return true;
+    })
+    .sort((a, b) => new Date(a.unlock_timestamp).getTime() - new Date(b.unlock_timestamp).getTime());
 
   const userLocks = account
     ? filteredLocks.filter((lock) => lock.user_address.toLowerCase() === account.toLowerCase())
