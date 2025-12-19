@@ -47,8 +47,9 @@ Deno.serve(async (req: Request) => {
 
     const currentBlock = await provider.getBlockNumber();
 
-    // If first run, start from 50k blocks ago to avoid RPC limits
-    const defaultStartBlock = Math.max(0, currentBlock - 50000);
+    // If first run, start from 200k blocks ago to catch all historical locks
+    // Subsequent runs will start from last indexed block
+    const defaultStartBlock = Math.max(0, currentBlock - 200000);
     const fromBlock = lastIndexedLock?.block_number
       ? Number(lastIndexedLock.block_number) + 1
       : defaultStartBlock;
