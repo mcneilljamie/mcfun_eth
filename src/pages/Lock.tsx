@@ -112,8 +112,21 @@ export function Lock({ onShowToast }: LockPageProps) {
     try {
       const { data, error } = await supabase.rpc('get_aggregated_locks_by_token');
 
-      if (!error && data) {
-        setAggregatedLocks(data);
+      if (error) {
+        console.error('Supabase error loading aggregated locks:', error);
+        return;
+      }
+
+      if (data) {
+        console.log('Loaded aggregated locks:', data);
+        // Filter out any invalid entries
+        const validLocks = data.filter((lock: AggregatedLock) =>
+          lock &&
+          lock.token_address &&
+          lock.token_symbol &&
+          lock.total_amount_locked
+        );
+        setAggregatedLocks(validLocks);
       }
     } catch (err) {
       console.error('Failed to load aggregated locks:', err);
@@ -381,10 +394,21 @@ export function Lock({ onShowToast }: LockPageProps) {
     }
   };
 
-  const formatLargeTokenAmount = (amountText: string, decimals: number): string => {
+  const formatLargeTokenAmount = (amountText: string | null | undefined, decimals: number): string => {
     try {
+      // Validate input
+      if (!amountText || amountText === '0' || amountText === '') {
+        return '0';
+      }
+
       // Convert text to BigInt safely
       const amountBigInt = BigInt(amountText);
+
+      // Check if amount is zero
+      if (amountBigInt === 0n) {
+        return '0';
+      }
+
       // Get the divisor for the decimals
       const divisor = BigInt(10 ** decimals);
       // Integer division
@@ -397,9 +421,18 @@ export function Lock({ onShowToast }: LockPageProps) {
       const total = Number(integerPart) + decimalPart;
       return formatNumber(total);
     } catch (err) {
-      console.error('Error formatting large token amount:', err);
+      console.error('Error formatting large token amount:', err, 'Input:', amountText);
       return '0';
     }
+  };
+
+  const safeDivide = (numerator: number | null | undefined, denominator: number | null | undefined): number => {
+    // Validate inputs
+    if (numerator == null || denominator == null || denominator === 0 || !isFinite(numerator) || !isFinite(denominator)) {
+      return 0;
+    }
+    const result = numerator / denominator;
+    return isFinite(result) ? result : 0;
   };
 
   const explorerUrl = getExplorerUrl(chainId || 11155111);
@@ -732,75 +765,88 @@ export function Lock({ onShowToast }: LockPageProps) {
               {t('lock.topLockedTokens')}
             </h2>
             <div className="space-y-3">
-              {aggregatedLocks.map((aggLock, index) => (
-                <div
-                  key={aggLock.token_address}
-                  className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3 flex-1">
-                      <div className="flex items-center space-x-2">
-                        {aggLock.is_mcfun_token && index < 3 && (
-                          <Trophy
-                            className={`w-5 h-5 ${
-                              index === 0
-                                ? 'text-yellow-500'
-                                : index === 1
-                                ? 'text-gray-400'
-                                : 'text-amber-700'
-                            }`}
-                          />
-                        )}
-                        <span className="font-bold text-gray-500 text-lg">#{index + 1}</span>
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="text-lg font-bold text-gray-900">{aggLock.token_symbol}</h3>
-                          <span className="text-sm text-gray-500">{aggLock.token_name}</span>
-                          {aggLock.is_mcfun_token && (
-                            <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                              McFun
-                            </span>
+              {aggregatedLocks.map((aggLock, index) => {
+                // Validate lock data before rendering
+                if (!aggLock || !aggLock.token_address || !aggLock.token_symbol) {
+                  return null;
+                }
+
+                // Safely extract values with defaults
+                const lockCount = aggLock.lock_count || 0;
+                const totalValueUsd = aggLock.total_value_usd || 0;
+                const totalValueEth = aggLock.total_value_eth || 0;
+                const avgPerLock = safeDivide(totalValueUsd, lockCount);
+
+                return (
+                  <div
+                    key={aggLock.token_address}
+                    className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3 flex-1">
+                        <div className="flex items-center space-x-2">
+                          {aggLock.is_mcfun_token && index < 3 && (
+                            <Trophy
+                              className={`w-5 h-5 ${
+                                index === 0
+                                  ? 'text-yellow-500'
+                                  : index === 1
+                                  ? 'text-gray-400'
+                                  : 'text-amber-700'
+                              }`}
+                            />
                           )}
+                          <span className="font-bold text-gray-500 text-lg">#{index + 1}</span>
                         </div>
-                        <div className="grid grid-cols-3 gap-4 text-sm">
-                          <div>
-                            <span className="text-gray-600">{t('lock.totalLocked')}:</span>
-                            <span className="ml-2 font-semibold text-gray-900">
-                              {formatLargeTokenAmount(aggLock.total_amount_locked, aggLock.token_decimals)} {aggLock.token_symbol}
-                            </span>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="text-lg font-bold text-gray-900">{aggLock.token_symbol}</h3>
+                            <span className="text-sm text-gray-500">{aggLock.token_name || 'Unknown'}</span>
+                            {aggLock.is_mcfun_token && (
+                              <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                McFun
+                              </span>
+                            )}
                           </div>
-                          <div>
-                            <span className="text-gray-600">{t('lock.lockCount')}:</span>
-                            <span className="ml-2 font-semibold text-gray-900">
-                              {aggLock.lock_count} {t('lock.locks')}
-                            </span>
-                          </div>
-                          {aggLock.is_mcfun_token && (
+                          <div className="grid grid-cols-3 gap-4 text-sm">
                             <div>
-                              <span className="text-gray-600">{t('lock.avgPerLock')}:</span>
+                              <span className="text-gray-600">{t('lock.totalLocked')}:</span>
                               <span className="ml-2 font-semibold text-gray-900">
-                                {formatCurrency(aggLock.total_value_usd / aggLock.lock_count)}
+                                {formatLargeTokenAmount(aggLock.total_amount_locked, aggLock.token_decimals || 18)} {aggLock.token_symbol}
                               </span>
                             </div>
-                          )}
+                            <div>
+                              <span className="text-gray-600">{t('lock.lockCount')}:</span>
+                              <span className="ml-2 font-semibold text-gray-900">
+                                {lockCount} {t('lock.locks')}
+                              </span>
+                            </div>
+                            {aggLock.is_mcfun_token && lockCount > 0 && (
+                              <div>
+                                <span className="text-gray-600">{t('lock.avgPerLock')}:</span>
+                                <span className="ml-2 font-semibold text-gray-900">
+                                  {formatCurrency(avgPerLock)}
+                                </span>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
+                      {aggLock.is_mcfun_token && (
+                        <div className="text-right ml-4">
+                          <div className="text-sm text-gray-500 mb-1">{t('lock.totalValue')}</div>
+                          <div className="text-2xl font-bold text-gray-900">
+                            {formatCurrency(totalValueUsd)}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {totalValueEth.toFixed(4)} ETH
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    {aggLock.is_mcfun_token && (
-                      <div className="text-right ml-4">
-                        <div className="text-sm text-gray-500 mb-1">{t('lock.totalValue')}</div>
-                        <div className="text-2xl font-bold text-gray-900">
-                          {formatCurrency(aggLock.total_value_usd)}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {aggLock.total_value_eth.toFixed(4)} ETH
-                        </div>
-                      </div>
-                    )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
