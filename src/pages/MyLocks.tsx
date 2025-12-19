@@ -4,6 +4,7 @@ import { useWeb3 } from '../lib/web3';
 import { supabase } from '../lib/supabase';
 import { ethers } from 'ethers';
 import { Loader2, Lock as LockIcon, Clock, Wallet, ExternalLink } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { ToastMessage } from '../App';
 import { getExplorerUrl, getLockerAddress } from '../contracts/addresses';
 import { TOKEN_LOCKER_ABI } from '../contracts/abis';
@@ -34,6 +35,7 @@ interface MyLocksProps {
 }
 
 export function MyLocks({ onShowToast }: MyLocksProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { account, signer, chainId } = useWeb3();
   const [loading, setLoading] = useState(true);
@@ -60,7 +62,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
       if (error) {
         console.error('Error loading user locks:', error);
         onShowToast({
-          message: 'Failed to load your locks',
+          message: t('myLocks.errors.failedToLoad'),
           type: 'error'
         });
       } else if (data) {
@@ -69,7 +71,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
     } catch (err) {
       console.error('Failed to load user locks:', err);
       onShowToast({
-        message: 'Failed to load your locks',
+        message: t('myLocks.errors.failedToLoad'),
         type: 'error'
       });
     } finally {
@@ -80,7 +82,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
   const handleWithdraw = async (lock: TokenLock) => {
     if (!signer || !chainId) {
       onShowToast({
-        message: 'Please connect your wallet',
+        message: t('myLocks.errors.connectWallet'),
         type: 'error'
       });
       return;
@@ -89,7 +91,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
     const lockerAddress = getLockerAddress(chainId);
     if (!lockerAddress) {
       onShowToast({
-        message: 'Token locker not available on this network',
+        message: t('myLocks.errors.lockerNotAvailable'),
         type: 'error'
       });
       return;
@@ -99,7 +101,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
     const unlockDate = new Date(lock.unlock_timestamp);
     if (now < unlockDate) {
       onShowToast({
-        message: 'Lock period has not ended yet',
+        message: t('myLocks.errors.lockNotEnded'),
         type: 'error'
       });
       return;
@@ -111,24 +113,24 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
 
       const tx = await lockerContract.withdraw(lock.lock_id);
       onShowToast({
-        message: 'Withdrawal transaction submitted...',
+        message: t('myLocks.toasts.withdrawSubmitted'),
         type: 'info'
       });
 
       await tx.wait();
 
       onShowToast({
-        message: `Successfully withdrawn ${lock.token_symbol}!`,
+        message: t('myLocks.toasts.withdrawSuccess', { symbol: lock.token_symbol }),
         type: 'success'
       });
 
       await loadUserLocks();
     } catch (error: any) {
       console.error('Withdrawal error:', error);
-      let errorMessage = 'Failed to withdraw tokens';
+      let errorMessage = t('myLocks.errors.withdrawFailed');
 
       if (error.code === 'ACTION_REJECTED') {
-        errorMessage = 'Transaction was rejected';
+        errorMessage = t('myLocks.errors.transactionRejected');
       } else if (error.message) {
         errorMessage = error.message;
       }
@@ -170,26 +172,26 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
     const diff = unlock.getTime() - now.getTime();
 
     if (diff <= 0) {
-      return 'Ready to unlock';
+      return t('myLocks.readyToUnlock');
     }
 
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
 
     if (days > 1) {
-      return `${days} days remaining`;
+      return `${days} ${t('myLocks.days')} ${t('myLocks.remaining')}`;
     } else if (days === 1) {
-      return `1 day remaining`;
+      return `1 ${t('myLocks.day')} ${t('myLocks.remaining')}`;
     } else {
-      return `${hours} ${hours === 1 ? 'hour' : 'hours'} remaining`;
+      return `${hours} ${hours === 1 ? t('myLocks.hour') : t('myLocks.hours')} ${t('myLocks.remaining')}`;
     }
   };
 
   const formatDuration = (days: number) => {
     if (days === 1) {
-      return '1 day';
+      return `1 ${t('myLocks.day')}`;
     } else {
-      return `${days} days`;
+      return `${days} ${t('myLocks.days')}`;
     }
   };
 
@@ -198,9 +200,9 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center">
           <Wallet className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Connect Your Wallet</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('myLocks.connectWallet')}</h2>
           <p className="text-gray-600">
-            Please connect your wallet to view your locked tokens
+            {t('myLocks.connectWalletDescription')}
           </p>
         </div>
       </div>
@@ -212,7 +214,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center justify-center">
           <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-          <span className="ml-3 text-gray-600">Loading your locks...</span>
+          <span className="ml-3 text-gray-600">{t('myLocks.loading')}</span>
         </div>
       </div>
     );
@@ -230,33 +232,33 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center">
           <LockIcon className="w-8 h-8 mr-3 text-blue-600" />
-          My Locked Tokens
+          {t('myLocks.title')}
         </h1>
         <p className="text-gray-600">
-          View and manage all your locked tokens
+          {t('myLocks.subtitle')}
         </p>
       </div>
 
       {activeLocks.length === 0 ? (
         <div className="bg-white rounded-xl shadow-lg p-12 text-center">
           <LockIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-gray-900 mb-2">No Active Locks</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">{t('myLocks.noActiveLocks')}</h2>
           <p className="text-gray-600 mb-6">
-            You don't have any active token locks yet
+            {t('myLocks.noLocksDescription')}
           </p>
           <button
             onClick={() => navigate('/lock')}
             className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
           >
-            Lock Tokens
+            {t('myLocks.lockTokensButton')}
           </button>
         </div>
       ) : (
         <>
           <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-8 mb-8 text-white">
-            <div className="text-sm text-blue-100 mb-2">Total Locked Value</div>
+            <div className="text-sm text-blue-100 mb-2">{t('myLocks.totalLockedValue')}</div>
             <div className="text-4xl font-bold">{formatCurrency(totalLockedValue)}</div>
-            <div className="text-sm text-blue-100 mt-2">{activeLocks.length} active {activeLocks.length === 1 ? 'lock' : 'locks'}</div>
+            <div className="text-sm text-blue-100 mt-2">{activeLocks.length} {activeLocks.length === 1 ? t('myLocks.activeLock') : t('myLocks.activeLocks')}</div>
           </div>
 
           <div className="space-y-4">
@@ -280,7 +282,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
                         <span className="text-sm text-gray-500">{lock.token_name}</span>
                         {isUnlockable && (
                           <span className="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                            Ready to Unlock
+                            {t('myLocks.readyToUnlock')}
                           </span>
                         )}
                       </div>
@@ -288,7 +290,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
                         onClick={() => navigate(`/lock/${lock.token_address}`)}
                         className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
                       >
-                        View all locks for this token
+                        {t('myLocks.viewAllForToken')}
                         <ExternalLink className="w-3 h-3" />
                       </button>
                     </div>
@@ -304,13 +306,13 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                     <div className="bg-gray-50 rounded-lg p-4">
-                      <div className="text-xs text-gray-500 mb-1">Locked On</div>
+                      <div className="text-xs text-gray-500 mb-1">{t('myLocks.lockedOn')}</div>
                       <div className="text-sm font-semibold text-gray-900">
                         {lockDate.toLocaleDateString()}
                       </div>
                     </div>
                     <div className="bg-gray-50 rounded-lg p-4">
-                      <div className="text-xs text-gray-500 mb-1">Lock Duration</div>
+                      <div className="text-xs text-gray-500 mb-1">{t('myLocks.lockDuration')}</div>
                       <div className="text-sm font-semibold text-gray-900">
                         {formatDuration(lock.lock_duration_days)}
                       </div>
@@ -318,7 +320,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
                     <div className="bg-gray-50 rounded-lg p-4">
                       <div className="text-xs text-gray-500 mb-1 flex items-center">
                         <Clock className="w-3 h-3 mr-1" />
-                        {isUnlockable ? 'Unlocked On' : 'Unlocks On'}
+                        {isUnlockable ? t('myLocks.unlockedOn') : t('myLocks.unlocksOn')}
                       </div>
                       <div className="text-sm font-semibold text-gray-900">
                         {unlockDate.toLocaleDateString()}
@@ -338,7 +340,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
                       rel="noopener noreferrer"
                       className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
                     >
-                      View Transaction
+                      {t('myLocks.viewTransaction')}
                       <ExternalLink className="w-3 h-3" />
                     </a>
 
@@ -351,10 +353,10 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
                         {withdrawing === lock.id ? (
                           <>
                             <Loader2 className="w-4 h-4 animate-spin" />
-                            Withdrawing...
+                            {t('myLocks.withdrawing')}
                           </>
                         ) : (
-                          'Withdraw'
+                          t('myLocks.withdraw')
                         )}
                       </button>
                     )}
@@ -368,7 +370,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
             <div className="mt-12">
               <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
                 <Clock className="w-5 h-5 mr-2 text-gray-400" />
-                Withdrawn Locks
+                {t('myLocks.withdrawnLocks')}
               </h2>
               <div className="space-y-3">
                 {withdrawnLocks.map((lock) => (
@@ -382,7 +384,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
                           {formatAmount(lock.amount_locked_formatted)} {lock.token_symbol}
                         </div>
                         <div className="text-sm text-gray-500">
-                          Locked for {formatDuration(lock.lock_duration_days)} • Withdrawn
+                          {t('myLocks.lockedFor')} {formatDuration(lock.lock_duration_days)} • {t('myLocks.withdrawn')}
                         </div>
                       </div>
                       <a
@@ -391,7 +393,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
                         rel="noopener noreferrer"
                         className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
                       >
-                        View Transaction
+                        {t('myLocks.viewTransaction')}
                         <ExternalLink className="w-3 h-3" />
                       </a>
                     </div>

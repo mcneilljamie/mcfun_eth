@@ -428,5 +428,47 @@
     "totalValue": "القيمة الإجمالية",
     "activeLocks": "الأقفال النشطة",
     "unlockableValue": "قيمة الرموز المفتوحة"
+  },
+  "myLocks": {
+    "title": "My Locked Tokens",
+    "subtitle": "View and manage all your locked tokens",
+    "connectWallet": "Connect Your Wallet",
+    "connectWalletDescription": "Please connect your wallet to view your locked tokens",
+    "loading": "Loading your locks...",
+    "noActiveLocks": "No Active Locks",
+    "noLocksDescription": "You don't have any active token locks yet",
+    "lockTokensButton": "Lock Tokens",
+    "totalLockedValue": "Total Locked Value",
+    "activeLock": "active lock",
+    "activeLocks": "active locks",
+    "readyToUnlock": "Ready to Unlock",
+    "viewAllForToken": "View all locks for this token",
+    "lockedOn": "Locked On",
+    "lockDuration": "Lock Duration",
+    "unlocksOn": "Unlocks On",
+    "unlockedOn": "Unlocked On",
+    "day": "day",
+    "days": "days",
+    "hour": "hour",
+    "hours": "hours",
+    "remaining": "remaining",
+    "viewTransaction": "View Transaction",
+    "withdrawing": "Withdrawing...",
+    "withdraw": "Withdraw",
+    "withdrawnLocks": "Withdrawn Locks",
+    "withdrawn": "Withdrawn",
+    "lockedFor": "Locked for",
+    "errors": {
+      "failedToLoad": "Failed to load your locks",
+      "connectWallet": "Please connect your wallet",
+      "lockerNotAvailable": "Token locker not available on this network",
+      "lockNotEnded": "Lock period has not ended yet",
+      "withdrawFailed": "Failed to withdraw tokens",
+      "transactionRejected": "Transaction was rejected"
+    },
+    "toasts": {
+      "withdrawSubmitted": "Withdrawal transaction submitted...",
+      "withdrawSuccess": "Successfully withdrawn {{symbol}}!"
+    }
   }
 }
