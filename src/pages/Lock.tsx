@@ -597,9 +597,9 @@ export function Lock({ onShowToast }: LockPageProps) {
                   <div className="text-2xl font-bold">{tokenStats.active_locks_count}</div>
                 </div>
                 <div className="bg-white/10 backdrop-blur rounded-lg p-4">
-                  <div className="text-blue-100 text-sm mb-1">{t('lock.averageLock')}</div>
+                  <div className="text-blue-100 text-sm mb-1">{t('lock.unlockableValue')}</div>
                   <div className="text-2xl font-bold">
-                    {formatCurrency(tokenStats.total_locks_count > 0 ? tokenStats.total_value_usd / tokenStats.total_locks_count : 0)}
+                    {formatCurrency(tokenStats.unlockable_value_usd || 0)}
                   </div>
                 </div>
                 <div className="bg-white/10 backdrop-blur rounded-lg p-4">

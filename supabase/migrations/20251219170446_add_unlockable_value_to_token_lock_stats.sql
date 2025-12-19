@@ -1,100 +1,19 @@
 /*
-  # Add Token-Specific Locks Function
+  # Add Unlockable Value to Token Lock Stats
 
-  1. New Functions
-    - `get_locks_by_token_address(token_addr text)` - Returns all locks for a specific token
-      - Includes active, unlockable, and withdrawn locks
-      - Calculates current USD values for each lock
-      - Provides aggregated statistics for the token
-      - Returns locks sorted by lock timestamp (newest first)
+  1. Changes
+    - Update `get_token_lock_stats` function to include `unlockable_value_usd` field
+    - Calculates the USD value of tokens that are unlockable (ready to withdraw but not yet withdrawn)
+    - Helps distinguish between active locks (still locked), unlockable locks (ready to withdraw), and withdrawn locks
 
   2. Purpose
-    - Enable token-specific lock page views
-    - Show full lock history for individual tokens
-    - Support filtering and analytics by token
-
-  3. Security
-    - Function is marked as SECURITY DEFINER to bypass RLS
-    - Only exposes public lock data (locks are publicly viewable)
+    - Provide more granular statistics for token lock pages
+    - Show the value of tokens that users can unlock right now
+    - Improve transparency and visibility of lock status
 */
 
--- Function to get all locks for a specific token address
-CREATE OR REPLACE FUNCTION get_locks_by_token_address(token_addr text)
-RETURNS TABLE (
-  id uuid,
-  lock_id bigint,
-  user_address text,
-  token_address text,
-  token_symbol text,
-  token_name text,
-  token_decimals integer,
-  amount_locked text,
-  amount_locked_formatted numeric,
-  lock_duration_days integer,
-  lock_timestamp timestamptz,
-  unlock_timestamp timestamptz,
-  is_withdrawn boolean,
-  is_unlockable boolean,
-  current_price_eth numeric,
-  current_price_usd numeric,
-  value_eth numeric,
-  value_usd numeric,
-  tx_hash text,
-  status text
-)
-SECURITY DEFINER
-AS $$
-BEGIN
-  RETURN QUERY
-  SELECT
-    tl.id,
-    tl.lock_id,
-    tl.user_address,
-    tl.token_address,
-    tl.token_symbol,
-    tl.token_name,
-    tl.token_decimals,
-    tl.amount_locked::text as amount_locked,
-    (tl.amount_locked::numeric / (10::numeric ^ tl.token_decimals)) as amount_locked_formatted,
-    tl.lock_duration_days,
-    tl.lock_timestamp,
-    tl.unlock_timestamp,
-    tl.is_withdrawn,
-    (tl.unlock_timestamp <= NOW() AND tl.is_withdrawn = false) as is_unlockable,
-    COALESCE(
-      t.current_eth_reserve::numeric / NULLIF(t.current_token_reserve::numeric, 0),
-      0
-    )::numeric as current_price_eth,
-    COALESCE(
-      (t.current_eth_reserve::numeric / NULLIF(t.current_token_reserve::numeric, 0)) *
-      (SELECT price_usd FROM eth_price_history ORDER BY timestamp DESC LIMIT 1),
-      0
-    )::numeric as current_price_usd,
-    COALESCE(
-      (tl.amount_locked::numeric / (10::numeric ^ tl.token_decimals)) *
-      (t.current_eth_reserve::numeric / NULLIF(t.current_token_reserve::numeric, 0)),
-      0
-    )::numeric as value_eth,
-    COALESCE(
-      (tl.amount_locked::numeric / (10::numeric ^ tl.token_decimals)) *
-      (t.current_eth_reserve::numeric / NULLIF(t.current_token_reserve::numeric, 0)) *
-      (SELECT price_usd FROM eth_price_history ORDER BY timestamp DESC LIMIT 1),
-      0
-    )::numeric as value_usd,
-    tl.tx_hash,
-    CASE
-      WHEN tl.is_withdrawn THEN 'withdrawn'
-      WHEN tl.unlock_timestamp <= NOW() THEN 'unlockable'
-      ELSE 'active'
-    END as status
-  FROM token_locks tl
-  LEFT JOIN tokens t ON t.token_address = tl.token_address
-  WHERE LOWER(tl.token_address) = LOWER(token_addr)
-  ORDER BY tl.lock_timestamp DESC;
-END;
-$$ LANGUAGE plpgsql;
+DROP FUNCTION IF EXISTS get_token_lock_stats(text);
 
--- Function to get aggregated statistics for a specific token
 CREATE OR REPLACE FUNCTION get_token_lock_stats(token_addr text)
 RETURNS TABLE (
   token_address text,
