@@ -189,7 +189,9 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
     );
   }
 
-  const activeLocks = userLocks.filter(lock => !lock.is_withdrawn);
+  const activeLocks = userLocks
+    .filter(lock => !lock.is_withdrawn)
+    .sort((a, b) => new Date(a.unlock_timestamp).getTime() - new Date(b.unlock_timestamp).getTime());
   const withdrawnLocks = userLocks.filter(lock => lock.is_withdrawn);
 
   const totalLockedValue = activeLocks.reduce((sum, lock) => sum + (lock.value_usd || 0), 0);
