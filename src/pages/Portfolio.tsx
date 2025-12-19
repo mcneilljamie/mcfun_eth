@@ -170,8 +170,14 @@ export default function Portfolio() {
 
       let lockedValue = 0;
       if (!lockedError && lockedData) {
+        console.log('Locked tokens data:', lockedData);
         setLockedTokens(lockedData);
-        lockedValue = lockedData.reduce((sum: number, lock: any) => sum + parseFloat(lock.value_usd || '0'), 0);
+        lockedValue = lockedData.reduce((sum: number, lock: any) => {
+          const lockValue = Number(lock.value_usd) || 0;
+          console.log(`Lock ${lock.token_symbol}: value_usd = ${lock.value_usd}, parsed = ${lockValue}`);
+          return sum + lockValue;
+        }, 0);
+        console.log('Total locked value:', lockedValue);
         setTotalLockedValueUsd(lockedValue);
       }
 
