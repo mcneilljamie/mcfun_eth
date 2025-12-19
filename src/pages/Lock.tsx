@@ -769,41 +769,41 @@ export function Lock({ onShowToast }: LockPageProps) {
                     key={lock.id}
                     className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors"
                   >
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
+                        <div className="flex items-center gap-3 mb-3">
                           <h3 className="text-lg font-bold text-gray-900">{lock.token_symbol}</h3>
                           <span className="text-sm text-gray-500">{lock.token_name}</span>
                         </div>
-                        <div className="grid grid-cols-2 gap-4 text-sm">
-                          <div>
-                            <span className="text-gray-600">{t('lock.amount')}:</span>
-                            <span className="ml-2 font-semibold">
-                              {formatLargeTokenAmount(lock.amount_locked, lock.token_decimals)} {lock.token_symbol}
-                            </span>
-                            {lock.value_usd && lock.value_usd > 0 && (
-                              <div className="text-xs text-gray-500 mt-1">
-                                {formatCurrency(lock.value_usd)}
-                              </div>
-                            )}
-                          </div>
-                          <div>
-                            <span className="text-gray-600">{t('lock.timeRemaining')}:</span>
-                            <span className="ml-2 font-semibold">
-                              {lock.is_withdrawn ? t('lock.withdrawn') : formatTimeRemaining(lock.unlock_timestamp)}
-                            </span>
-                          </div>
+                        <div className="text-sm">
+                          <span className="text-gray-600">{t('lock.amount')}:</span>
+                          <span className="ml-2 font-semibold text-gray-900">
+                            {formatLargeTokenAmount(lock.amount_locked, lock.token_decimals)} {lock.token_symbol}
+                          </span>
                         </div>
                       </div>
-                      {isUnlockable && (
-                        <button
-                          onClick={() => handleUnlock(lock.lock_id)}
-                          disabled={loading}
-                          className="ml-4 px-4 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:opacity-50"
-                        >
-                          {t('lock.unlock')}
-                        </button>
-                      )}
+                      <div className="text-right">
+                        {lock.value_usd && lock.value_usd > 0 && (
+                          <div className="text-2xl font-bold text-gray-900 mb-2">
+                            {formatCurrency(lock.value_usd)}
+                          </div>
+                        )}
+                        <div className="text-sm">
+                          <span className="text-gray-600">{t('lock.timeRemaining')}:</span>
+                          <span className="ml-2 font-semibold text-gray-900">
+                            {lock.is_withdrawn ? t('lock.withdrawn') : formatTimeRemaining(lock.unlock_timestamp)}
+                          </span>
+                        </div>
+                        {isUnlockable && (
+                          <button
+                            onClick={() => handleUnlock(lock.lock_id)}
+                            disabled={loading}
+                            className="mt-3 px-4 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:opacity-50"
+                          >
+                            {t('lock.unlock')}
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 );
