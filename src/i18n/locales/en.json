@@ -478,7 +478,7 @@
     "avgPerLock": "Avg per Lock",
     "totalValue": "Total Value",
     "activeLocks": "Active locks",
-    "unlockableValue": "Unlocked tokens value",
+    "unlockableValue": "Unlocked Tokens Value",
     "totalQuantityLocked": "Total quantity locked",
     "activeOnly": "Show Active Only",
     "searchPlaceholder": "Search by token name, symbol, address, or locker address...",
