@@ -622,7 +622,7 @@ export function Lock({ onShowToast }: LockPageProps) {
                           <div>
                             <span className="text-gray-600">{t('lock.amount')}:</span>
                             <span className="ml-2 font-semibold">
-                              {parseFloat(ethers.formatUnits(lock.amount_locked, lock.token_decimals)).toFixed(4)} {lock.token_symbol}
+                              {formatLargeTokenAmount(lock.amount_locked, lock.token_decimals)} {lock.token_symbol}
                             </span>
                           </div>
                           <div>
@@ -718,7 +718,7 @@ export function Lock({ onShowToast }: LockPageProps) {
                       </td>
                       <td className="px-4 py-3">
                         <div className="font-semibold text-gray-900">
-                          {parseFloat(ethers.formatUnits(lock.amount_locked, lock.token_decimals)).toFixed(4)}
+                          {formatLargeTokenAmount(lock.amount_locked, lock.token_decimals)}
                         </div>
                         <div className="text-sm text-gray-500">{lock.token_symbol}</div>
                       </td>
