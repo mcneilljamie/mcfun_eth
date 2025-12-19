@@ -45,11 +45,14 @@ Deno.serve(async (req: Request) => {
       .limit(1)
       .maybeSingle();
 
+    const currentBlock = await provider.getBlockNumber();
+
+    // If first run, start from 50k blocks ago to avoid RPC limits
+    const defaultStartBlock = Math.max(0, currentBlock - 50000);
     const fromBlock = lastIndexedLock?.block_number
       ? Number(lastIndexedLock.block_number) + 1
-      : 0;
+      : defaultStartBlock;
 
-    const currentBlock = await provider.getBlockNumber();
     const toBlock = currentBlock;
 
     console.log(`Indexing locks from block ${fromBlock} to ${toBlock}`);

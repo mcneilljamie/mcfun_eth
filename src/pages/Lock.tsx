@@ -36,6 +36,7 @@ interface AggregatedLock {
   current_price_usd: number;
   total_value_eth: number;
   total_value_usd: number;
+  is_mcfun_token: boolean;
 }
 
 interface LockPageProps {
@@ -715,7 +716,7 @@ export function Lock({ onShowToast }: LockPageProps) {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3 flex-1">
                       <div className="flex items-center space-x-2">
-                        {index < 3 && (
+                        {aggLock.is_mcfun_token && index < 3 && (
                           <Trophy
                             className={`w-5 h-5 ${
                               index === 0
@@ -732,6 +733,11 @@ export function Lock({ onShowToast }: LockPageProps) {
                         <div className="flex items-center gap-2 mb-1">
                           <h3 className="text-lg font-bold text-gray-900">{aggLock.token_symbol}</h3>
                           <span className="text-sm text-gray-500">{aggLock.token_name}</span>
+                          {aggLock.is_mcfun_token && (
+                            <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                              McFun
+                            </span>
+                          )}
                         </div>
                         <div className="grid grid-cols-3 gap-4 text-sm">
                           <div>
@@ -746,24 +752,28 @@ export function Lock({ onShowToast }: LockPageProps) {
                               {aggLock.lock_count} {t('lock.locks')}
                             </span>
                           </div>
-                          <div>
-                            <span className="text-gray-600">{t('lock.avgPerLock')}:</span>
-                            <span className="ml-2 font-semibold text-gray-900">
-                              {formatCurrency(aggLock.total_value_usd / aggLock.lock_count)}
-                            </span>
-                          </div>
+                          {aggLock.is_mcfun_token && (
+                            <div>
+                              <span className="text-gray-600">{t('lock.avgPerLock')}:</span>
+                              <span className="ml-2 font-semibold text-gray-900">
+                                {formatCurrency(aggLock.total_value_usd / aggLock.lock_count)}
+                              </span>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
-                    <div className="text-right ml-4">
-                      <div className="text-sm text-gray-500 mb-1">{t('lock.totalValue')}</div>
-                      <div className="text-2xl font-bold text-gray-900">
-                        {formatCurrency(aggLock.total_value_usd)}
+                    {aggLock.is_mcfun_token && (
+                      <div className="text-right ml-4">
+                        <div className="text-sm text-gray-500 mb-1">{t('lock.totalValue')}</div>
+                        <div className="text-2xl font-bold text-gray-900">
+                          {formatCurrency(aggLock.total_value_usd)}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {aggLock.total_value_eth.toFixed(4)} ETH
+                        </div>
                       </div>
-                      <div className="text-sm text-gray-500">
-                        {aggLock.total_value_eth.toFixed(4)} ETH
-                      </div>
-                    </div>
+                    )}
                   </div>
                 </div>
               ))}
