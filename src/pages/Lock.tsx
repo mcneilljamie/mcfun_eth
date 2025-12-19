@@ -168,21 +168,23 @@ export function Lock({ onShowToast }: LockPageProps) {
       setIsApproving(true);
       const lockerAddress = getLockerAddress(chainId);
       const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, signer);
-      const amountWei = ethers.parseUnits(amount, tokenInfo.decimals);
 
-      const tx = await tokenContract.approve(lockerAddress, amountWei);
+      // Approve maximum amount so users only need to approve once
+      const tx = await tokenContract.approve(lockerAddress, ethers.MaxUint256);
       onShowToast({
         message: t('lock.approving'),
         type: 'info',
       });
 
       await tx.wait();
-      setNeedsApproval(false);
 
       onShowToast({
         message: t('lock.approved'),
         type: 'success',
       });
+
+      // Re-check allowance to update UI
+      await checkAllowance();
     } catch (err: any) {
       console.error('Approval failed:', err);
       onShowToast({
