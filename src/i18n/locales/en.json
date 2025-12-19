@@ -322,7 +322,7 @@
     "lockedTokens": "Locked Tokens",
     "viewAllLocks": "View All My Locks",
     "locked": "Locked",
-    "unlockable": "Unlockable",
+    "unlockable": "Unlocked",
     "readyToUnlock": "Ready to unlock",
     "daysRemaining": "days remaining",
     "unlocks": "Unlocks",
@@ -453,11 +453,11 @@
     "unlocking": "Unlocking tokens...",
     "unlocked": "Tokens unlocked successfully",
     "withdrawn": "Withdrawn",
-    "unlockable": "Unlockable",
+    "unlockable": "Unlocked",
     "locked": "Locked",
     "status": {
       "active": "Active",
-      "unlockable": "Ready to Unlock",
+      "unlockable": "Unlocked",
       "withdrawn": "Withdrawn"
     },
     "days": "days",
