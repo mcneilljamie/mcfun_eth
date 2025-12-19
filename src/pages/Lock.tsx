@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useWeb3 } from '../lib/web3';
 import { supabase } from '../lib/supabase';
 import { ethers } from 'ethers';
-import { Loader2, Lock as LockIcon, Search, Clock, User, Coins, AlertCircle, ExternalLink } from 'lucide-react';
+import { Loader2, Lock as LockIcon, Search, Clock, User, Coins, AlertCircle, ExternalLink, TrendingUp, Trophy } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { LockCelebration } from '../components/LockCelebration';
 import { ToastMessage } from '../App';
@@ -25,6 +25,19 @@ interface TokenLock {
   tx_hash: string;
 }
 
+interface AggregatedLock {
+  token_address: string;
+  token_symbol: string;
+  token_name: string;
+  token_decimals: number;
+  total_amount_locked: string;
+  lock_count: number;
+  current_price_eth: number;
+  current_price_usd: number;
+  total_value_eth: number;
+  total_value_usd: number;
+}
+
 interface LockPageProps {
   onShowToast: (toast: ToastMessage) => void;
 }
@@ -34,6 +47,7 @@ export function Lock({ onShowToast }: LockPageProps) {
   const { account, provider, signer, chainId } = useWeb3();
   const [loading, setLoading] = useState(false);
   const [allLocks, setAllLocks] = useState<TokenLock[]>([]);
+  const [aggregatedLocks, setAggregatedLocks] = useState<AggregatedLock[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showActiveOnly, setShowActiveOnly] = useState(true);
 
@@ -58,6 +72,7 @@ export function Lock({ onShowToast }: LockPageProps) {
 
   useEffect(() => {
     loadLocks();
+    loadAggregatedLocks();
   }, []);
 
   useEffect(() => {
@@ -89,6 +104,18 @@ export function Lock({ onShowToast }: LockPageProps) {
       }
     } catch (err) {
       console.error('Failed to load locks:', err);
+    }
+  };
+
+  const loadAggregatedLocks = async () => {
+    try {
+      const { data, error } = await supabase.rpc('get_aggregated_locks_by_token');
+
+      if (!error && data) {
+        setAggregatedLocks(data);
+      }
+    } catch (err) {
+      console.error('Failed to load aggregated locks:', err);
     }
   };
 
@@ -236,6 +263,7 @@ export function Lock({ onShowToast }: LockPageProps) {
 
         setTimeout(() => {
           loadLocks();
+          loadAggregatedLocks();
         }, 2000);
       }
     } catch (err: any) {
@@ -271,6 +299,7 @@ export function Lock({ onShowToast }: LockPageProps) {
 
       setTimeout(() => {
         loadLocks();
+        loadAggregatedLocks();
       }, 2000);
     } catch (err: any) {
       console.error('Unlock failed:', err);
@@ -321,6 +350,29 @@ export function Lock({ onShowToast }: LockPageProps) {
       return `${days} ${t('lock.days')} ${hours} ${t('lock.hours')}`;
     }
     return `${hours} ${t('lock.hours')}`;
+  };
+
+  const formatCurrency = (value: number) => {
+    if (value >= 1000000) {
+      return `$${(value / 1000000).toFixed(2)}M`;
+    } else if (value >= 1000) {
+      return `$${(value / 1000).toFixed(2)}K`;
+    } else {
+      return `$${value.toFixed(2)}`;
+    }
+  };
+
+  const formatNumber = (value: string | number) => {
+    const num = typeof value === 'string' ? parseFloat(value) : value;
+    if (num >= 1000000) {
+      return `${(num / 1000000).toFixed(2)}M`;
+    } else if (num >= 1000) {
+      return `${(num / 1000).toFixed(2)}K`;
+    } else if (num >= 1) {
+      return num.toFixed(2);
+    } else {
+      return num.toFixed(6);
+    }
   };
 
   const explorerUrl = getExplorerUrl(chainId || 11155111);
@@ -645,6 +697,77 @@ export function Lock({ onShowToast }: LockPageProps) {
             </div>
           )}
         </div>
+
+        {aggregatedLocks.length > 0 && (
+          <div className="bg-white rounded-xl shadow-lg p-6 mt-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+              <Trophy className="w-6 h-6 mr-2 text-yellow-500" />
+              {t('lock.topLockedTokens')}
+            </h2>
+            <div className="space-y-3">
+              {aggregatedLocks.map((aggLock, index) => (
+                <div
+                  key={aggLock.token_address}
+                  className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3 flex-1">
+                      <div className="flex items-center space-x-2">
+                        {index < 3 && (
+                          <Trophy
+                            className={`w-5 h-5 ${
+                              index === 0
+                                ? 'text-yellow-500'
+                                : index === 1
+                                ? 'text-gray-400'
+                                : 'text-amber-700'
+                            }`}
+                          />
+                        )}
+                        <span className="font-bold text-gray-500 text-lg">#{index + 1}</span>
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="text-lg font-bold text-gray-900">{aggLock.token_symbol}</h3>
+                          <span className="text-sm text-gray-500">{aggLock.token_name}</span>
+                        </div>
+                        <div className="grid grid-cols-3 gap-4 text-sm">
+                          <div>
+                            <span className="text-gray-600">{t('lock.totalLocked')}:</span>
+                            <span className="ml-2 font-semibold text-gray-900">
+                              {formatNumber(parseFloat(aggLock.total_amount_locked) / Math.pow(10, aggLock.token_decimals))} {aggLock.token_symbol}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-gray-600">{t('lock.lockCount')}:</span>
+                            <span className="ml-2 font-semibold text-gray-900">
+                              {aggLock.lock_count} {t('lock.locks')}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-gray-600">{t('lock.avgPerLock')}:</span>
+                            <span className="ml-2 font-semibold text-gray-900">
+                              {formatCurrency(aggLock.total_value_usd / aggLock.lock_count)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right ml-4">
+                      <div className="text-sm text-gray-500 mb-1">{t('lock.totalValue')}</div>
+                      <div className="text-2xl font-bold text-gray-900">
+                        {formatCurrency(aggLock.total_value_usd)}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {aggLock.total_value_eth.toFixed(4)} ETH
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {celebration && (

@@ -3,7 +3,7 @@ import { useWeb3 } from '../lib/web3';
 import { supabase } from '../lib/supabase';
 import { ethers } from 'ethers';
 import { getEthPriceUSD } from '../lib/ethPrice';
-import { Loader2, Wallet } from 'lucide-react';
+import { Loader2, Wallet, Lock as LockIcon, Clock } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -19,15 +19,38 @@ interface TokenBalance {
   change24h: number;
 }
 
+interface LockedToken {
+  id: string;
+  lock_id: number;
+  token_address: string;
+  token_symbol: string;
+  token_name: string;
+  token_decimals: number;
+  amount_locked: string;
+  amount_locked_formatted: number;
+  lock_duration_days: number;
+  lock_timestamp: string;
+  unlock_timestamp: string;
+  is_withdrawn: boolean;
+  is_unlockable: boolean;
+  current_price_eth: number;
+  current_price_usd: number;
+  value_eth: number;
+  value_usd: number;
+  tx_hash: string;
+}
+
 export default function Portfolio() {
   const { t } = useTranslation();
   const { account, provider } = useWeb3();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [tokens, setTokens] = useState<TokenBalance[]>([]);
+  const [lockedTokens, setLockedTokens] = useState<LockedToken[]>([]);
   const [ethBalance, setEthBalance] = useState('0');
   const [ethPriceUsd, setEthPriceUsd] = useState(0);
   const [totalValueUsd, setTotalValueUsd] = useState(0);
+  const [totalLockedValueUsd, setTotalLockedValueUsd] = useState(0);
 
   useEffect(() => {
     if (account && provider) {
@@ -141,6 +164,16 @@ export default function Portfolio() {
       tokenBalances.sort((a, b) => b.valueUsd - a.valueUsd);
       setTokens(tokenBalances);
 
+      // Load locked tokens
+      const { data: lockedData, error: lockedError } = await supabase
+        .rpc('get_user_locked_tokens', { user_addr: account });
+
+      if (!lockedError && lockedData) {
+        setLockedTokens(lockedData);
+        const lockedValue = lockedData.reduce((sum: number, lock: any) => sum + parseFloat(lock.value_usd || '0'), 0);
+        setTotalLockedValueUsd(lockedValue);
+      }
+
       // Calculate total value
       const ethValue = parseFloat(ethBal) * ethPrice;
       const tokensValue = tokenBalances.reduce((sum, t) => sum + t.valueUsd, 0);
@@ -222,7 +255,7 @@ export default function Portfolio() {
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-8 mb-8 text-white">
         <h1 className="text-3xl font-bold mb-2">{t('portfolio.portfolioValue')}</h1>
         <div className="text-5xl font-bold mb-6">{formatCurrency(totalValueUsd)}</div>
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
           <div className="bg-white/10 backdrop-blur rounded-lg p-4">
             <div className="text-blue-100 text-sm mb-2">{t('portfolio.ethBalance')}</div>
             <div className="text-2xl font-bold mb-1">
@@ -238,6 +271,15 @@ export default function Portfolio() {
               {formatCurrency(tokens.reduce((sum, t) => sum + t.valueUsd, 0))}
             </div>
           </div>
+          <div className="bg-white/10 backdrop-blur rounded-lg p-4">
+            <div className="text-blue-100 text-sm mb-2 flex items-center">
+              <LockIcon className="w-4 h-4 mr-1" />
+              {t('portfolio.lockedValue')}
+            </div>
+            <div className="text-2xl font-bold">
+              {formatCurrency(totalLockedValueUsd)}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -248,8 +290,79 @@ export default function Portfolio() {
         </p>
       </div>
 
+      {/* Locked Tokens Section */}
+      {lockedTokens.length > 0 && (
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-gray-900 flex items-center">
+              <LockIcon className="w-5 h-5 mr-2 text-blue-600" />
+              {t('portfolio.lockedTokens')}
+            </h2>
+            <Link
+              to="/lock"
+              className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+            >
+              {t('portfolio.viewAllLocks')} →
+            </Link>
+          </div>
+          <div className="space-y-3">
+            {lockedTokens.map((lock) => {
+              const now = new Date();
+              const unlockDate = new Date(lock.unlock_timestamp);
+              const timeRemaining = unlockDate.getTime() - now.getTime();
+              const daysRemaining = Math.ceil(timeRemaining / (1000 * 60 * 60 * 24));
+
+              return (
+                <div
+                  key={lock.id}
+                  className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border-2 border-purple-200 p-6 hover:shadow-lg transition-all"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <LockIcon className="w-5 h-5 text-purple-600" />
+                        <h3 className="text-xl font-bold text-gray-900">{lock.token_symbol}</h3>
+                        <span className="text-sm text-gray-500">{lock.token_name}</span>
+                        {lock.is_unlockable && (
+                          <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                            {t('portfolio.unlockable')}
+                          </span>
+                        )}
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm">
+                        <div className="text-gray-600">
+                          {t('portfolio.locked')}: <span className="font-semibold text-gray-900">{lock.amount_locked_formatted.toFixed(4)} {lock.token_symbol}</span>
+                        </div>
+                        <div className="text-gray-600 flex items-center">
+                          <Clock className="w-4 h-4 mr-1" />
+                          {lock.is_unlockable
+                            ? t('portfolio.readyToUnlock')
+                            : `${daysRemaining} ${t('portfolio.daysRemaining')}`
+                          }
+                        </div>
+                        <div className="text-gray-600">
+                          {t('portfolio.unlocks')}: <span className="font-semibold text-gray-900">{new Date(lock.unlock_timestamp).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right ml-4">
+                      <div className="text-2xl font-bold text-gray-900 mb-1">
+                        {formatCurrency(lock.value_usd)}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {formatPrice(lock.current_price_usd)} {t('portfolio.perToken')}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Token Holdings */}
-      {tokens.length === 0 ? (
+      {tokens.length === 0 && lockedTokens.length === 0 ? (
         <div className="bg-white rounded-xl shadow-lg p-12 text-center">
           <p className="text-gray-600 text-lg mb-6">{t('portfolio.noHoldings')}</p>
           <Link
@@ -259,7 +372,7 @@ export default function Portfolio() {
             {t('portfolio.browseTokens')}
           </Link>
         </div>
-      ) : (
+      ) : tokens.length > 0 ? (
         <div className="space-y-3">
           <h2 className="text-xl font-bold text-gray-900 mb-4">{t('portfolio.yourHoldings')}</h2>
           {tokens.map((token) => (
@@ -290,7 +403,7 @@ export default function Portfolio() {
             </div>
           ))}
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

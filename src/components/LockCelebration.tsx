@@ -152,8 +152,9 @@ export function LockCelebration({
             <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-full mb-4 animate-bounce">
               <Lock className="w-10 h-10 text-white" />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              {t('lockCelebration.title')}
+            <h2 className="text-3xl font-bold text-gray-900 mb-2 flex items-center justify-center">
+              <Lock className="w-8 h-8 mr-2 text-green-600" />
+              {t('lockCelebration.lockSuccessful')}
             </h2>
             <p className="text-lg text-gray-600">
               {t('lockCelebration.subtitle', { amount: amountLocked, symbol: tokenSymbol, days: durationDays })}
