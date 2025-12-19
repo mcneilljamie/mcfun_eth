@@ -40,6 +40,18 @@ interface LockedToken {
   tx_hash: string;
 }
 
+interface AggregatedLockedToken {
+  token_address: string;
+  token_symbol: string;
+  token_name: string;
+  total_amount_locked: number;
+  lock_count: number;
+  total_value_usd: number;
+  current_price_usd: number;
+  earliest_unlock: string;
+  has_unlockable: boolean;
+}
+
 export default function Portfolio() {
   const { t } = useTranslation();
   const { account, provider } = useWeb3();
@@ -47,6 +59,7 @@ export default function Portfolio() {
   const [loading, setLoading] = useState(true);
   const [tokens, setTokens] = useState<TokenBalance[]>([]);
   const [lockedTokens, setLockedTokens] = useState<LockedToken[]>([]);
+  const [aggregatedLockedTokens, setAggregatedLockedTokens] = useState<AggregatedLockedToken[]>([]);
   const [ethBalance, setEthBalance] = useState('0');
   const [ethPriceUsd, setEthPriceUsd] = useState(0);
   const [totalValueUsd, setTotalValueUsd] = useState(0);
@@ -179,6 +192,42 @@ export default function Portfolio() {
         }, 0);
         console.log('Total locked value:', lockedValue);
         setTotalLockedValueUsd(lockedValue);
+
+        // Aggregate locked tokens by token address
+        const aggregated = new Map<string, AggregatedLockedToken>();
+        for (const lock of lockedData) {
+          const key = lock.token_address.toLowerCase();
+          const existing = aggregated.get(key);
+          const unlockDate = new Date(lock.unlock_timestamp);
+
+          if (existing) {
+            existing.total_amount_locked += lock.amount_locked_formatted;
+            existing.lock_count += 1;
+            existing.total_value_usd += Number(lock.value_usd) || 0;
+            existing.has_unlockable = existing.has_unlockable || lock.is_unlockable;
+            // Keep earliest unlock date
+            if (unlockDate < new Date(existing.earliest_unlock)) {
+              existing.earliest_unlock = lock.unlock_timestamp;
+            }
+          } else {
+            aggregated.set(key, {
+              token_address: lock.token_address,
+              token_symbol: lock.token_symbol,
+              token_name: lock.token_name,
+              total_amount_locked: lock.amount_locked_formatted,
+              lock_count: 1,
+              total_value_usd: Number(lock.value_usd) || 0,
+              current_price_usd: lock.current_price_usd,
+              earliest_unlock: lock.unlock_timestamp,
+              has_unlockable: lock.is_unlockable,
+            });
+          }
+        }
+
+        const aggregatedArray = Array.from(aggregated.values());
+        // Sort by total value descending
+        aggregatedArray.sort((a, b) => b.total_value_usd - a.total_value_usd);
+        setAggregatedLockedTokens(aggregatedArray);
       }
 
       // Calculate total value (including locked tokens)
@@ -299,7 +348,7 @@ export default function Portfolio() {
       </div>
 
       {/* Locked Tokens Section */}
-      {lockedTokens.length > 0 && (
+      {aggregatedLockedTokens.length > 0 && (
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-gray-900 flex items-center">
@@ -314,24 +363,25 @@ export default function Portfolio() {
             </Link>
           </div>
           <div className="space-y-3">
-            {lockedTokens.map((lock) => {
+            {aggregatedLockedTokens.map((aggLock) => {
               const now = new Date();
-              const unlockDate = new Date(lock.unlock_timestamp);
+              const unlockDate = new Date(aggLock.earliest_unlock);
               const timeRemaining = unlockDate.getTime() - now.getTime();
               const daysRemaining = Math.ceil(timeRemaining / (1000 * 60 * 60 * 24));
 
               return (
                 <div
-                  key={lock.id}
-                  className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border-2 border-purple-200 p-6 hover:shadow-lg transition-all"
+                  key={aggLock.token_address}
+                  onClick={() => navigate(`/lock/${aggLock.token_address}`)}
+                  className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border-2 border-purple-200 p-6 hover:shadow-lg transition-all cursor-pointer"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
                         <LockIcon className="w-5 h-5 text-purple-600" />
-                        <h3 className="text-xl font-bold text-gray-900">{lock.token_symbol}</h3>
-                        <span className="text-sm text-gray-500">{lock.token_name}</span>
-                        {lock.is_unlockable && (
+                        <h3 className="text-xl font-bold text-gray-900">{aggLock.token_symbol}</h3>
+                        <span className="text-sm text-gray-500">{aggLock.token_name}</span>
+                        {aggLock.has_unlockable && (
                           <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
                             {t('portfolio.unlockable')}
                           </span>
@@ -339,26 +389,23 @@ export default function Portfolio() {
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm">
                         <div className="text-gray-600">
-                          {t('portfolio.locked')}: <span className="font-semibold text-gray-900">{lock.amount_locked_formatted.toFixed(4)} {lock.token_symbol}</span>
+                          {t('portfolio.locked')}: <span className="font-semibold text-gray-900">{formatNumber(aggLock.total_amount_locked)} {aggLock.token_symbol}</span>
                         </div>
                         <div className="text-gray-600 flex items-center">
                           <Clock className="w-4 h-4 mr-1" />
-                          {lock.is_unlockable
-                            ? t('portfolio.readyToUnlock')
-                            : `${daysRemaining} ${t('portfolio.daysRemaining')}`
-                          }
+                          {aggLock.lock_count} {aggLock.lock_count === 1 ? 'lock' : 'locks'}
                         </div>
                         <div className="text-gray-600">
-                          {t('portfolio.unlocks')}: <span className="font-semibold text-gray-900">{new Date(lock.unlock_timestamp).toLocaleDateString()}</span>
+                          {t('portfolio.unlocks')}: <span className="font-semibold text-gray-900">{new Date(aggLock.earliest_unlock).toLocaleDateString()}</span>
                         </div>
                       </div>
                     </div>
                     <div className="text-right ml-4">
                       <div className="text-2xl font-bold text-gray-900 mb-1">
-                        {formatCurrency(lock.value_usd)}
+                        {formatCurrency(aggLock.total_value_usd)}
                       </div>
                       <div className="text-sm text-gray-500">
-                        {formatPrice(lock.current_price_usd)} {t('portfolio.perToken')}
+                        {formatPrice(aggLock.current_price_usd)} {t('portfolio.perToken')}
                       </div>
                     </div>
                   </div>
@@ -370,7 +417,7 @@ export default function Portfolio() {
       )}
 
       {/* Token Holdings */}
-      {tokens.length === 0 && lockedTokens.length === 0 ? (
+      {tokens.length === 0 && aggregatedLockedTokens.length === 0 ? (
         <div className="bg-white rounded-xl shadow-lg p-12 text-center">
           <p className="text-gray-600 text-lg mb-6">{t('portfolio.noHoldings')}</p>
           <Link
