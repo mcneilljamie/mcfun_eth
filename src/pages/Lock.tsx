@@ -743,7 +743,7 @@ export function Lock({ onShowToast }: LockPageProps) {
                           <div>
                             <span className="text-gray-600">{t('lock.totalLocked')}:</span>
                             <span className="ml-2 font-semibold text-gray-900">
-                              {formatNumber(parseFloat(aggLock.total_amount_locked) / Math.pow(10, aggLock.token_decimals))} {aggLock.token_symbol}
+                              {formatNumber(parseFloat(ethers.formatUnits(aggLock.total_amount_locked, aggLock.token_decimals)))} {aggLock.token_symbol}
                             </span>
                           </div>
                           <div>
