@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useWeb3 } from '../lib/web3';
 import { supabase } from '../lib/supabase';
 import { ethers } from 'ethers';
-import { Loader2, Lock as LockIcon, Search, Clock, User, Coins, AlertCircle, ExternalLink, TrendingUp, Trophy, ArrowLeft } from 'lucide-react';
+import { Loader2, Lock as LockIcon, Search, Clock, User, Coins, AlertCircle, ExternalLink, TrendingUp, Trophy, ArrowLeft, Share2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { LockCelebration } from '../components/LockCelebration';
 import { ToastMessage } from '../App';
@@ -562,6 +562,21 @@ export function Lock({ onShowToast }: LockPageProps) {
 
   const explorerUrl = getExplorerUrl(chainId || 11155111);
 
+  const handleShareLock = () => {
+    const shareUrl = `${window.location.origin}/lock/${urlTokenAddress}`;
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      onShowToast({
+        message: t('lock.shareLinkCopied'),
+        type: 'success',
+      });
+    }).catch(() => {
+      onShowToast({
+        message: t('lock.shareLinkFailed'),
+        type: 'error',
+      });
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -582,6 +597,13 @@ export function Lock({ onShowToast }: LockPageProps) {
                   </h1>
                   <p className="text-blue-100 text-lg">{tokenStats.token_name}</p>
                 </div>
+                <button
+                  onClick={handleShareLock}
+                  className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors backdrop-blur"
+                >
+                  <Share2 className="w-5 h-5" />
+                  <span className="hidden sm:inline">{t('lock.shareLock')}</span>
+                </button>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 <div className="bg-white/10 backdrop-blur rounded-lg p-4">
