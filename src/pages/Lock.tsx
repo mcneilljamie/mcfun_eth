@@ -49,7 +49,7 @@ export function Lock({ onShowToast }: LockPageProps) {
   const [allLocks, setAllLocks] = useState<TokenLock[]>([]);
   const [aggregatedLocks, setAggregatedLocks] = useState<AggregatedLock[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [showActiveOnly, setShowActiveOnly] = useState(true);
+  const [showActiveOnly, setShowActiveOnly] = useState(false);
 
   const [tokenAddress, setTokenAddress] = useState('');
   const [amount, setAmount] = useState('');
