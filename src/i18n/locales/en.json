@@ -479,6 +479,7 @@
     "totalValue": "Total Value",
     "activeLocks": "Active locks",
     "averageLock": "Average lock",
+    "totalQuantityLocked": "Total quantity locked",
     "activeOnly": "Show Active Only",
     "searchPlaceholder": "Search by token name, symbol, address, or locker address...",
     "noLocks": "No token locks found",

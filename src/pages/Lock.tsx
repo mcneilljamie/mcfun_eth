@@ -582,7 +582,7 @@ export function Lock({ onShowToast }: LockPageProps) {
                   <p className="text-blue-100 text-lg">{tokenStats.token_name}</p>
                 </div>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 <div className="bg-white/10 backdrop-blur rounded-lg p-4">
                   <div className="text-blue-100 text-sm mb-1">{t('lock.totalValue')}</div>
                   <div className="text-2xl font-bold">{formatCurrency(tokenStats.total_value_usd)}</div>
@@ -599,6 +599,12 @@ export function Lock({ onShowToast }: LockPageProps) {
                   <div className="text-blue-100 text-sm mb-1">{t('lock.averageLock')}</div>
                   <div className="text-2xl font-bold">
                     {formatCurrency(tokenStats.total_locks_count > 0 ? tokenStats.total_value_usd / tokenStats.total_locks_count : 0)}
+                  </div>
+                </div>
+                <div className="bg-white/10 backdrop-blur rounded-lg p-4">
+                  <div className="text-blue-100 text-sm mb-1">{t('lock.totalQuantityLocked')}</div>
+                  <div className="text-2xl font-bold">
+                    {formatLargeTokenAmount(tokenStats.total_amount_locked, tokenStats.token_decimals)} {tokenStats.token_symbol}
                   </div>
                 </div>
               </div>
