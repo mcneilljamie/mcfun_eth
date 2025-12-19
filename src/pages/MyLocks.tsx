@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useWeb3 } from '../lib/web3';
 import { supabase } from '../lib/supabase';
 import { ethers } from 'ethers';
-import { Loader2, Lock as LockIcon, Clock, Wallet, ExternalLink, AlertCircle } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import { Loader2, Lock as LockIcon, Clock, Wallet, ExternalLink } from 'lucide-react';
 import { ToastMessage } from '../App';
 import { getExplorerUrl, getLockerAddress } from '../contracts/addresses';
 import { TOKEN_LOCKER_ABI } from '../contracts/abis';
@@ -18,6 +17,7 @@ interface TokenLock {
   token_name: string;
   token_decimals: number;
   amount_locked: string;
+  amount_locked_formatted: number;
   lock_duration_days: number;
   lock_timestamp: string;
   unlock_timestamp: string;
@@ -34,9 +34,8 @@ interface MyLocksProps {
 }
 
 export function MyLocks({ onShowToast }: MyLocksProps) {
-  const { t } = useTranslation();
   const navigate = useNavigate();
-  const { account, provider, signer, chainId } = useWeb3();
+  const { account, signer, chainId } = useWeb3();
   const [loading, setLoading] = useState(true);
   const [userLocks, setUserLocks] = useState<TokenLock[]>([]);
   const [withdrawing, setWithdrawing] = useState<string | null>(null);
@@ -153,18 +152,15 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
     }
   };
 
-  const formatAmount = (amount: string, decimals: number) => {
-    const formatted = ethers.formatUnits(amount, decimals);
-    const num = parseFloat(formatted);
-
-    if (num >= 1000000) {
-      return `${(num / 1000000).toFixed(2)}M`;
-    } else if (num >= 1000) {
-      return `${(num / 1000).toFixed(2)}K`;
-    } else if (num >= 1) {
-      return num.toFixed(2);
+  const formatAmount = (amount: number) => {
+    if (amount >= 1000000) {
+      return `${(amount / 1000000).toFixed(2)}M`;
+    } else if (amount >= 1000) {
+      return `${(amount / 1000).toFixed(2)}K`;
+    } else if (amount >= 1) {
+      return amount.toFixed(2);
     } else {
-      return num.toFixed(6);
+      return amount.toFixed(6);
     }
   };
 
@@ -270,7 +266,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
                         {formatCurrency(lock.value_usd || 0)}
                       </div>
                       <div className="text-sm text-gray-500">
-                        {formatAmount(lock.amount_locked, lock.token_decimals)} {lock.token_symbol}
+                        {formatAmount(lock.amount_locked_formatted)} {lock.token_symbol}
                       </div>
                     </div>
                   </div>
@@ -352,7 +348,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="font-semibold text-gray-900">
-                          {formatAmount(lock.amount_locked, lock.token_decimals)} {lock.token_symbol}
+                          {formatAmount(lock.amount_locked_formatted)} {lock.token_symbol}
                         </div>
                         <div className="text-sm text-gray-500">
                           Locked for {lock.lock_duration_days} days • Withdrawn
