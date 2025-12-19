@@ -367,6 +367,9 @@ export function Lock({ onShowToast }: LockPageProps) {
 
   const formatNumber = (value: string | number) => {
     const num = typeof value === 'string' ? parseFloat(value) : value;
+    if (isNaN(num) || !isFinite(num)) {
+      return '0';
+    }
     if (num >= 1000000) {
       return `${(num / 1000000).toFixed(2)}M`;
     } else if (num >= 1000) {
@@ -375,6 +378,27 @@ export function Lock({ onShowToast }: LockPageProps) {
       return num.toFixed(2);
     } else {
       return num.toFixed(6);
+    }
+  };
+
+  const formatLargeTokenAmount = (amountText: string, decimals: number): string => {
+    try {
+      // Convert text to BigInt safely
+      const amountBigInt = BigInt(amountText);
+      // Get the divisor for the decimals
+      const divisor = BigInt(10 ** decimals);
+      // Integer division
+      const integerPart = amountBigInt / divisor;
+      // Get first 6 decimal places for precision
+      const remainder = amountBigInt % divisor;
+      const decimalPart = Number(remainder) / Number(divisor);
+
+      // Combine and format
+      const total = Number(integerPart) + decimalPart;
+      return formatNumber(total);
+    } catch (err) {
+      console.error('Error formatting large token amount:', err);
+      return '0';
     }
   };
 
@@ -743,7 +767,7 @@ export function Lock({ onShowToast }: LockPageProps) {
                           <div>
                             <span className="text-gray-600">{t('lock.totalLocked')}:</span>
                             <span className="ml-2 font-semibold text-gray-900">
-                              {formatNumber(parseFloat(ethers.formatUnits(aggLock.total_amount_locked, aggLock.token_decimals)))} {aggLock.token_symbol}
+                              {formatLargeTokenAmount(aggLock.total_amount_locked, aggLock.token_decimals)} {aggLock.token_symbol}
                             </span>
                           </div>
                           <div>
