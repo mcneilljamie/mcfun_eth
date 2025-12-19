@@ -11,6 +11,7 @@ import { Tokens } from './pages/Tokens';
 import { TokenDetail } from './pages/TokenDetail';
 import Portfolio from './pages/Portfolio';
 import { Lock } from './pages/Lock';
+import { MyLocks } from './pages/MyLocks';
 import { About } from './pages/About';
 import { Token } from './lib/supabase';
 
@@ -89,6 +90,7 @@ function AppContent() {
             <Route path="/portfolio" element={<Portfolio />} />
             <Route path="/lock" element={<Lock onShowToast={setToast} />} />
             <Route path="/lock/:tokenAddress" element={<Lock onShowToast={setToast} />} />
+            <Route path="/my-locks" element={<MyLocks onShowToast={setToast} />} />
             <Route path="/about" element={<About />} />
           </Routes>
         </div>

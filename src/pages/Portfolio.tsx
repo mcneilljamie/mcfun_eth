@@ -356,7 +356,7 @@ export default function Portfolio() {
               {t('portfolio.lockedTokens')}
             </h2>
             <Link
-              to="/lock"
+              to="/my-locks"
               className="text-blue-600 hover:text-blue-700 text-sm font-medium"
             >
               {t('portfolio.viewAllLocks')} →
