@@ -441,10 +441,21 @@ export function Lock({ onShowToast }: LockPageProps) {
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
 
-    if (days > 0) {
-      return `${days} ${t('lock.days')} ${hours} ${t('lock.hours')}`;
+    if (days > 1) {
+      return `${days} ${t('lock.days')}`;
+    } else if (days === 1) {
+      return `1 ${t('lock.days').slice(0, -1)}`;
+    } else {
+      return `${hours} ${hours === 1 ? t('lock.hours').slice(0, -1) : t('lock.hours')}`;
     }
-    return `${hours} ${t('lock.hours')}`;
+  };
+
+  const formatDuration = (days: number) => {
+    if (days === 1) {
+      return `1 ${t('lock.days').slice(0, -1)}`;
+    } else {
+      return `${days} ${t('lock.days')}`;
+    }
   };
 
   const getLockStatus = (lock: TokenLock): 'active' | 'unlockable' | 'withdrawn' => {
@@ -955,7 +966,7 @@ export function Lock({ onShowToast }: LockPageProps) {
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <div className="text-gray-900">{lock.lock_duration_days} {t('lock.days')}</div>
+                        <div className="text-gray-900">{formatDuration(lock.lock_duration_days)}</div>
                       </td>
                       <td className="px-4 py-3">
                         <div className="text-gray-900">

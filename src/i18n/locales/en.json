@@ -506,7 +506,7 @@
   "lockCelebration": {
     "title": "Tokens Locked Successfully!",
     "lockSuccessful": "Lock successful",
-    "subtitle": "You've successfully locked {{amount}} {{symbol}} for {{days}} days",
+    "subtitle": "You've successfully locked {{amount}} {{symbol}} for {{days}}",
     "lockDetails": "Lock Details",
     "token": "Token",
     "amount": "Amount",

@@ -42,6 +42,14 @@ export function LockCelebration({
     return num.toLocaleString('en-US', { maximumFractionDigits: 6 });
   };
 
+  const formatDuration = (days: number) => {
+    if (days === 1) {
+      return `1 ${t('lockCelebration.days').slice(0, -1)}`;
+    } else {
+      return `${days} ${t('lockCelebration.days')}`;
+    }
+  };
+
   const formattedAmount = formatNumber(amountLocked);
 
   useEffect(() => {
@@ -166,7 +174,7 @@ export function LockCelebration({
               {t('lockCelebration.lockSuccessful')}
             </h2>
             <p className="text-lg text-gray-600">
-              {t('lockCelebration.subtitle', { amount: formattedAmount, symbol: tokenSymbol, days: durationDays })}
+              {t('lockCelebration.subtitle', { amount: formattedAmount, symbol: tokenSymbol, days: formatDuration(durationDays) })}
             </p>
           </div>
 
@@ -188,7 +196,7 @@ export function LockCelebration({
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">{t('lockCelebration.duration')}:</span>
-                  <span className="font-semibold text-gray-900">{durationDays} {t('lockCelebration.days')}</span>
+                  <span className="font-semibold text-gray-900">{formatDuration(durationDays)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">{t('lockCelebration.unlockDate')}:</span>

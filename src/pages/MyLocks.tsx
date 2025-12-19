@@ -164,6 +164,35 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
     }
   };
 
+  const formatTimeRemaining = (unlockTimestamp: string) => {
+    const now = new Date();
+    const unlock = new Date(unlockTimestamp);
+    const diff = unlock.getTime() - now.getTime();
+
+    if (diff <= 0) {
+      return 'Ready to unlock';
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+    if (days > 1) {
+      return `${days} days remaining`;
+    } else if (days === 1) {
+      return `1 day remaining`;
+    } else {
+      return `${hours} ${hours === 1 ? 'hour' : 'hours'} remaining`;
+    }
+  };
+
+  const formatDuration = (days: number) => {
+    if (days === 1) {
+      return '1 day';
+    } else {
+      return `${days} days`;
+    }
+  };
+
   if (!account) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -283,7 +312,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
                     <div className="bg-gray-50 rounded-lg p-4">
                       <div className="text-xs text-gray-500 mb-1">Lock Duration</div>
                       <div className="text-sm font-semibold text-gray-900">
-                        {lock.lock_duration_days} days
+                        {formatDuration(lock.lock_duration_days)}
                       </div>
                     </div>
                     <div className="bg-gray-50 rounded-lg p-4">
@@ -296,7 +325,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
                       </div>
                       {!isUnlockable && (
                         <div className="text-xs text-gray-500 mt-1">
-                          {daysRemaining} days remaining
+                          {formatTimeRemaining(lock.unlock_timestamp)}
                         </div>
                       )}
                     </div>
@@ -353,7 +382,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
                           {formatAmount(lock.amount_locked_formatted)} {lock.token_symbol}
                         </div>
                         <div className="text-sm text-gray-500">
-                          Locked for {lock.lock_duration_days} days • Withdrawn
+                          Locked for {formatDuration(lock.lock_duration_days)} • Withdrawn
                         </div>
                       </div>
                       <a
