@@ -28,6 +28,13 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
   const displayPrice = livePrice !== undefined ? livePrice : currentPrice;
   const displayValue = chartMode === 'marketCap' ? displayPrice * TOKEN_TOTAL_SUPPLY : displayPrice;
 
+  const formatDisplayValue = (value: number): string => {
+    if (chartMode === 'marketCap') {
+      return Math.round(value).toLocaleString('en-US');
+    }
+    return formatPrice(value);
+  };
+
   // Initialize chart
   useEffect(() => {
     if (!chartContainerRef.current) return;
@@ -67,8 +74,8 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
     });
 
     const baseValue = chartMode === 'marketCap' ? displayPrice * TOKEN_TOTAL_SUPPLY : displayPrice;
-    const precision = chartMode === 'marketCap' ? 2 : (displayPrice < 1 ? 5 : 3);
-    const minMove = chartMode === 'marketCap' ? 0.01 : (displayPrice < 1 ? 0.00001 : 0.001);
+    const precision = chartMode === 'marketCap' ? 0 : (displayPrice < 1 ? 5 : 3);
+    const minMove = chartMode === 'marketCap' ? 1 : (displayPrice < 1 ? 0.00001 : 0.001);
 
     const areaSeries = chart.addSeries(AreaSeries, {
       lineColor: (priceChange !== null && priceChange >= 0) ? '#10b981' : '#ef4444',
@@ -138,7 +145,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
 
     const chartData: LineData[] = data.map((point) => ({
       time: point.time as Time,
-      value: chartMode === 'marketCap' ? point.value * TOKEN_TOTAL_SUPPLY : point.value,
+      value: chartMode === 'marketCap' ? Math.round(point.value * TOKEN_TOTAL_SUPPLY) : point.value,
     }));
 
     seriesRef.current.setData(chartData);
@@ -189,7 +196,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
           </div>
           <div className="mt-2 flex items-baseline gap-3">
             <span className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              ${formatPrice(displayValue)}
+              ${formatDisplayValue(displayValue)}
             </span>
             {priceChange !== null && (
               <div className={`flex items-center gap-1 ${
