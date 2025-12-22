@@ -258,7 +258,7 @@ export function Lock({ onShowToast }: LockPageProps) {
     const amountNum = parseFloat(amount);
     const durationNum = parseInt(duration);
 
-    if (amountNum <= 0 || durationNum <= 0) {
+    if (amountNum <= 0 || durationNum <= 0 || !Number.isInteger(parseFloat(duration))) {
       onShowToast({
         message: t('lock.errors.invalidInput'),
         type: 'error',
@@ -713,6 +713,8 @@ export function Lock({ onShowToast }: LockPageProps) {
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     placeholder="0.0"
+                    min="0"
+                    step="any"
                     disabled={!tokenInfo}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
                   />
@@ -727,6 +729,8 @@ export function Lock({ onShowToast }: LockPageProps) {
                     value={duration}
                     onChange={(e) => setDuration(e.target.value)}
                     placeholder="30"
+                    min="1"
+                    step="1"
                     disabled={!tokenInfo}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
                   />
