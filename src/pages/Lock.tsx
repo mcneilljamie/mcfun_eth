@@ -994,7 +994,7 @@ export function Lock({ onShowToast }: LockPageProps) {
                             <div className="text-sm text-gray-500">{lock.token_name}</div>
                           </div>
                           <a
-                            href={`${explorerUrl}/token/${lock.token_address}`}
+                            href={`${explorerUrl}/tx/${lock.tx_hash}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="ml-2 text-blue-600 hover:text-blue-700"
