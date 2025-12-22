@@ -461,13 +461,16 @@ export function Lock({ onShowToast }: LockPageProps) {
 
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
 
     if (days > 1) {
       return `${days} ${t('lock.days')}`;
     } else if (days === 1) {
       return `1 ${t('lock.days').slice(0, -1)}`;
-    } else {
+    } else if (hours > 0) {
       return `${hours} ${hours === 1 ? t('lock.hours').slice(0, -1) : t('lock.hours')}`;
+    } else {
+      return `${minutes} ${minutes === 1 ? t('lock.minutes').slice(0, -1) : t('lock.minutes')}`;
     }
   };
 
