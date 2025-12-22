@@ -446,7 +446,7 @@
     "locking": "Tokenler kilitleniyor...",
     "unlock": "Çek",
     "unlocking": "Tokenler çekiliyor...",
-    "unlocked": "Tokenler başarıyla çekildi",
+    "unlocked": "Tokenler başarıyla kilidi açıldı",
     "withdrawn": "Çekildi",
     "unlockable": "Kilidi Açılmış",
     "locked": "Kilitli",

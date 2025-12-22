@@ -446,7 +446,7 @@
     "locking": "锁定代币中...",
     "unlock": "提取",
     "unlocking": "提取代币中...",
-    "unlocked": "代币提取成功",
+    "unlocked": "代币解锁成功",
     "withdrawn": "已提取",
     "unlockable": "已解锁",
     "locked": "已锁定",

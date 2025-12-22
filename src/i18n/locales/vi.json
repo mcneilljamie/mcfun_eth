@@ -446,7 +446,7 @@
     "locking": "Đang khóa token...",
     "unlock": "Rút",
     "unlocking": "Đang rút token...",
-    "unlocked": "Token đã được rút thành công",
+    "unlocked": "Token đã được mở khóa thành công",
     "withdrawn": "Đã Rút",
     "unlockable": "Đã Mở Khóa",
     "locked": "Đã Khóa",

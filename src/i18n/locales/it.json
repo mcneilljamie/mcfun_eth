@@ -446,7 +446,7 @@
     "locking": "Blocco token in corso...",
     "unlock": "Ritira",
     "unlocking": "Ritiro token in corso...",
-    "unlocked": "Token ritirati con successo",
+    "unlocked": "Token sbloccati con successo",
     "withdrawn": "Ritirato",
     "unlockable": "Sbloccato",
     "locked": "Bloccato",

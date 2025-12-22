@@ -446,7 +446,7 @@
     "locking": "Locking tokens...",
     "unlock": "Retirer",
     "unlocking": "Retrait des tokens...",
-    "unlocked": "Tokens retirés avec succès",
+    "unlocked": "Tokens déverrouillés avec succès",
     "withdrawn": "Withdrawn",
     "unlockable": "Unlocked",
     "locked": "Locked",

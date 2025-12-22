@@ -446,7 +446,7 @@
     "locking": "토큰 잠금 중...",
     "unlock": "인출",
     "unlocking": "토큰 인출 중...",
-    "unlocked": "토큰이 성공적으로 인출되었습니다",
+    "unlocked": "토큰이 성공적으로 잠금 해제되었습니다",
     "withdrawn": "인출됨",
     "unlockable": "잠금 해제됨",
     "locked": "잠김",

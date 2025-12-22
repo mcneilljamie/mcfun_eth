@@ -453,7 +453,7 @@
     "locking": "Locking tokens...",
     "unlock": "Withdraw",
     "unlocking": "Withdrawing tokens...",
-    "unlocked": "Tokens withdrawn successfully",
+    "unlocked": "Tokens unlocked successfully",
     "withdrawn": "Withdrawn",
     "unlockable": "Unlocked",
     "locked": "Locked",
