@@ -31,15 +31,13 @@ export function calculatePriceImpact(
   amountIn: number,
   amountOut: number
 ): number {
-  if (reserveIn === 0 || reserveOut === 0) return 0;
+  if (reserveIn === 0 || reserveOut === 0 || amountIn === 0 || amountOut === 0) return 0;
 
-  const oldPrice = reserveIn / reserveOut;
-  const newReserveIn = reserveIn + amountIn;
-  const newReserveOut = reserveOut - amountOut;
-  const newPrice = newReserveIn / newReserveOut;
-  const impact = ((newPrice - oldPrice) / oldPrice) * 100;
+  const spotPrice = reserveOut / reserveIn;
+  const effectivePrice = amountOut / amountIn;
+  const impact = Math.abs(1 - (effectivePrice / spotPrice)) * 100;
 
-  return Math.abs(impact);
+  return Math.min(impact, 100);
 }
 
 export function formatTimeAgo(timestamp: string): string {
