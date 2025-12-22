@@ -70,7 +70,7 @@
         },
         "lowCost": {
           "title": "Chi Phí Thấp",
-          "description": "Không có phí nền tảng - chỉ trả phí gas mạng"
+          "description": "Only 0.4% swap fee plus network gas fees"
         }
       }
     }

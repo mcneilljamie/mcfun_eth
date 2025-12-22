@@ -70,7 +70,7 @@
         },
         "lowCost": {
           "title": "დაბალი ღირებულება",
-          "description": "პლატფორმის საკომისიოს გარეშე - გადაიხადეთ მხოლოდ ქსელის გაზის საკომისიო"
+          "description": "Only 0.4% swap fee plus network gas fees"
         }
       }
     }

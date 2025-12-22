@@ -70,7 +70,7 @@
         },
         "lowCost": {
           "title": "कम लागत",
-          "description": "कोई प्लेटफॉर्म शुल्क नहीं - केवल नेटवर्क गैस शुल्क का भुगतान करें"
+          "description": "Only 0.4% swap fee plus network gas fees"
         }
       }
     }

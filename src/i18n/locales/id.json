@@ -70,7 +70,7 @@
         },
         "lowCost": {
           "title": "Biaya Rendah",
-          "description": "Tanpa biaya platform - hanya bayar biaya gas jaringan"
+          "description": "Only 0.4% swap fee plus network gas fees"
         }
       }
     }

@@ -70,7 +70,7 @@
         },
         "lowCost": {
           "title": "低コスト",
-          "description": "プラットフォーム手数料なし - ネットワークガス代のみ"
+          "description": "Only 0.4% swap fee plus network gas fees"
         }
       }
     }

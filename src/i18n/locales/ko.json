@@ -70,7 +70,7 @@
         },
         "lowCost": {
           "title": "저렴한 비용",
-          "description": "플랫폼 수수료 없음 - 네트워크 가스비만 지불"
+          "description": "Only 0.4% swap fee plus network gas fees"
         }
       }
     }

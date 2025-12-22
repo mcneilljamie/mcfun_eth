@@ -70,7 +70,7 @@
         },
         "lowCost": {
           "title": "Низкая Стоимость",
-          "description": "Без комиссий платформы - платите только за газ сети"
+          "description": "Only 0.4% swap fee plus network gas fees"
         }
       }
     }

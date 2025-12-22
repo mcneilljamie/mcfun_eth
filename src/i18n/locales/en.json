@@ -70,7 +70,7 @@
         },
         "lowCost": {
           "title": "Low Cost",
-          "description": "No platform fees - only pay network gas fees"
+          "description": "Only 0.4% swap fee plus network gas fees"
         }
       }
     }

@@ -70,7 +70,7 @@
         },
         "lowCost": {
           "title": "Basso Costo",
-          "description": "Nessuna commissione di piattaforma - paga solo le commissioni gas della rete"
+          "description": "Only 0.4% swap fee plus network gas fees"
         }
       }
     }

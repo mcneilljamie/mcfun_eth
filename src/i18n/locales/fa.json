@@ -70,7 +70,7 @@
         },
         "lowCost": {
           "title": "هزینه پایین",
-          "description": "بدون هزینه پلتفرم - فقط هزینه گس شبکه را پرداخت کنید"
+          "description": "Only 0.4% swap fee plus network gas fees"
         }
       }
     }

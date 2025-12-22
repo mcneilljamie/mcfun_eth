@@ -70,7 +70,7 @@
         },
         "lowCost": {
           "title": "Bajo Costo",
-          "description": "Sin tarifas de plataforma - solo pagas gas de red"
+          "description": "Only 0.4% swap fee plus network gas fees"
         }
       }
     }

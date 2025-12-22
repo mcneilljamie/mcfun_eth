@@ -70,7 +70,7 @@
         },
         "lowCost": {
           "title": "低成本",
-          "description": "无平台费用 - 仅需支付网络燃料费"
+          "description": "Only 0.4% swap fee plus network gas fees"
         }
       }
     }
