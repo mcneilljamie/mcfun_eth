@@ -304,11 +304,10 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
 
   const priceImpact = reserves && amountIn && amountOut
     ? calculatePriceImpact(
+        isETHToToken ? parseFloat(reserves.reserveETH) : parseFloat(reserves.reserveToken),
+        isETHToToken ? parseFloat(reserves.reserveToken) : parseFloat(reserves.reserveETH),
         parseFloat(amountIn),
-        parseFloat(amountOut),
-        isETHToToken
-          ? parseFloat(reserves.reserveToken) / parseFloat(reserves.reserveETH)
-          : parseFloat(reserves.reserveETH) / parseFloat(reserves.reserveToken)
+        parseFloat(amountOut)
       )
     : 0;
 

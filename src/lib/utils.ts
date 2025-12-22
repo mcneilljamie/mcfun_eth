@@ -25,14 +25,18 @@ export function formatPercent(value: number): string {
 }
 
 export function calculatePriceImpact(
+  reserveIn: number,
+  reserveOut: number,
   amountIn: number,
-  amountOut: number,
-  currentPrice: number
+  amountOut: number
 ): number {
-  if (amountIn === 0 || currentPrice === 0) return 0;
+  if (reserveIn === 0 || reserveOut === 0) return 0;
 
-  const expectedOut = amountIn * currentPrice;
-  const impact = ((expectedOut - amountOut) / expectedOut) * 100;
+  const oldPrice = reserveIn / reserveOut;
+  const newReserveIn = reserveIn + amountIn;
+  const newReserveOut = reserveOut - amountOut;
+  const newPrice = newReserveIn / newReserveOut;
+  const impact = ((newPrice - oldPrice) / oldPrice) * 100;
 
   return Math.abs(impact);
 }
