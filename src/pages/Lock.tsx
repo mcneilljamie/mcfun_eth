@@ -628,7 +628,7 @@ export function Lock({ onShowToast }: LockPageProps) {
                   <span className="hidden sm:inline">{t('lock.shareLock')}</span>
                 </button>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-white/10 backdrop-blur rounded-lg p-4">
                   <div className="text-blue-100 text-sm mb-1">{t('lock.totalValue')}</div>
                   <div className="text-2xl font-bold">{formatCurrency(tokenStats.total_value_usd)}</div>
@@ -640,12 +640,6 @@ export function Lock({ onShowToast }: LockPageProps) {
                 <div className="bg-white/10 backdrop-blur rounded-lg p-4">
                   <div className="text-blue-100 text-sm mb-1">{t('lock.activeLocks')}</div>
                   <div className="text-2xl font-bold">{tokenStats.active_locks_count}</div>
-                </div>
-                <div className="bg-white/10 backdrop-blur rounded-lg p-4">
-                  <div className="text-blue-100 text-sm mb-1">{t('lock.unlockableValue')}</div>
-                  <div className="text-2xl font-bold">
-                    {formatCurrency(tokenStats.unlockable_value_usd || 0)}
-                  </div>
                 </div>
                 <div className="bg-white/10 backdrop-blur rounded-lg p-4">
                   <div className="text-blue-100 text-sm mb-1">{t('lock.totalQuantityLocked')}</div>
