@@ -85,7 +85,7 @@ export function LockCelebration({
   };
 
   const explorerUrl = getExplorerUrl(chainId || 11155111);
-  const shareableLink = `${window.location.origin}/lock/${lockId}`;
+  const shareableLink = `${window.location.origin}/lock/${tokenAddress}`;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
