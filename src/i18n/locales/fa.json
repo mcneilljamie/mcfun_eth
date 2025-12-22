@@ -4,13 +4,16 @@
     "launch": "راه‌اندازی توکن",
     "trade": "معامله",
     "tokens": "توکن‌های محبوب",
+    "portfolio": "سبد سرمایه",
+    "lock": "قفل",
+    "myLocks": "قفل‌های من",
     "about": "درباره",
     "connectWallet": "اتصال کیف پول",
     "connecting": "در حال اتصال...",
     "connect": "اتصال",
     "launchShort": "راه‌اندازی",
     "tokensShort": "توکن‌ها",
-    "portfolio": "سبد سرمایه"
+    "myLocksShort": "قفل‌های من"
   },
   "home": {
     "hero": {

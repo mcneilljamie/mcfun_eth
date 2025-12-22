@@ -5,12 +5,15 @@
     "trade": "Giao Dịch",
     "tokens": "Token Phổ Biến",
     "portfolio": "Danh mục",
+    "lock": "Khóa",
+    "myLocks": "Khóa Của Tôi",
     "about": "Giới Thiệu",
     "connectWallet": "Kết Nối Ví",
     "connecting": "Đang kết nối...",
     "connect": "Kết Nối",
     "launchShort": "Ra Mắt",
-    "tokensShort": "Token"
+    "tokensShort": "Token",
+    "myLocksShort": "Khóa Của Tôi"
   },
   "home": {
     "hero": {

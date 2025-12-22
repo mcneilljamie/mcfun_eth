@@ -5,12 +5,15 @@
     "trade": "거래",
     "tokens": "인기 토큰",
     "portfolio": "포트폴리오",
+    "lock": "잠금",
+    "myLocks": "내 잠금",
     "about": "소개",
     "connectWallet": "지갑 연결",
     "connecting": "연결 중...",
     "connect": "연결",
     "launchShort": "출시",
-    "tokensShort": "토큰"
+    "tokensShort": "토큰",
+    "myLocksShort": "내 잠금"
   },
   "home": {
     "hero": {

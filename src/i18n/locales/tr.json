@@ -5,12 +5,15 @@
     "trade": "İşlem Yap",
     "tokens": "Popüler Tokenlar",
     "portfolio": "Portföy",
+    "lock": "Kilitle",
+    "myLocks": "Kilitlemelerim",
     "about": "Hakkında",
     "connectWallet": "Cüzdan Bağla",
     "connecting": "Bağlanıyor...",
     "connect": "Bağlan",
     "launchShort": "Başlat",
-    "tokensShort": "Tokenlar"
+    "tokensShort": "Tokenlar",
+    "myLocksShort": "Kilitlemelerim"
   },
   "home": {
     "hero": {

@@ -6,12 +6,14 @@
     "tokens": "Popular Tokens",
     "portfolio": "Portfolio",
     "lock": "Lock",
+    "myLocks": "My Locks",
     "about": "About",
     "connectWallet": "Connect Wallet",
     "connecting": "Connecting...",
     "connect": "Connect",
     "launchShort": "Launch",
-    "tokensShort": "Tokens"
+    "tokensShort": "Tokens",
+    "myLocksShort": "My Locks"
   },
   "home": {
     "hero": {

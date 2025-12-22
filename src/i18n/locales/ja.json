@@ -5,12 +5,15 @@
     "trade": "トレード",
     "tokens": "人気トークン",
     "portfolio": "ポートフォリオ",
+    "lock": "ロック",
+    "myLocks": "マイロック",
     "about": "について",
     "connectWallet": "ウォレット接続",
     "connecting": "接続中...",
     "connect": "接続",
     "launchShort": "ローンチ",
-    "tokensShort": "トークン"
+    "tokensShort": "トークン",
+    "myLocksShort": "マイロック"
   },
   "home": {
     "hero": {

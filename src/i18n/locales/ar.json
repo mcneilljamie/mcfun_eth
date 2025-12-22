@@ -5,12 +5,15 @@
     "trade": "تداول",
     "tokens": "الرموز الشائعة",
     "portfolio": "المحفظة",
+    "lock": "قفل",
+    "myLocks": "أقفالي",
     "about": "حول",
     "connectWallet": "ربط المحفظة",
     "connecting": "جارٍ الاتصال...",
     "connect": "اتصال",
     "launchShort": "إطلاق",
-    "tokensShort": "رموز"
+    "tokensShort": "رموز",
+    "myLocksShort": "أقفالي"
   },
   "home": {
     "hero": {

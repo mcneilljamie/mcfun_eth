@@ -4,13 +4,16 @@
     "launch": "ტოკენის გაშვება",
     "trade": "ვაჭრობა",
     "tokens": "პოპულარული ტოკენები",
+    "portfolio": "პორტფოლიო",
+    "lock": "დაბლოკვა",
+    "myLocks": "ჩემი ბლოკები",
     "about": "შესახებ",
     "connectWallet": "საფულის დაკავშირება",
     "connecting": "დაკავშირება...",
     "connect": "დაკავშირება",
     "launchShort": "გაშვება",
     "tokensShort": "ტოკენები",
-    "portfolio": "პორტფოლიო"
+    "myLocksShort": "ჩემი ბლოკები"
   },
   "home": {
     "hero": {

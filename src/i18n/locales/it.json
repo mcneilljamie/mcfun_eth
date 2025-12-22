@@ -5,12 +5,15 @@
     "trade": "Scambia",
     "tokens": "Token Popolari",
     "portfolio": "Portafoglio",
+    "lock": "Blocca",
+    "myLocks": "I Miei Blocchi",
     "about": "Informazioni",
     "connectWallet": "Connetti Portafoglio",
     "connecting": "Connessione...",
     "connect": "Connetti",
     "launchShort": "Lancia",
-    "tokensShort": "Token"
+    "tokensShort": "Token",
+    "myLocksShort": "I Miei Blocchi"
   },
   "home": {
     "hero": {

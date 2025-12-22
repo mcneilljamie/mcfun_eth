@@ -5,12 +5,15 @@
     "trade": "Trading",
     "tokens": "Token Populer",
     "portfolio": "Portofolio",
+    "lock": "Kunci",
+    "myLocks": "Kunci Saya",
     "about": "Tentang",
     "connectWallet": "Hubungkan Wallet",
     "connecting": "Menghubungkan...",
     "connect": "Hubungkan",
     "launchShort": "Luncurkan",
-    "tokensShort": "Token"
+    "tokensShort": "Token",
+    "myLocksShort": "Kunci Saya"
   },
   "home": {
     "hero": {

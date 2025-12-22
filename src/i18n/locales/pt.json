@@ -5,12 +5,15 @@
     "trade": "Negociar",
     "tokens": "Tokens Populares",
     "portfolio": "Portfólio",
+    "lock": "Bloquear",
+    "myLocks": "Meus Bloqueios",
     "about": "Sobre",
     "connectWallet": "Conectar Carteira",
     "connecting": "Conectando...",
     "connect": "Conectar",
     "launchShort": "Lançar",
-    "tokensShort": "Tokens"
+    "tokensShort": "Tokens",
+    "myLocksShort": "Meus Bloqueios"
   },
   "home": {
     "hero": {

@@ -5,12 +5,15 @@
     "trade": "Торговать",
     "tokens": "Популярные Токены",
     "portfolio": "Портфель",
+    "lock": "Заблокировать",
+    "myLocks": "Мои Блокировки",
     "about": "О Нас",
     "connectWallet": "Подключить Кошелёк",
     "connecting": "Подключение...",
     "connect": "Подключить",
     "launchShort": "Запустить",
-    "tokensShort": "Токены"
+    "tokensShort": "Токены",
+    "myLocksShort": "Мои Блокировки"
   },
   "home": {
     "hero": {

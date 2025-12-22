@@ -4,13 +4,16 @@
     "launch": "टोकन लॉन्च करें",
     "trade": "ट्रेड",
     "tokens": "लोकप्रिय टोकन",
+    "portfolio": "पोर्टफोलियो",
+    "lock": "लॉक",
+    "myLocks": "मेरे लॉक",
     "about": "हमारे बारे में",
     "connectWallet": "वॉलेट कनेक्ट करें",
     "connecting": "कनेक्ट हो रहा है...",
     "connect": "कनेक्ट करें",
     "launchShort": "लॉन्च",
     "tokensShort": "टोकन",
-    "portfolio": "पोर्टफोलियो"
+    "myLocksShort": "मेरे लॉक"
   },
   "home": {
     "hero": {

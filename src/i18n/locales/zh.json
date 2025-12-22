@@ -5,12 +5,15 @@
     "trade": "交易",
     "tokens": "热门代币",
     "portfolio": "投资组合",
+    "lock": "锁定",
+    "myLocks": "我的锁定",
     "about": "关于",
     "connectWallet": "连接钱包",
     "connecting": "连接中...",
     "connect": "连接",
     "launchShort": "发行",
-    "tokensShort": "代币"
+    "tokensShort": "代币",
+    "myLocksShort": "我的锁定"
   },
   "home": {
     "hero": {

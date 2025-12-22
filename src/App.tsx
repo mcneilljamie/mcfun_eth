@@ -33,6 +33,7 @@ function AppContent() {
     else if (page === 'tokens') navigate('/tokens');
     else if (page === 'portfolio') navigate('/portfolio');
     else if (page === 'lock') navigate('/lock');
+    else if (page === 'my-locks') navigate('/my-locks');
     else if (page === 'token-detail' && tokenAddress) navigate(`/token/${tokenAddress}`);
     else if (page === 'about') navigate('/about');
   };
@@ -54,6 +55,7 @@ function AppContent() {
     if (path === '/tokens') return 'tokens';
     if (path === '/portfolio') return 'portfolio';
     if (path === '/lock' || path.startsWith('/lock/')) return 'lock';
+    if (path === '/my-locks') return 'my-locks';
     if (path.startsWith('/token/')) return 'token-detail';
     if (path === '/about') return 'about';
     return 'home';

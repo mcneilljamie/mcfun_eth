@@ -5,12 +5,15 @@
     "trade": "Échanger",
     "tokens": "Tokens Populaires",
     "portfolio": "Portefeuille",
+    "lock": "Verrouiller",
+    "myLocks": "Mes Verrouillages",
     "about": "À Propos",
     "connectWallet": "Connecter Portefeuille",
     "connecting": "Connexion...",
     "connect": "Connecter",
     "launchShort": "Lancer",
-    "tokensShort": "Tokens"
+    "tokensShort": "Tokens",
+    "myLocksShort": "Mes Verrous"
   },
   "home": {
     "hero": {
