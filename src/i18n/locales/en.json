@@ -249,14 +249,15 @@
         "amount": "$0",
         "description": "That's right - there are no token creation fees to launch your token. You only pay Ethereum network gas fees."
       },
+      "locking": {
+        "title": "Token Locking Fees",
+        "amount": "$0",
+        "description": "Lock any ERC-20 token for any duration completely free. You only pay Ethereum network gas fees."
+      },
       "trading": {
         "title": "Trading Fees",
         "amount": "0.4%",
         "description": "Every token swap on our platform incurs a 0.4% fee. This fee goes to the platform to support infrastructure, development, and ongoing improvements."
-      },
-      "why": {
-        "title": "Why This Model?",
-        "description": "Unlike traditional DEXes that charge fees to liquidity providers (which can be removed), our 0.4% trading fee ensures platform sustainability without impacting the security of your token. The burned liquidity remains permanent, and the small trading fee enables us to provide a reliable, maintained platform for the community."
       }
     },
     "security": {

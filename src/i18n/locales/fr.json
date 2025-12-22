@@ -250,14 +250,15 @@
         "amount": "0$",
         "description": "C'est exact - il n'y a pas de frais de création de tokens pour lancer votre token. Vous ne payez que les frais de gas du réseau Ethereum."
       },
+      "locking": {
+        "title": "Frais de Verrouillage de Tokens",
+        "amount": "$0",
+        "description": "Verrouillez n'importe quel token ERC-20 pour n'importe quelle durée gratuitement. Vous ne payez que les frais de gas du réseau Ethereum."
+      },
       "trading": {
         "title": "Frais d'Échange",
         "amount": "0,4%",
         "description": "Chaque échange de tokens sur notre plateforme entraîne des frais de 0,4%. Ces frais vont à la plateforme pour soutenir l'infrastructure, le développement et les améliorations continues."
-      },
-      "why": {
-        "title": "Pourquoi Ce Modèle?",
-        "description": "Contrairement aux DEX traditionnels qui facturent des frais aux fournisseurs de liquidité (qui peuvent être retirés), nos frais d'échange de 0,4% assurent la durabilité de la plateforme sans impacter la sécurité de votre token. La liquidité brûlée reste permanente, et les petits frais d'échange nous permettent de fournir une plateforme fiable et maintenue pour la communauté."
       }
     },
     "security": {

@@ -250,14 +250,15 @@
         "amount": "$0",
         "description": "Evet doğru - tokenınızı başlatmak için token oluşturma ücreti yoktur. Sadece Ethereum ağı gaz ücretlerini ödersiniz."
       },
+      "locking": {
+        "title": "Token Kilitleme Ücretleri",
+        "amount": "$0",
+        "description": "Herhangi bir ERC-20 tokenini herhangi bir süre için tamamen ücretsiz kilitleyin. Sadece Ethereum ağı gaz ücretlerini ödersiniz."
+      },
       "trading": {
         "title": "İşlem Ücretleri",
         "amount": "%0.4",
         "description": "Platformumuzda her token takası %0.4 ücrete tabidir. Bu ücret, altyapıyı, geliştirmeyi ve devam eden iyileştirmeleri desteklemek için platforma gider."
-      },
-      "why": {
-        "title": "Neden Bu Model?",
-        "description": "Likidite sağlayıcılarından (kaldırılabilen) ücret alan geleneksel DEX'lerin aksine, %0.4 işlem ücretimiz tokenınızın güvenliğini etkilemeden platform sürdürülebilirliğini sağlar. Yakılan likidite kalıcı kalır ve küçük işlem ücreti, topluluğa güvenilir, bakımlı bir platform sunmamızı sağlar."
       }
     },
     "security": {

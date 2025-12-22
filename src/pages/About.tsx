@@ -374,24 +374,25 @@ export function About() {
 
             <div className="bg-gray-50 p-4 sm:p-6 rounded-lg border-2 border-gray-200">
               <div className="flex items-start gap-3 sm:gap-4">
+                <Lock className="w-6 h-6 sm:w-8 sm:h-8 text-gray-900 flex-shrink-0 mt-1" />
+                <div>
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">{t('about.fees.locking.title')}</h3>
+                  <div className="text-2xl sm:text-3xl font-bold text-green-600 mb-2">{t('about.fees.locking.amount')}</div>
+                  <p className="text-sm sm:text-base text-gray-700">
+                    {t('about.fees.locking.description')}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gray-50 p-4 sm:p-6 rounded-lg border-2 border-gray-200">
+              <div className="flex items-start gap-3 sm:gap-4">
                 <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-gray-900 flex-shrink-0 mt-1" />
                 <div>
                   <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">{t('about.fees.trading.title')}</h3>
                   <div className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{t('about.fees.trading.amount')}</div>
                   <p className="text-sm sm:text-base text-gray-700">
                     {t('about.fees.trading.description')}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-blue-50 p-4 sm:p-6 rounded-lg border-2 border-blue-200">
-              <div className="flex items-start gap-3 sm:gap-4">
-                <Users className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600 flex-shrink-0 mt-1" />
-                <div>
-                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">{t('about.fees.why.title')}</h3>
-                  <p className="text-sm sm:text-base text-gray-700">
-                    {t('about.fees.why.description')}
                   </p>
                 </div>
               </div>

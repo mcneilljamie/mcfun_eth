@@ -250,14 +250,15 @@
         "amount": "$0",
         "description": "Así es - no hay tarifas de creación de tokens para lanzar tu token. Solo pagas tarifas de gas de la red Ethereum."
       },
+      "locking": {
+        "title": "Tarifas de Bloqueo de Tokens",
+        "amount": "$0",
+        "description": "Bloquea cualquier token ERC-20 por cualquier duración completamente gratis. Solo pagas tarifas de gas de la red Ethereum."
+      },
       "trading": {
         "title": "Tarifas de Comercio",
         "amount": "0.4%",
         "description": "Cada intercambio de tokens en nuestra plataforma incurre en una tarifa del 0.4%. Esta tarifa va a la plataforma para soportar infraestructura, desarrollo y mejoras continuas."
-      },
-      "why": {
-        "title": "¿Por Qué Este Modelo?",
-        "description": "A diferencia de los DEX tradicionales que cobran tarifas a los proveedores de liquidez (que pueden ser removidas), nuestra tarifa de comercio del 0.4% asegura la sostenibilidad de la plataforma sin impactar la seguridad de tu token. La liquidez quemada permanece permanente, y la pequeña tarifa de comercio nos permite proporcionar una plataforma confiable y mantenida para la comunidad."
       }
     },
     "security": {

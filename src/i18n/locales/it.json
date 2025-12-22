@@ -250,14 +250,15 @@
         "amount": "$0",
         "description": "Esatto - non ci sono commissioni di creazione token per lanciare il tuo token. Paghi solo le commissioni gas della rete Ethereum."
       },
+      "locking": {
+        "title": "Commissioni di Blocco Token",
+        "amount": "$0",
+        "description": "Blocca qualsiasi token ERC-20 per qualsiasi durata completamente gratis. Paghi solo le commissioni gas della rete Ethereum."
+      },
       "trading": {
         "title": "Commissioni di Scambio",
         "amount": "0,4%",
         "description": "Ogni scambio di token sulla nostra piattaforma comporta una commissione dello 0,4%. Questa commissione va alla piattaforma per supportare l'infrastruttura, lo sviluppo e i miglioramenti continui."
-      },
-      "why": {
-        "title": "Perché Questo Modello?",
-        "description": "A differenza dei DEX tradizionali che addebitano commissioni ai fornitori di liquidità (che possono essere rimossi), la nostra commissione di scambio dello 0,4% garantisce la sostenibilità della piattaforma senza impattare la sicurezza del tuo token. La liquidità bruciata rimane permanente e la piccola commissione di scambio ci consente di fornire una piattaforma affidabile e mantenuta per la comunità."
       }
     },
     "security": {

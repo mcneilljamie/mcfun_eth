@@ -250,14 +250,15 @@
         "amount": "$0",
         "description": "Benar - tidak ada biaya pembuatan token untuk meluncurkan token Anda. Anda hanya membayar biaya gas jaringan Ethereum."
       },
+      "locking": {
+        "title": "Biaya Penguncian Token",
+        "amount": "$0",
+        "description": "Kunci token ERC-20 apa pun untuk durasi apa pun sepenuhnya gratis. Anda hanya membayar biaya gas jaringan Ethereum."
+      },
       "trading": {
         "title": "Biaya Trading",
         "amount": "0.4%",
         "description": "Setiap swap token di platform kami dikenakan biaya 0.4%. Biaya ini masuk ke platform untuk mendukung infrastruktur, pengembangan, dan peningkatan berkelanjutan."
-      },
-      "why": {
-        "title": "Mengapa Model Ini?",
-        "description": "Tidak seperti DEX tradisional yang membebankan biaya kepada penyedia likuiditas (yang dapat dihapus), biaya trading 0.4% kami memastikan keberlanjutan platform tanpa mempengaruhi keamanan token Anda. Likuiditas yang dibakar tetap permanen, dan biaya trading kecil memungkinkan kami menyediakan platform yang andal dan terawat untuk komunitas."
       }
     },
     "security": {

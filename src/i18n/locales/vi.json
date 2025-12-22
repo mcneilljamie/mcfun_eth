@@ -250,14 +250,15 @@
         "amount": "$0",
         "description": "Đúng vậy - không có phí tạo token để ra mắt token của bạn. Bạn chỉ trả phí gas mạng Ethereum."
       },
+      "locking": {
+        "title": "Phí Khóa Token",
+        "amount": "$0",
+        "description": "Khóa bất kỳ token ERC-20 nào trong bất kỳ thời gian nào hoàn toàn miễn phí. Bạn chỉ trả phí gas mạng Ethereum."
+      },
       "trading": {
         "title": "Phí Giao Dịch",
         "amount": "0.4%",
         "description": "Mỗi lần hoán đổi token trên nền tảng của chúng tôi phát sinh phí 0.4%. Phí này được chuyển cho nền tảng để hỗ trợ cơ sở hạ tầng, phát triển và cải tiến liên tục."
-      },
-      "why": {
-        "title": "Tại Sao Mô Hình Này?",
-        "description": "Không giống như các DEX truyền thống tính phí cho nhà cung cấp thanh khoản (có thể bị xóa), phí giao dịch 0.4% của chúng tôi đảm bảo tính bền vững của nền tảng mà không ảnh hưởng đến bảo mật token của bạn. Thanh khoản bị đốt vẫn vĩnh viễn và phí giao dịch nhỏ cho phép chúng tôi cung cấp nền tảng đáng tin cậy, được duy trì cho cộng đồng."
       }
     },
     "security": {
