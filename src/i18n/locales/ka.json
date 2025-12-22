@@ -502,6 +502,15 @@
       "unlockFailed": "ტოკენების განბლოკვა ვერ მოხერხდა"
     }
   },
+  "withdrawSuccess": {
+    "title": "გატანა წარმატებულია!",
+    "subtitle": "თქვენ წარმატებით გატანეთ {{amount}} {{symbol}}",
+    "transactionHash": "ტრანზაქციის ჰეში",
+    "copy": "კოპირება",
+    "copied": "დაკოპირებულია!",
+    "viewOnExplorer": "ნახვა ექსპლორერში",
+    "close": "დახურვა"
+  },
   "myLocks": {
     "title": "My Locked Tokens",
     "subtitle": "View and manage all your locked tokens",

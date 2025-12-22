@@ -502,6 +502,15 @@
       "unlockFailed": "Failed to unlock tokens"
     }
   },
+  "withdrawSuccess": {
+    "title": "निकासी सफल!",
+    "subtitle": "आपने सफलतापूर्वक {{amount}} {{symbol}} निकाला है",
+    "transactionHash": "लेनदेन हैश",
+    "copy": "कॉपी करें",
+    "copied": "कॉपी हो गया!",
+    "viewOnExplorer": "एक्सप्लोरर पर देखें",
+    "close": "बंद करें"
+  },
   "myLocks": {
     "title": "My Locked Tokens",
     "subtitle": "View and manage all your locked tokens",

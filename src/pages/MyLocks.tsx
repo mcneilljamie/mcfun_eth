@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 import { ethers } from 'ethers';
 import { Loader2, Lock as LockIcon, Clock, Wallet, ExternalLink } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { WithdrawSuccess } from '../components/WithdrawSuccess';
 import { ToastMessage } from '../App';
 import { getExplorerUrl, getLockerAddress } from '../contracts/addresses';
 import { TOKEN_LOCKER_ABI } from '../contracts/abis';
@@ -41,6 +42,11 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
   const [loading, setLoading] = useState(true);
   const [userLocks, setUserLocks] = useState<TokenLock[]>([]);
   const [withdrawing, setWithdrawing] = useState<string | null>(null);
+  const [withdrawSuccess, setWithdrawSuccess] = useState<{
+    txHash: string;
+    tokenSymbol: string;
+    amount: string;
+  } | null>(null);
 
   useEffect(() => {
     if (account) {
@@ -117,11 +123,13 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
         type: 'info'
       });
 
-      await tx.wait();
+      const receipt = await tx.wait();
 
-      onShowToast({
-        message: t('myLocks.toasts.withdrawSuccess', { symbol: lock.token_symbol }),
-        type: 'success'
+      const formattedAmount = ethers.formatUnits(lock.amount_locked, lock.token_decimals);
+      setWithdrawSuccess({
+        txHash: receipt.hash,
+        tokenSymbol: lock.token_symbol,
+        amount: parseFloat(formattedAmount).toFixed(4),
       });
 
       await loadUserLocks();
@@ -403,6 +411,17 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
             </div>
           )}
         </>
+      )}
+
+      {withdrawSuccess && chainId && (
+        <WithdrawSuccess
+          isOpen={true}
+          onClose={() => setWithdrawSuccess(null)}
+          txHash={withdrawSuccess.txHash}
+          chainId={chainId}
+          tokenSymbol={withdrawSuccess.tokenSymbol}
+          amount={withdrawSuccess.amount}
+        />
       )}
     </div>
   );

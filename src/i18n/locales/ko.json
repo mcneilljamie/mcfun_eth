@@ -502,6 +502,15 @@
       "unlockFailed": "토큰 잠금 해제 실패"
     }
   },
+  "withdrawSuccess": {
+    "title": "출금 성공!",
+    "subtitle": "{{amount}} {{symbol}}을(를) 성공적으로 출금했습니다",
+    "transactionHash": "트랜잭션 해시",
+    "copy": "복사",
+    "copied": "복사됨!",
+    "viewOnExplorer": "탐색기에서 보기",
+    "close": "닫기"
+  },
   "myLocks": {
     "title": "My Locked Tokens",
     "subtitle": "View and manage all your locked tokens",

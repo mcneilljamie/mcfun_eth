@@ -6,6 +6,7 @@ import { ethers } from 'ethers';
 import { Loader2, Lock as LockIcon, Search, Clock, User, Coins, AlertCircle, ExternalLink, TrendingUp, Trophy, ArrowLeft, Share2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { LockCelebration } from '../components/LockCelebration';
+import { WithdrawSuccess } from '../components/WithdrawSuccess';
 import { ToastMessage } from '../App';
 import { getExplorerUrl, getLockerAddress } from '../contracts/addresses';
 import { ERC20_ABI, TOKEN_LOCKER_ABI } from '../contracts/abis';
@@ -76,6 +77,12 @@ export function Lock({ onShowToast }: LockPageProps) {
     durationDays: number;
     unlockDate: Date;
     txHash: string;
+  } | null>(null);
+
+  const [withdrawSuccess, setWithdrawSuccess] = useState<{
+    txHash: string;
+    tokenSymbol: string;
+    amount: string;
   } | null>(null);
 
   useEffect(() => {
@@ -353,6 +360,9 @@ export function Lock({ onShowToast }: LockPageProps) {
   const handleUnlock = async (lockId: number) => {
     if (!signer || !chainId) return;
 
+    const lock = allLocks.find(l => l.lock_id === lockId);
+    if (!lock) return;
+
     try {
       setLoading(true);
       const lockerAddress = getLockerAddress(chainId);
@@ -364,10 +374,13 @@ export function Lock({ onShowToast }: LockPageProps) {
         type: 'info',
       });
 
-      await tx.wait();
-      onShowToast({
-        message: t('lock.unlocked'),
-        type: 'success',
+      const receipt = await tx.wait();
+
+      const formattedAmount = ethers.formatUnits(lock.amount_locked, lock.token_decimals);
+      setWithdrawSuccess({
+        txHash: receipt.hash,
+        tokenSymbol: lock.token_symbol,
+        amount: parseFloat(formattedAmount).toFixed(4),
       });
 
       const triggerIndexer = async () => {
@@ -1030,6 +1043,17 @@ export function Lock({ onShowToast }: LockPageProps) {
           {...celebration}
           onClose={() => setCelebration(null)}
           onShowToast={onShowToast}
+        />
+      )}
+
+      {withdrawSuccess && chainId && (
+        <WithdrawSuccess
+          isOpen={true}
+          onClose={() => setWithdrawSuccess(null)}
+          txHash={withdrawSuccess.txHash}
+          chainId={chainId}
+          tokenSymbol={withdrawSuccess.tokenSymbol}
+          amount={withdrawSuccess.amount}
         />
       )}
     </div>

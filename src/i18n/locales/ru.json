@@ -502,6 +502,15 @@
       "unlockFailed": "Не удалось разблокировать токены"
     }
   },
+  "withdrawSuccess": {
+    "title": "Вывод Успешен!",
+    "subtitle": "Вы успешно вывели {{amount}} {{symbol}}",
+    "transactionHash": "Хеш Транзакции",
+    "copy": "Копировать",
+    "copied": "Скопировано!",
+    "viewOnExplorer": "Посмотреть в Обозревателе",
+    "close": "Закрыть"
+  },
   "myLocks": {
     "title": "My Locked Tokens",
     "subtitle": "View and manage all your locked tokens",

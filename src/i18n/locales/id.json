@@ -502,6 +502,15 @@
       "unlockFailed": "Failed to unlock tokens"
     }
   },
+  "withdrawSuccess": {
+    "title": "Penarikan Berhasil!",
+    "subtitle": "Anda berhasil menarik {{amount}} {{symbol}}",
+    "transactionHash": "Hash Transaksi",
+    "copy": "Salin",
+    "copied": "Tersalin!",
+    "viewOnExplorer": "Lihat di Penjelajah",
+    "close": "Tutup"
+  },
   "myLocks": {
     "title": "My Locked Tokens",
     "subtitle": "View and manage all your locked tokens",

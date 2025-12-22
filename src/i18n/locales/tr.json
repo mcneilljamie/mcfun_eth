@@ -502,6 +502,15 @@
       "unlockFailed": "Token kilidi açılamadı"
     }
   },
+  "withdrawSuccess": {
+    "title": "Çekim Başarılı!",
+    "subtitle": "{{amount}} {{symbol}} başarıyla çektiniz",
+    "transactionHash": "İşlem Hash'i",
+    "copy": "Kopyala",
+    "copied": "Kopyalandı!",
+    "viewOnExplorer": "Gezginde Görüntüle",
+    "close": "Kapat"
+  },
   "myLocks": {
     "title": "My Locked Tokens",
     "subtitle": "View and manage all your locked tokens",

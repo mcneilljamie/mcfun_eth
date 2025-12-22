@@ -502,6 +502,15 @@
       "unlockFailed": "Failed to unlock tokens"
     }
   },
+  "withdrawSuccess": {
+    "title": "سحب ناجح!",
+    "subtitle": "لقد قمت بسحب {{amount}} {{symbol}} بنجاح",
+    "transactionHash": "معرّف المعاملة",
+    "copy": "نسخ",
+    "copied": "تم النسخ!",
+    "viewOnExplorer": "عرض على المتصفح",
+    "close": "إغلاق"
+  },
   "myLocks": {
     "title": "My Locked Tokens",
     "subtitle": "View and manage all your locked tokens",

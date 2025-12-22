@@ -502,6 +502,15 @@
       "unlockFailed": "解锁代币失败"
     }
   },
+  "withdrawSuccess": {
+    "title": "提取成功！",
+    "subtitle": "您已成功提取 {{amount}} {{symbol}}",
+    "transactionHash": "交易哈希",
+    "copy": "复制",
+    "copied": "已复制！",
+    "viewOnExplorer": "在浏览器中查看",
+    "close": "关闭"
+  },
   "myLocks": {
     "title": "My Locked Tokens",
     "subtitle": "View and manage all your locked tokens",

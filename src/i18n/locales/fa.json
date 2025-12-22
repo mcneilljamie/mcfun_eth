@@ -502,6 +502,15 @@
       "unlockFailed": "Failed to unlock tokens"
     }
   },
+  "withdrawSuccess": {
+    "title": "برداشت موفق!",
+    "subtitle": "شما با موفقیت {{amount}} {{symbol}} را برداشت کردید",
+    "transactionHash": "هش تراکنش",
+    "copy": "کپی",
+    "copied": "کپی شد!",
+    "viewOnExplorer": "مشاهده در مرورگر",
+    "close": "بستن"
+  },
   "myLocks": {
     "title": "My Locked Tokens",
     "subtitle": "View and manage all your locked tokens",

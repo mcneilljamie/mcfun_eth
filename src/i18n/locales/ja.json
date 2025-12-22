@@ -502,6 +502,15 @@
       "unlockFailed": "トークンのロック解除に失敗しました"
     }
   },
+  "withdrawSuccess": {
+    "title": "出金成功！",
+    "subtitle": "{{amount}} {{symbol}}を正常に出金しました",
+    "transactionHash": "トランザクションハッシュ",
+    "copy": "コピー",
+    "copied": "コピーしました！",
+    "viewOnExplorer": "エクスプローラーで表示",
+    "close": "閉じる"
+  },
   "myLocks": {
     "title": "My Locked Tokens",
     "subtitle": "View and manage all your locked tokens",

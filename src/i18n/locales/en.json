@@ -533,6 +533,15 @@
     "goToMyLocks": "Go to My Locks",
     "close": "Close"
   },
+  "withdrawSuccess": {
+    "title": "Withdrawal Successful!",
+    "subtitle": "You've successfully withdrawn {{amount}} {{symbol}}",
+    "transactionHash": "Transaction Hash",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "viewOnExplorer": "View on Explorer",
+    "close": "Close"
+  },
   "myLocks": {
     "title": "My Locked Tokens",
     "subtitle": "View and manage all your locked tokens",

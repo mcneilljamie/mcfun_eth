@@ -502,6 +502,15 @@
       "unlockFailed": "Không thể mở khóa token"
     }
   },
+  "withdrawSuccess": {
+    "title": "Rút Thành Công!",
+    "subtitle": "Bạn đã rút thành công {{amount}} {{symbol}}",
+    "transactionHash": "Hash Giao Dịch",
+    "copy": "Sao Chép",
+    "copied": "Đã Sao Chép!",
+    "viewOnExplorer": "Xem trên Trình Khám Phá",
+    "close": "Đóng"
+  },
   "myLocks": {
     "title": "My Locked Tokens",
     "subtitle": "View and manage all your locked tokens",
