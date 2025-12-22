@@ -65,7 +65,7 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
   const totalEthNeeded = parseFloat(ethAmount);
   const hasInsufficientBalance = !!(account && parseFloat(ethBalance) < totalEthNeeded);
   const balanceShortfall = hasInsufficientBalance
-    ? (totalEthNeeded - parseFloat(ethBalance)).toFixed(4)
+    ? (totalEthNeeded - parseFloat(ethBalance)).toLocaleString('en-US', { minimumFractionDigits: 4, maximumFractionDigits: 4 })
     : '0';
 
   const handleLaunch = async () => {
@@ -100,8 +100,8 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
     if (hasInsufficientBalance) {
       setError(
         t('launch.errors.insufficientBalance', {
-          balance: parseFloat(ethBalance).toFixed(4),
-          needed: totalEthNeeded.toFixed(4),
+          balance: parseFloat(ethBalance).toLocaleString('en-US', { minimumFractionDigits: 4, maximumFractionDigits: 4 }),
+          needed: totalEthNeeded.toLocaleString('en-US', { minimumFractionDigits: 4, maximumFractionDigits: 4 }),
           shortfall: balanceShortfall,
         })
       );
@@ -367,7 +367,7 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                         t('launch.form.loadingBalance')
                       ) : (
                         <>
-                          {parseFloat(ethBalance).toFixed(4)} ETH
+                          {parseFloat(ethBalance).toLocaleString('en-US', { minimumFractionDigits: 4, maximumFractionDigits: 4 })} ETH
                         </>
                       )}
                     </span>

@@ -13,6 +13,7 @@ export function formatNumber(value: string | number, decimals: number = 4): stri
   return num.toLocaleString('en-US', {
     minimumFractionDigits: 0,
     maximumFractionDigits: decimals,
+    useGrouping: true,
   });
 }
 

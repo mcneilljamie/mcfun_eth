@@ -154,23 +154,23 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
 
   const formatCurrency = (value: number) => {
     if (value >= 1000000) {
-      return `$${(value / 1000000).toFixed(2)}M`;
+      return `$${(value / 1000000).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}M`;
     } else if (value >= 1000) {
-      return `$${(value / 1000).toFixed(2)}K`;
+      return `$${(value / 1000).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}K`;
     } else {
-      return `$${value.toFixed(2)}`;
+      return `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     }
   };
 
   const formatAmount = (amount: number) => {
     if (amount >= 1000000) {
-      return `${(amount / 1000000).toFixed(2)}M`;
+      return `${(amount / 1000000).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}M`;
     } else if (amount >= 1000) {
-      return `${(amount / 1000).toFixed(2)}K`;
+      return `${(amount / 1000).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}K`;
     } else if (amount >= 1) {
-      return amount.toFixed(2);
+      return amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     } else {
-      return amount.toFixed(6);
+      return amount.toLocaleString('en-US', { minimumFractionDigits: 6, maximumFractionDigits: 6 });
     }
   };
 

@@ -518,11 +518,11 @@ export function Lock({ onShowToast }: LockPageProps) {
 
   const formatCurrency = (value: number) => {
     if (value >= 1000000) {
-      return `$${(value / 1000000).toFixed(2)}M`;
+      return `$${(value / 1000000).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}M`;
     } else if (value >= 1000) {
-      return `$${(value / 1000).toFixed(2)}K`;
+      return `$${(value / 1000).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}K`;
     } else {
-      return `$${value.toFixed(2)}`;
+      return `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     }
   };
 
@@ -532,13 +532,13 @@ export function Lock({ onShowToast }: LockPageProps) {
       return '0';
     }
     if (num >= 1000000) {
-      return `${(num / 1000000).toFixed(2)}M`;
+      return `${(num / 1000000).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}M`;
     } else if (num >= 1000) {
-      return `${(num / 1000).toFixed(2)}K`;
+      return `${(num / 1000).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}K`;
     } else if (num >= 1) {
-      return num.toFixed(2);
+      return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     } else {
-      return num.toFixed(6);
+      return num.toLocaleString('en-US', { minimumFractionDigits: 6, maximumFractionDigits: 6 });
     }
   };
 

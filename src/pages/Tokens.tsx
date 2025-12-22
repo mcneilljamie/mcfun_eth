@@ -327,7 +327,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                           {priceChanges[token.token_address] !== undefined ? (
                             <div>
                               <div className={`font-semibold ${priceChanges[token.token_address].change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                {priceChanges[token.token_address].change >= 0 ? '+' : ''}{priceChanges[token.token_address].change.toFixed(2)}%
+                                {priceChanges[token.token_address].change >= 0 ? '+' : ''}{priceChanges[token.token_address].change.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
                               </div>
                               <div className="text-xs text-gray-500 mt-0.5">
                                 {priceChanges[token.token_address].isNew ? t('tokens.table.sinceLaunch') : t('tokens.table.24h')}
@@ -420,7 +420,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                           {priceChanges[token.token_address] !== undefined && (
                             <div className="flex items-center justify-end gap-1">
                               <span className={`text-xs font-medium ${priceChanges[token.token_address].change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                {priceChanges[token.token_address].change >= 0 ? '+' : ''}{priceChanges[token.token_address].change.toFixed(2)}%
+                                {priceChanges[token.token_address].change >= 0 ? '+' : ''}{priceChanges[token.token_address].change.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
                               </span>
                               <span className="text-xs text-gray-500">
                                 {priceChanges[token.token_address].isNew ? t('tokens.table.launch') : t('tokens.table.24h')}

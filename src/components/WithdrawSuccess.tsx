@@ -1,6 +1,7 @@
 import { X, ExternalLink, Copy, Check } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { formatNumber } from '../lib/utils';
 
 interface WithdrawSuccessProps {
   isOpen: boolean;
@@ -37,6 +38,7 @@ export function WithdrawSuccess({ isOpen, onClose, txHash, chainId, tokenSymbol,
   };
 
   const explorerUrl = getExplorerUrl(chainId, txHash);
+  const formattedAmount = formatNumber(amount, 4);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -56,7 +58,7 @@ export function WithdrawSuccess({ isOpen, onClose, txHash, chainId, tokenSymbol,
             {t('withdrawSuccess.title')}
           </h2>
           <p className="text-gray-600">
-            {t('withdrawSuccess.subtitle', { amount, symbol: tokenSymbol })}
+            {t('withdrawSuccess.subtitle', { amount: formattedAmount, symbol: tokenSymbol })}
           </p>
         </div>
 

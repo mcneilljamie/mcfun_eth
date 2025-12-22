@@ -471,7 +471,7 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
                   <div className="flex justify-between">
                     <span className="text-gray-600">{t('trade.priceImpact')}</span>
                     <span className={`font-medium ${priceImpact > 5 ? 'text-red-600' : 'text-gray-900'}`}>
-                      {priceImpact.toFixed(2)}%
+                      {priceImpact.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
                     </span>
                   </div>
                   <div className="flex justify-between">

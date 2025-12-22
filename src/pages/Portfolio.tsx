@@ -250,34 +250,34 @@ export default function Portfolio() {
 
   const formatCurrency = (value: number) => {
     if (value >= 1000000) {
-      return `$${(value / 1000000).toFixed(2)}M`;
+      return `$${(value / 1000000).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}M`;
     } else if (value >= 1000) {
-      return `$${(value / 1000).toFixed(2)}K`;
+      return `$${(value / 1000).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}K`;
     } else {
-      return `$${value.toFixed(2)}`;
+      return `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     }
   };
 
   const formatPrice = (value: number) => {
     if (value >= 1) {
-      return `$${value.toFixed(4)}`;
+      return `$${value.toLocaleString('en-US', { minimumFractionDigits: 4, maximumFractionDigits: 4 })}`;
     } else if (value >= 0.0001) {
-      return `$${value.toFixed(6)}`;
+      return `$${value.toLocaleString('en-US', { minimumFractionDigits: 6, maximumFractionDigits: 6 })}`;
     } else {
-      return `$${value.toFixed(8)}`;
+      return `$${value.toLocaleString('en-US', { minimumFractionDigits: 8, maximumFractionDigits: 8 })}`;
     }
   };
 
   const formatNumber = (value: string | number) => {
     const num = typeof value === 'string' ? parseFloat(value) : value;
     if (num >= 1000000) {
-      return `${(num / 1000000).toFixed(2)}M`;
+      return `${(num / 1000000).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}M`;
     } else if (num >= 1000) {
-      return `${(num / 1000).toFixed(2)}K`;
+      return `${(num / 1000).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}K`;
     } else if (num >= 1) {
-      return num.toFixed(2);
+      return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     } else {
-      return num.toFixed(6);
+      return num.toLocaleString('en-US', { minimumFractionDigits: 6, maximumFractionDigits: 6 });
     }
   };
 
@@ -316,7 +316,7 @@ export default function Portfolio() {
           <div className="bg-white/10 backdrop-blur rounded-lg p-4">
             <div className="text-blue-100 text-sm mb-2">{t('portfolio.ethBalance')}</div>
             <div className="text-2xl font-bold mb-1">
-              {parseFloat(ethBalance).toFixed(4)} ETH
+              {parseFloat(ethBalance).toLocaleString('en-US', { minimumFractionDigits: 4, maximumFractionDigits: 4 })} ETH
             </div>
             <div className="text-blue-100 text-sm">
               {formatCurrency(parseFloat(ethBalance) * ethPriceUsd)}
