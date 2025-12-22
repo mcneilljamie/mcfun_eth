@@ -83,9 +83,14 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
       bottomColor: (priceChange !== null && priceChange >= 0) ? 'rgba(16, 185, 129, 0.0)' : 'rgba(239, 68, 68, 0.0)',
       lineWidth: 2,
       priceFormat: {
-        type: 'price',
-        precision: precision,
+        type: 'custom',
         minMove: minMove,
+        formatter: (price: number) => {
+          if (chartMode === 'marketCap') {
+            return '$' + Math.round(price).toLocaleString('en-US');
+          }
+          return '$' + price.toFixed(precision);
+        },
       },
       autoscaleInfoProvider: (original: () => any) => {
         const res = original();
