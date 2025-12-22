@@ -444,9 +444,9 @@
     "approved": "Token başarıyla onaylandı",
     "lockButton": "Tokenleri Kilitle",
     "locking": "Tokenler kilitleniyor...",
-    "unlock": "Kilidi Aç",
-    "unlocking": "Token kilidi açılıyor...",
-    "unlocked": "Tokenler başarıyla kilidi açıldı",
+    "unlock": "Çek",
+    "unlocking": "Tokenler çekiliyor...",
+    "unlocked": "Tokenler başarıyla çekildi",
     "withdrawn": "Çekildi",
     "unlockable": "Kilidi Açılmış",
     "locked": "Kilitli",
@@ -499,7 +499,7 @@
       "insufficientBalance": "Yetersiz token bakiyesi",
       "approvalFailed": "Token onayı başarısız",
       "lockFailed": "Tokenler kilitlenemedi",
-      "unlockFailed": "Token kilidi açılamadı"
+      "unlockFailed": "Token çekme başarısız"
     }
   },
   "withdrawSuccess": {

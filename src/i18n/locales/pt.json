@@ -444,9 +444,9 @@
     "approved": "Token aprovado com sucesso",
     "lockButton": "Bloquear Tokens",
     "locking": "Bloqueando tokens...",
-    "unlock": "Desbloquear",
-    "unlocking": "Desbloqueando tokens...",
-    "unlocked": "Tokens desbloqueados com sucesso",
+    "unlock": "Retirar",
+    "unlocking": "Retirando tokens...",
+    "unlocked": "Tokens retirados com sucesso",
     "withdrawn": "Retirado",
     "unlockable": "Desbloqueado",
     "locked": "Bloqueado",
@@ -499,7 +499,7 @@
       "insufficientBalance": "Saldo de token insuficiente",
       "approvalFailed": "Aprovação do token falhou",
       "lockFailed": "Falha ao bloquear tokens",
-      "unlockFailed": "Falha ao desbloquear tokens"
+      "unlockFailed": "Falha ao retirar tokens"
     }
   },
   "withdrawSuccess": {

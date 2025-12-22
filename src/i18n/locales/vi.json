@@ -444,9 +444,9 @@
     "approved": "Token đã được phê duyệt thành công",
     "lockButton": "Khóa Token",
     "locking": "Đang khóa token...",
-    "unlock": "Mở Khóa",
-    "unlocking": "Đang mở khóa token...",
-    "unlocked": "Token đã được mở khóa thành công",
+    "unlock": "Rút",
+    "unlocking": "Đang rút token...",
+    "unlocked": "Token đã được rút thành công",
     "withdrawn": "Đã Rút",
     "unlockable": "Đã Mở Khóa",
     "locked": "Đã Khóa",
@@ -499,7 +499,7 @@
       "insufficientBalance": "Số dư token không đủ",
       "approvalFailed": "Phê duyệt token thất bại",
       "lockFailed": "Không thể khóa token",
-      "unlockFailed": "Không thể mở khóa token"
+      "unlockFailed": "Không thể rút token"
     }
   },
   "withdrawSuccess": {

@@ -444,9 +444,9 @@
     "approved": "Token approved successfully",
     "lockButton": "Lock Tokens",
     "locking": "Locking tokens...",
-    "unlock": "Unlock",
-    "unlocking": "Unlocking tokens...",
-    "unlocked": "Tokens unlocked successfully",
+    "unlock": "निकालें",
+    "unlocking": "टोकन निकाला जा रहा है...",
+    "unlocked": "टोकन सफलतापूर्वक निकाला गया",
     "withdrawn": "Withdrawn",
     "unlockable": "Unlocked",
     "locked": "Locked",
@@ -499,7 +499,7 @@
       "insufficientBalance": "Insufficient token balance",
       "approvalFailed": "Token approval failed",
       "lockFailed": "Failed to lock tokens",
-      "unlockFailed": "Failed to unlock tokens"
+      "unlockFailed": "टोकन निकालने में विफल"
     }
   },
   "withdrawSuccess": {

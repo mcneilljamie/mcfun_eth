@@ -444,9 +444,9 @@
     "approved": "토큰이 성공적으로 승인되었습니다",
     "lockButton": "토큰 잠금",
     "locking": "토큰 잠금 중...",
-    "unlock": "잠금 해제",
-    "unlocking": "토큰 잠금 해제 중...",
-    "unlocked": "토큰이 성공적으로 잠금 해제되었습니다",
+    "unlock": "인출",
+    "unlocking": "토큰 인출 중...",
+    "unlocked": "토큰이 성공적으로 인출되었습니다",
     "withdrawn": "인출됨",
     "unlockable": "잠금 해제됨",
     "locked": "잠김",
@@ -499,7 +499,7 @@
       "insufficientBalance": "토큰 잔액 부족",
       "approvalFailed": "토큰 승인 실패",
       "lockFailed": "토큰 잠금 실패",
-      "unlockFailed": "토큰 잠금 해제 실패"
+      "unlockFailed": "토큰 인출 실패"
     }
   },
   "withdrawSuccess": {

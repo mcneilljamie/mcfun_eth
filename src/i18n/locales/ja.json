@@ -444,9 +444,9 @@
     "approved": "トークンが正常に承認されました",
     "lockButton": "トークンをロック",
     "locking": "トークンをロック中...",
-    "unlock": "ロック解除",
-    "unlocking": "トークンをロック解除中...",
-    "unlocked": "トークンが正常にロック解除されました",
+    "unlock": "引き出す",
+    "unlocking": "トークンを引き出し中...",
+    "unlocked": "トークンが正常に引き出されました",
     "withdrawn": "引き出し済み",
     "unlockable": "ロック解除済み",
     "locked": "ロック済み",
@@ -499,7 +499,7 @@
       "insufficientBalance": "トークン残高不足",
       "approvalFailed": "トークンの承認に失敗しました",
       "lockFailed": "トークンのロックに失敗しました",
-      "unlockFailed": "トークンのロック解除に失敗しました"
+      "unlockFailed": "トークンの引き出しに失敗しました"
     }
   },
   "withdrawSuccess": {

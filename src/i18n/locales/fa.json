@@ -444,9 +444,9 @@
     "approved": "Token approved successfully",
     "lockButton": "Lock Tokens",
     "locking": "Locking tokens...",
-    "unlock": "Unlock",
-    "unlocking": "Unlocking tokens...",
-    "unlocked": "Tokens unlocked successfully",
+    "unlock": "برداشت",
+    "unlocking": "در حال برداشت توکن‌ها...",
+    "unlocked": "توکن‌ها با موفقیت برداشت شدند",
     "withdrawn": "Withdrawn",
     "unlockable": "Unlocked",
     "locked": "Locked",
@@ -499,7 +499,7 @@
       "insufficientBalance": "Insufficient token balance",
       "approvalFailed": "Token approval failed",
       "lockFailed": "Failed to lock tokens",
-      "unlockFailed": "Failed to unlock tokens"
+      "unlockFailed": "برداشت توکن‌ها ناموفق بود"
     }
   },
   "withdrawSuccess": {

@@ -444,9 +444,9 @@
     "approved": "代币批准成功",
     "lockButton": "锁定代币",
     "locking": "锁定代币中...",
-    "unlock": "解锁",
-    "unlocking": "解锁代币中...",
-    "unlocked": "代币解锁成功",
+    "unlock": "提取",
+    "unlocking": "提取代币中...",
+    "unlocked": "代币提取成功",
     "withdrawn": "已提取",
     "unlockable": "已解锁",
     "locked": "已锁定",
@@ -499,7 +499,7 @@
       "insufficientBalance": "代币余额不足",
       "approvalFailed": "代币批准失败",
       "lockFailed": "锁定代币失败",
-      "unlockFailed": "解锁代币失败"
+      "unlockFailed": "提取代币失败"
     }
   },
   "withdrawSuccess": {
