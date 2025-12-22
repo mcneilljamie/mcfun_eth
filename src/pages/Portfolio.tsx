@@ -185,7 +185,13 @@ export default function Portfolio() {
       if (!lockedError && lockedData) {
         console.log('Locked tokens data:', lockedData);
         setLockedTokens(lockedData);
+        // Only count non-withdrawn locks in the total locked value
+        // Withdrawn locks are already counted in the wallet balance
         lockedValue = lockedData.reduce((sum: number, lock: any) => {
+          if (lock.is_withdrawn) {
+            console.log(`Lock ${lock.token_symbol}: withdrawn, skipping from total`);
+            return sum;
+          }
           const lockValue = Number(lock.value_usd) || 0;
           console.log(`Lock ${lock.token_symbol}: value_usd = ${lock.value_usd}, parsed = ${lockValue}`);
           return sum + lockValue;
@@ -193,9 +199,13 @@ export default function Portfolio() {
         console.log('Total locked value:', lockedValue);
         setTotalLockedValueUsd(lockedValue);
 
-        // Aggregate locked tokens by token address
+        // Aggregate locked tokens by token address (excluding withdrawn locks)
         const aggregated = new Map<string, AggregatedLockedToken>();
         for (const lock of lockedData) {
+          // Skip withdrawn locks in aggregation
+          if (lock.is_withdrawn) {
+            continue;
+          }
           const key = lock.token_address.toLowerCase();
           const existing = aggregated.get(key);
           const unlockDate = new Date(lock.unlock_timestamp);
