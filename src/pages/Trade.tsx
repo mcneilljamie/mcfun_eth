@@ -311,6 +311,31 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
       )
     : 0;
 
+  // Calculate current price and new price after trade
+  const currentPrice = reserves ? parseFloat(reserves.reserveETH) / parseFloat(reserves.reserveToken) : 0;
+  const newPrice = reserves && amountIn && amountOut ? (() => {
+    const amountInNum = parseFloat(amountIn);
+    const amountOutNum = parseFloat(amountOut);
+    const reserveETHNum = parseFloat(reserves.reserveETH);
+    const reserveTokenNum = parseFloat(reserves.reserveToken);
+
+    if (isETHToToken) {
+      // Calculate fee
+      const fee = amountInNum * 0.004;
+      const ethAfterFee = amountInNum - fee;
+      const newReserveETH = reserveETHNum + ethAfterFee;
+      const newReserveToken = reserveTokenNum - amountOutNum;
+      return newReserveETH / newReserveToken;
+    } else {
+      const ethBeforeFee = amountOutNum / (1 - 0.004);
+      const newReserveETH = reserveETHNum - ethBeforeFee;
+      const newReserveToken = reserveTokenNum + amountInNum;
+      return newReserveETH / newReserveToken;
+    }
+  })() : 0;
+
+  const priceChange = currentPrice && newPrice ? ((newPrice - currentPrice) / currentPrice) * 100 : 0;
+
   return (
     <>
       {swapSuccess && selectedTokenData && (
@@ -460,7 +485,7 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
                         <p className={`text-xs mt-1 ${
                           priceImpact > 10 ? 'text-red-800' : priceImpact > 5 ? 'text-orange-800' : 'text-yellow-800'
                         }`}>
-                          This trade will significantly affect the token price. Consider reducing your trade size or increasing slippage tolerance if the transaction fails.
+                          Your average price will be {priceImpact.toFixed(1)}% worse than the current price, and the token price will move {Math.abs(priceChange).toFixed(1)}% after your trade. Consider reducing your trade size.
                         </p>
                       </div>
                     </div>
@@ -472,6 +497,15 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
                     <span className="text-gray-600">{t('trade.priceImpact')}</span>
                     <span className={`font-medium ${priceImpact > 5 ? 'text-red-600' : 'text-gray-900'}`}>
                       {priceImpact.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-1">
+                      <span className="text-gray-600">Price Change</span>
+                      <span className="text-gray-400 text-[10px]" title="The token price will move more than your price impact due to AMM curve mechanics">ⓘ</span>
+                    </div>
+                    <span className={`font-medium ${Math.abs(priceChange) > 10 ? 'text-red-600' : 'text-gray-900'}`}>
+                      {priceChange >= 0 ? '+' : ''}{priceChange.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
                     </span>
                   </div>
                   <div className="flex justify-between">
