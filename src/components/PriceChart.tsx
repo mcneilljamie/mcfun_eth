@@ -19,7 +19,10 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<'Area'> | null>(null);
-  const [chartMode, setChartMode] = useState<ChartMode>('price');
+  const [chartMode, setChartMode] = useState<ChartMode>(() => {
+    const saved = localStorage.getItem('chartMode');
+    return (saved === 'price' || saved === 'marketCap') ? saved : 'price';
+  });
   const { data, loading, error, priceChange, currentPrice, isNew, refetch } = useChartData(
     tokenAddress,
     'ALL'
@@ -27,6 +30,11 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
 
   const displayPrice = livePrice !== undefined ? livePrice : currentPrice;
   const displayValue = chartMode === 'marketCap' ? displayPrice * TOKEN_TOTAL_SUPPLY : displayPrice;
+
+  // Save chart mode preference to localStorage
+  useEffect(() => {
+    localStorage.setItem('chartMode', chartMode);
+  }, [chartMode]);
 
   const formatDisplayValue = (value: number): string => {
     if (chartMode === 'marketCap') {
