@@ -327,7 +327,7 @@
     "unlockable": "Unlocked",
     "readyToUnlock": "Ready to unlock",
     "daysRemaining": "days remaining",
-    "unlocks": "Unlocks",
+    "unlocks": "Next unlock",
     "infoMessage": "This page tracks your ETH balance and tokens that are traded on McFun.",
     "noHoldings": "No token holdings found",
     "browseTokens": "Browse Tokens",

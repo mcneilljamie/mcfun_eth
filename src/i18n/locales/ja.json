@@ -328,7 +328,7 @@
     "unlockable": "アンロック済み",
     "readyToUnlock": "アンロック準備完了",
     "daysRemaining": "日残り",
-    "unlocks": "アンロック",
+    "unlocks": "次のアンロック",
     "infoMessage": "このページではMcFunで取引されているETH残高とトークンを追跡します。",
     "noHoldings": "トークン保有が見つかりません",
     "browseTokens": "トークンを閲覧",

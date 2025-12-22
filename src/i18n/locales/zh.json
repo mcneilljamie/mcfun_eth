@@ -328,7 +328,7 @@
     "unlockable": "已解锁",
     "readyToUnlock": "准备解锁",
     "daysRemaining": "天剩余",
-    "unlocks": "解锁",
+    "unlocks": "下次解锁",
     "infoMessage": "此页面跟踪您的ETH余额和在McFun上交易的代币。",
     "noHoldings": "未找到代币持仓",
     "browseTokens": "浏览代币",

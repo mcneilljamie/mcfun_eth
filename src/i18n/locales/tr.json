@@ -328,7 +328,7 @@
     "unlockable": "Kilidi Açılmış",
     "readyToUnlock": "Kilidi açmaya hazır",
     "daysRemaining": "gün kaldı",
-    "unlocks": "Kilidi açılır",
+    "unlocks": "Sonraki kilit açma",
     "infoMessage": "Bu sayfa McFun'da işlem gören ETH bakiyenizi ve tokenleri takip eder.",
     "noHoldings": "Token bulunamadı",
     "browseTokens": "Tokenlere Göz At",

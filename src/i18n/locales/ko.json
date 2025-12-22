@@ -328,7 +328,7 @@
     "unlockable": "잠금 해제됨",
     "readyToUnlock": "잠금 해제 준비 완료",
     "daysRemaining": "일 남음",
-    "unlocks": "잠금 해제",
+    "unlocks": "다음 잠금 해제",
     "infoMessage": "이 페이지는 McFun에서 거래되는 ETH 잔액과 토큰을 추적합니다.",
     "noHoldings": "토큰 보유량이 없습니다",
     "browseTokens": "토큰 둘러보기",

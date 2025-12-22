@@ -328,7 +328,7 @@
     "unlockable": "Déverrouillé",
     "readyToUnlock": "Prêt à déverrouiller",
     "daysRemaining": "jours restants",
-    "unlocks": "Déverrouille",
+    "unlocks": "Prochain déverrouillage",
     "infoMessage": "Cette page suit votre solde ETH et les tokens échangés sur McFun.",
     "noHoldings": "Aucun token trouvé",
     "browseTokens": "Parcourir les Tokens",
