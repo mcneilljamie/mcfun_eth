@@ -467,7 +467,7 @@
     "step3Title": "ロックと追跡",
     "step3Description": "トークンを承認してロックします。期間が終了したらロック解除できます",
     "yourLocks": "あなたのアクティブなロック",
-    "allLocks": "すべてのロックされたトークン",
+    "allLocks": "Upcoming Token Unlocks",
     "topLockedTokens": "総価値でトップのロックされたMcFunトークン",
     "totalLocked": "合計ロック",
     "lockCount": "ロック数",

@@ -467,7 +467,7 @@
     "step3Title": "锁定和跟踪",
     "step3Description": "批准并锁定您的代币。期限到期后可以解锁",
     "yourLocks": "您的活跃锁定",
-    "allLocks": "所有锁定的代币",
+    "allLocks": "Upcoming Token Unlocks",
     "topLockedTokens": "按总价值排名的顶级锁定McFun代币",
     "totalLocked": "总锁定",
     "lockCount": "锁定数量",

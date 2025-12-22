@@ -467,7 +467,7 @@
     "step3Title": "잠금 및 추적",
     "step3Description": "토큰을 승인하고 잠급니다. 기간이 만료되면 잠금을 해제할 수 있습니다",
     "yourLocks": "활성 잠금",
-    "allLocks": "모든 잠긴 토큰",
+    "allLocks": "Upcoming Token Unlocks",
     "topLockedTokens": "총 가치별 상위 잠긴 McFun 토큰",
     "totalLocked": "총 잠금",
     "lockCount": "잠금 수",
