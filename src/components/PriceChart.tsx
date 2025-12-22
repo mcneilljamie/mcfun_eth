@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createChart, IChartApi, ISeriesApi, LineData, Time, AreaSeries } from 'lightweight-charts';
 import { useChartData } from '../hooks/useChartData';
 import { TrendingUp, TrendingDown } from 'lucide-react';
@@ -11,16 +11,22 @@ interface PriceChartProps {
   livePrice?: number;
 }
 
+type ChartMode = 'price' | 'marketCap';
+
+const TOKEN_TOTAL_SUPPLY = 1000000;
+
 export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePrice }: PriceChartProps) {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<'Area'> | null>(null);
+  const [chartMode, setChartMode] = useState<ChartMode>('price');
   const { data, loading, error, priceChange, currentPrice, isNew, refetch } = useChartData(
     tokenAddress,
     'ALL'
   );
 
   const displayPrice = livePrice !== undefined ? livePrice : currentPrice;
+  const displayValue = chartMode === 'marketCap' ? displayPrice * TOKEN_TOTAL_SUPPLY : displayPrice;
 
   // Initialize chart
   useEffect(() => {
@@ -60,8 +66,9 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
       },
     });
 
-    const precision = displayPrice < 1 ? 5 : 3;
-    const minMove = displayPrice < 1 ? 0.00001 : 0.001;
+    const baseValue = chartMode === 'marketCap' ? displayPrice * TOKEN_TOTAL_SUPPLY : displayPrice;
+    const precision = chartMode === 'marketCap' ? 2 : (displayPrice < 1 ? 5 : 3);
+    const minMove = chartMode === 'marketCap' ? 0.01 : (displayPrice < 1 ? 0.00001 : 0.001);
 
     const areaSeries = chart.addSeries(AreaSeries, {
       lineColor: (priceChange !== null && priceChange >= 0) ? '#10b981' : '#ef4444',
@@ -108,7 +115,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
       window.removeEventListener('resize', handleResize);
       chart.remove();
     };
-  }, [theme, priceChange, displayPrice]);
+  }, [theme, priceChange, displayPrice, chartMode]);
 
   // Update chart colors when price change direction changes
   useEffect(() => {
@@ -131,7 +138,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
 
     const chartData: LineData[] = data.map((point) => ({
       time: point.time as Time,
-      value: point.value,
+      value: chartMode === 'marketCap' ? point.value * TOKEN_TOTAL_SUPPLY : point.value,
     }));
 
     seriesRef.current.setData(chartData);
@@ -140,7 +147,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
     if (chartRef.current) {
       chartRef.current.timeScale().fitContent();
     }
-  }, [data]);
+  }, [data, chartMode]);
 
   // Auto-refresh every 30 seconds
   useEffect(() => {
@@ -171,19 +178,27 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
     <div className={`${isDark ? 'bg-gray-900' : 'bg-white'} rounded-xl ${isDark ? 'p-6' : 'p-6 shadow-lg'} space-y-4`}>
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
+        <div className="flex-1">
           <div className="flex items-center gap-3">
-            <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{tokenSymbol} Price</h3>
+            <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+              {tokenSymbol} {chartMode === 'price' ? 'Price' : 'Market Cap'}
+            </h3>
             {loading && (
               <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
             )}
           </div>
           <div className="mt-2 flex items-baseline gap-3">
             <span className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              ${formatPrice(displayPrice)}
+              ${formatPrice(displayValue)}
             </span>
             {priceChange !== null && (
-              <div className={`flex items-center gap-1 ${priceChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              <div className={`flex items-center gap-1 ${
+                priceChange === 0
+                  ? 'text-gray-500'
+                  : priceChange > 0
+                  ? 'text-green-600'
+                  : 'text-red-600'
+              }`}>
                 {priceChange >= 0 ? (
                   <TrendingUp className="w-4 h-4" />
                 ) : (
@@ -201,6 +216,38 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
               {isNew ? 'Since Launch' : '24h'}
             </p>
           )}
+        </div>
+
+        {/* Toggle */}
+        <div className={`flex rounded-lg overflow-hidden border ${isDark ? 'border-gray-700' : 'border-gray-300'}`}>
+          <button
+            onClick={() => setChartMode('price')}
+            className={`px-4 py-2 text-sm font-medium transition-colors ${
+              chartMode === 'price'
+                ? isDark
+                  ? 'bg-gray-700 text-white'
+                  : 'bg-gray-900 text-white'
+                : isDark
+                ? 'bg-gray-800 text-gray-400 hover:text-white'
+                : 'bg-white text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            Price
+          </button>
+          <button
+            onClick={() => setChartMode('marketCap')}
+            className={`px-4 py-2 text-sm font-medium transition-colors ${
+              chartMode === 'marketCap'
+                ? isDark
+                  ? 'bg-gray-700 text-white'
+                  : 'bg-gray-900 text-white'
+                : isDark
+                ? 'bg-gray-800 text-gray-400 hover:text-white'
+                : 'bg-white text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            Market Cap
+          </button>
         </div>
       </div>
 
