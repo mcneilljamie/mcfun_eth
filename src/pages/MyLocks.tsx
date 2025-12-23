@@ -25,6 +25,7 @@ interface TokenLock {
   unlock_timestamp: string;
   is_withdrawn: boolean;
   tx_hash: string;
+  withdraw_tx_hash?: string;
   value_eth?: number;
   value_usd?: number;
   current_price_eth?: number;
@@ -375,7 +376,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
 
                   <div className="flex items-center justify-between">
                     <a
-                      href={`${getExplorerUrl(chainId || 1)}/tx/${lock.tx_hash}`}
+                      href={`${getExplorerUrl(chainId || 1)}/tx/${lock.withdraw_tx_hash || lock.tx_hash}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
@@ -428,7 +429,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
                         </div>
                       </div>
                       <a
-                        href={`${getExplorerUrl(chainId || 1)}/tx/${lock.tx_hash}`}
+                        href={`${getExplorerUrl(chainId || 1)}/tx/${lock.withdraw_tx_hash || lock.tx_hash}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"

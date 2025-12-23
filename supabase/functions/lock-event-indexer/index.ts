@@ -157,13 +157,16 @@ Deno.serve(async (req: Request) => {
 
         const { error: updateError } = await supabase
           .from("token_locks")
-          .update({ is_withdrawn: true })
+          .update({
+            is_withdrawn: true,
+            withdraw_tx_hash: event.transactionHash
+          })
           .eq("lock_id", lockId);
 
         if (updateError) {
           console.error(`Failed to update lock ${lockId}:`, updateError);
         } else {
-          console.log(`Updated lock ${lockId} as withdrawn`);
+          console.log(`Updated lock ${lockId} as withdrawn with tx ${event.transactionHash}`);
         }
       } catch (err) {
         console.error("Error processing unlock event:", err);
