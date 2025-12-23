@@ -644,7 +644,10 @@ export function Lock({ onShowToast }: LockPageProps) {
                 <div className="bg-white/10 backdrop-blur rounded-lg p-4">
                   <div className="text-blue-100 text-sm mb-1">{t('lock.totalQuantityLocked')}</div>
                   <div className="text-2xl font-bold">
-                    {formatLargeTokenAmount(tokenStats.total_amount_locked, tokenStats.token_decimals)} {tokenStats.token_symbol}
+                    {formatLargeTokenAmount(
+                      tokenStats.non_withdrawn_amount_locked || tokenStats.active_amount_locked,
+                      tokenStats.token_decimals
+                    )} {tokenStats.token_symbol}
                   </div>
                 </div>
               </div>
