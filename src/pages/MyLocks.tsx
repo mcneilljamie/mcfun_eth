@@ -253,7 +253,9 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
     .sort((a, b) => new Date(a.unlock_timestamp).getTime() - new Date(b.unlock_timestamp).getTime());
   const withdrawnLocks = userLocks.filter(lock => lock.is_withdrawn);
 
-  const totalLockedValue = activeLocks.reduce((sum, lock) => sum + (lock.value_usd || 0), 0);
+  const locksWithPricing = activeLocks.filter(lock => lock.value_usd && lock.value_usd > 0);
+  const totalLockedValue = locksWithPricing.reduce((sum, lock) => sum + (lock.value_usd || 0), 0);
+  const hasPricingData = locksWithPricing.length > 0;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -283,11 +285,13 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
         </div>
       ) : (
         <>
-          <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-8 mb-8 text-white">
-            <div className="text-sm text-blue-100 mb-2">{t('myLocks.totalLockedValue')}</div>
-            <div className="text-4xl font-bold">{formatCurrency(totalLockedValue)}</div>
-            <div className="text-sm text-blue-100 mt-2">{activeLocks.length} {activeLocks.length === 1 ? t('myLocks.activeLock') : t('myLocks.activeLocks')}</div>
-          </div>
+          {hasPricingData && (
+            <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-8 mb-8 text-white">
+              <div className="text-sm text-blue-100 mb-2">{t('myLocks.totalLockedValue')}</div>
+              <div className="text-4xl font-bold">{formatCurrency(totalLockedValue)}</div>
+              <div className="text-sm text-blue-100 mt-2">{activeLocks.length} {activeLocks.length === 1 ? t('myLocks.activeLock') : t('myLocks.activeLocks')}</div>
+            </div>
+          )}
 
           <div className="space-y-4">
             {activeLocks.map((lock) => {
@@ -323,12 +327,20 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
                       </button>
                     </div>
                     <div className="text-right">
-                      <div className="text-3xl font-bold text-gray-900 mb-1">
-                        {formatCurrency(lock.value_usd || 0)}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {formatAmount(lock.amount_locked_formatted)} {lock.token_symbol}
-                      </div>
+                      {lock.value_usd && lock.value_usd > 0 ? (
+                        <>
+                          <div className="text-3xl font-bold text-gray-900 mb-1">
+                            {formatCurrency(lock.value_usd)}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {formatAmount(lock.amount_locked_formatted)} {lock.token_symbol}
+                          </div>
+                        </>
+                      ) : (
+                        <div className="text-3xl font-bold text-gray-900">
+                          {formatAmount(lock.amount_locked_formatted)} {lock.token_symbol}
+                        </div>
+                      )}
                     </div>
                   </div>
 
