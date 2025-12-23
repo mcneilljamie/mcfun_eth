@@ -31,6 +31,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
   const [snapshotCount, setSnapshotCount] = useState<number>(0);
   const { priceChangeSinceLaunch } = useChartData(tokenAddress || '', 'ALL');
   const [priceChange24h, setPriceChange24h] = useState<number | null>(null);
+  const [activeLockCount, setActiveLockCount] = useState<number>(0);
 
   const ensureProtocol = (url: string): string => {
     if (!url) return url;
@@ -53,7 +54,8 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
         await Promise.all([
           loadEthPrice(),
           loadSnapshotCount(),
-          load24hPriceChange()
+          load24hPriceChange(),
+          loadActiveLockCount()
         ]);
       } catch (error) {
         console.error('Error loading token data:', error);
@@ -118,6 +120,22 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
       }
     } catch (err) {
       console.error('Failed to load 24h price change:', err);
+    }
+  };
+
+  const loadActiveLockCount = async () => {
+    if (!tokenAddress) return;
+
+    try {
+      const { data, error } = await supabase.rpc('get_locks_by_token_address', {
+        token_addr: tokenAddress.toLowerCase()
+      });
+
+      if (error) throw error;
+
+      setActiveLockCount(data?.length || 0);
+    } catch (err) {
+      console.error('Failed to load active lock count:', err);
     }
   };
 
@@ -459,10 +477,6 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                   )}
                 </button>
               </div>
-              <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-gray-600">{t('tokenDetail.created')}</span>
-                <span className="font-semibold text-gray-900">{formatTimeAgo(token.created_at)}</span>
-              </div>
               {token.website && (
                 <div className="flex justify-between items-center py-2 border-b border-gray-100">
                   <span className="text-gray-600">{t('tokenDetail.website')}</span>
@@ -477,7 +491,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                   </a>
                 </div>
               )}
-              <div className="flex justify-between items-center py-2">
+              <div className={`flex justify-between items-center py-2 ${activeLockCount > 0 ? 'border-b border-gray-100' : ''}`}>
                 <span className="text-gray-600">{t('tokenDetail.tokenContract')}</span>
                 <a
                   href={`${getExplorerUrl(chainId || 11155111)}/token/${token.token_address}`}
@@ -489,6 +503,18 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                   <ExternalLink className="w-4 h-4" />
                 </a>
               </div>
+              {activeLockCount > 0 && (
+                <div className="flex justify-between items-center py-2">
+                  <span className="text-gray-600">Active Locks</span>
+                  <button
+                    onClick={() => navigate(`/lock?token=${token.token_address}`)}
+                    className="flex items-center space-x-2 text-gray-900 hover:text-gray-700 transition-colors"
+                  >
+                    <span className="font-semibold text-sm">View {activeLockCount} lock{activeLockCount !== 1 ? 's' : ''}</span>
+                    <ExternalLink className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -506,6 +532,10 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                 <span className="font-semibold text-gray-900">
                   {parseFloat(liveReserves?.reserveToken || token.current_token_reserve?.toString() || '0').toLocaleString()} {token.symbol}
                 </span>
+              </div>
+              <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                <span className="text-gray-600">{t('tokenDetail.created')}</span>
+                <span className="font-semibold text-gray-900">{formatTimeAgo(token.created_at)}</span>
               </div>
               <div className="flex justify-between items-center py-2">
                 <span className="text-gray-600">{t('tokenDetail.ammContract')}</span>
