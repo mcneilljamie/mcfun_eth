@@ -507,7 +507,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                 <div className="flex justify-between items-center py-2">
                   <span className="text-gray-600">Active Locks</span>
                   <button
-                    onClick={() => navigate(`/lock?token=${token.token_address}`)}
+                    onClick={() => navigate(`/lock/${token.token_address}`)}
                     className="flex items-center space-x-2 text-gray-900 hover:text-gray-700 transition-colors"
                   >
                     <span className="font-semibold text-sm">View {activeLockCount} lock{activeLockCount !== 1 ? 's' : ''}</span>
