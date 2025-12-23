@@ -309,10 +309,10 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
                   className="bg-white rounded-xl border-2 border-gray-200 p-6 hover:shadow-lg transition-all"
                 >
                   <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-2xl font-bold text-gray-900">{lock.token_symbol}</h3>
-                        <span className="text-sm text-gray-500">{lock.token_name}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-3 mb-2 flex-wrap">
+                        <h3 className="text-2xl font-bold text-gray-900 whitespace-nowrap">{lock.token_symbol}</h3>
+                        <span className="text-sm text-gray-500 break-words">{lock.token_name}</span>
                         {isUnlockable && (
                           <span className="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
                             {t('myLocks.readyToUnlock')}

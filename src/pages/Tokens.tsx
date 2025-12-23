@@ -313,9 +313,9 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                           </div>
                         </td>
                         <td className="py-4 px-4">
-                          <div>
-                            <div className="font-semibold text-gray-900">{token.name}</div>
-                            <div className="text-sm text-gray-500">{token.symbol}</div>
+                          <div className="min-w-0">
+                            <div className="font-semibold text-gray-900 break-words">{token.name}</div>
+                            <div className="text-sm text-gray-500 whitespace-nowrap">{token.symbol}</div>
                           </div>
                         </td>
                         <td className="py-4 px-4">
@@ -412,8 +412,8 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                     </div>
 
                     <div className="mb-3">
-                      <div className="font-bold text-gray-900 text-lg">{token.name}</div>
-                      <div className="text-sm text-gray-500">{token.symbol}</div>
+                      <div className="font-bold text-gray-900 text-lg break-words">{token.name}</div>
+                      <div className="text-sm text-gray-500 whitespace-nowrap">{token.symbol}</div>
                     </div>
 
                     <div className="space-y-2 mb-3">

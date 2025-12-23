@@ -378,10 +378,10 @@ export default function Portfolio() {
               className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg hover:border-blue-300 transition-all cursor-pointer"
             >
               <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h3 className="text-xl font-bold text-gray-900">{token.symbol}</h3>
-                    <span className="text-sm text-gray-500">{token.name}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-3 mb-2 flex-wrap">
+                    <h3 className="text-xl font-bold text-gray-900 whitespace-nowrap">{token.symbol}</h3>
+                    <span className="text-sm text-gray-500 break-words">{token.name}</span>
                   </div>
                   <div className="text-sm text-gray-600">
                     {t('portfolio.balance')}: {formatNumber(token.balance)} {token.symbol}

@@ -834,10 +834,10 @@ export function Lock({ onShowToast }: LockPageProps) {
                     className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors"
                   >
                     <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-3">
-                          <h3 className="text-lg font-bold text-gray-900">{lock.token_symbol}</h3>
-                          <span className="text-sm text-gray-500">{lock.token_name}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-3 mb-3 flex-wrap">
+                          <h3 className="text-lg font-bold text-gray-900 whitespace-nowrap">{lock.token_symbol}</h3>
+                          <span className="text-sm text-gray-500 break-words">{lock.token_name}</span>
                         </div>
                         <div className="text-sm">
                           <span className="text-gray-600">{t('lock.amount')}:</span>
@@ -911,10 +911,10 @@ export function Lock({ onShowToast }: LockPageProps) {
                           )}
                           <span className="font-bold text-gray-500 text-lg">#{index + 1}</span>
                         </div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h3 className="text-lg font-bold text-gray-900">{aggLock.token_symbol}</h3>
-                            <span className="text-sm text-gray-500">{aggLock.token_name || 'Unknown'}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            <h3 className="text-lg font-bold text-gray-900 whitespace-nowrap">{aggLock.token_symbol}</h3>
+                            <span className="text-sm text-gray-500 break-words">{aggLock.token_name || 'Unknown'}</span>
                           </div>
                           <div className="grid grid-cols-3 gap-4 text-sm">
                             <div>
@@ -993,9 +993,9 @@ export function Lock({ onShowToast }: LockPageProps) {
                     <tr key={lock.id} className="hover:bg-gray-50">
                       <td className="px-4 py-3">
                         <div className="flex items-center">
-                          <div>
-                            <div className="font-semibold text-gray-900">{lock.token_symbol}</div>
-                            <div className="text-sm text-gray-500">{lock.token_name}</div>
+                          <div className="min-w-0">
+                            <div className="font-semibold text-gray-900 whitespace-nowrap">{lock.token_symbol}</div>
+                            <div className="text-sm text-gray-500 break-words">{lock.token_name}</div>
                           </div>
                           <a
                             href={`${explorerUrl}/tx/${lock.tx_hash}`}

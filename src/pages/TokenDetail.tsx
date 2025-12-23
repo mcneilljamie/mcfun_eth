@@ -293,10 +293,10 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
 
         <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8 mb-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <div>
-              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">{token.name}</h1>
-              <div className="flex items-center space-x-3">
-                <span className="text-xl text-gray-600">{token.symbol}</span>
+            <div className="min-w-0">
+              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2 break-words">{token.name}</h1>
+              <div className="flex items-center space-x-3 flex-wrap">
+                <span className="text-xl text-gray-600 whitespace-nowrap">{token.symbol}</span>
                 <button
                   onClick={() => copyToClipboard(token.token_address, 'token')}
                   className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors text-sm"
