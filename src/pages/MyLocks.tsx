@@ -137,9 +137,26 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
       console.error('Withdrawal error:', error);
       let errorMessage = t('myLocks.errors.withdrawFailed');
 
-      if (error.code === 'ACTION_REJECTED') {
+      // Check for user rejection in various formats
+      const isUserRejection =
+        error.code === 'ACTION_REJECTED' ||
+        error.code === 4001 ||
+        error.code === -32603 ||
+        (error.message && (
+          error.message.includes('user rejected') ||
+          error.message.includes('User denied') ||
+          error.message.includes('rejected') ||
+          error.message.includes('denied')
+        )) ||
+        (error.reason && (
+          error.reason.includes('user rejected') ||
+          error.reason.includes('rejected')
+        ));
+
+      if (isUserRejection) {
         errorMessage = t('myLocks.errors.transactionRejected');
       } else if (error.message) {
+        // Only show detailed error message if it's not a rejection
         errorMessage = error.message;
       }
 
