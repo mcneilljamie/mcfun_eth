@@ -432,7 +432,6 @@ Deno.serve(async (req: Request) => {
 
                   const ethReserveFormatted = ethers.formatEther(reserveETH);
                   const tokenReserveFormatted = ethers.formatEther(reserveToken);
-                  const priceEth = parseFloat(ethReserveFormatted) / parseFloat(tokenReserveFormatted);
 
                   await supabase
                     .from("tokens")
@@ -442,31 +441,6 @@ Deno.serve(async (req: Request) => {
                       total_volume_eth: newVolume,
                     })
                     .eq("token_address", token.token_address);
-
-                  const { data: ethPriceData } = await supabase
-                    .from("eth_price_history")
-                    .select("price_usd")
-                    .order("timestamp", { ascending: false })
-                    .limit(1)
-                    .maybeSingle();
-
-                  const ethPriceUSD = ethPriceData?.price_usd || 3000;
-
-                  await supabase
-                    .from("price_snapshots")
-                    .upsert({
-                      token_address: token.token_address,
-                      price_eth: priceEth.toString(),
-                      eth_reserve: ethReserveFormatted,
-                      token_reserve: tokenReserveFormatted,
-                      eth_price_usd: ethPriceUSD,
-                      is_interpolated: false,
-                      block_number: block.number,
-                      created_at: new Date(block.timestamp * 1000).toISOString(),
-                    }, {
-                      onConflict: 'token_address,block_number,created_at',
-                      ignoreDuplicates: true
-                    });
 
                   if (parseFloat(ethers.formatEther(args.tokenOut)) > 0) {
                     await supabase.rpc('refresh_token_holder_count', {
