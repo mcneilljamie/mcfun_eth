@@ -118,6 +118,18 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
       setWithdrawing(lock.id);
       const lockerContract = new ethers.Contract(lockerAddress, TOKEN_LOCKER_ABI, signer);
 
+      const lockInfo = await lockerContract.getLock(lock.lock_id);
+      const isWithdrawnOnChain = lockInfo[4];
+
+      if (isWithdrawnOnChain) {
+        onShowToast({
+          message: t('myLocks.errors.alreadyWithdrawn'),
+          type: 'error'
+        });
+        await loadUserLocks();
+        return;
+      }
+
       const tx = await lockerContract.unlockTokens(lock.lock_id);
       onShowToast({
         message: t('myLocks.toasts.withdrawSubmitted'),

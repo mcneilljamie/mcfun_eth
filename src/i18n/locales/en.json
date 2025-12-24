@@ -582,7 +582,8 @@
       "lockerNotAvailable": "Token locker not available on this network",
       "lockNotEnded": "Lock period has not ended yet",
       "withdrawFailed": "Failed to withdraw tokens",
-      "transactionRejected": "Transaction was rejected"
+      "transactionRejected": "Transaction was rejected",
+      "alreadyWithdrawn": "This lock has already been withdrawn"
     },
     "toasts": {
       "withdrawSubmitted": "Withdrawal transaction submitted...",
