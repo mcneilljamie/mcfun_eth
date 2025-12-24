@@ -27,6 +27,10 @@ const RPC_PROVIDERS = [
   "https://rpc2.sepolia.org",
 ];
 
+const MAX_BLOCK_RANGE = 500;
+const MAX_EXECUTION_TIME_MS = 23000;
+const PARALLEL_TOKEN_LIMIT = 8;
+
 let currentProviderIndex = 0;
 
 async function createProviderWithFailover(): Promise<ethers.JsonRpcProvider> {
@@ -72,6 +76,25 @@ interface IndexRequest {
   indexSwaps?: boolean;
   skipReorgCheck?: boolean;
   backfillSwaps?: boolean;
+}
+
+class BlockCache {
+  private cache: Map<number, ethers.Block> = new Map();
+
+  async getBlock(provider: ethers.JsonRpcProvider, blockNumber: number): Promise<ethers.Block> {
+    if (this.cache.has(blockNumber)) {
+      return this.cache.get(blockNumber)!;
+    }
+    const block = await provider.getBlock(blockNumber);
+    if (block) {
+      this.cache.set(blockNumber, block);
+    }
+    return block!;
+  }
+
+  clear() {
+    this.cache.clear();
+  }
 }
 
 async function detectAndHandleReorg(
@@ -165,6 +188,139 @@ async function rollbackToBlock(supabase: any, blockNumber: number): Promise<{ de
   };
 }
 
+async function processTokenSwaps(
+  token: any,
+  startBlock: number,
+  endBlock: number,
+  backfillSwaps: boolean,
+  provider: ethers.JsonRpcProvider,
+  supabase: any,
+  blockCache: BlockCache,
+  startTime: number
+): Promise<{ swapsIndexed: number; errors: string[]; timedOut: boolean }> {
+  const errors: string[] = [];
+  let swapsIndexed = 0;
+  let timedOut = false;
+
+  try {
+    if (Date.now() - startTime > MAX_EXECUTION_TIME_MS) {
+      return { swapsIndexed, errors, timedOut: true };
+    }
+
+    let queryStartBlock = startBlock;
+
+    if (backfillSwaps) {
+      const { data: earliestSwap } = await supabase
+        .from("swaps")
+        .select("block_number")
+        .eq("token_address", token.token_address)
+        .order("block_number", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+
+      if (!earliestSwap || earliestSwap.block_number > token.block_number + 1) {
+        queryStartBlock = Math.max(token.block_number, startBlock);
+      }
+    }
+
+    if (queryStartBlock > endBlock) {
+      return { swapsIndexed, errors, timedOut };
+    }
+
+    const amm = new ethers.Contract(token.amm_address, AMM_ABI, provider);
+    const filter = amm.filters.Swap();
+    const events = await amm.queryFilter(filter, queryStartBlock, endBlock);
+
+    if (events.length === 0) {
+      return { swapsIndexed, errors, timedOut };
+    }
+
+    const swapsToInsert: any[] = [];
+    const uniqueBlocks = new Set<number>();
+
+    for (const event of events) {
+      if (Date.now() - startTime > MAX_EXECUTION_TIME_MS) {
+        timedOut = true;
+        break;
+      }
+
+      const args = event.args!;
+      uniqueBlocks.add(event.blockNumber);
+
+      const block = await blockCache.getBlock(provider, event.blockNumber);
+
+      swapsToInsert.push({
+        token_address: token.token_address,
+        amm_address: token.amm_address,
+        user_address: args.user.toLowerCase(),
+        eth_in: ethers.formatEther(args.ethIn),
+        token_in: ethers.formatEther(args.tokenIn),
+        eth_out: ethers.formatEther(args.ethOut),
+        token_out: ethers.formatEther(args.tokenOut),
+        tx_hash: event.transactionHash,
+        created_at: new Date(block.timestamp * 1000).toISOString(),
+        block_number: block.number,
+        block_hash: block.hash,
+      });
+    }
+
+    if (swapsToInsert.length > 0) {
+      const { error: swapError, count } = await supabase
+        .from("swaps")
+        .upsert(swapsToInsert, { onConflict: "tx_hash", count: "exact" });
+
+      if (swapError) {
+        errors.push(`Failed to insert swaps for ${token.token_address}: ${swapError.message}`);
+      } else {
+        swapsIndexed = count || 0;
+
+        const lastEvent = events[events.length - 1];
+        const [reserveETH, reserveToken] = await Promise.all([
+          amm.reserveETH(),
+          amm.reserveToken(),
+        ]);
+
+        let totalEthVolume = 0;
+        for (const swap of swapsToInsert) {
+          totalEthVolume += parseFloat(swap.eth_in) + parseFloat(swap.eth_out);
+        }
+
+        const { data: currentToken } = await supabase
+          .from("tokens")
+          .select("total_volume_eth")
+          .eq("token_address", token.token_address)
+          .maybeSingle();
+
+        const currentVolume = parseFloat(currentToken?.total_volume_eth || "0");
+        const newVolume = (currentVolume + totalEthVolume).toString();
+
+        const ethReserveFormatted = ethers.formatEther(reserveETH);
+        const tokenReserveFormatted = ethers.formatEther(reserveToken);
+
+        await supabase
+          .from("tokens")
+          .update({
+            current_eth_reserve: ethReserveFormatted,
+            current_token_reserve: tokenReserveFormatted,
+            total_volume_eth: newVolume,
+          })
+          .eq("token_address", token.token_address);
+
+        const hasTokenSells = swapsToInsert.some(swap => parseFloat(swap.token_out) > 0);
+        if (hasTokenSells) {
+          await supabase.rpc('refresh_token_holder_count', {
+            p_token_address: token.token_address
+          });
+        }
+      }
+    }
+  } catch (err: any) {
+    errors.push(`Failed to index swaps for ${token.token_address}: ${err.message}`);
+  }
+
+  return { swapsIndexed, errors, timedOut };
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, {
@@ -173,12 +329,15 @@ Deno.serve(async (req: Request) => {
     });
   }
 
+  const startTime = Date.now();
+
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
     const supabase = createClient(supabaseUrl, supabaseKey);
     const provider = await retryWithBackoff(() => createProviderWithFailover());
+    const blockCache = new BlockCache();
 
     const {
       fromBlock,
@@ -207,6 +366,8 @@ Deno.serve(async (req: Request) => {
       rollbackData: null as any,
       fromBlock: 0,
       toBlock: 0,
+      executionTimeMs: 0,
+      timedOut: false,
     };
 
     if (!skipReorgCheck && lastIndexedBlock > 0) {
@@ -245,12 +406,12 @@ Deno.serve(async (req: Request) => {
 
     let endBlock = toBlock !== undefined ? toBlock : safeBlock;
 
-    const MAX_BLOCK_RANGE = 10000;
     if (endBlock - startBlock > MAX_BLOCK_RANGE) {
       endBlock = startBlock + MAX_BLOCK_RANGE;
     }
 
     if (startBlock > endBlock) {
+      results.executionTimeMs = Date.now() - startTime;
       return new Response(
         JSON.stringify({
           ...results,
@@ -281,8 +442,13 @@ Deno.serve(async (req: Request) => {
         const events = await factory.queryFilter(filter, startBlock, endBlock);
 
         for (const event of events) {
+          if (Date.now() - startTime > MAX_EXECUTION_TIME_MS) {
+            results.timedOut = true;
+            break;
+          }
+
           const args = event.args!;
-          const block = await event.getBlock();
+          const block = await blockCache.getBlock(provider, event.blockNumber);
 
           const initialLiquidityEth = parseFloat(ethers.formatEther(args.initialLiquidityETH));
           const liquidityPercent = Number(args.liquidityPercent);
@@ -351,106 +517,45 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    if (indexSwaps) {
+    if (indexSwaps && !results.timedOut) {
       try {
         const { data: tokens } = await supabase
           .from("tokens")
           .select("token_address, amm_address, block_number");
 
         if (tokens && tokens.length > 0) {
-          for (const token of tokens) {
-            try {
-              let queryStartBlock = startBlock;
+          const processToken = async (token: any) => {
+            return await processTokenSwaps(
+              token,
+              startBlock,
+              endBlock,
+              backfillSwaps,
+              provider,
+              supabase,
+              blockCache,
+              startTime
+            );
+          };
 
-              if (backfillSwaps) {
-                const { data: earliestSwap } = await supabase
-                  .from("swaps")
-                  .select("block_number")
-                  .eq("token_address", token.token_address)
-                  .order("block_number", { ascending: true })
-                  .limit(1)
-                  .maybeSingle();
+          for (let i = 0; i < tokens.length; i += PARALLEL_TOKEN_LIMIT) {
+            if (Date.now() - startTime > MAX_EXECUTION_TIME_MS) {
+              results.timedOut = true;
+              break;
+            }
 
-                if (!earliestSwap || earliestSwap.block_number > token.block_number + 1) {
-                  queryStartBlock = Math.max(token.block_number, startBlock);
-                }
+            const batch = tokens.slice(i, i + PARALLEL_TOKEN_LIMIT);
+            const batchResults = await Promise.all(batch.map(processToken));
+
+            for (const result of batchResults) {
+              results.swapsIndexed += result.swapsIndexed;
+              results.errors.push(...result.errors);
+              if (result.timedOut) {
+                results.timedOut = true;
               }
+            }
 
-              if (queryStartBlock > endBlock) {
-                continue;
-              }
-
-              const amm = new ethers.Contract(token.amm_address, AMM_ABI, provider);
-              const filter = amm.filters.Swap();
-              const events = await amm.queryFilter(filter, queryStartBlock, endBlock);
-
-              for (const event of events) {
-                const args = event.args!;
-                const block = await event.getBlock();
-
-                const { error: swapError } = await supabase
-                  .from("swaps")
-                  .upsert({
-                    token_address: token.token_address,
-                    amm_address: token.amm_address,
-                    user_address: args.user.toLowerCase(),
-                    eth_in: ethers.formatEther(args.ethIn),
-                    token_in: ethers.formatEther(args.tokenIn),
-                    eth_out: ethers.formatEther(args.ethOut),
-                    token_out: ethers.formatEther(args.tokenOut),
-                    tx_hash: event.transactionHash,
-                    created_at: new Date(block.timestamp * 1000).toISOString(),
-                    block_number: block.number,
-                    block_hash: block.hash,
-                  }, {
-                    onConflict: "tx_hash",
-                  });
-
-                if (swapError) {
-                  results.errors.push(`Failed to insert swap: ${swapError.message}`);
-                } else {
-                  results.swapsIndexed++;
-                  lastProcessedBlockNumber = Math.max(lastProcessedBlockNumber, block.number);
-                  lastProcessedBlockHash = block.hash;
-
-                  const [reserveETH, reserveToken] = await Promise.all([
-                    amm.reserveETH(),
-                    amm.reserveToken(),
-                  ]);
-
-                  const ethVolume = parseFloat(ethers.formatEther(args.ethIn)) +
-                                    parseFloat(ethers.formatEther(args.ethOut));
-
-                  const { data: currentToken } = await supabase
-                    .from("tokens")
-                    .select("total_volume_eth")
-                    .eq("token_address", token.token_address)
-                    .maybeSingle();
-
-                  const currentVolume = parseFloat(currentToken?.total_volume_eth || "0");
-                  const newVolume = (currentVolume + ethVolume).toString();
-
-                  const ethReserveFormatted = ethers.formatEther(reserveETH);
-                  const tokenReserveFormatted = ethers.formatEther(reserveToken);
-
-                  await supabase
-                    .from("tokens")
-                    .update({
-                      current_eth_reserve: ethReserveFormatted,
-                      current_token_reserve: tokenReserveFormatted,
-                      total_volume_eth: newVolume,
-                    })
-                    .eq("token_address", token.token_address);
-
-                  if (parseFloat(ethers.formatEther(args.tokenOut)) > 0) {
-                    await supabase.rpc('refresh_token_holder_count', {
-                      p_token_address: token.token_address
-                    });
-                  }
-                }
-              }
-            } catch (err: any) {
-              results.errors.push(`Failed to index swaps for ${token.token_address}: ${err.message}`);
+            if (results.timedOut) {
+              break;
             }
           }
         }
@@ -467,7 +572,7 @@ Deno.serve(async (req: Request) => {
       }
 
       if (!lastProcessedBlockHash) {
-        const block = await provider.getBlock(lastProcessedBlockNumber);
+        const block = await blockCache.getBlock(provider, lastProcessedBlockNumber);
         lastProcessedBlockHash = block?.hash || null;
       }
 
@@ -480,8 +585,9 @@ Deno.serve(async (req: Request) => {
           confirmation_depth: confirmationDepth,
           updated_at: new Date().toISOString(),
         });
-    } else if (endBlock > lastIndexedBlock) {
-      const block = await provider.getBlock(endBlock);      await supabase
+    } else if (endBlock > lastIndexedBlock && !results.timedOut) {
+      const block = await blockCache.getBlock(provider, endBlock);
+      await supabase
         .from("indexer_state")
         .upsert({
           id: indexerState?.id || undefined,
@@ -491,6 +597,9 @@ Deno.serve(async (req: Request) => {
           updated_at: new Date().toISOString(),
         });
     }
+
+    blockCache.clear();
+    results.executionTimeMs = Date.now() - startTime;
 
     return new Response(
       JSON.stringify(results),
@@ -504,7 +613,10 @@ Deno.serve(async (req: Request) => {
   } catch (err: any) {
     console.error("Error in event-indexer:", err);
     return new Response(
-      JSON.stringify({ error: err.message }),
+      JSON.stringify({
+        error: err.message,
+        executionTimeMs: Date.now() - startTime
+      }),
       {
         status: 500,
         headers: {
