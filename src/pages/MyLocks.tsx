@@ -102,14 +102,15 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
 
       const enriched: TokenLock[] = dbLocks.map(lock => {
         const price = tokenPrices.get(lock.token_address.toLowerCase());
-        const amountFormatted = parseFloat(ethers.formatEther(lock.amount));
+        const amountFormatted = parseFloat(lock.amount_locked);
 
         const valueEth = price ? amountFormatted * price.priceEth : undefined;
         const valueUsd = price ? amountFormatted * price.priceUsd : undefined;
 
-        // Calculate duration from lock_timestamp to unlock_time
+        // Calculate duration from lock_timestamp to unlock_timestamp
         const lockTimestamp = new Date(lock.lock_timestamp).getTime() / 1000;
-        const durationDays = Math.floor((lock.unlock_time - lockTimestamp) / 86400);
+        const unlockTimestamp = new Date(lock.unlock_timestamp).getTime() / 1000;
+        const durationDays = Math.floor((unlockTimestamp - lockTimestamp) / 86400);
 
         return {
           ...lock,
@@ -146,8 +147,9 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
       return;
     }
 
+    const unlockTime = Math.floor(new Date(lock.unlock_timestamp).getTime() / 1000);
     const now = Math.floor(Date.now() / 1000);
-    if (now < lock.unlock_time) {
+    if (now < unlockTime) {
       onShowToast({
         message: t('myLocks.errors.lockNotEnded'),
         type: 'error'
@@ -181,12 +183,10 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
 
       const receipt = await tx.wait();
 
-      const formattedAmount = ethers.formatEther(lock.amount);
-
       setWithdrawSuccess({
         txHash: receipt.hash,
         tokenSymbol: lock.token_symbol || 'TOKEN',
-        amount: parseFloat(formattedAmount).toFixed(4),
+        amount: parseFloat(lock.amount_locked).toFixed(4),
       });
 
       // Reload locks from database (will be updated by indexer)
@@ -320,9 +320,9 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
   }
 
   const activeLocks = enrichedLocks
-    .filter(lock => !lock.withdrawn)
-    .sort((a, b) => a.unlock_time - b.unlock_time);
-  const withdrawnLocks = enrichedLocks.filter(lock => lock.withdrawn);
+    .filter(lock => !lock.is_withdrawn)
+    .sort((a, b) => new Date(a.unlock_timestamp).getTime() - new Date(b.unlock_timestamp).getTime());
+  const withdrawnLocks = enrichedLocks.filter(lock => lock.is_withdrawn);
 
   const locksWithPricing = activeLocks.filter(lock => lock.value_usd && lock.value_usd > 0);
   const totalLockedValue = locksWithPricing.reduce((sum, lock) => sum + (lock.value_usd || 0), 0);
@@ -367,9 +367,10 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
           <div className="space-y-4">
             {activeLocks.map((lock) => {
               const now = Math.floor(Date.now() / 1000);
-              const unlockDate = new Date(lock.unlock_time * 1000);
+              const unlockDate = new Date(lock.unlock_timestamp);
               const lockDate = new Date(lock.lock_timestamp);
-              const isUnlockable = now >= lock.unlock_time;
+              const unlockTime = Math.floor(unlockDate.getTime() / 1000);
+              const isUnlockable = now >= unlockTime;
 
               return (
                 <div
@@ -436,7 +437,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
                       </div>
                       {!isUnlockable && (
                         <div className="text-xs text-gray-500 mt-1">
-                          {formatTimeRemaining(lock.unlock_time)}
+                          {formatTimeRemaining(unlockTime)}
                         </div>
                       )}
                     </div>

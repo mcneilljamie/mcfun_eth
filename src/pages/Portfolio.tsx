@@ -186,8 +186,8 @@ export default function Portfolio() {
         const { data: userLocks, error: locksError } = await supabase
           .from('token_locks')
           .select('*')
-          .eq('owner_address', account.toLowerCase())
-          .eq('withdrawn', false);
+          .eq('user_address', account.toLowerCase())
+          .eq('is_withdrawn', false);
 
         if (locksError) {
           throw locksError;
@@ -239,12 +239,16 @@ export default function Portfolio() {
 
             const priceUsd = priceEth * ethPrice;
 
-            // Sum up all lock amounts (stored as strings in database)
-            const totalAmount = locks.reduce((sum: bigint, lock: any) =>
-              sum + ethers.parseEther(lock.amount), 0n
+            // Sum up all lock amounts (stored as numeric strings in database)
+            const formattedAmount = locks.reduce((sum: number, lock: any) =>
+              sum + parseFloat(lock.amount_locked), 0
             );
-            const formattedAmount = parseFloat(ethers.formatEther(totalAmount));
             const valueUsd = formattedAmount * priceUsd;
+
+            // Find earliest unlock time
+            const earliestUnlockTime = Math.min(...locks.map((l: any) =>
+              new Date(l.unlock_timestamp).getTime()
+            ));
 
             dbLockedTokens.push({
               id: tokenAddr,
@@ -255,8 +259,8 @@ export default function Portfolio() {
               token_decimals: 18,
               amount_locked_formatted: formattedAmount,
               lock_count: locks.length,
-              unlock_timestamp: new Date(Math.min(...locks.map((l: any) => l.unlock_time)) * 1000).toISOString(),
-              is_unlockable: Math.min(...locks.map((l: any) => l.unlock_time)) <= Math.floor(Date.now() / 1000),
+              unlock_timestamp: new Date(earliestUnlockTime).toISOString(),
+              is_unlockable: earliestUnlockTime <= Date.now(),
               current_price_usd: priceUsd,
               value_usd: valueUsd,
             });
