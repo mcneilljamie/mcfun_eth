@@ -454,7 +454,7 @@ Deno.serve(async (req: Request) => {
 
                   await supabase
                     .from("price_snapshots")
-                    .insert({
+                    .upsert({
                       token_address: token.token_address,
                       price_eth: priceEth.toString(),
                       eth_reserve: ethReserveFormatted,
@@ -463,6 +463,9 @@ Deno.serve(async (req: Request) => {
                       is_interpolated: false,
                       block_number: block.number,
                       created_at: new Date(block.timestamp * 1000).toISOString(),
+                    }, {
+                      onConflict: 'token_address,block_number,created_at',
+                      ignoreDuplicates: true
                     });
 
                   if (parseFloat(ethers.formatEther(args.tokenOut)) > 0) {
