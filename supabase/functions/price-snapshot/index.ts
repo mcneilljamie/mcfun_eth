@@ -109,7 +109,16 @@ Deno.serve(async (req: Request) => {
     const fortyEightHoursAgo = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
 
-    const { data: tokens, error: tokensError } = await supabase
+    // First, get tokens with recent swaps
+    const { data: recentSwaps } = await supabase
+      .from("swaps")
+      .select("token_address")
+      .gte("created_at", fortyEightHoursAgo);
+
+    const activeTokenAddresses = new Set(recentSwaps?.map(s => s.token_address) || []);
+
+    // Get all tokens that are either new (< 1 hour) or have recent swaps
+    const { data: newTokens } = await supabase
       .from("tokens")
       .select(`
         token_address,
@@ -117,13 +126,26 @@ Deno.serve(async (req: Request) => {
         symbol,
         created_at
       `)
-      .or(`created_at.gte.${oneHourAgo},token_address.in.(
-        select distinct token_address from swaps where created_at >= '${fortyEightHoursAgo}'
-      )`);
+      .gte("created_at", oneHourAgo);
 
-    if (tokensError) {
-      throw new Error(`Failed to fetch tokens: ${tokensError.message}`);
-    }
+    const { data: activeTokens } = await supabase
+      .from("tokens")
+      .select(`
+        token_address,
+        amm_address,
+        symbol,
+        created_at
+      `)
+      .in("token_address", Array.from(activeTokenAddresses));
+
+    // Combine and deduplicate
+    const tokenMap = new Map();
+    [...(newTokens || []), ...(activeTokens || [])].forEach(token => {
+      tokenMap.set(token.token_address, token);
+    });
+    const tokens = Array.from(tokenMap.values());
+
+    const tokensError = null;
 
     const results = {
       snapshotsCreated: 0,
