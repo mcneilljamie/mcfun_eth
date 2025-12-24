@@ -14,9 +14,56 @@ const AMM_ABI = [
   "function getPrice() external view returns (uint256)"
 ];
 
+// RPC providers with fallback support
+const RPC_PROVIDERS = [
+  Deno.env.get("ETHEREUM_RPC_URL") || "https://ethereum-sepolia-rpc.publicnode.com",
+  "https://rpc.sepolia.org",
+  "https://ethereum-sepolia.blockpi.network/v1/rpc/public",
+  "https://rpc2.sepolia.org",
+];
+
+let currentProviderIndex = 0;
+
+// Create provider with automatic failover
+async function createProviderWithFailover(): Promise<ethers.JsonRpcProvider> {
+  for (let i = 0; i < RPC_PROVIDERS.length; i++) {
+    const providerUrl = RPC_PROVIDERS[(currentProviderIndex + i) % RPC_PROVIDERS.length];
+    try {
+      const provider = new ethers.JsonRpcProvider(providerUrl);
+      await provider.getBlockNumber();
+      currentProviderIndex = (currentProviderIndex + i) % RPC_PROVIDERS.length;
+      return provider;
+    } catch (error) {
+      console.error(`RPC provider ${providerUrl} failed, trying next...`, error);
+      continue;
+    }
+  }
+  throw new Error("All RPC providers failed");
+}
+
+// Retry function with exponential backoff
+async function retryWithBackoff<T>(
+  fn: () => Promise<T>,
+  maxRetries = 3,
+  initialDelay = 100
+): Promise<T> {
+  let lastError;
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error;
+      if (i < maxRetries - 1) {
+        const delay = initialDelay * Math.pow(2, i);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+  }
+  throw lastError;
+}
+
 // Fetch ETH price from historical table (preferred) or CoinGecko API (fallback)
 async function fetchEthPriceUSD(supabase: any): Promise<number> {
-  // Try to get latest price from eth_price_history table
   const { data, error } = await supabase
     .from("eth_price_history")
     .select("price_usd")
@@ -28,7 +75,6 @@ async function fetchEthPriceUSD(supabase: any): Promise<number> {
     return data.price_usd;
   }
 
-  // Fallback to CoinGecko API if table is empty
   try {
     const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
     const apiData = await response.json();
@@ -50,21 +96,30 @@ Deno.serve(async (req: Request) => {
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const rpcUrl = Deno.env.get("ETHEREUM_RPC_URL") || "https://ethereum-sepolia-rpc.publicnode.com";
 
     const supabase = createClient(supabaseUrl, supabaseKey);
-    const provider = new ethers.JsonRpcProvider(rpcUrl);
 
-    // Get current block number for reorg protection
-    const currentBlockNumber = await provider.getBlockNumber();
+    const provider = await retryWithBackoff(() => createProviderWithFailover());
 
-    // Get ETH price from historical data or API
+    const currentBlockNumber = await retryWithBackoff(() => provider.getBlockNumber());
+
     const ethPriceUSD = await fetchEthPriceUSD(supabase);
 
-    // Get ALL tokens - no age filtering for 15-second snapshots
+    // Only process tokens with recent activity (trades in last 48 hours) OR very new tokens (< 1 hour old)
+    const fortyEightHoursAgo = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+
     const { data: tokens, error: tokensError } = await supabase
       .from("tokens")
-      .select("token_address, amm_address, symbol, created_at");
+      .select(`
+        token_address,
+        amm_address,
+        symbol,
+        created_at
+      `)
+      .or(`created_at.gte.${oneHourAgo},token_address.in.(
+        select distinct token_address from swaps where created_at >= '${fortyEightHoursAgo}'
+      )`);
 
     if (tokensError) {
       throw new Error(`Failed to fetch tokens: ${tokensError.message}`);
@@ -75,12 +130,13 @@ Deno.serve(async (req: Request) => {
       errors: [] as string[],
       timestamp: new Date().toISOString(),
       tokensProcessed: 0,
+      tokensSkipped: 0,
       ethPriceUsd: ethPriceUSD,
     };
 
     if (!tokens || tokens.length === 0) {
       return new Response(
-        JSON.stringify({ message: "No tokens found", ...results }),
+        JSON.stringify({ message: "No active tokens found", ...results }),
         {
           headers: {
             ...corsHeaders,
@@ -90,8 +146,7 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Process tokens in parallel batches for better performance
-    const batchSize = 10;
+    const batchSize = 5;
     const snapshotsToInsert = [];
     const tokensToUpdate = [];
 
@@ -100,51 +155,53 @@ Deno.serve(async (req: Request) => {
 
       const batchResults = await Promise.allSettled(
         batch.map(async (token) => {
-          const amm = new ethers.Contract(token.amm_address, AMM_ABI, provider);
+          return await retryWithBackoff(async () => {
+            const amm = new ethers.Contract(token.amm_address, AMM_ABI, provider);
 
-          const [reserveETH, reserveToken, price] = await Promise.all([
-            amm.reserveETH(),
-            amm.reserveToken(),
-            amm.getPrice(),
-          ]);
+            const [reserveETH, reserveToken, price] = await Promise.all([
+              amm.reserveETH(),
+              amm.reserveToken(),
+              amm.getPrice(),
+            ]);
 
-          const ethReserveFormatted = ethers.formatEther(reserveETH);
-          const tokenReserveFormatted = ethers.formatEther(reserveToken);
-          const priceFormatted = ethers.formatEther(price);
+            const ethReserveFormatted = ethers.formatEther(reserveETH);
+            const tokenReserveFormatted = ethers.formatEther(reserveToken);
+            const priceFormatted = ethers.formatEther(price);
 
-          // Skip if reserves are zero (token not yet initialized)
-          if (ethReserveFormatted === "0.0" || tokenReserveFormatted === "0.0") {
-            return { success: false, error: `Zero reserves for ${token.symbol}` };
-          }
+            if (ethReserveFormatted === "0.0" || tokenReserveFormatted === "0.0") {
+              return { success: false, error: `Zero reserves for ${token.symbol}`, skipped: true };
+            }
 
-          return {
-            success: true,
-            token,
-            snapshot: {
-              token_address: token.token_address,
-              price_eth: priceFormatted,
-              eth_reserve: ethReserveFormatted,
-              token_reserve: tokenReserveFormatted,
-              eth_price_usd: ethPriceUSD,
-              is_interpolated: false,
-              block_number: currentBlockNumber,
-              created_at: new Date().toISOString(),
-            },
-            update: {
-              token_address: token.token_address,
-              current_eth_reserve: ethReserveFormatted,
-              current_token_reserve: tokenReserveFormatted,
-            },
-          };
+            return {
+              success: true,
+              token,
+              snapshot: {
+                token_address: token.token_address,
+                price_eth: priceFormatted,
+                eth_reserve: ethReserveFormatted,
+                token_reserve: tokenReserveFormatted,
+                eth_price_usd: ethPriceUSD,
+                is_interpolated: false,
+                block_number: currentBlockNumber,
+                created_at: new Date().toISOString(),
+              },
+              update: {
+                token_address: token.token_address,
+                current_eth_reserve: ethReserveFormatted,
+                current_token_reserve: tokenReserveFormatted,
+              },
+            };
+          }, 2, 200);
         })
       );
 
-      // Process batch results
       for (const result of batchResults) {
         if (result.status === 'fulfilled' && result.value.success) {
           snapshotsToInsert.push(result.value.snapshot);
           tokensToUpdate.push(result.value.update);
           results.tokensProcessed++;
+        } else if (result.status === 'fulfilled' && result.value.skipped) {
+          results.tokensSkipped++;
         } else if (result.status === 'fulfilled') {
           results.errors.push(result.value.error);
         } else {
@@ -153,7 +210,6 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    // Bulk insert snapshots
     if (snapshotsToInsert.length > 0) {
       const insertBatchSize = 100;
       for (let i = 0; i < snapshotsToInsert.length; i += insertBatchSize) {
@@ -170,7 +226,6 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    // Bulk update token reserves
     for (const update of tokensToUpdate) {
       await supabase
         .from("tokens")
@@ -181,10 +236,8 @@ Deno.serve(async (req: Request) => {
         .eq("token_address", update.token_address);
     }
 
-    // Calculate and store platform statistics (less frequently to save time)
-    // Only run stats calculation every 4th snapshot cycle (once per minute)
-    const shouldCalculateStats = Math.random() < 0.25; // 25% chance = ~once per minute
-    
+    const shouldCalculateStats = Math.random() < 0.25;
+
     if (shouldCalculateStats && snapshotsToInsert.length > 0) {
       try {
         const { data: allTokens, error: allTokensError } = await supabase
@@ -198,7 +251,7 @@ Deno.serve(async (req: Request) => {
 
           for (const token of allTokens) {
             const ethReserve = parseFloat(token.current_eth_reserve || "0");
-            
+
             if (ethReserve > 0) {
               const { data: snapshot } = await supabase
                 .from("price_snapshots")
@@ -207,14 +260,14 @@ Deno.serve(async (req: Request) => {
                 .order("created_at", { ascending: false })
                 .limit(1)
                 .maybeSingle();
-              
+
               if (snapshot) {
                 const priceETH = parseFloat(snapshot.price_eth);
                 const fdv = TOTAL_SUPPLY * priceETH * ethPriceUSD;
                 totalMarketCapUSD += fdv;
               }
             }
-            
+
             totalVolumeETH += parseFloat(token.total_volume_eth || "0");
           }
 

@@ -94,7 +94,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
     };
 
     loadPrices();
-    const interval = setInterval(loadPrices, 15000);
+    const interval = setInterval(loadPrices, 30000);
     return () => clearInterval(interval);
   }, [provider, onChainLocks, ethPriceUsd]);
 

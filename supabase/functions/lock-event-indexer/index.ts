@@ -9,7 +9,6 @@ const corsHeaders = {
 };
 
 const LOCKER_ADDRESS = "0x1277b6E3f4407AD44A9b33641b51848c0098368f";
-const RPC_URL = Deno.env.get("RPC_URL") || "https://ethereum-sepolia-rpc.publicnode.com";
 
 const LOCKER_ABI = [
   "event TokensLocked(uint256 indexed lockId, address indexed owner, address indexed tokenAddress, uint256 amount, uint256 unlockTime)",
@@ -21,6 +20,51 @@ const ERC20_ABI = [
   "function symbol() view returns (string)",
   "function decimals() view returns (uint8)",
 ];
+
+const RPC_PROVIDERS = [
+  Deno.env.get("ETHEREUM_RPC_URL") || Deno.env.get("RPC_URL") || "https://ethereum-sepolia-rpc.publicnode.com",
+  "https://rpc.sepolia.org",
+  "https://ethereum-sepolia.blockpi.network/v1/rpc/public",
+  "https://rpc2.sepolia.org",
+];
+
+let currentProviderIndex = 0;
+
+async function createProviderWithFailover(): Promise<ethers.JsonRpcProvider> {
+  for (let i = 0; i < RPC_PROVIDERS.length; i++) {
+    const providerUrl = RPC_PROVIDERS[(currentProviderIndex + i) % RPC_PROVIDERS.length];
+    try {
+      const provider = new ethers.JsonRpcProvider(providerUrl);
+      await provider.getBlockNumber();
+      currentProviderIndex = (currentProviderIndex + i) % RPC_PROVIDERS.length;
+      return provider;
+    } catch (error) {
+      console.error(`RPC provider ${providerUrl} failed, trying next...`, error);
+      continue;
+    }
+  }
+  throw new Error("All RPC providers failed");
+}
+
+async function retryWithBackoff<T>(
+  fn: () => Promise<T>,
+  maxRetries = 3,
+  initialDelay = 100
+): Promise<T> {
+  let lastError;
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error;
+      if (i < maxRetries - 1) {
+        const delay = initialDelay * Math.pow(2, i);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+  }
+  throw lastError;
+}
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -35,7 +79,7 @@ Deno.serve(async (req: Request) => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const provider = new ethers.JsonRpcProvider(RPC_URL);
+    const provider = await retryWithBackoff(() => createProviderWithFailover());
     const lockerContract = new ethers.Contract(LOCKER_ADDRESS, LOCKER_ABI, provider);
 
     // Check for custom start block from request body

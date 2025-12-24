@@ -77,7 +77,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
   useEffect(() => {
     if (token && provider) {
       loadLiveReserves();
-      const reservesInterval = setInterval(loadLiveReserves, 10000);
+      const reservesInterval = setInterval(loadLiveReserves, 30000);
       return () => clearInterval(reservesInterval);
     }
   }, [token, provider]);

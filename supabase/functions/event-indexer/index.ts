@@ -20,6 +20,51 @@ const AMM_ABI = [
   "function reserveETH() external view returns (uint256)"
 ];
 
+const RPC_PROVIDERS = [
+  Deno.env.get("ETHEREUM_RPC_URL") || "https://ethereum-sepolia-rpc.publicnode.com",
+  "https://rpc.sepolia.org",
+  "https://ethereum-sepolia.blockpi.network/v1/rpc/public",
+  "https://rpc2.sepolia.org",
+];
+
+let currentProviderIndex = 0;
+
+async function createProviderWithFailover(): Promise<ethers.JsonRpcProvider> {
+  for (let i = 0; i < RPC_PROVIDERS.length; i++) {
+    const providerUrl = RPC_PROVIDERS[(currentProviderIndex + i) % RPC_PROVIDERS.length];
+    try {
+      const provider = new ethers.JsonRpcProvider(providerUrl);
+      await provider.getBlockNumber();
+      currentProviderIndex = (currentProviderIndex + i) % RPC_PROVIDERS.length;
+      return provider;
+    } catch (error) {
+      console.error(`RPC provider ${providerUrl} failed, trying next...`, error);
+      continue;
+    }
+  }
+  throw new Error("All RPC providers failed");
+}
+
+async function retryWithBackoff<T>(
+  fn: () => Promise<T>,
+  maxRetries = 3,
+  initialDelay = 100
+): Promise<T> {
+  let lastError;
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error;
+      if (i < maxRetries - 1) {
+        const delay = initialDelay * Math.pow(2, i);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+  }
+  throw lastError;
+}
+
 interface IndexRequest {
   fromBlock?: number;
   toBlock?: number;
@@ -131,10 +176,9 @@ Deno.serve(async (req: Request) => {
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const rpcUrl = Deno.env.get("ETHEREUM_RPC_URL") || "https://ethereum-sepolia-rpc.publicnode.com";
 
     const supabase = createClient(supabaseUrl, supabaseKey);
-    const provider = new ethers.JsonRpcProvider(rpcUrl);
+    const provider = await retryWithBackoff(() => createProviderWithFailover());
 
     const {
       fromBlock,
