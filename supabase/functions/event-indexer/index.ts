@@ -82,7 +82,6 @@ async function detectAndHandleReorg(
 async function rollbackToBlock(supabase: any, blockNumber: number): Promise<{ deletedTokens: number; deletedSwaps: number; deletedSnapshots: number }> {
   console.log(`Rolling back data from blocks > ${blockNumber}`);
 
-  // Get token addresses that will be deleted
   const { data: tokensToDelete } = await supabase
     .from("tokens")
     .select("token_address")
@@ -100,13 +99,11 @@ async function rollbackToBlock(supabase: any, blockNumber: number): Promise<{ de
     .delete({ count: "exact" })
     .gt("block_number", blockNumber);
 
-  // Delete snapshots with block_number > rollback point
   const { count: deletedSnapshots1 } = await supabase
     .from("price_snapshots")
     .delete({ count: "exact" })
     .gt("block_number", blockNumber);
 
-  // Also delete snapshots for deleted tokens (handles NULL block_number case)
   let deletedSnapshots2 = 0;
   if (deletedTokenAddresses.length > 0) {
     const { count: orphanedSnapshots } = await supabase
@@ -335,7 +332,6 @@ Deno.serve(async (req: Request) => {
                 }
               }
 
-              // Skip if token was created after the endBlock
               if (queryStartBlock > endBlock) {
                 continue;
               }
@@ -390,14 +386,40 @@ Deno.serve(async (req: Request) => {
                   const currentVolume = parseFloat(currentToken?.total_volume_eth || "0");
                   const newVolume = (currentVolume + ethVolume).toString();
 
+                  const ethReserveFormatted = ethers.formatEther(reserveETH);
+                  const tokenReserveFormatted = ethers.formatEther(reserveToken);
+                  const priceEth = parseFloat(ethReserveFormatted) / parseFloat(tokenReserveFormatted);
+
                   await supabase
                     .from("tokens")
                     .update({
-                      current_eth_reserve: ethers.formatEther(reserveETH),
-                      current_token_reserve: ethers.formatEther(reserveToken),
+                      current_eth_reserve: ethReserveFormatted,
+                      current_token_reserve: tokenReserveFormatted,
                       total_volume_eth: newVolume,
                     })
                     .eq("token_address", token.token_address);
+
+                  const { data: ethPriceData } = await supabase
+                    .from("eth_price_history")
+                    .select("price_usd")
+                    .order("timestamp", { ascending: false })
+                    .limit(1)
+                    .maybeSingle();
+
+                  const ethPriceUSD = ethPriceData?.price_usd || 3000;
+
+                  await supabase
+                    .from("price_snapshots")
+                    .insert({
+                      token_address: token.token_address,
+                      price_eth: priceEth.toString(),
+                      eth_reserve: ethReserveFormatted,
+                      token_reserve: tokenReserveFormatted,
+                      eth_price_usd: ethPriceUSD,
+                      is_interpolated: false,
+                      block_number: block.number,
+                      created_at: new Date(block.timestamp * 1000).toISOString(),
+                    });
 
                   if (parseFloat(ethers.formatEther(args.tokenOut)) > 0) {
                     await supabase.rpc('refresh_token_holder_count', {
