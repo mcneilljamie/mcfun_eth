@@ -239,9 +239,9 @@ export default function Portfolio() {
 
             const priceUsd = priceEth * ethPrice;
 
-            // Sum up all lock amounts (stored as numeric strings in database)
+            // Sum up all lock amounts (stored in wei in database, need to convert to ether)
             const formattedAmount = locks.reduce((sum: number, lock: any) =>
-              sum + parseFloat(lock.amount_locked), 0
+              sum + parseFloat(ethers.formatEther(lock.amount_locked)), 0
             );
             const valueUsd = formattedAmount * priceUsd;
 

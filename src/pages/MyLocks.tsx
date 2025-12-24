@@ -102,7 +102,8 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
 
       const enriched: TokenLock[] = dbLocks.map(lock => {
         const price = tokenPrices.get(lock.token_address.toLowerCase());
-        const amountFormatted = parseFloat(lock.amount_locked);
+        // amount_locked is stored in wei, need to convert to ether
+        const amountFormatted = parseFloat(ethers.formatEther(lock.amount_locked));
 
         const valueEth = price ? amountFormatted * price.priceEth : undefined;
         const valueUsd = price ? amountFormatted * price.priceUsd : undefined;
@@ -186,7 +187,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
       setWithdrawSuccess({
         txHash: receipt.hash,
         tokenSymbol: lock.token_symbol || 'TOKEN',
-        amount: parseFloat(lock.amount_locked).toFixed(4),
+        amount: parseFloat(ethers.formatEther(lock.amount_locked)).toFixed(4),
       });
 
       // Reload locks from database (will be updated by indexer)
