@@ -403,6 +403,11 @@ export function Lock({ onShowToast }: LockPageProps) {
 
   const filteredLocks = allLocks
     .filter((lock) => {
+      // Filter out withdrawn locks
+      if (lock.is_withdrawn) {
+        return false;
+      }
+
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
         return (
@@ -416,16 +421,14 @@ export function Lock({ onShowToast }: LockPageProps) {
       return true;
     })
     .sort((a, b) => {
-      // First, sort by withdrawal status - non-withdrawn first
-      if (a.is_withdrawn !== b.is_withdrawn) {
-        return a.is_withdrawn ? 1 : -1;
-      }
-      // Then sort by unlock timestamp
+      // Sort by unlock timestamp (all locks are non-withdrawn due to filter above)
       return new Date(a.unlock_timestamp).getTime() - new Date(b.unlock_timestamp).getTime();
     });
 
   const userLocks = account
-    ? filteredLocks.filter((lock) => lock.user_address.toLowerCase() === account.toLowerCase())
+    ? filteredLocks.filter((lock) =>
+        lock.user_address.toLowerCase() === account.toLowerCase()
+      )
     : [];
 
   const topLockedTokens = aggregatedLocks
