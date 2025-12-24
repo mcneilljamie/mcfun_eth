@@ -29,7 +29,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
   const [liveReserves, setLiveReserves] = useState<{ reserveETH: string; reserveToken: string } | null>(null);
   const [snapshotCount, setSnapshotCount] = useState<number>(0);
-  const { priceChangeSinceLaunch } = useChartData(tokenAddress || '', 'ALL');
+  const { priceChangeSinceLaunch, currentPrice: chartPrice } = useChartData(tokenAddress || '', 'ALL');
   const [priceChange24h, setPriceChange24h] = useState<number | null>(null);
   const [activeLockCount, setActiveLockCount] = useState<number>(0);
 
@@ -216,6 +216,9 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
   };
 
   const calculateTokenPriceUSD = (): number => {
+    // Use chart price from database for consistency with chart display
+    if (chartPrice > 0) return chartPrice;
+
     if (!token) return 0;
 
     const ethReserve = liveReserves
@@ -443,7 +446,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 flex items-start space-x-3">
             <Info className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
             <p className="text-sm text-blue-800">
-              Chart appears after the first trade. Price snapshots are collected automatically every 15-30 seconds.
+              Chart appears after the first trade. Price snapshots are collected automatically every minute.
             </p>
           </div>
         )}
@@ -452,7 +455,6 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
           tokenAddress={token.token_address}
           tokenSymbol={token.symbol}
           theme="light"
-          livePrice={calculateTokenPriceUSD()}
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
