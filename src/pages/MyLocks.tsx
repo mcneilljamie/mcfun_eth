@@ -118,7 +118,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
       setWithdrawing(lock.id);
       const lockerContract = new ethers.Contract(lockerAddress, TOKEN_LOCKER_ABI, signer);
 
-      const tx = await lockerContract.withdraw(lock.lock_id);
+      const tx = await lockerContract.unlockTokens(lock.lock_id);
       onShowToast({
         message: t('myLocks.toasts.withdrawSubmitted'),
         type: 'info'
