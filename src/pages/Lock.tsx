@@ -319,32 +319,11 @@ export function Lock({ onShowToast }: LockPageProps) {
         setDuration('');
         setTokenInfo(null);
 
-        const triggerIndexer = async () => {
-          try {
-            const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-            const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-            await fetch(`${supabaseUrl}/functions/v1/lock-event-indexer`, {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${supabaseKey}`,
-                'Content-Type': 'application/json',
-              },
-            });
-
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            loadLocks();
-            loadAggregatedLocks();
-          } catch (err) {
-            console.error('Failed to trigger indexer:', err);
-            setTimeout(() => {
-              loadLocks();
-              loadAggregatedLocks();
-            }, 3000);
-          }
-        };
-
-        triggerIndexer();
+        // Reload lock data with a slight delay to allow blockchain to process
+        setTimeout(() => {
+          loadLocks();
+          loadAggregatedLocks();
+        }, 2000);
       }
     } catch (err: any) {
       console.error('Lock failed:', err);
@@ -383,32 +362,11 @@ export function Lock({ onShowToast }: LockPageProps) {
         amount: parseFloat(formattedAmount).toFixed(4),
       });
 
-      const triggerIndexer = async () => {
-        try {
-          const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-          const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-          await fetch(`${supabaseUrl}/functions/v1/lock-event-indexer`, {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${supabaseKey}`,
-              'Content-Type': 'application/json',
-            },
-          });
-
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          loadLocks();
-          loadAggregatedLocks();
-        } catch (err) {
-          console.error('Failed to trigger indexer:', err);
-          setTimeout(() => {
-            loadLocks();
-            loadAggregatedLocks();
-          }, 3000);
-        }
-      };
-
-      triggerIndexer();
+      // Reload lock data with a slight delay to allow blockchain to process
+      setTimeout(() => {
+        loadLocks();
+        loadAggregatedLocks();
+      }, 2000);
     } catch (err: any) {
       console.error('Unlock failed:', err);
       let errorMessage = t('lock.errors.unlockFailed');

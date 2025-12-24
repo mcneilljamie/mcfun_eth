@@ -96,28 +96,16 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     setIsLoading(true);
 
     try {
-      // Index recent swaps in the background (non-blocking)
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-      fetch(`${supabaseUrl}/functions/v1/event-indexer`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${supabaseAnonKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          indexTokenLaunches: false,
-          indexSwaps: true
-        }),
-      }).catch(err => console.error('Failed to index swaps:', err));
-
       const { data, error } = await supabase
         .from('tokens')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Database error loading tokens:', error);
+        setIsLoading(false);
+        return;
+      }
 
       if (data) {
         setTokens(data);
@@ -134,28 +122,17 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     if (!provider || tokens.length === 0) return;
 
     try {
-      const reservesPromises = tokens.map(async (token) => {
-        try {
-          const reserves = await getAMMReserves(provider, token.amm_address);
-          return {
-            tokenAddress: token.token_address,
-            reserves: {
-              reserveETH: reserves.reserveETH,
-              reserveToken: reserves.reserveToken,
-            },
-          };
-        } catch (err) {
-          console.error(`Failed to load reserves for ${token.symbol}:`, err);
-          return null;
-        }
-      });
+      // Use multicall to batch all reserve requests into a single RPC call
+      const { getMultipleReserves } = await import('../lib/multicall');
+      const ammAddresses = tokens.map(t => t.amm_address);
+      const reservesMap = await getMultipleReserves(provider, ammAddresses);
 
-      const results = await Promise.all(reservesPromises);
       const newReserves: Record<string, { reserveETH: string; reserveToken: string }> = {};
 
-      results.forEach((result) => {
-        if (result) {
-          newReserves[result.tokenAddress] = result.reserves;
+      tokens.forEach((token) => {
+        const reserves = reservesMap.get(token.amm_address);
+        if (reserves) {
+          newReserves[token.token_address] = reserves;
         }
       });
 
@@ -174,7 +151,10 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
         .select('token_address, total_volume_eth')
         .in('token_address', tokens.map(t => t.token_address));
 
-      if (error) throw error;
+      if (error) {
+        console.error('Database error loading volumes:', error);
+        return;
+      }
 
       const newVolumes: Record<string, string> = {};
       data?.forEach(token => {
@@ -196,7 +176,10 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
           p_token_addresses: tokens.map(t => t.token_address)
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Database error loading price changes:', error);
+        return;
+      }
 
       const newChanges: Record<string, { change: number; isNew: boolean }> = {};
       data?.forEach((item: any) => {

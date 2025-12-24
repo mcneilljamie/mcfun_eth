@@ -123,52 +123,10 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
         ethAmount,
       });
 
-      const { supabase } = await import('../lib/supabase');
-      const { getEthPriceUSD } = await import('../lib/ethPrice');
-
-      const tokenReserve = ((TOTAL_SUPPLY * liquidityPercent) / 100).toString();
-      const ethReserve = ethAmount;
-
       const normalizedTokenAddress = result.tokenAddress.toLowerCase();
       const normalizedAmmAddress = result.ammAddress.toLowerCase();
 
-      await supabase
-        .from('tokens')
-        .upsert({
-          token_address: normalizedTokenAddress,
-          amm_address: normalizedAmmAddress,
-          name: name.trim(),
-          symbol: symbol.trim().toUpperCase(),
-          creator_address: account.toLowerCase(),
-          liquidity_percent: liquidityPercent,
-          initial_liquidity_eth: ethAmount,
-          current_eth_reserve: ethReserve,
-          current_token_reserve: tokenReserve,
-          total_volume_eth: '0',
-          website: website.trim() || null,
-          telegram_url: telegramUrl.trim() || null,
-          discord_url: discordUrl.trim() || null,
-          x_url: xUrl.trim() || null,
-          created_at: new Date().toISOString(),
-          block_number: result.blockNumber,
-          block_hash: result.blockHash,
-        }, {
-          onConflict: 'token_address',
-        });
-
-      const priceEth = parseFloat(ethReserve) / parseFloat(tokenReserve);
-      const ethPriceUsd = await getEthPriceUSD();
-
-      await supabase
-        .from('price_snapshots')
-        .insert({
-          token_address: normalizedTokenAddress,
-          price_eth: priceEth.toString(),
-          eth_reserve: ethReserve,
-          token_reserve: tokenReserve,
-          eth_price_usd: ethPriceUsd.toString(),
-        });
-
+      // Show success immediately after blockchain confirmation
       setSuccess({
         tokenAddress: normalizedTokenAddress,
         ammAddress: normalizedAmmAddress,
@@ -176,6 +134,7 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
         tokenName: name.trim(),
         tokenSymbol: symbol.trim().toUpperCase(),
       });
+
       setName('');
       setSymbol('');
       setWebsite('');
@@ -184,6 +143,84 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
       setXUrl('');
       setLiquidityPercent(RECOMMENDED_LIQUIDITY_PERCENT);
       setEthAmount(MIN_LIQUIDITY_ETH);
+
+      // Handle database writes in background (non-blocking, with retry logic)
+      (async () => {
+        try {
+          const { supabase } = await import('../lib/supabase');
+          const { getEthPriceUSD } = await import('../lib/ethPrice');
+
+          const tokenReserve = ((TOTAL_SUPPLY * liquidityPercent) / 100).toString();
+          const ethReserve = ethAmount;
+
+          // Try to write token data with exponential backoff
+          let retries = 0;
+          const maxRetries = 3;
+          while (retries < maxRetries) {
+            try {
+              await supabase
+                .from('tokens')
+                .upsert({
+                  token_address: normalizedTokenAddress,
+                  amm_address: normalizedAmmAddress,
+                  name: name.trim(),
+                  symbol: symbol.trim().toUpperCase(),
+                  creator_address: account.toLowerCase(),
+                  liquidity_percent: liquidityPercent,
+                  initial_liquidity_eth: ethAmount,
+                  current_eth_reserve: ethReserve,
+                  current_token_reserve: tokenReserve,
+                  total_volume_eth: '0',
+                  website: website.trim() || null,
+                  telegram_url: telegramUrl.trim() || null,
+                  discord_url: discordUrl.trim() || null,
+                  x_url: xUrl.trim() || null,
+                  created_at: new Date().toISOString(),
+                  block_number: result.blockNumber,
+                  block_hash: result.blockHash,
+                }, {
+                  onConflict: 'token_address',
+                });
+              break;
+            } catch (dbError) {
+              retries++;
+              if (retries >= maxRetries) {
+                console.error('Failed to write token data after retries:', dbError);
+                // Store in localStorage for later retry
+                const failedWrites = JSON.parse(localStorage.getItem('failedTokenWrites') || '[]');
+                failedWrites.push({
+                  tokenAddress: normalizedTokenAddress,
+                  timestamp: Date.now(),
+                  data: { normalizedTokenAddress, normalizedAmmAddress, name: name.trim(), symbol: symbol.trim().toUpperCase() }
+                });
+                localStorage.setItem('failedTokenWrites', JSON.stringify(failedWrites));
+              } else {
+                await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, retries)));
+              }
+            }
+          }
+
+          // Try to write price snapshot
+          try {
+            const priceEth = parseFloat(ethReserve) / parseFloat(tokenReserve);
+            const ethPriceUsd = await getEthPriceUSD();
+
+            await supabase
+              .from('price_snapshots')
+              .insert({
+                token_address: normalizedTokenAddress,
+                price_eth: priceEth.toString(),
+                eth_reserve: ethReserve,
+                token_reserve: tokenReserve,
+                eth_price_usd: ethPriceUsd.toString(),
+              });
+          } catch (snapshotError) {
+            console.error('Failed to create price snapshot:', snapshotError);
+          }
+        } catch (bgError) {
+          console.error('Background database write failed:', bgError);
+        }
+      })();
     } catch (err: any) {
       console.error('Failed to launch token:', err);
 

@@ -24,38 +24,14 @@ export function About() {
 
   const loadData = async () => {
     try {
-      // Sync data from blockchain (non-blocking)
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-      // Sync reserves
-      fetch(`${supabaseUrl}/functions/v1/sync-reserves`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${supabaseAnonKey}`,
-          'Content-Type': 'application/json',
-        },
-      }).catch(err => console.error('Failed to sync reserves:', err));
-
-      // Index recent swaps
-      fetch(`${supabaseUrl}/functions/v1/event-indexer`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${supabaseAnonKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          indexTokenLaunches: false,
-          indexSwaps: true
-        }),
-      }).catch(err => console.error('Failed to index swaps:', err));
-
       // Load total liquidity
       const { data: tokensData, error: tokensError } = await supabase
         .from('tokens')
         .select('current_eth_reserve, initial_liquidity_eth');
 
-      if (!tokensError && tokensData) {
+      if (tokensError) {
+        console.error('Database error loading liquidity:', tokensError);
+      } else if (tokensData) {
         const total = tokensData.reduce((sum, token) => {
           const reserve = parseFloat(token.current_eth_reserve || token.initial_liquidity_eth || '0');
           return sum + reserve;
@@ -63,21 +39,27 @@ export function About() {
         setTotalLiquidity(total.toString());
       }
 
-      // Load platform stats (wait a bit for sync to complete)
+      // Load platform stats
       setTimeout(async () => {
-        const { data: statsData, error: statsError } = await supabase
-          .from('platform_stats')
-          .select('total_market_cap_usd, total_volume_eth, token_count')
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .maybeSingle();
+        try {
+          const { data: statsData, error: statsError } = await supabase
+            .from('platform_stats')
+            .select('total_market_cap_usd, total_volume_eth, token_count')
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
 
-        if (!statsError && statsData) {
-          setPlatformStats({
-            totalMarketCapUsd: parseFloat(statsData.total_market_cap_usd || '0'),
-            totalVolumeEth: parseFloat(statsData.total_volume_eth || '0'),
-            tokenCount: statsData.token_count || 0,
-          });
+          if (statsError) {
+            console.error('Database error loading platform stats:', statsError);
+          } else if (statsData) {
+            setPlatformStats({
+              totalMarketCapUsd: parseFloat(statsData.total_market_cap_usd || '0'),
+              totalVolumeEth: parseFloat(statsData.total_volume_eth || '0'),
+              tokenCount: statsData.token_count || 0,
+            });
+          }
+        } catch (err) {
+          console.error('Failed to load platform stats:', err);
         }
       }, 1000);
     } catch (err) {

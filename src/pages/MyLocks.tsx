@@ -223,17 +223,6 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
 
       // Reload on-chain locks immediately after transaction confirms
       await reload();
-
-      // Trigger indexer in background (non-blocking)
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-      fetch(`${supabaseUrl}/functions/v1/lock-event-indexer`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${supabaseKey}`,
-          'Content-Type': 'application/json',
-        },
-      }).catch(err => console.warn('Failed to trigger indexer:', err));
     } catch (error: any) {
       console.error('Withdrawal error:', error);
       let errorMessage = t('myLocks.errors.withdrawFailed');

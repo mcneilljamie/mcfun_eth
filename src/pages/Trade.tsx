@@ -8,7 +8,7 @@ import { formatNumber, formatCurrency, calculatePriceImpact, limitDecimalPrecisi
 import { Token } from '../lib/supabase';
 import { TokenSelector } from '../components/TokenSelector';
 import { SwapConfirmation } from '../components/SwapConfirmation';
-import { Contract, formatEther } from 'ethers';
+import { Contract, formatEther, ethers } from 'ethers';
 import { ToastMessage } from '../App';
 
 interface TradeProps {
@@ -105,11 +105,14 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
       if (selectedTokenData) {
         const tokenContract = new Contract(
           selectedTokenData.token_address,
-          ['function balanceOf(address) view returns (uint256)'],
+          ['function balanceOf(address) view returns (uint256)', 'function decimals() view returns (uint8)'],
           provider
         );
-        const tokenBal = await tokenContract.balanceOf(account);
-        setTokenBalance(formatEther(tokenBal));
+        const [tokenBal, decimals] = await Promise.all([
+          tokenContract.balanceOf(account),
+          tokenContract.decimals()
+        ]);
+        setTokenBalance(ethers.formatUnits(tokenBal, decimals));
       } else {
         setTokenBalance('0');
       }
@@ -259,32 +262,6 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
 
       loadReserves();
       loadBalances();
-
-      // Update data in the background (non-blocking)
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-      // Index the swap event
-      fetch(`${supabaseUrl}/functions/v1/event-indexer`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${supabaseAnonKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          indexTokenLaunches: false,
-          indexSwaps: true
-        }),
-      }).catch(err => console.error('Failed to index swap:', err));
-
-      // Create a price snapshot immediately
-      fetch(`${supabaseUrl}/functions/v1/price-snapshot`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${supabaseAnonKey}`,
-          'Content-Type': 'application/json',
-        },
-      }).catch(err => console.error('Failed to create snapshot:', err));
     } catch (err: any) {
       console.error('Failed to swap:', err);
       setError(parseSwapError(err));
