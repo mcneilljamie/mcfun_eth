@@ -501,7 +501,8 @@
       "insufficientBalance": "Insufficient token balance",
       "approvalFailed": "Token approval failed",
       "lockFailed": "Failed to lock tokens",
-      "unlockFailed": "برداشت توکن‌ها ناموفق بود"
+      "unlockFailed": "برداشت توکن‌ها ناموفق بود",
+      "transactionRejected": "Transaction was rejected"
     }
   },
   "withdrawSuccess": {

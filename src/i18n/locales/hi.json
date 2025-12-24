@@ -501,7 +501,8 @@
       "insufficientBalance": "Insufficient token balance",
       "approvalFailed": "Token approval failed",
       "lockFailed": "Failed to lock tokens",
-      "unlockFailed": "टोकन निकालने में विफल"
+      "unlockFailed": "टोकन निकालने में विफल",
+      "transactionRejected": "Transaction was rejected"
     }
   },
   "withdrawSuccess": {

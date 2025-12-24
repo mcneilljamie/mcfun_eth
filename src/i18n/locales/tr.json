@@ -501,7 +501,8 @@
       "insufficientBalance": "Yetersiz token bakiyesi",
       "approvalFailed": "Token onayı başarısız",
       "lockFailed": "Tokenler kilitlenemedi",
-      "unlockFailed": "Token çekme başarısız"
+      "unlockFailed": "Token çekme başarısız",
+      "transactionRejected": "Transaction was rejected"
     }
   },
   "withdrawSuccess": {

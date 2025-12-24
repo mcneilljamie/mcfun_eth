@@ -501,7 +501,8 @@
       "insufficientBalance": "トークン残高不足",
       "approvalFailed": "トークンの承認に失敗しました",
       "lockFailed": "トークンのロックに失敗しました",
-      "unlockFailed": "トークンの引き出しに失敗しました"
+      "unlockFailed": "トークンの引き出しに失敗しました",
+      "transactionRejected": "Transaction was rejected"
     }
   },
   "withdrawSuccess": {

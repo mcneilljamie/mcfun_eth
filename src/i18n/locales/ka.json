@@ -501,7 +501,8 @@
       "insufficientBalance": "არასაკმარისი ტოკენის ბალანსი",
       "approvalFailed": "ტოკენის დამტკიცება ვერ მოხერხდა",
       "lockFailed": "ტოკენების დაბლოკვა ვერ მოხერხდა",
-      "unlockFailed": "ტოკენების გატანა ვერ მოხერხდა"
+      "unlockFailed": "ტოკენების გატანა ვერ მოხერხდა",
+      "transactionRejected": "Transaction was rejected"
     }
   },
   "withdrawSuccess": {

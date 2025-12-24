@@ -508,7 +508,8 @@
       "insufficientBalance": "Insufficient token balance",
       "approvalFailed": "Token approval failed",
       "lockFailed": "Failed to lock tokens",
-      "unlockFailed": "Failed to withdraw tokens"
+      "unlockFailed": "Failed to withdraw tokens",
+      "transactionRejected": "Transaction was rejected"
     }
   },
   "lockCelebration": {

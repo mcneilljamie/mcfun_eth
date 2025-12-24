@@ -501,7 +501,8 @@
       "insufficientBalance": "代币余额不足",
       "approvalFailed": "代币批准失败",
       "lockFailed": "锁定代币失败",
-      "unlockFailed": "提取代币失败"
+      "unlockFailed": "提取代币失败",
+      "transactionRejected": "Transaction was rejected"
     }
   },
   "withdrawSuccess": {

@@ -501,7 +501,8 @@
       "insufficientBalance": "Số dư token không đủ",
       "approvalFailed": "Phê duyệt token thất bại",
       "lockFailed": "Không thể khóa token",
-      "unlockFailed": "Không thể rút token"
+      "unlockFailed": "Không thể rút token",
+      "transactionRejected": "Transaction was rejected"
     }
   },
   "withdrawSuccess": {

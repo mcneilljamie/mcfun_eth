@@ -501,7 +501,8 @@
       "insufficientBalance": "토큰 잔액 부족",
       "approvalFailed": "토큰 승인 실패",
       "lockFailed": "토큰 잠금 실패",
-      "unlockFailed": "토큰 인출 실패"
+      "unlockFailed": "토큰 인출 실패",
+      "transactionRejected": "Transaction was rejected"
     }
   },
   "withdrawSuccess": {

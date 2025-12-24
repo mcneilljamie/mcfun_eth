@@ -501,7 +501,8 @@
       "insufficientBalance": "Saldo de token insuficiente",
       "approvalFailed": "Aprovação do token falhou",
       "lockFailed": "Falha ao bloquear tokens",
-      "unlockFailed": "Falha ao retirar tokens"
+      "unlockFailed": "Falha ao retirar tokens",
+      "transactionRejected": "Transaction was rejected"
     }
   },
   "withdrawSuccess": {

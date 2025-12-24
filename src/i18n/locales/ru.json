@@ -501,7 +501,8 @@
       "insufficientBalance": "Недостаточный баланс токенов",
       "approvalFailed": "Не удалось одобрить токен",
       "lockFailed": "Не удалось заблокировать токены",
-      "unlockFailed": "Не удалось вывести токены"
+      "unlockFailed": "Не удалось вывести токены",
+      "transactionRejected": "Transaction was rejected"
     }
   },
   "withdrawSuccess": {

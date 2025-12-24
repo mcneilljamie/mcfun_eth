@@ -411,8 +411,31 @@ export function Lock({ onShowToast }: LockPageProps) {
       triggerIndexer();
     } catch (err: any) {
       console.error('Unlock failed:', err);
+      let errorMessage = t('lock.errors.unlockFailed');
+
+      const isUserRejection =
+        err.code === 'ACTION_REJECTED' ||
+        err.code === 4001 ||
+        err.code === -32603 ||
+        (err.message && (
+          err.message.includes('user rejected') ||
+          err.message.includes('User denied') ||
+          err.message.includes('rejected') ||
+          err.message.includes('denied')
+        )) ||
+        (err.reason && (
+          err.reason.includes('user rejected') ||
+          err.reason.includes('rejected')
+        ));
+
+      if (isUserRejection) {
+        errorMessage = t('lock.errors.transactionRejected');
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
       onShowToast({
-        message: err.message || t('lock.errors.unlockFailed'),
+        message: errorMessage,
         type: 'error',
       });
     } finally {
