@@ -177,122 +177,107 @@ export default function Portfolio() {
       tokenBalances.sort((a, b) => b.valueUsd - a.valueUsd);
       setTokens(tokenBalances);
 
-      // Load locked tokens from on-chain as source of truth
-      const { useOnChainLocks } = await import('../hooks/useOnChainLocks');
-      const { getLockerAddress } = await import('../contracts/addresses');
-      const lockerAddress = getLockerAddress(await provider.getNetwork().then(n => Number(n.chainId)));
-
+      // Load locked tokens from database instead of scanning on-chain
       let lockedValue = 0;
-      let onChainLockedTokens: any[] = [];
+      let dbLockedTokens: any[] = [];
 
-      if (lockerAddress) {
-        try {
-          // Import and use the hook's logic directly
-          const { TOKEN_LOCKER_ABI, ERC20_ABI } = await import('../contracts/abis');
-          const lockerContract = new ethers.Contract(lockerAddress, TOKEN_LOCKER_ABI, provider);
+      try {
+        // Query user's locks from database
+        const { data: userLocks, error: locksError } = await supabase
+          .from('token_locks')
+          .select('*')
+          .eq('owner_address', account.toLowerCase())
+          .eq('withdrawn', false);
 
-          // Get next lock ID to know how many locks exist
-          const nextLockId = await lockerContract.nextLockId();
-          const totalLocks = Number(nextLockId);
-
-          // Query user's locks
-          const userLockPromises = [];
-          for (let lockId = 0; lockId < totalLocks; lockId++) {
-            userLockPromises.push(
-              lockerContract.getLock(lockId).then((lockData: any) => ({
-                lockId,
-                owner: lockData[0],
-                tokenAddress: lockData[1],
-                amount: lockData[2],
-                unlockTime: Number(lockData[3]),
-                withdrawn: lockData[4],
-              })).catch(() => null)
-            );
-          }
-
-          const allLocks = (await Promise.all(userLockPromises)).filter(Boolean);
-          const userLocks = allLocks.filter(lock =>
-            lock.owner.toLowerCase() === account.toLowerCase() && !lock.withdrawn
-          );
-
-          // Group by token and calculate values
-          const tokenGroups = new Map();
-          for (const lock of userLocks) {
-            const addr = lock.tokenAddress.toLowerCase();
-            if (!tokenGroups.has(addr)) {
-              tokenGroups.set(addr, []);
-            }
-            tokenGroups.get(addr).push(lock);
-          }
-
-          // Get token info and prices for locked tokens
-          for (const [tokenAddr, locks] of tokenGroups) {
-            try {
-              const tokenContract = new ethers.Contract(tokenAddr, ERC20_ABI, provider);
-              const [symbol, name, decimals] = await Promise.all([
-                tokenContract.symbol(),
-                tokenContract.name(),
-                tokenContract.decimals(),
-              ]);
-
-              // Try to get price from database
-              const { data: tokenData } = await supabase
-                .from('tokens')
-                .select('amm_address, current_eth_reserve, current_token_reserve')
-                .eq('token_address', tokenAddr)
-                .maybeSingle();
-
-              let priceEth = 0;
-              if (tokenData?.amm_address) {
-                try {
-                  const reserves = await import('../lib/contracts').then(m =>
-                    m.getAMMReserves(provider, tokenData.amm_address)
-                  );
-                  priceEth = parseFloat(reserves.reserveETH) / parseFloat(reserves.reserveToken);
-                } catch (err) {
-                  console.error(`Failed to get reserves for ${tokenAddr}:`, err);
-                }
-              }
-
-              const priceUsd = priceEth * ethPrice;
-              const totalAmount = locks.reduce((sum: bigint, lock: any) =>
-                sum + lock.amount, 0n
-              );
-              const formattedAmount = parseFloat(ethers.formatUnits(totalAmount, decimals));
-              const valueUsd = formattedAmount * priceUsd;
-
-              onChainLockedTokens.push({
-                id: tokenAddr,
-                lock_id: locks[0].lockId,
-                token_address: tokenAddr,
-                token_symbol: symbol,
-                token_name: name,
-                token_decimals: decimals,
-                amount_locked_formatted: formattedAmount,
-                lock_count: locks.length,
-                unlock_timestamp: new Date(Math.min(...locks.map((l: any) => l.unlockTime)) * 1000).toISOString(),
-                is_unlockable: Math.min(...locks.map((l: any) => l.unlockTime)) <= Math.floor(Date.now() / 1000),
-                current_price_usd: priceUsd,
-                value_usd: valueUsd,
-              });
-
-              lockedValue += valueUsd;
-            } catch (err) {
-              console.error(`Failed to load lock info for ${tokenAddr}:`, err);
-            }
-          }
-
-          setLockedTokens(onChainLockedTokens);
-        } catch (err) {
-          console.error('Failed to load on-chain locks:', err);
+        if (locksError) {
+          throw locksError;
         }
+
+        if (!userLocks || userLocks.length === 0) {
+          setLockedTokens([]);
+        } else {
+
+        // Group by token and calculate values
+        const tokenGroups = new Map();
+        for (const lock of userLocks) {
+          const addr = lock.token_address.toLowerCase();
+          if (!tokenGroups.has(addr)) {
+            tokenGroups.set(addr, []);
+          }
+          tokenGroups.get(addr).push(lock);
+        }
+
+        // Get token metadata and prices from database
+        const uniqueTokens = Array.from(tokenGroups.keys());
+        const { data: tokensData } = await supabase
+          .from('tokens')
+          .select('token_address, symbol, name, amm_address')
+          .in('token_address', uniqueTokens);
+
+        const tokenMetadata = new Map(
+          tokensData?.map(t => [t.token_address.toLowerCase(), t]) || []
+        );
+
+        // Get prices for locked tokens
+        for (const [tokenAddr, locks] of tokenGroups) {
+          try {
+            const metadata = tokenMetadata.get(tokenAddr);
+            if (!metadata) continue;
+
+            // Get price from AMM reserves
+            let priceEth = 0;
+            if (metadata.amm_address) {
+              try {
+                const reserves = await import('../lib/contracts').then(m =>
+                  m.getAMMReserves(provider, metadata.amm_address)
+                );
+                priceEth = parseFloat(reserves.reserveETH) / parseFloat(reserves.reserveToken);
+              } catch (err) {
+                console.error(`Failed to get reserves for ${tokenAddr}:`, err);
+              }
+            }
+
+            const priceUsd = priceEth * ethPrice;
+
+            // Sum up all lock amounts (stored as strings in database)
+            const totalAmount = locks.reduce((sum: bigint, lock: any) =>
+              sum + ethers.parseEther(lock.amount), 0n
+            );
+            const formattedAmount = parseFloat(ethers.formatEther(totalAmount));
+            const valueUsd = formattedAmount * priceUsd;
+
+            dbLockedTokens.push({
+              id: tokenAddr,
+              lock_id: locks[0].lock_id,
+              token_address: tokenAddr,
+              token_symbol: metadata.symbol,
+              token_name: metadata.name,
+              token_decimals: 18,
+              amount_locked_formatted: formattedAmount,
+              lock_count: locks.length,
+              unlock_timestamp: new Date(Math.min(...locks.map((l: any) => l.unlock_time)) * 1000).toISOString(),
+              is_unlockable: Math.min(...locks.map((l: any) => l.unlock_time)) <= Math.floor(Date.now() / 1000),
+              current_price_usd: priceUsd,
+              value_usd: valueUsd,
+            });
+
+            lockedValue += valueUsd;
+          } catch (err) {
+            console.error(`Failed to load lock info for ${tokenAddr}:`, err);
+          }
+        }
+
+        setLockedTokens(dbLockedTokens);
+        }
+      } catch (err) {
+        console.error('Failed to load database locks:', err);
       }
 
       console.log('Total locked value:', lockedValue);
       setTotalLockedValueUsd(lockedValue);
 
-      // Aggregate the on-chain locked tokens for display
-      const aggregatedArray = onChainLockedTokens.map(lock => ({
+      // Aggregate the database locked tokens for display
+      const aggregatedArray = dbLockedTokens.map(lock => ({
         token_address: lock.token_address,
         token_symbol: lock.token_symbol,
         token_name: lock.token_name,

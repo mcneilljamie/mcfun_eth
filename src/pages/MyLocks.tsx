@@ -9,14 +9,10 @@ import { WithdrawSuccess } from '../components/WithdrawSuccess';
 import { ToastMessage } from '../App';
 import { getExplorerUrl, getLockerAddress } from '../contracts/addresses';
 import { TOKEN_LOCKER_ABI } from '../contracts/abis';
-import { useOnChainLocks, OnChainLock } from '../hooks/useOnChainLocks';
-import { useLiveReserves } from '../hooks/useLiveReserves';
+import { useDbLocks, DbLock } from '../hooks/useDbLocks';
 import { getEthPriceUSD } from '../lib/ethPrice';
 
-interface TokenLock extends OnChainLock {
-  lock_timestamp?: string;
-  tx_hash?: string;
-  withdraw_tx_hash?: string;
+interface TokenLock extends DbLock {
   value_eth?: number;
   value_usd?: number;
   current_price_eth?: number;
@@ -43,8 +39,8 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
   const [enrichedLocks, setEnrichedLocks] = useState<TokenLock[]>([]);
   const [tokenPrices, setTokenPrices] = useState<Map<string, { priceEth: number; priceUsd: number }>>(new Map());
 
-  // Use on-chain hook as source of truth
-  const { locks: onChainLocks, loading, error, reload } = useOnChainLocks(provider, chainId, account);
+  // Use database as primary data source
+  const { locks: dbLocks, loading, error, reload } = useDbLocks(account);
 
   // Load ETH price
   useEffect(() => {
@@ -59,10 +55,10 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
 
   // Load token prices for each unique token
   useEffect(() => {
-    if (!provider || onChainLocks.length === 0) return;
+    if (!provider || dbLocks.length === 0) return;
 
     const loadPrices = async () => {
-      const uniqueTokens = new Set(onChainLocks.map(lock => lock.tokenAddress.toLowerCase()));
+      const uniqueTokens = new Set(dbLocks.map(lock => lock.token_address.toLowerCase()));
       const prices = new Map<string, { priceEth: number; priceUsd: number }>();
 
       // Get token info from database to find AMM addresses
@@ -72,8 +68,6 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
         .in('token_address', Array.from(uniqueTokens));
 
       if (tokensData) {
-        const { useLiveReserves } = await import('../hooks/useLiveReserves');
-
         for (const tokenData of tokensData) {
           try {
             const reserves = await import('../lib/contracts').then(m =>
@@ -96,52 +90,29 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
     loadPrices();
     const interval = setInterval(loadPrices, 30000);
     return () => clearInterval(interval);
-  }, [provider, onChainLocks, ethPriceUsd]);
+  }, [provider, dbLocks, ethPriceUsd]);
 
-  // Enrich on-chain locks with metadata from indexer (non-blocking)
+  // Enrich database locks with pricing data
   useEffect(() => {
     const enrichLocks = async () => {
-      if (onChainLocks.length === 0) {
+      if (dbLocks.length === 0) {
         setEnrichedLocks([]);
         return;
       }
 
-      // Try to load metadata from indexer but don't block on it
-      let indexerData: any[] = [];
-      try {
-        const { data } = await supabase
-          .from('token_locks')
-          .select('lock_id, lock_timestamp, tx_hash, withdraw_tx_hash')
-          .in('lock_id', onChainLocks.map(l => l.lockId));
-
-        if (data) {
-          indexerData = data;
-        }
-      } catch (err) {
-        console.warn('Failed to load lock metadata from indexer:', err);
-      }
-
-      const indexerMap = new Map(indexerData.map(d => [d.lock_id, d]));
-
-      const enriched: TokenLock[] = onChainLocks.map(lock => {
-        const metadata = indexerMap.get(lock.lockId);
-        const price = tokenPrices.get(lock.tokenAddress.toLowerCase());
-        const amountFormatted = lock.tokenDecimals
-          ? parseFloat(ethers.formatUnits(lock.amount, lock.tokenDecimals))
-          : parseFloat(ethers.formatEther(lock.amount));
+      const enriched: TokenLock[] = dbLocks.map(lock => {
+        const price = tokenPrices.get(lock.token_address.toLowerCase());
+        const amountFormatted = parseFloat(ethers.formatEther(lock.amount));
 
         const valueEth = price ? amountFormatted * price.priceEth : undefined;
         const valueUsd = price ? amountFormatted * price.priceUsd : undefined;
 
-        // Calculate duration from unlock time
-        const lockTimestamp = metadata?.lock_timestamp ? new Date(metadata.lock_timestamp).getTime() / 1000 : lock.unlockTime - (30 * 24 * 60 * 60); // fallback estimate
-        const durationDays = Math.floor((lock.unlockTime - lockTimestamp) / 86400);
+        // Calculate duration from lock_timestamp to unlock_time
+        const lockTimestamp = new Date(lock.lock_timestamp).getTime() / 1000;
+        const durationDays = Math.floor((lock.unlock_time - lockTimestamp) / 86400);
 
         return {
           ...lock,
-          lock_timestamp: metadata?.lock_timestamp,
-          tx_hash: metadata?.tx_hash,
-          withdraw_tx_hash: metadata?.withdraw_tx_hash,
           value_eth: valueEth,
           value_usd: valueUsd,
           current_price_eth: price?.priceEth,
@@ -155,7 +126,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
     };
 
     enrichLocks();
-  }, [onChainLocks, tokenPrices]);
+  }, [dbLocks, tokenPrices]);
 
   const handleWithdraw = async (lock: TokenLock) => {
     if (!signer || !chainId) {
@@ -176,7 +147,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
     }
 
     const now = Math.floor(Date.now() / 1000);
-    if (now < lock.unlockTime) {
+    if (now < lock.unlock_time) {
       onShowToast({
         message: t('myLocks.errors.lockNotEnded'),
         type: 'error'
@@ -185,11 +156,11 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
     }
 
     try {
-      setWithdrawing(lock.lockId);
+      setWithdrawing(lock.lock_id);
       const lockerContract = new ethers.Contract(lockerAddress, TOKEN_LOCKER_ABI, signer);
 
-      // Check on-chain state before attempting withdrawal
-      const lockInfo = await lockerContract.getLock(lock.lockId);
+      // Verify on-chain state right before withdrawal
+      const lockInfo = await lockerContract.getLock(lock.lock_id);
       const isWithdrawnOnChain = lockInfo[4];
 
       if (isWithdrawnOnChain) {
@@ -198,12 +169,11 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
           type: 'error'
         });
         setWithdrawing(null);
-        // Reload on-chain data to update UI
         await reload();
         return;
       }
 
-      const tx = await lockerContract.unlockTokens(lock.lockId);
+      const tx = await lockerContract.unlockTokens(lock.lock_id);
       onShowToast({
         message: t('myLocks.toasts.withdrawSubmitted'),
         type: 'info'
@@ -211,17 +181,15 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
 
       const receipt = await tx.wait();
 
-      const formattedAmount = lock.tokenDecimals
-        ? ethers.formatUnits(lock.amount, lock.tokenDecimals)
-        : ethers.formatEther(lock.amount);
+      const formattedAmount = ethers.formatEther(lock.amount);
 
       setWithdrawSuccess({
         txHash: receipt.hash,
-        tokenSymbol: lock.tokenSymbol || 'TOKEN',
+        tokenSymbol: lock.token_symbol || 'TOKEN',
         amount: parseFloat(formattedAmount).toFixed(4),
       });
 
-      // Reload on-chain locks immediately after transaction confirms
+      // Reload locks from database (will be updated by indexer)
       await reload();
     } catch (error: any) {
       console.error('Withdrawal error:', error);
@@ -353,7 +321,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
 
   const activeLocks = enrichedLocks
     .filter(lock => !lock.withdrawn)
-    .sort((a, b) => a.unlockTime - b.unlockTime);
+    .sort((a, b) => a.unlock_time - b.unlock_time);
   const withdrawnLocks = enrichedLocks.filter(lock => lock.withdrawn);
 
   const locksWithPricing = activeLocks.filter(lock => lock.value_usd && lock.value_usd > 0);
@@ -399,20 +367,20 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
           <div className="space-y-4">
             {activeLocks.map((lock) => {
               const now = Math.floor(Date.now() / 1000);
-              const unlockDate = new Date(lock.unlockTime * 1000);
-              const lockDate = lock.lock_timestamp ? new Date(lock.lock_timestamp) : new Date((lock.unlockTime - (lock.lock_duration_days || 30) * 86400) * 1000);
-              const isUnlockable = now >= lock.unlockTime;
+              const unlockDate = new Date(lock.unlock_time * 1000);
+              const lockDate = new Date(lock.lock_timestamp);
+              const isUnlockable = now >= lock.unlock_time;
 
               return (
                 <div
-                  key={lock.lockId}
+                  key={lock.lock_id}
                   className="bg-white rounded-xl border-2 border-gray-200 p-6 hover:shadow-lg transition-all"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-3 mb-2 flex-wrap">
-                        <h3 className="text-2xl font-bold text-gray-900 whitespace-nowrap">{lock.tokenSymbol || 'TOKEN'}</h3>
-                        <span className="text-sm text-gray-500 break-words">{lock.tokenName || 'Unknown Token'}</span>
+                        <h3 className="text-2xl font-bold text-gray-900 whitespace-nowrap">{lock.token_symbol || 'TOKEN'}</h3>
+                        <span className="text-sm text-gray-500 break-words">{lock.token_name || 'Unknown Token'}</span>
                         {isUnlockable && (
                           <span className="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
                             {t('myLocks.readyToUnlock')}
@@ -420,7 +388,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
                         )}
                       </div>
                       <button
-                        onClick={() => navigate(`/lock/${lock.tokenAddress}`)}
+                        onClick={() => navigate(`/lock/${lock.token_address}`)}
                         className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
                       >
                         {t('myLocks.viewAllForToken')}
@@ -434,12 +402,12 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
                             {formatCurrency(lock.value_usd)}
                           </div>
                           <div className="text-sm text-gray-500">
-                            {lock.amount_locked_formatted ? formatAmount(lock.amount_locked_formatted) : '...'} {lock.tokenSymbol || ''}
+                            {lock.amount_locked_formatted ? formatAmount(lock.amount_locked_formatted) : '...'} {lock.token_symbol || ''}
                           </div>
                         </>
                       ) : (
                         <div className="text-3xl font-bold text-gray-900">
-                          {lock.amount_locked_formatted ? formatAmount(lock.amount_locked_formatted) : '...'} {lock.tokenSymbol || 'TOKEN'}
+                          {lock.amount_locked_formatted ? formatAmount(lock.amount_locked_formatted) : '...'} {lock.token_symbol || 'TOKEN'}
                         </div>
                       )}
                     </div>
@@ -468,7 +436,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
                       </div>
                       {!isUnlockable && (
                         <div className="text-xs text-gray-500 mt-1">
-                          {formatTimeRemaining(lock.unlockTime)}
+                          {formatTimeRemaining(lock.unlock_time)}
                         </div>
                       )}
                     </div>
@@ -494,10 +462,10 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
                     {isUnlockable && (
                       <button
                         onClick={() => handleWithdraw(lock)}
-                        disabled={withdrawing === lock.lockId}
+                        disabled={withdrawing === lock.lock_id}
                         className="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                       >
-                        {withdrawing === lock.lockId ? (
+                        {withdrawing === lock.lock_id ? (
                           <>
                             <Loader2 className="w-4 h-4 animate-spin" />
                             {t('myLocks.withdrawing')}
@@ -522,13 +490,13 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
               <div className="space-y-3">
                 {withdrawnLocks.map((lock) => (
                   <div
-                    key={lock.lockId}
+                    key={lock.lock_id}
                     className="bg-gray-50 rounded-lg border border-gray-200 p-4 opacity-75"
                   >
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="font-semibold text-gray-900">
-                          {lock.amount_locked_formatted ? formatAmount(lock.amount_locked_formatted) : '...'} {lock.tokenSymbol || 'TOKEN'}
+                          {lock.amount_locked_formatted ? formatAmount(lock.amount_locked_formatted) : '...'} {lock.token_symbol || 'TOKEN'}
                         </div>
                         <div className="text-sm text-gray-500">
                           {t('myLocks.lockedFor')} {lock.lock_duration_days ? formatDuration(lock.lock_duration_days) : '...'} • {t('myLocks.withdrawn')}
