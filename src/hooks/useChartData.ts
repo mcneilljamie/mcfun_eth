@@ -143,6 +143,30 @@ export function useChartData(tokenAddress: string | undefined, timeRange: TimeRa
     fetchChartData();
   }, [fetchChartData]);
 
+  useEffect(() => {
+    if (!tokenAddress) return;
+
+    const channel = supabase
+      .channel(`price-snapshots-${tokenAddress}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'price_snapshots',
+          filter: `token_address=eq.${tokenAddress.toLowerCase()}`
+        },
+        () => {
+          fetchChartData();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [tokenAddress, fetchChartData]);
+
   return {
     data,
     loading,

@@ -171,11 +171,11 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
     }
   }, [data, chartMode]);
 
-  // Auto-refresh every 30 seconds
+  // Auto-refresh every 60 seconds as fallback (realtime subscription handles instant updates)
   useEffect(() => {
     const interval = setInterval(() => {
       refetch();
-    }, 30000);
+    }, 60000);
 
     return () => clearInterval(interval);
   }, [refetch]);
@@ -300,7 +300,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
       {data.length > 0 && (
         <div className={`flex items-center justify-between text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'} pt-2 border-t ${isDark ? 'border-gray-800' : 'border-gray-200'}`}>
           <span>{data.length} data points</span>
-          <span>Updates every 15-30 seconds</span>
+          <span>Updates in real-time</span>
         </div>
       )}
     </div>
