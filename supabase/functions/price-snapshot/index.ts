@@ -117,27 +117,6 @@ Deno.serve(async (req: Request) => {
             return { success: false, error: `Zero reserves for ${token.symbol}` };
           }
 
-          // Check last snapshot to see if reserves changed (i.e., if there was trading activity)
-          const { data: lastSnapshot } = await supabase
-            .from("price_snapshots")
-            .select("eth_reserve, token_reserve")
-            .eq("token_address", token.token_address)
-            .order("created_at", { ascending: false })
-            .limit(1)
-            .maybeSingle();
-
-          // Only create snapshot if reserves changed (meaning there was a trade)
-          // or if this is the first snapshot for this token
-          if (lastSnapshot) {
-            const reservesUnchanged =
-              lastSnapshot.eth_reserve === ethReserveFormatted &&
-              lastSnapshot.token_reserve === tokenReserveFormatted;
-
-            if (reservesUnchanged) {
-              return { success: false, error: `No activity for ${token.symbol}` };
-            }
-          }
-
           return {
             success: true,
             token,
