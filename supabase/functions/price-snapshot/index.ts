@@ -216,10 +216,13 @@ Deno.serve(async (req: Request) => {
         const insertBatch = snapshotsToInsert.slice(i, i + insertBatchSize);
         const { error: snapshotError } = await supabase
           .from("price_snapshots")
-          .insert(insertBatch);
+          .upsert(insertBatch, {
+            onConflict: 'token_address,block_number',
+            ignoreDuplicates: false
+          });
 
         if (snapshotError) {
-          results.errors.push(`Failed to insert snapshot batch: ${snapshotError.message}`);
+          results.errors.push(`Failed to upsert snapshot batch: ${snapshotError.message}`);
         } else {
           results.snapshotsCreated += insertBatch.length;
         }
