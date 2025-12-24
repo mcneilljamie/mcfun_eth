@@ -97,7 +97,9 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
           if (chartMode === 'marketCap') {
             return '$' + Math.round(price).toLocaleString('en-US');
           }
-          return '$' + price.toFixed(precision);
+          // Prevent negative zero display
+          const absolutePrice = Math.abs(price);
+          return '$' + absolutePrice.toFixed(precision);
         },
       },
       autoscaleInfoProvider: (original: () => any) => {
