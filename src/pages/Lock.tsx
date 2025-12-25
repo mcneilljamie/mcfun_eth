@@ -462,6 +462,7 @@ export function Lock({ onShowToast }: LockPageProps) {
     : [];
 
   const topLockedTokens = aggregatedLocks
+    .filter(lock => lock.is_mcfun_token)
     .sort((a, b) => (b.total_value_usd || 0) - (a.total_value_usd || 0));
 
   const formatTimeRemaining = (unlockTimestamp: string) => {
