@@ -9,6 +9,8 @@ const corsHeaders = {
 };
 
 const LOCKER_ADDRESS = "0x1277b6E3f4407AD44A9b33641b51848c0098368f";
+const LOCK_KEY = "lock_event_indexer_lock";
+const LOCK_TIMEOUT_MS = 120000; // 2 minutes
 
 const LOCKER_ABI = [
   "event TokensLocked(uint256 indexed lockId, address indexed owner, address indexed tokenAddress, uint256 amount, uint256 unlockTime)",
@@ -29,6 +31,9 @@ const RPC_PROVIDERS = [
 ];
 
 let currentProviderIndex = 0;
+
+// Token metadata cache to avoid repeated RPC calls
+const tokenMetadataCache = new Map<string, { name: string; symbol: string; decimals: number }>();
 
 async function createProviderWithFailover(): Promise<ethers.JsonRpcProvider> {
   for (let i = 0; i < RPC_PROVIDERS.length; i++) {
@@ -66,6 +71,73 @@ async function retryWithBackoff<T>(
   throw lastError;
 }
 
+// Acquire execution lock to prevent concurrent runs
+async function acquireLock(supabase: any): Promise<boolean> {
+  try {
+    // Try to insert a lock record
+    const { error } = await supabase
+      .from('indexer_locks')
+      .insert({
+        lock_key: LOCK_KEY,
+        acquired_at: new Date().toISOString(),
+        expires_at: new Date(Date.now() + LOCK_TIMEOUT_MS).toISOString(),
+      });
+
+    if (error) {
+      // Check if lock exists and is expired
+      const { data: existingLock } = await supabase
+        .from('indexer_locks')
+        .select('expires_at')
+        .eq('lock_key', LOCK_KEY)
+        .maybeSingle();
+
+      if (existingLock && new Date(existingLock.expires_at) < new Date()) {
+        // Lock expired, delete and try again
+        await supabase.from('indexer_locks').delete().eq('lock_key', LOCK_KEY);
+        return acquireLock(supabase);
+      }
+
+      return false; // Another instance is running
+    }
+
+    return true;
+  } catch (err) {
+    console.error('Failed to acquire lock:', err);
+    return false;
+  }
+}
+
+// Release execution lock
+async function releaseLock(supabase: any): Promise<void> {
+  try {
+    await supabase.from('indexer_locks').delete().eq('lock_key', LOCK_KEY);
+  } catch (err) {
+    console.error('Failed to release lock:', err);
+  }
+}
+
+// Get cached token metadata or fetch from blockchain
+async function getTokenMetadata(
+  tokenAddress: string,
+  provider: ethers.JsonRpcProvider
+): Promise<{ name: string; symbol: string; decimals: number }> {
+  const cached = tokenMetadataCache.get(tokenAddress.toLowerCase());
+  if (cached) {
+    return cached;
+  }
+
+  const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
+  const [name, symbol, decimals] = await Promise.all([
+    tokenContract.name(),
+    tokenContract.symbol(),
+    tokenContract.decimals(),
+  ]);
+
+  const metadata = { name, symbol, decimals: Number(decimals) };
+  tokenMetadataCache.set(tokenAddress.toLowerCase(), metadata);
+  return metadata;
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, {
@@ -74,10 +146,29 @@ Deno.serve(async (req: Request) => {
     });
   }
 
+  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+  const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
   try {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    // Try to acquire lock
+    const lockAcquired = await acquireLock(supabase);
+    if (!lockAcquired) {
+      console.log('Another indexer instance is running, skipping...');
+      return new Response(
+        JSON.stringify({
+          success: true,
+          skipped: true,
+          message: 'Another instance is running',
+        }),
+        {
+          headers: {
+            ...corsHeaders,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
 
     const provider = await retryWithBackoff(() => createProviderWithFailover());
     const lockerContract = new ethers.Contract(LOCKER_ADDRESS, LOCKER_ABI, provider);
@@ -104,21 +195,39 @@ Deno.serve(async (req: Request) => {
 
     const currentBlock = await provider.getBlockNumber();
 
-    // If custom start block provided, use it
-    // Otherwise, if first run, start from block 0 to catch ALL historical locks
-    // Subsequent runs will start from last indexed block (not +1, to catch any missed events in that block)
+    // Smart block range: only scan recent blocks if we've indexed before
     const fromBlock = requestedStartBlock !== null
       ? requestedStartBlock
       : (lastIndexedLock?.block_number
-        ? Math.max(0, Number(lastIndexedLock.block_number) - 10) // Scan last 10 blocks to catch any missed events
+        ? Math.max(0, Number(lastIndexedLock.block_number) - 2) // Only scan last 2 blocks for reorg protection
         : 0);
 
     const toBlock = currentBlock;
 
+    // Skip if no new blocks
+    if (fromBlock > toBlock) {
+      await releaseLock(supabase);
+      return new Response(
+        JSON.stringify({
+          success: true,
+          indexed: { locked: 0, unlocked: 0 },
+          message: 'No new blocks to index',
+          fromBlock,
+          toBlock,
+        }),
+        {
+          headers: {
+            ...corsHeaders,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
     console.log(`Indexing locks from block ${fromBlock} to ${toBlock}`);
 
-    // Query in chunks to avoid RPC limits (50k blocks per chunk)
-    const CHUNK_SIZE = 50000;
+    // Query in chunks to avoid RPC limits (reduce chunk size for better reliability)
+    const CHUNK_SIZE = 10000;
     const allLockedEvents = [];
     const allUnlockedEvents = [];
 
@@ -137,43 +246,45 @@ Deno.serve(async (req: Request) => {
 
     console.log(`Found ${allLockedEvents.length} TokensLocked events`);
 
+    // Batch check for existing locks
+    const lockIds = allLockedEvents.map(e => Number(e.args[0]));
+    const { data: existingLocks } = await supabase
+      .from('token_locks')
+      .select('lock_id')
+      .in('lock_id', lockIds);
+
+    const existingLockIds = new Set(existingLocks?.map(l => l.lock_id) || []);
+
+    // Process new locks in batches
+    const newLocks = [];
     for (const event of allLockedEvents) {
       try {
         const lockId = Number(event.args[0]);
+
+        if (existingLockIds.has(lockId)) {
+          console.log(`Lock ${lockId} already indexed, skipping`);
+          continue;
+        }
+
         const owner = event.args[1];
         const tokenAddress = event.args[2];
         const amount = event.args[3];
         const unlockTime = Number(event.args[4]);
 
-        const { data: existingLock } = await supabase
-          .from("token_locks")
-          .select("id")
-          .eq("lock_id", lockId)
-          .maybeSingle();
-
-        if (existingLock) {
-          console.log(`Lock ${lockId} already indexed, skipping`);
-          continue;
-        }
-
-        const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
-        const [name, symbol, decimals] = await Promise.all([
-          tokenContract.name(),
-          tokenContract.symbol(),
-          tokenContract.decimals(),
-        ]);
+        // Get token metadata (cached)
+        const { name, symbol, decimals } = await getTokenMetadata(tokenAddress, provider);
 
         const block = await provider.getBlock(event.blockNumber);
         const lockTimestamp = block ? block.timestamp : Math.floor(Date.now() / 1000);
         const durationDays = Math.floor((unlockTime - lockTimestamp) / 86400);
 
-        const { error: insertError } = await supabase.from("token_locks").insert({
+        newLocks.push({
           lock_id: lockId,
           user_address: owner.toLowerCase(),
           token_address: tokenAddress.toLowerCase(),
           token_symbol: symbol,
           token_name: name,
-          token_decimals: Number(decimals),
+          token_decimals: decimals,
           amount_locked: amount.toString(),
           lock_duration_days: durationDays,
           lock_timestamp: new Date(lockTimestamp * 1000).toISOString(),
@@ -182,19 +293,27 @@ Deno.serve(async (req: Request) => {
           tx_hash: event.transactionHash,
           block_number: event.blockNumber,
         });
-
-        if (insertError) {
-          console.error(`Failed to insert lock ${lockId}:`, insertError);
-        } else {
-          console.log(`Indexed lock ${lockId}`);
-        }
       } catch (err) {
         console.error("Error processing lock event:", err);
       }
     }
 
+    // Batch insert new locks
+    if (newLocks.length > 0) {
+      const { error: insertError } = await supabase
+        .from("token_locks")
+        .insert(newLocks);
+
+      if (insertError) {
+        console.error('Failed to batch insert locks:', insertError);
+      } else {
+        console.log(`Batch inserted ${newLocks.length} new locks`);
+      }
+    }
+
     console.log(`Found ${allUnlockedEvents.length} TokensUnlocked events`);
 
+    // Process unlock events
     for (const event of allUnlockedEvents) {
       try {
         const lockId = Number(event.args[0]);
@@ -210,18 +329,20 @@ Deno.serve(async (req: Request) => {
         if (updateError) {
           console.error(`Failed to update lock ${lockId}:`, updateError);
         } else {
-          console.log(`Updated lock ${lockId} as withdrawn with tx ${event.transactionHash}`);
+          console.log(`Updated lock ${lockId} as withdrawn`);
         }
       } catch (err) {
         console.error("Error processing unlock event:", err);
       }
     }
 
+    await releaseLock(supabase);
+
     return new Response(
       JSON.stringify({
         success: true,
         indexed: {
-          locked: allLockedEvents.length,
+          locked: newLocks.length,
           unlocked: allUnlockedEvents.length,
         },
         fromBlock,
@@ -236,6 +357,8 @@ Deno.serve(async (req: Request) => {
     );
   } catch (error: any) {
     console.error("Lock indexer error:", error);
+    await releaseLock(supabase);
+
     return new Response(
       JSON.stringify({
         success: false,

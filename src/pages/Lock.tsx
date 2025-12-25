@@ -60,6 +60,11 @@ export function Lock({ onShowToast }: LockPageProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [tokenStats, setTokenStats] = useState<any>(null);
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const ITEMS_PER_PAGE = 20;
+
   const [tokenAddress, setTokenAddress] = useState('');
   const [amount, setAmount] = useState('');
   const [duration, setDuration] = useState('');
@@ -87,13 +92,19 @@ export function Lock({ onShowToast }: LockPageProps) {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    loadLocks();
+    setCurrentPage(1);
+    loadLocks(1);
     if (!urlTokenAddress) {
       loadAggregatedLocks();
     } else {
       loadTokenStats();
     }
   }, [urlTokenAddress]);
+
+  // Reload locks when page changes
+  useEffect(() => {
+    loadLocks(currentPage);
+  }, [currentPage]);
 
   useEffect(() => {
     if (tokenAddress && ethers.isAddress(tokenAddress) && provider) {
@@ -112,21 +123,36 @@ export function Lock({ onShowToast }: LockPageProps) {
     }
   }, [tokenInfo, amount, account, provider]);
 
-  const loadLocks = async () => {
+  const loadLocks = async (page = 1) => {
     try {
+      const offset = (page - 1) * ITEMS_PER_PAGE;
+
       if (urlTokenAddress) {
-        const { data, error } = await supabase.rpc('get_locks_by_token_address', {
-          token_addr: urlTokenAddress
+        const { data, error } = await supabase.rpc('get_locks_by_token_address_paginated', {
+          token_addr: urlTokenAddress,
+          page_limit: ITEMS_PER_PAGE,
+          page_offset: offset
         });
 
-        if (!error && data) {
+        if (!error && data && data.length > 0) {
           setAllLocks(data);
+          setTotalCount(data[0]?.total_count || 0);
+        } else {
+          setAllLocks([]);
+          setTotalCount(0);
         }
       } else {
-        const { data, error } = await supabase.rpc('get_all_locks_with_values');
+        const { data, error } = await supabase.rpc('get_all_locks_with_values_paginated', {
+          page_limit: ITEMS_PER_PAGE,
+          page_offset: offset
+        });
 
-        if (!error && data) {
+        if (!error && data && data.length > 0) {
           setAllLocks(data);
+          setTotalCount(data[0]?.total_count || 0);
+        } else {
+          setAllLocks([]);
+          setTotalCount(0);
         }
       }
     } catch (err) {
@@ -152,7 +178,11 @@ export function Lock({ onShowToast }: LockPageProps) {
 
   const loadAggregatedLocks = async () => {
     try {
-      const { data, error } = await supabase.rpc('get_aggregated_locks_by_token');
+      // Use cached materialized view for better performance
+      const { data, error } = await supabase.rpc('get_aggregated_locks_cached', {
+        page_limit: 10,
+        page_offset: 0
+      });
 
       if (error) {
         console.error('Supabase error loading aggregated locks:', error);
@@ -160,9 +190,9 @@ export function Lock({ onShowToast }: LockPageProps) {
       }
 
       if (data) {
-        console.log('Loaded aggregated locks:', data);
+        console.log('Loaded aggregated locks from cache:', data);
         // Filter out any invalid entries
-        const validLocks = data.filter((lock: AggregatedLock) =>
+        const validLocks = data.filter((lock: any) =>
           lock &&
           lock.token_address &&
           lock.token_symbol &&
@@ -960,8 +990,9 @@ export function Lock({ onShowToast }: LockPageProps) {
               <p className="text-gray-600">{t('lock.noLocks')}</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
+            <>
+              <div className="overflow-x-auto">
+                <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('lock.table.token')}</th>
@@ -1029,6 +1060,35 @@ export function Lock({ onShowToast }: LockPageProps) {
                 </tbody>
               </table>
             </div>
+
+            {/* Pagination controls */}
+            {totalCount > ITEMS_PER_PAGE && (
+              <div className="mt-6 flex items-center justify-between border-t border-gray-200 pt-4">
+                <div className="text-sm text-gray-700">
+                  {t('lock.showing')} {((currentPage - 1) * ITEMS_PER_PAGE) + 1} - {Math.min(currentPage * ITEMS_PER_PAGE, totalCount)} {t('lock.of')} {totalCount}
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {t('lock.previous')}
+                  </button>
+                  <div className="flex items-center px-4 py-2 text-sm font-medium">
+                    {t('lock.page')} {currentPage} {t('lock.of')} {Math.ceil(totalCount / ITEMS_PER_PAGE)}
+                  </div>
+                  <button
+                    onClick={() => setCurrentPage(p => Math.min(Math.ceil(totalCount / ITEMS_PER_PAGE), p + 1))}
+                    disabled={currentPage >= Math.ceil(totalCount / ITEMS_PER_PAGE)}
+                    className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {t('lock.next')}
+                  </button>
+                </div>
+              </div>
+            )}
+            </>
           )}
         </div>
       </div>

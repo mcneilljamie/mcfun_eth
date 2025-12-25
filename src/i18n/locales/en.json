@@ -502,6 +502,11 @@
       "timeRemaining": "Time Remaining",
       "status": "Status"
     },
+    "showing": "Showing",
+    "of": "of",
+    "page": "Page",
+    "previous": "Previous",
+    "next": "Next",
     "errors": {
       "invalidToken": "Invalid token address or failed to load token information",
       "invalidInput": "Please enter valid amount and duration",
