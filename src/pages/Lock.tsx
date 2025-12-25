@@ -969,7 +969,7 @@ export function Lock({ onShowToast }: LockPageProps) {
 
         <div className="bg-white rounded-xl shadow-lg p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">{t('lock.allLocks')}</h2>
+            <h2 className="text-2xl font-bold text-gray-900">{t('lock.upcomingLocks')}</h2>
           </div>
 
           <div className="mb-4">
@@ -1005,7 +1005,7 @@ export function Lock({ onShowToast }: LockPageProps) {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {filteredLocks.map((lock) => (
+                  {filteredLocks.slice(0, 10).map((lock) => (
                     <tr key={lock.id} className="hover:bg-gray-50">
                       <td className="px-4 py-3">
                         <div className="flex items-center">
