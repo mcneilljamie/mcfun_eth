@@ -468,6 +468,7 @@
     "step3Description": "Tokenlerinizi onaylayın ve kilitleyin. Süre dolduktan sonra kilidini açabilirsiniz",
     "yourLocks": "Aktif Kilitlemeleriniz",
     "allLocks": "Upcoming Token Unlocks",
+    "upcomingLocks": "Upcoming Locks",
     "topLockedTokens": "Toplam Değere Göre En Çok Kilitli McFun Tokenleri",
     "totalLocked": "Toplam Kilitli",
     "lockCount": "Kilit Sayısı",

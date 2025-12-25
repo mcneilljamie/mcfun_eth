@@ -468,6 +468,7 @@
     "step3Description": "Approva e blocca i tuoi token. Puoi sbloccarli dopo la scadenza della durata",
     "yourLocks": "I Tuoi Blocchi Attivi",
     "allLocks": "Upcoming Token Unlocks",
+    "upcomingLocks": "Upcoming Locks",
     "topLockedTokens": "Top Token McFun Bloccati per Valore Totale",
     "totalLocked": "Totale Bloccato",
     "lockCount": "Conteggio Blocchi",

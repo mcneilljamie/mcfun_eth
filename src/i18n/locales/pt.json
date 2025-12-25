@@ -468,6 +468,7 @@
     "step3Description": "Aprove e bloqueie seus tokens. Você pode desbloqueá-los após a duração expirar",
     "yourLocks": "Seus Bloqueios Ativos",
     "allLocks": "Upcoming Token Unlocks",
+    "upcomingLocks": "Upcoming Locks",
     "topLockedTokens": "Top Tokens McFun Bloqueados por Valor Total",
     "totalLocked": "Total Bloqueado",
     "lockCount": "Contagem de Bloqueios",

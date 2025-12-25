@@ -468,6 +468,7 @@
     "step3Description": "Одобрите и заблокируйте ваши токены. Вы сможете разблокировать их после истечения срока",
     "yourLocks": "Ваши активные блокировки",
     "allLocks": "Upcoming Token Unlocks",
+    "upcomingLocks": "Upcoming Locks",
     "topLockedTokens": "Топ заблокированных токенов McFun по общей стоимости",
     "totalLocked": "Всего заблокировано",
     "lockCount": "Количество блокировок",
