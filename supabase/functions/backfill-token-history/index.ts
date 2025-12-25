@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.4";
+import { withLock } from "../_shared/lockManager.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -15,6 +16,35 @@ Deno.serve(async (req: Request) => {
     });
   }
 
+  try {
+    return await withLock("backfill_lock", async () => {
+      return await processBackfillTokenHistory(req);
+    }, {
+      timeoutSeconds: 600,
+      autoRenew: true,
+      renewIntervalMs: 60000,
+    });
+  } catch (err: any) {
+    console.error("Error acquiring lock or executing backfill-token-history:", err);
+    return new Response(
+      JSON.stringify({
+        error: err.message,
+        message: err.message.includes("Failed to acquire lock")
+          ? "A backfill operation is already running. This request will be retried automatically."
+          : undefined
+      }),
+      {
+        status: err.message.includes("Failed to acquire lock") ? 503 : 500,
+        headers: {
+          ...corsHeaders,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  }
+});
+
+async function processBackfillTokenHistory(req: Request): Promise<Response> {
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -102,4 +132,4 @@ Deno.serve(async (req: Request) => {
       }
     );
   }
-});
+}

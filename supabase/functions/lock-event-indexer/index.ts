@@ -1,6 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.4";
 import { ethers } from "npm:ethers@6.16.0";
+import { withLock } from "../_shared/lockManager.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -9,8 +10,6 @@ const corsHeaders = {
 };
 
 const LOCKER_ADDRESS = "0x1277b6E3f4407AD44A9b33641b51848c0098368f";
-const LOCK_KEY = "lock_event_indexer_lock";
-const LOCK_TIMEOUT_MS = 120000; // 2 minutes
 
 const LOCKER_ABI = [
   "event TokensLocked(uint256 indexed lockId, address indexed owner, address indexed tokenAddress, uint256 amount, uint256 unlockTime)",
@@ -71,50 +70,6 @@ async function retryWithBackoff<T>(
   throw lastError;
 }
 
-// Acquire execution lock to prevent concurrent runs
-async function acquireLock(supabase: any): Promise<boolean> {
-  try {
-    // Try to insert a lock record
-    const { error } = await supabase
-      .from('indexer_locks')
-      .insert({
-        lock_key: LOCK_KEY,
-        acquired_at: new Date().toISOString(),
-        expires_at: new Date(Date.now() + LOCK_TIMEOUT_MS).toISOString(),
-      });
-
-    if (error) {
-      // Check if lock exists and is expired
-      const { data: existingLock } = await supabase
-        .from('indexer_locks')
-        .select('expires_at')
-        .eq('lock_key', LOCK_KEY)
-        .maybeSingle();
-
-      if (existingLock && new Date(existingLock.expires_at) < new Date()) {
-        // Lock expired, delete and try again
-        await supabase.from('indexer_locks').delete().eq('lock_key', LOCK_KEY);
-        return acquireLock(supabase);
-      }
-
-      return false; // Another instance is running
-    }
-
-    return true;
-  } catch (err) {
-    console.error('Failed to acquire lock:', err);
-    return false;
-  }
-}
-
-// Release execution lock
-async function releaseLock(supabase: any): Promise<void> {
-  try {
-    await supabase.from('indexer_locks').delete().eq('lock_key', LOCK_KEY);
-  } catch (err) {
-    console.error('Failed to release lock:', err);
-  }
-}
 
 // Get cached token metadata or fetch from blockchain
 async function getTokenMetadata(
@@ -146,29 +101,41 @@ Deno.serve(async (req: Request) => {
     });
   }
 
+  try {
+    return await withLock("lock_event_indexer_lock", async () => {
+      return await processLockIndexing(req);
+    }, {
+      timeoutSeconds: 300,
+      autoRenew: true,
+      renewIntervalMs: 30000,
+    });
+  } catch (err: any) {
+    console.error("Error acquiring lock or executing lock-event-indexer:", err);
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: err.message,
+        message: err.message.includes("Failed to acquire lock")
+          ? "Lock event indexer is busy processing. This request will be retried automatically."
+          : undefined
+      }),
+      {
+        status: err.message.includes("Failed to acquire lock") ? 503 : 500,
+        headers: {
+          ...corsHeaders,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  }
+});
+
+async function processLockIndexing(req: Request): Promise<Response> {
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
   const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
   try {
-    // Try to acquire lock
-    const lockAcquired = await acquireLock(supabase);
-    if (!lockAcquired) {
-      console.log('Another indexer instance is running, skipping...');
-      return new Response(
-        JSON.stringify({
-          success: true,
-          skipped: true,
-          message: 'Another instance is running',
-        }),
-        {
-          headers: {
-            ...corsHeaders,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
 
     const provider = await retryWithBackoff(() => createProviderWithFailover());
     const lockerContract = new ethers.Contract(LOCKER_ADDRESS, LOCKER_ABI, provider);
@@ -206,7 +173,6 @@ Deno.serve(async (req: Request) => {
 
     // Skip if no new blocks
     if (fromBlock > toBlock) {
-      await releaseLock(supabase);
       return new Response(
         JSON.stringify({
           success: true,
@@ -336,8 +302,6 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    await releaseLock(supabase);
-
     return new Response(
       JSON.stringify({
         success: true,
@@ -357,7 +321,6 @@ Deno.serve(async (req: Request) => {
     );
   } catch (error: any) {
     console.error("Lock indexer error:", error);
-    await releaseLock(supabase);
 
     return new Response(
       JSON.stringify({
@@ -373,4 +336,4 @@ Deno.serve(async (req: Request) => {
       }
     );
   }
-});
+}
