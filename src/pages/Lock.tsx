@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useWeb3 } from '../lib/web3';
 import { supabase } from '../lib/supabase';
 import { ethers } from 'ethers';
-import { Loader2, Lock as LockIcon, Search, Clock, User, Coins, AlertCircle, ExternalLink, TrendingUp, Trophy, ArrowLeft, Share2 } from 'lucide-react';
+import { Loader2, Lock as LockIcon, Clock, User, Coins, AlertCircle, ExternalLink, TrendingUp, Trophy, ArrowLeft, Share2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { LockCelebration } from '../components/LockCelebration';
 import { WithdrawSuccess } from '../components/WithdrawSuccess';
@@ -57,7 +57,6 @@ export function Lock({ onShowToast }: LockPageProps) {
   const [loading, setLoading] = useState(false);
   const [allLocks, setAllLocks] = useState<TokenLock[]>([]);
   const [aggregatedLocks, setAggregatedLocks] = useState<AggregatedLock[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
   const [tokenStats, setTokenStats] = useState<any>(null);
 
   // Pagination state
@@ -434,21 +433,7 @@ export function Lock({ onShowToast }: LockPageProps) {
   const filteredLocks = allLocks
     .filter((lock) => {
       // Filter out withdrawn locks
-      if (lock.is_withdrawn) {
-        return false;
-      }
-
-      if (searchQuery) {
-        const query = searchQuery.toLowerCase();
-        return (
-          lock.token_symbol.toLowerCase().includes(query) ||
-          lock.token_name.toLowerCase().includes(query) ||
-          lock.token_address.toLowerCase().includes(query) ||
-          lock.user_address.toLowerCase().includes(query)
-        );
-      }
-
-      return true;
+      return !lock.is_withdrawn;
     })
     .sort((a, b) => {
       // Sort by unlock timestamp (all locks are non-withdrawn due to filter above)
@@ -966,132 +951,6 @@ export function Lock({ onShowToast }: LockPageProps) {
             </div>
           </div>
         )}
-
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">{t('lock.upcomingLocks')}</h2>
-          </div>
-
-          <div className="mb-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={t('lock.searchPlaceholder')}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-          </div>
-
-          {filteredLocks.length === 0 ? (
-            <div className="text-center py-12">
-              <LockIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">{t('lock.noLocks')}</p>
-            </div>
-          ) : (
-            <>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('lock.table.token')}</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('lock.table.amount')}</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('lock.table.locker')}</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('lock.table.duration')}</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('lock.table.timeRemaining')}</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('lock.table.status')}</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {filteredLocks.slice(0, 10).map((lock) => (
-                    <tr key={lock.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3">
-                        <div className="flex items-center">
-                          <div className="min-w-0">
-                            <div className="font-semibold text-gray-900 whitespace-nowrap">{lock.token_symbol}</div>
-                            <div className="text-sm text-gray-500 break-words">{lock.token_name}</div>
-                          </div>
-                          <a
-                            href={`${explorerUrl}/tx/${lock.tx_hash}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="ml-2 text-blue-600 hover:text-blue-700"
-                          >
-                            <ExternalLink className="w-4 h-4" />
-                          </a>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="font-semibold text-gray-900">
-                          {formatLargeTokenAmount(lock.amount_locked, lock.token_decimals)}
-                        </div>
-                        <div className="text-sm text-gray-500">{lock.token_symbol}</div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="font-mono text-sm text-gray-900">
-                          {lock.user_address.slice(0, 6)}...{lock.user_address.slice(-4)}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="text-gray-900">{formatDuration(lock.lock_duration_days)}</div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="text-gray-900">
-                          {lock.is_withdrawn ? t('lock.withdrawn') : formatTimeRemaining(lock.unlock_timestamp)}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
-                          {getStatusBadge(getLockStatus(lock))}
-                          {getLockStatus(lock) === 'unlockable' && account && lock.user_address.toLowerCase() === account.toLowerCase() && (
-                            <button
-                              onClick={() => handleUnlock(lock.lock_id)}
-                              disabled={loading}
-                              className="px-3 py-1 bg-green-600 text-white text-xs font-semibold rounded hover:bg-green-700 transition-colors disabled:opacity-50"
-                            >
-                              {t('lock.unlock')}
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Pagination controls */}
-            {totalCount > ITEMS_PER_PAGE && (
-              <div className="mt-6 flex items-center justify-between border-t border-gray-200 pt-4">
-                <div className="text-sm text-gray-700">
-                  {t('lock.showing')} {((currentPage - 1) * ITEMS_PER_PAGE) + 1} - {Math.min(currentPage * ITEMS_PER_PAGE, totalCount)} {t('lock.of')} {totalCount}
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                    disabled={currentPage === 1}
-                    className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {t('lock.previous')}
-                  </button>
-                  <div className="flex items-center px-4 py-2 text-sm font-medium">
-                    {t('lock.page')} {currentPage} {t('lock.of')} {Math.ceil(totalCount / ITEMS_PER_PAGE)}
-                  </div>
-                  <button
-                    onClick={() => setCurrentPage(p => Math.min(Math.ceil(totalCount / ITEMS_PER_PAGE), p + 1))}
-                    disabled={currentPage >= Math.ceil(totalCount / ITEMS_PER_PAGE)}
-                    className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {t('lock.next')}
-                  </button>
-                </div>
-              </div>
-            )}
-            </>
-          )}
-        </div>
       </div>
 
       {celebration && (
