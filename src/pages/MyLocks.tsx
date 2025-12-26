@@ -95,6 +95,35 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
     loadLocks();
   }, [account]);
 
+  // Subscribe to real-time updates for lock withdrawals
+  useEffect(() => {
+    if (!account) return;
+
+    const channel = supabase
+      .channel('token_locks_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'token_locks',
+          filter: `user_address=eq.${account.toLowerCase()}`
+        },
+        (payload) => {
+          console.log('Lock updated:', payload);
+          // Reload locks when a withdrawal is detected
+          if (payload.new.is_withdrawn) {
+            loadLocks();
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [account]);
+
   // Load ETH price
   useEffect(() => {
     const loadEthPrice = async () => {
