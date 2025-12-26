@@ -119,10 +119,13 @@ interface IndexRequest {
   indexSwaps?: boolean;
   skipReorgCheck?: boolean;
   backfillSwaps?: boolean;
+  tier?: 'hot' | 'warm' | 'cold' | 'dormant';
+  batchSize?: number;
 }
 
 class BlockCache {
   private cache: Map<number, ethers.Block> = new Map();
+  private maxSize: number = 1000;
 
   async getBlock(provider: ethers.JsonRpcProvider, blockNumber: number): Promise<ethers.Block> {
     if (this.cache.has(blockNumber)) {
@@ -130,6 +133,11 @@ class BlockCache {
     }
     const block = await provider.getBlock(blockNumber);
     if (block) {
+      // LRU eviction when cache is full
+      if (this.cache.size >= this.maxSize) {
+        const firstKey = this.cache.keys().next().value;
+        this.cache.delete(firstKey);
+      }
       this.cache.set(blockNumber, block);
     }
     return block!;
@@ -137,6 +145,24 @@ class BlockCache {
 
   clear() {
     this.cache.clear();
+  }
+}
+
+class ContractCache {
+  private contracts: Map<string, ethers.Contract> = new Map();
+
+  getContract(address: string, abi: any[], provider: ethers.JsonRpcProvider): ethers.Contract {
+    const key = address.toLowerCase();
+    if (this.contracts.has(key)) {
+      return this.contracts.get(key)!;
+    }
+    const contract = new ethers.Contract(address, abi, provider);
+    this.contracts.set(key, contract);
+    return contract;
+  }
+
+  clear() {
+    this.contracts.clear();
   }
 }
 
@@ -239,19 +265,22 @@ async function processTokenSwaps(
   provider: ethers.JsonRpcProvider,
   supabase: any,
   blockCache: BlockCache,
+  contractCache: ContractCache,
   startTime: number
-): Promise<{ swapsIndexed: number; errors: string[]; timedOut: boolean }> {
+): Promise<{ swapsIndexed: number; errors: string[]; timedOut: boolean; blocksScanned: number }> {
   const errors: string[] = [];
   let swapsIndexed = 0;
   let timedOut = false;
 
   try {
     if (Date.now() - startTime > MAX_EXECUTION_TIME_MS) {
-      return { swapsIndexed, errors, timedOut: true };
+      return { swapsIndexed, errors, timedOut: true, blocksScanned: 0 };
     }
 
-    let queryStartBlock = startBlock;
+    // Use per-token last_checked_block for efficient incremental indexing
+    let queryStartBlock = token.last_checked_block || token.block_number || startBlock;
 
+    // For backfill mode, check if we need to fill gaps
     if (backfillSwaps) {
       const { data: earliestSwap } = await supabase
         .from("swaps")
@@ -264,18 +293,34 @@ async function processTokenSwaps(
       if (!earliestSwap || earliestSwap.block_number > token.block_number + 1) {
         queryStartBlock = Math.max(token.block_number, startBlock);
       }
+    } else {
+      // Normal incremental mode: start from last checked block + 1
+      queryStartBlock = Math.max(queryStartBlock + 1, startBlock);
     }
 
     if (queryStartBlock > endBlock) {
-      return { swapsIndexed, errors, timedOut };
+      // No new blocks to check, but update last_checked_block
+      await supabase
+        .from("tokens")
+        .update({ last_checked_block: endBlock })
+        .eq("token_address", token.token_address);
+      return { swapsIndexed, errors, timedOut, blocksScanned: 0 };
     }
 
-    const amm = new ethers.Contract(token.amm_address, AMM_ABI, provider);
+    const blocksScanned = endBlock - queryStartBlock + 1;
+
+    // Use contract cache to avoid recreating contract instances
+    const amm = contractCache.getContract(token.amm_address, AMM_ABI, provider);
     const filter = amm.filters.Swap();
     const events = await retryWithBackoff(() => amm.queryFilter(filter, queryStartBlock, endBlock));
 
+    // Update last_checked_block even if no swaps found
     if (events.length === 0) {
-      return { swapsIndexed, errors, timedOut };
+      await supabase
+        .from("tokens")
+        .update({ last_checked_block: endBlock })
+        .eq("token_address", token.token_address);
+      return { swapsIndexed, errors, timedOut, blocksScanned };
     }
 
     const swapsToInsert: any[] = [];
@@ -346,8 +391,16 @@ async function processTokenSwaps(
             current_eth_reserve: ethReserveFormatted,
             current_token_reserve: tokenReserveFormatted,
             total_volume_eth: newVolume,
+            last_checked_block: endBlock,
           })
           .eq("token_address", token.token_address);
+
+        // Update activity tracking when swaps found
+        const mostRecentSwap = swapsToInsert[swapsToInsert.length - 1];
+        await supabase.rpc('record_token_swap_activity', {
+          token_addr: token.token_address,
+          swap_timestamp: mostRecentSwap.created_at
+        });
 
         const hasTokenSells = swapsToInsert.some(swap => parseFloat(swap.token_out) > 0);
         if (hasTokenSells) {
@@ -361,7 +414,7 @@ async function processTokenSwaps(
     errors.push(`Failed to index swaps for ${token.token_address}: ${err.message}`);
   }
 
-  return { swapsIndexed, errors, timedOut };
+  return { swapsIndexed, errors, timedOut, blocksScanned };
 }
 
 Deno.serve(async (req: Request) => {
@@ -402,6 +455,7 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
     const supabase = createClient(supabaseUrl, supabaseKey);
     const provider = await retryWithBackoff(() => createProviderWithFailover());
     const blockCache = new BlockCache();
+    const contractCache = new ContractCache();
 
     const {
       fromBlock,
@@ -409,7 +463,9 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
       indexTokenLaunches = true,
       indexSwaps = true,
       skipReorgCheck = false,
-      backfillSwaps = false
+      backfillSwaps = false,
+      tier,
+      batchSize
     }: IndexRequest = await req.json().catch(() => ({}));
 
     const { data: indexerState } = await supabase
@@ -432,6 +488,10 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
       toBlock: 0,
       executionTimeMs: 0,
       timedOut: false,
+      tier: tier || 'all',
+      tokensProcessed: 0,
+      blocksScanned: 0,
+      rpcCallsMade: 0,
     };
 
     // Skip reorg check temporarily to speed up catch-up
@@ -504,7 +564,7 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
 
     if (indexTokenLaunches && FACTORY_ADDRESS !== "0x0000000000000000000000000000000000000000") {
       try {
-        const factory = new ethers.Contract(FACTORY_ADDRESS, FACTORY_ABI, provider);
+        const factory = contractCache.getContract(FACTORY_ADDRESS, FACTORY_ABI, provider);
         const filter = factory.filters.TokenLaunched();
         const events = await factory.queryFilter(filter, startBlock, endBlock);
 
@@ -586,16 +646,37 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
 
     if (indexSwaps && !results.timedOut) {
       try {
-        // Only query tokens that might have activity in this block range
-        // Skip tokens created after our endBlock
-        const { data: tokens } = await supabase
-          .from("tokens")
-          .select("token_address, amm_address, block_number")
-          .lte("block_number", endBlock);
+        let tokens: any[] = [];
+
+        // Use tier-based querying if tier specified
+        if (tier) {
+          const effectiveBatchSize = batchSize || (tier === 'hot' ? 20 : tier === 'warm' ? 50 : tier === 'cold' ? 100 : 200);
+          const { data: tierTokens, error: tierError } = await supabase.rpc('get_tokens_by_tier', {
+            tier_name: tier,
+            batch_limit: effectiveBatchSize,
+            min_block_age: 0
+          });
+
+          if (tierError) {
+            results.errors.push(`Failed to get tokens by tier: ${tierError.message}`);
+          } else {
+            tokens = tierTokens || [];
+          }
+        } else {
+          // Fallback: query all tokens (legacy mode)
+          const { data: allTokens } = await supabase
+            .from("tokens")
+            .select("token_address, amm_address, block_number, last_checked_block, last_swap_at, swap_count_24h")
+            .lte("block_number", endBlock);
+          tokens = allTokens || [];
+        }
 
         if (tokens && tokens.length > 0) {
-          console.log(`Processing swaps for ${tokens.length} tokens`);
+          console.log(`Processing swaps for ${tokens.length} tokens (tier: ${tier || 'all'})`);
+          results.tokensProcessed = tokens.length;
+
           const processToken = async (token: any) => {
+            results.rpcCallsMade += 2; // Estimate: queryFilter + getReserves
             return await processTokenSwaps(
               token,
               startBlock,
@@ -604,21 +685,26 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
               provider,
               supabase,
               blockCache,
+              contractCache,
               startTime
             );
           };
 
-          for (let i = 0; i < tokens.length; i += PARALLEL_TOKEN_LIMIT) {
+          // Adjust parallel limit based on tier
+          const effectiveParallelLimit = tier === 'hot' ? 15 : tier === 'warm' ? 10 : PARALLEL_TOKEN_LIMIT;
+
+          for (let i = 0; i < tokens.length; i += effectiveParallelLimit) {
             if (Date.now() - startTime > MAX_EXECUTION_TIME_MS) {
               results.timedOut = true;
               break;
             }
 
-            const batch = tokens.slice(i, i + PARALLEL_TOKEN_LIMIT);
+            const batch = tokens.slice(i, i + effectiveParallelLimit);
             const batchResults = await Promise.all(batch.map(processToken));
 
             for (const result of batchResults) {
               results.swapsIndexed += result.swapsIndexed;
+              results.blocksScanned += result.blocksScanned;
               results.errors.push(...result.errors);
               if (result.timedOut) {
                 results.timedOut = true;
@@ -629,9 +715,10 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
               break;
             }
 
-            // Small delay between batches to avoid overwhelming the RPC
-            if (i + PARALLEL_TOKEN_LIMIT < tokens.length) {
-              await new Promise(resolve => setTimeout(resolve, 100));
+            // Smaller delay for hot tier, longer for others
+            const delayMs = tier === 'hot' ? 50 : tier === 'warm' ? 100 : 200;
+            if (i + effectiveParallelLimit < tokens.length) {
+              await new Promise(resolve => setTimeout(resolve, delayMs));
             }
           }
         }
@@ -675,7 +762,24 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
     }
 
     blockCache.clear();
+    contractCache.clear();
     results.executionTimeMs = Date.now() - startTime;
+
+    // Record metrics in database
+    try {
+      await supabase.from('indexer_metrics').insert({
+        run_type: tier || 'legacy',
+        tokens_processed: results.tokensProcessed,
+        blocks_scanned: results.blocksScanned,
+        swaps_found: results.swapsIndexed,
+        rpc_calls_made: results.rpcCallsMade,
+        processing_time_ms: results.executionTimeMs,
+        errors_count: results.errors.length,
+        error_details: results.errors.length > 0 ? { errors: results.errors } : null,
+      });
+    } catch (err: any) {
+      console.error('Failed to record indexer metrics:', err);
+    }
 
     // Add monitoring information
     const responseData = {
@@ -688,7 +792,7 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
       lastIndexedBlock: lastProcessedBlockNumber || lastIndexedBlock,
     };
 
-    console.log(`Indexing complete: ${responseData.tokensIndexed} tokens, ${responseData.swapsIndexed} swaps, ${responseData.blocksProcessed} blocks in ${responseData.executionTimeMs}ms`);
+    console.log(`Indexing complete (tier: ${tier || 'all'}): ${responseData.tokensProcessed} tokens processed, ${responseData.swapsIndexed} swaps, ${responseData.blocksScanned} blocks scanned in ${responseData.executionTimeMs}ms`);
     console.log(`Still ${responseData.blocksBehind} blocks behind (rate: ${responseData.blockProcessingRate} blocks/sec)`);
 
     return new Response(
