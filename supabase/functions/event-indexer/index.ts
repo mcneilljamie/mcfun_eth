@@ -27,9 +27,25 @@ const RPC_PROVIDERS = [
   "https://rpc2.sepolia.org",
 ];
 
-const MAX_BLOCK_RANGE = 200; // Reduced to process faster with 18 tokens
+const MIN_BLOCK_RANGE = 100;
+const MAX_BLOCK_RANGE = 2000; // Allow larger ranges when catching up
 const MAX_EXECUTION_TIME_MS = 23000;
 const PARALLEL_TOKEN_LIMIT = 6; // Balance between speed and rate limits
+
+// Calculate adaptive block range based on how far behind we are
+function calculateBlockRange(blocksBehind: number): number {
+  if (blocksBehind > 10000) {
+    return MAX_BLOCK_RANGE; // Maximum speed when very behind
+  } else if (blocksBehind > 5000) {
+    return 1000;
+  } else if (blocksBehind > 1000) {
+    return 500;
+  } else if (blocksBehind > 500) {
+    return 300;
+  } else {
+    return MIN_BLOCK_RANGE; // Slower when caught up for better accuracy
+  }
+}
 
 let currentProviderIndex = 0;
 
@@ -64,13 +80,29 @@ async function retryWithBackoff<T>(
       // Check if it's a rate limit error
       const isRateLimitError = error?.message?.includes('429') ||
                                error?.message?.includes('rate limit') ||
-                               error?.code === 429;
+                               error?.message?.toLowerCase().includes('too many requests') ||
+                               error?.code === 429 ||
+                               error?.code === -32005; // JSON-RPC rate limit code
+
+      // Check if it's a timeout or connection error
+      const isConnectionError = error?.message?.includes('timeout') ||
+                                error?.message?.includes('ETIMEDOUT') ||
+                                error?.message?.includes('ECONNRESET') ||
+                                error?.code === 'TIMEOUT';
 
       if (isRateLimitError && i < maxRetries - 1) {
-        // For rate limit errors, wait much longer
+        // For rate limit errors, wait much longer and try next provider
         const delay = Math.min(initialDelay * Math.pow(3, i), 60000);
         console.log(`Rate limit detected, waiting ${delay}ms before retry ${i + 1}/${maxRetries}`);
         await new Promise(resolve => setTimeout(resolve, delay));
+
+        // Try switching provider on rate limit
+        currentProviderIndex = (currentProviderIndex + 1) % RPC_PROVIDERS.length;
+      } else if (isConnectionError && i < maxRetries - 1) {
+        // For connection errors, try next provider immediately
+        console.log(`Connection error, trying next provider (retry ${i + 1}/${maxRetries})`);
+        currentProviderIndex = (currentProviderIndex + 1) % RPC_PROVIDERS.length;
+        await new Promise(resolve => setTimeout(resolve, 500));
       } else if (i < maxRetries - 1) {
         const delay = initialDelay * Math.pow(2, i);
         await new Promise(resolve => setTimeout(resolve, delay));
@@ -241,9 +273,6 @@ async function processTokenSwaps(
     const amm = new ethers.Contract(token.amm_address, AMM_ABI, provider);
     const filter = amm.filters.Swap();
     const events = await retryWithBackoff(() => amm.queryFilter(filter, queryStartBlock, endBlock));
-
-    // Add small delay to avoid rate limiting (reduced from 200ms)
-    await new Promise(resolve => setTimeout(resolve, 50));
 
     if (events.length === 0) {
       return { swapsIndexed, errors, timedOut };
@@ -438,9 +467,15 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
 
     let endBlock = toBlock !== undefined ? toBlock : safeBlock;
 
-    if (endBlock - startBlock > MAX_BLOCK_RANGE) {
-      endBlock = startBlock + MAX_BLOCK_RANGE;
+    // Use adaptive block range based on how far behind we are
+    const blocksBehind = safeBlock - startBlock;
+    const adaptiveBlockRange = calculateBlockRange(blocksBehind);
+
+    if (endBlock - startBlock > adaptiveBlockRange) {
+      endBlock = startBlock + adaptiveBlockRange;
     }
+
+    console.log(`Processing blocks ${startBlock} to ${endBlock} (${blocksBehind} blocks behind, using range: ${adaptiveBlockRange})`);
 
     if (startBlock > endBlock) {
       results.executionTimeMs = Date.now() - startTime;
@@ -551,11 +586,15 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
 
     if (indexSwaps && !results.timedOut) {
       try {
+        // Only query tokens that might have activity in this block range
+        // Skip tokens created after our endBlock
         const { data: tokens } = await supabase
           .from("tokens")
-          .select("token_address, amm_address, block_number");
+          .select("token_address, amm_address, block_number")
+          .lte("block_number", endBlock);
 
         if (tokens && tokens.length > 0) {
+          console.log(`Processing swaps for ${tokens.length} tokens`);
           const processToken = async (token: any) => {
             return await processTokenSwaps(
               token,
@@ -590,9 +629,9 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
               break;
             }
 
-            // Add delay between batches to avoid rate limiting (reduced)
+            // Small delay between batches to avoid overwhelming the RPC
             if (i + PARALLEL_TOKEN_LIMIT < tokens.length) {
-              await new Promise(resolve => setTimeout(resolve, 200));
+              await new Promise(resolve => setTimeout(resolve, 100));
             }
           }
         }
@@ -638,8 +677,22 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
     blockCache.clear();
     results.executionTimeMs = Date.now() - startTime;
 
+    // Add monitoring information
+    const responseData = {
+      ...results,
+      blocksBehind: safeBlock - (lastProcessedBlockNumber || lastIndexedBlock),
+      blocksProcessed: endBlock - startBlock,
+      blockProcessingRate: Math.round((endBlock - startBlock) / (results.executionTimeMs / 1000)),
+      currentBlock,
+      safeBlock,
+      lastIndexedBlock: lastProcessedBlockNumber || lastIndexedBlock,
+    };
+
+    console.log(`Indexing complete: ${responseData.tokensIndexed} tokens, ${responseData.swapsIndexed} swaps, ${responseData.blocksProcessed} blocks in ${responseData.executionTimeMs}ms`);
+    console.log(`Still ${responseData.blocksBehind} blocks behind (rate: ${responseData.blockProcessingRate} blocks/sec)`);
+
     return new Response(
-      JSON.stringify(results),
+      JSON.stringify(responseData),
       {
         headers: {
           ...corsHeaders,
