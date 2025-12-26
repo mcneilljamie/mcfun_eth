@@ -6,7 +6,6 @@ import { ethers } from 'ethers';
 import { Loader2, Lock as LockIcon, Clock, User, Coins, AlertCircle, ExternalLink, TrendingUp, Trophy, ArrowLeft, Share2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { LockCelebration } from '../components/LockCelebration';
-import { WithdrawSuccess } from '../components/WithdrawSuccess';
 import { ToastMessage } from '../App';
 import { getExplorerUrl, getLockerAddress } from '../contracts/addresses';
 import { ERC20_ABI, TOKEN_LOCKER_ABI } from '../contracts/abis';
@@ -81,12 +80,6 @@ export function Lock({ onShowToast }: LockPageProps) {
     durationDays: number;
     unlockDate: Date;
     txHash: string;
-  } | null>(null);
-
-  const [withdrawSuccess, setWithdrawSuccess] = useState<{
-    txHash: string;
-    tokenSymbol: string;
-    amount: string;
   } | null>(null);
 
   useEffect(() => {
@@ -365,71 +358,6 @@ export function Lock({ onShowToast }: LockPageProps) {
     }
   };
 
-  const handleUnlock = async (lockId: number) => {
-    if (!signer || !chainId) return;
-
-    const lock = allLocks.find(l => l.lock_id === lockId);
-    if (!lock) return;
-
-    try {
-      setLoading(true);
-      const lockerAddress = getLockerAddress(chainId);
-      const lockerContract = new ethers.Contract(lockerAddress, TOKEN_LOCKER_ABI, signer);
-
-      const tx = await lockerContract.unlockTokens(lockId);
-      onShowToast({
-        message: t('lock.unlocking'),
-        type: 'info',
-      });
-
-      const receipt = await tx.wait();
-
-      const formattedAmount = ethers.formatUnits(lock.amount_locked, lock.token_decimals);
-      setWithdrawSuccess({
-        txHash: receipt.hash,
-        tokenSymbol: lock.token_symbol,
-        amount: parseFloat(formattedAmount).toFixed(4),
-      });
-
-      // Reload lock data with a slight delay to allow blockchain to process
-      setTimeout(() => {
-        loadLocks();
-        loadAggregatedLocks();
-      }, 2000);
-    } catch (err: any) {
-      console.error('Unlock failed:', err);
-      let errorMessage = t('lock.errors.unlockFailed');
-
-      const isUserRejection =
-        err.code === 'ACTION_REJECTED' ||
-        err.code === 4001 ||
-        err.code === -32603 ||
-        (err.message && (
-          err.message.includes('user rejected') ||
-          err.message.includes('User denied') ||
-          err.message.includes('rejected') ||
-          err.message.includes('denied')
-        )) ||
-        (err.reason && (
-          err.reason.includes('user rejected') ||
-          err.reason.includes('rejected')
-        ));
-
-      if (isUserRejection) {
-        errorMessage = t('lock.errors.transactionRejected');
-      } else if (err.message) {
-        errorMessage = err.message;
-      }
-
-      onShowToast({
-        message: errorMessage,
-        type: 'error',
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const filteredLocks = allLocks
     .filter((lock) => {
       // Filter out withdrawn locks
@@ -439,12 +367,6 @@ export function Lock({ onShowToast }: LockPageProps) {
       // Sort by unlock timestamp (all locks are non-withdrawn due to filter above)
       return new Date(a.unlock_timestamp).getTime() - new Date(b.unlock_timestamp).getTime();
     });
-
-  const userLocks = account
-    ? filteredLocks.filter((lock) =>
-        lock.user_address.toLowerCase() === account.toLowerCase()
-      )
-    : [];
 
   const topLockedTokens = aggregatedLocks
     .filter(lock => lock.is_mcfun_token)
@@ -822,60 +744,6 @@ export function Lock({ onShowToast }: LockPageProps) {
         </div>
         )}
 
-        {account && userLocks.length > 0 && (
-          <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('lock.yourLocks')}</h2>
-            <div className="space-y-3">
-              {userLocks.map((lock) => {
-                const isUnlockable = new Date(lock.unlock_timestamp) <= new Date() && !lock.is_withdrawn;
-                return (
-                  <div
-                    key={lock.id}
-                    className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-3 mb-3 flex-wrap">
-                          <h3 className="text-lg font-bold text-gray-900 whitespace-nowrap">{lock.token_symbol}</h3>
-                          <span className="text-sm text-gray-500 break-words">{lock.token_name}</span>
-                        </div>
-                        <div className="text-sm">
-                          <span className="text-gray-600">{t('lock.amount')}:</span>
-                          <span className="ml-2 font-semibold text-gray-900">
-                            {formatLargeTokenAmount(lock.amount_locked, lock.token_decimals)} {lock.token_symbol}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        {lock.value_usd && lock.value_usd > 0 && (
-                          <div className="text-2xl font-bold text-gray-900 mb-2">
-                            {formatCurrency(lock.value_usd)}
-                          </div>
-                        )}
-                        <div className="text-sm">
-                          <span className="text-gray-600">{t('lock.timeRemaining')}:</span>
-                          <span className="ml-2 font-semibold text-gray-900">
-                            {lock.is_withdrawn ? t('lock.withdrawn') : formatTimeRemaining(lock.unlock_timestamp)}
-                          </span>
-                        </div>
-                        {isUnlockable && (
-                          <button
-                            onClick={() => handleUnlock(lock.lock_id)}
-                            disabled={loading}
-                            className="mt-3 px-4 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:opacity-50"
-                          >
-                            {t('lock.unlock')}
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
         {!urlTokenAddress && topLockedTokens.length > 0 && (
           <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
@@ -958,17 +826,6 @@ export function Lock({ onShowToast }: LockPageProps) {
           {...celebration}
           onClose={() => setCelebration(null)}
           onShowToast={onShowToast}
-        />
-      )}
-
-      {withdrawSuccess && chainId && (
-        <WithdrawSuccess
-          isOpen={true}
-          onClose={() => setWithdrawSuccess(null)}
-          txHash={withdrawSuccess.txHash}
-          chainId={chainId}
-          tokenSymbol={withdrawSuccess.tokenSymbol}
-          amount={withdrawSuccess.amount}
         />
       )}
     </div>
