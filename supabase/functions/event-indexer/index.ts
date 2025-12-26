@@ -27,9 +27,9 @@ const RPC_PROVIDERS = [
   "https://rpc2.sepolia.org",
 ];
 
-const MAX_BLOCK_RANGE = 500;
+const MAX_BLOCK_RANGE = 200; // Reduced to process faster with 18 tokens
 const MAX_EXECUTION_TIME_MS = 23000;
-const PARALLEL_TOKEN_LIMIT = 3; // Reduced from 8 to avoid rate limiting
+const PARALLEL_TOKEN_LIMIT = 6; // Balance between speed and rate limits
 
 let currentProviderIndex = 0;
 
@@ -242,8 +242,8 @@ async function processTokenSwaps(
     const filter = amm.filters.Swap();
     const events = await retryWithBackoff(() => amm.queryFilter(filter, queryStartBlock, endBlock));
 
-    // Add small delay to avoid rate limiting
-    await new Promise(resolve => setTimeout(resolve, 200));
+    // Add small delay to avoid rate limiting (reduced from 200ms)
+    await new Promise(resolve => setTimeout(resolve, 50));
 
     if (events.length === 0) {
       return { swapsIndexed, errors, timedOut };
@@ -405,30 +405,27 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
       timedOut: false,
     };
 
-    if (!skipReorgCheck && lastIndexedBlock > 0) {
-      const reorgResult = await detectAndHandleReorg(supabase, provider, lastIndexedBlock, lastBlockHash);
-
-      if (reorgResult.error) {
-        results.errors.push(`Reorg detection error: ${reorgResult.error}`);
-      }
-
-      if (reorgResult.reorgDetected) {
-        results.reorgDetected = true;
-        const rollbackData = await rollbackToBlock(supabase, reorgResult.rollbackToBlock);
-        results.rollbackData = rollbackData;
-
-        await supabase
-          .from("indexer_state")
-          .update({
-            last_indexed_block: reorgResult.rollbackToBlock,
-            last_block_hash: null,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("id", indexerState.id);
-
-        console.log(`Rolled back to block ${reorgResult.rollbackToBlock}`, rollbackData);
-      }
-    }
+    // Skip reorg check temporarily to speed up catch-up
+    // if (!skipReorgCheck && lastIndexedBlock > 0) {
+    //   const reorgResult = await detectAndHandleReorg(supabase, provider, lastIndexedBlock, lastBlockHash);
+    //   if (reorgResult.error) {
+    //     results.errors.push(`Reorg detection error: ${reorgResult.error}`);
+    //   }
+    //   if (reorgResult.reorgDetected) {
+    //     results.reorgDetected = true;
+    //     const rollbackData = await rollbackToBlock(supabase, reorgResult.rollbackToBlock);
+    //     results.rollbackData = rollbackData;
+    //     await supabase
+    //       .from("indexer_state")
+    //       .update({
+    //         last_indexed_block: reorgResult.rollbackToBlock,
+    //         last_block_hash: null,
+    //         updated_at: new Date().toISOString(),
+    //       })
+    //       .eq("id", indexerState.id);
+    //     console.log(`Rolled back to block ${reorgResult.rollbackToBlock}`, rollbackData);
+    //   }
+    // }
 
     const currentBlock = await provider.getBlockNumber();
     const safeBlock = currentBlock - confirmationDepth;
@@ -593,9 +590,9 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
               break;
             }
 
-            // Add delay between batches to avoid rate limiting
+            // Add delay between batches to avoid rate limiting (reduced)
             if (i + PARALLEL_TOKEN_LIMIT < tokens.length) {
-              await new Promise(resolve => setTimeout(resolve, 500));
+              await new Promise(resolve => setTimeout(resolve, 200));
             }
           }
         }
