@@ -53,21 +53,37 @@ async function createProviderWithFailover(): Promise<ethers.JsonRpcProvider> {
 async function retryWithBackoff<T>(
   fn: () => Promise<T>,
   maxRetries = 3,
-  initialDelay = 100
+  initialDelay = 1000
 ): Promise<T> {
   let lastError;
   for (let i = 0; i < maxRetries; i++) {
     try {
       return await fn();
-    } catch (error) {
+    } catch (error: any) {
       lastError = error;
-      if (i < maxRetries - 1) {
+
+      // Check if it's a rate limit error
+      const isRateLimitError = error?.message?.includes('429') ||
+                               error?.message?.includes('rate limit') ||
+                               error?.code === 429;
+
+      if (isRateLimitError && i < maxRetries - 1) {
+        // For rate limit errors, wait longer
+        const delay = Math.min(initialDelay * Math.pow(3, i), 60000); // Cap at 60 seconds
+        console.log(`Rate limit detected, waiting ${delay}ms before retry ${i + 1}/${maxRetries}`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      } else if (i < maxRetries - 1) {
         const delay = initialDelay * Math.pow(2, i);
         await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
   }
   throw lastError;
+}
+
+// Rate limiting helper - adds delay between calls
+async function rateLimit(delayMs: number = 200) {
+  await new Promise(resolve => setTimeout(resolve, delayMs));
 }
 
 
@@ -221,9 +237,12 @@ async function processLockIndexing(req: Request): Promise<Response> {
 
     const existingLockIds = new Set(existingLocks?.map(l => l.lock_id) || []);
 
-    // Process new locks in batches
+    // Process new locks in batches with rate limiting
     const newLocks = [];
-    for (const event of allLockedEvents) {
+    const PROCESS_BATCH_SIZE = 5; // Process 5 locks at a time
+
+    for (let i = 0; i < allLockedEvents.length; i++) {
+      const event = allLockedEvents[i];
       try {
         const lockId = Number(event.args[0]);
 
@@ -237,10 +256,15 @@ async function processLockIndexing(req: Request): Promise<Response> {
         const amount = event.args[3];
         const unlockTime = Number(event.args[4]);
 
-        // Get token metadata (cached)
-        const { name, symbol, decimals } = await getTokenMetadata(tokenAddress, provider);
+        // Get token metadata (cached) with retry
+        const { name, symbol, decimals } = await retryWithBackoff(
+          () => getTokenMetadata(tokenAddress, provider)
+        );
 
-        const block = await provider.getBlock(event.blockNumber);
+        // Add delay between RPC calls
+        await rateLimit(300);
+
+        const block = await retryWithBackoff(() => provider.getBlock(event.blockNumber));
         const lockTimestamp = block ? block.timestamp : Math.floor(Date.now() / 1000);
         const durationDays = Math.floor((unlockTime - lockTimestamp) / 86400);
 
@@ -259,8 +283,20 @@ async function processLockIndexing(req: Request): Promise<Response> {
           tx_hash: event.transactionHash,
           block_number: event.blockNumber,
         });
-      } catch (err) {
-        console.error("Error processing lock event:", err);
+
+        // Add delay every batch to avoid rate limiting
+        if ((i + 1) % PROCESS_BATCH_SIZE === 0) {
+          console.log(`Processed ${i + 1}/${allLockedEvents.length} locks, pausing to avoid rate limits...`);
+          await rateLimit(2000); // 2 second pause between batches
+        }
+      } catch (err: any) {
+        console.error(`Error processing lock event ${Number(event.args[0])}:`, err);
+
+        // If rate limited, wait longer before continuing
+        if (err?.message?.includes('429') || err?.message?.includes('rate limit')) {
+          console.log('Rate limit hit, waiting 10 seconds before continuing...');
+          await rateLimit(10000);
+        }
       }
     }
 
