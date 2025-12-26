@@ -183,12 +183,10 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
 
       const newChanges: Record<string, { change: number; isNew: boolean }> = {};
       data?.forEach((item: any) => {
-        if (item.price_change !== null) {
-          newChanges[item.token_address] = {
-            change: parseFloat(item.price_change),
-            isNew: item.is_new
-          };
-        }
+        newChanges[item.token_address] = {
+          change: item.price_change !== null ? parseFloat(item.price_change) : 0,
+          isNew: item.is_new
+        };
       });
 
       setPriceChanges(newChanges);
@@ -307,24 +305,28 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                           </div>
                         </td>
                         <td className="py-4 px-4">
-                          {priceChanges[token.token_address] !== undefined ? (
-                            <div>
-                              <div className={`font-semibold ${
-                                priceChanges[token.token_address].change === 0
-                                  ? 'text-gray-500'
-                                  : priceChanges[token.token_address].change > 0
-                                  ? 'text-green-600'
-                                  : 'text-red-600'
-                              }`}>
-                                {priceChanges[token.token_address].change >= 0 ? '+' : ''}{priceChanges[token.token_address].change.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
+                          {(() => {
+                            const priceChange = priceChanges[token.token_address];
+                            const change = priceChange?.change ?? 0;
+                            const isNew = priceChange?.isNew ?? false;
+
+                            return (
+                              <div>
+                                <div className={`font-semibold ${
+                                  change === 0
+                                    ? 'text-gray-500'
+                                    : change > 0
+                                    ? 'text-green-600'
+                                    : 'text-red-600'
+                                }`}>
+                                  {change >= 0 ? '+' : ''}{change.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
+                                </div>
+                                <div className="text-xs text-gray-500 mt-0.5">
+                                  {isNew ? t('tokens.table.sinceLaunch') : t('tokens.table.24h')}
+                                </div>
                               </div>
-                              <div className="text-xs text-gray-500 mt-0.5">
-                                {priceChanges[token.token_address].isNew ? t('tokens.table.sinceLaunch') : t('tokens.table.24h')}
-                              </div>
-                            </div>
-                          ) : (
-                            <span className="text-gray-400 text-sm">-</span>
-                          )}
+                            );
+                          })()}
                         </td>
                         <td className="py-4 px-4">
                           <div className="font-semibold text-gray-900">
@@ -406,22 +408,28 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                           <div className="font-semibold text-gray-900">
                             {formatUSD(calculateTokenPriceUSD(token), false)}
                           </div>
-                          {priceChanges[token.token_address] !== undefined && (
-                            <div className="flex items-center justify-end gap-1">
-                              <span className={`text-xs font-medium ${
-                                priceChanges[token.token_address].change === 0
-                                  ? 'text-gray-500'
-                                  : priceChanges[token.token_address].change > 0
-                                  ? 'text-green-600'
-                                  : 'text-red-600'
-                              }`}>
-                                {priceChanges[token.token_address].change >= 0 ? '+' : ''}{priceChanges[token.token_address].change.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
-                              </span>
-                              <span className="text-xs text-gray-500">
-                                {priceChanges[token.token_address].isNew ? t('tokens.table.launch') : t('tokens.table.24h')}
-                              </span>
-                            </div>
-                          )}
+                          {(() => {
+                            const priceChange = priceChanges[token.token_address];
+                            const change = priceChange?.change ?? 0;
+                            const isNew = priceChange?.isNew ?? false;
+
+                            return (
+                              <div className="flex items-center justify-end gap-1">
+                                <span className={`text-xs font-medium ${
+                                  change === 0
+                                    ? 'text-gray-500'
+                                    : change > 0
+                                    ? 'text-green-600'
+                                    : 'text-red-600'
+                                }`}>
+                                  {change >= 0 ? '+' : ''}{change.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
+                                </span>
+                                <span className="text-xs text-gray-500">
+                                  {isNew ? t('tokens.table.launch') : t('tokens.table.24h')}
+                                </span>
+                              </div>
+                            );
+                          })()}
                         </div>
                       </div>
 
