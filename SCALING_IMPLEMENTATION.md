@@ -12,7 +12,7 @@ Tokens are now classified into 4 activity tiers:
 
 - **HOT**: Last swap within 1 hour → Checked every 10 seconds
 - **WARM**: Last swap within 24 hours → Checked every 2 minutes
-- **COLD**: Last swap within 7 days → Checked every 15 minutes
+- **COLD**: Last swap within 7 days → Checked every 10 minutes
 - **DORMANT**: No swap in 7+ days → Checked every 15 minutes
 
 This automatically focuses resources on active tokens while still monitoring dormant ones.
@@ -32,7 +32,7 @@ Replaced 6 identical jobs with tier-specific scheduling:
 
 - **6 HOT tier jobs**: Run every 10 seconds (staggered) for near-real-time updates
 - **1 WARM tier job**: Runs every 2 minutes
-- **1 COLD tier job**: Runs every 15 minutes
+- **1 COLD tier job**: Runs every 10 minutes
 - **1 DORMANT tier job**: Runs every 15 minutes
 - **1 TIER UPDATE job**: Recalculates tiers every 5 minutes
 
@@ -98,18 +98,18 @@ New `indexer_metrics` table records:
 - Each token only scans new blocks since last check
 - HOT (10 tokens) × 6 runs/min = 60 queries
 - WARM (20 tokens) × 0.5 runs/min = 10 queries
-- COLD (30 tokens) × 0.067 runs/min = 2 queries
+- COLD (30 tokens) × 0.1 runs/min = 3 queries
 - DORMANT (40 tokens) × 0.067 runs/min = 2.7 queries
-- **Total: ~75 token queries/min (88% reduction)**
+- **Total: ~76 token queries/min (87% reduction)**
 
 ### With 500 Tokens:
 Assuming distribution: 5% hot, 10% warm, 20% cold, 65% dormant
 
 - HOT (25) × 6 = 150 queries/min
 - WARM (50) × 0.5 = 25 queries/min
-- COLD (100) × 0.067 = 7 queries/min
+- COLD (100) × 0.1 = 10 queries/min
 - DORMANT (325) × 0.067 = 22 queries/min
-- **Total: ~204 token queries/min**
+- **Total: ~207 token queries/min**
 
 Even with 500 tokens, this is 68% fewer queries than the old system with 100 tokens!
 
