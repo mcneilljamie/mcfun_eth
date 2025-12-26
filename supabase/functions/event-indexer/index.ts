@@ -28,14 +28,13 @@ const RPC_PROVIDERS = [
 ];
 
 const MIN_BLOCK_RANGE = 100;
-const MAX_BLOCK_RANGE = 2000; // Allow larger ranges when catching up
+const MAX_BLOCK_RANGE = 2000;
 const MAX_EXECUTION_TIME_MS = 23000;
-const PARALLEL_TOKEN_LIMIT = 6; // Balance between speed and rate limits
+const PARALLEL_TOKEN_LIMIT = 6;
 
-// Calculate adaptive block range based on how far behind we are
 function calculateBlockRange(blocksBehind: number): number {
   if (blocksBehind > 10000) {
-    return MAX_BLOCK_RANGE; // Maximum speed when very behind
+    return MAX_BLOCK_RANGE;
   } else if (blocksBehind > 5000) {
     return 1000;
   } else if (blocksBehind > 1000) {
@@ -43,7 +42,7 @@ function calculateBlockRange(blocksBehind: number): number {
   } else if (blocksBehind > 500) {
     return 300;
   } else {
-    return MIN_BLOCK_RANGE; // Slower when caught up for better accuracy
+    return MIN_BLOCK_RANGE;
   }
 }
 
@@ -77,29 +76,23 @@ async function retryWithBackoff<T>(
     } catch (error: any) {
       lastError = error;
 
-      // Check if it's a rate limit error
       const isRateLimitError = error?.message?.includes('429') ||
                                error?.message?.includes('rate limit') ||
                                error?.message?.toLowerCase().includes('too many requests') ||
                                error?.code === 429 ||
-                               error?.code === -32005; // JSON-RPC rate limit code
+                               error?.code === -32005;
 
-      // Check if it's a timeout or connection error
       const isConnectionError = error?.message?.includes('timeout') ||
                                 error?.message?.includes('ETIMEDOUT') ||
                                 error?.message?.includes('ECONNRESET') ||
                                 error?.code === 'TIMEOUT';
 
       if (isRateLimitError && i < maxRetries - 1) {
-        // For rate limit errors, wait much longer and try next provider
         const delay = Math.min(initialDelay * Math.pow(3, i), 60000);
         console.log(`Rate limit detected, waiting ${delay}ms before retry ${i + 1}/${maxRetries}`);
         await new Promise(resolve => setTimeout(resolve, delay));
-
-        // Try switching provider on rate limit
         currentProviderIndex = (currentProviderIndex + 1) % RPC_PROVIDERS.length;
       } else if (isConnectionError && i < maxRetries - 1) {
-        // For connection errors, try next provider immediately
         console.log(`Connection error, trying next provider (retry ${i + 1}/${maxRetries})`);
         currentProviderIndex = (currentProviderIndex + 1) % RPC_PROVIDERS.length;
         await new Promise(resolve => setTimeout(resolve, 500));
@@ -133,7 +126,6 @@ class BlockCache {
     }
     const block = await provider.getBlock(blockNumber);
     if (block) {
-      // LRU eviction when cache is full
       if (this.cache.size >= this.maxSize) {
         const firstKey = this.cache.keys().next().value;
         this.cache.delete(firstKey);
@@ -271,16 +263,15 @@ async function processTokenSwaps(
   const errors: string[] = [];
   let swapsIndexed = 0;
   let timedOut = false;
+  let blocksScanned = 0;
 
   try {
     if (Date.now() - startTime > MAX_EXECUTION_TIME_MS) {
       return { swapsIndexed, errors, timedOut: true, blocksScanned: 0 };
     }
 
-    // Use per-token last_checked_block for efficient incremental indexing
     let queryStartBlock = token.last_checked_block || token.block_number || startBlock;
 
-    // For backfill mode, check if we need to fill gaps
     if (backfillSwaps) {
       const { data: earliestSwap } = await supabase
         .from("swaps")
@@ -294,12 +285,10 @@ async function processTokenSwaps(
         queryStartBlock = Math.max(token.block_number, startBlock);
       }
     } else {
-      // Normal incremental mode: start from last checked block + 1
       queryStartBlock = Math.max(queryStartBlock + 1, startBlock);
     }
 
     if (queryStartBlock > endBlock) {
-      // No new blocks to check, but update last_checked_block
       await supabase
         .from("tokens")
         .update({ last_checked_block: endBlock })
@@ -307,14 +296,12 @@ async function processTokenSwaps(
       return { swapsIndexed, errors, timedOut, blocksScanned: 0 };
     }
 
-    const blocksScanned = endBlock - queryStartBlock + 1;
+    blocksScanned = endBlock - queryStartBlock + 1;
 
-    // Use contract cache to avoid recreating contract instances
     const amm = contractCache.getContract(token.amm_address, AMM_ABI, provider);
     const filter = amm.filters.Swap();
     const events = await retryWithBackoff(() => amm.queryFilter(filter, queryStartBlock, endBlock));
 
-    // Update last_checked_block even if no swaps found
     if (events.length === 0) {
       await supabase
         .from("tokens")
@@ -395,7 +382,6 @@ async function processTokenSwaps(
           })
           .eq("token_address", token.token_address);
 
-        // Update activity tracking when swaps found
         const mostRecentSwap = swapsToInsert[swapsToInsert.length - 1];
         await supabase.rpc('record_token_swap_activity', {
           token_addr: token.token_address,
@@ -494,28 +480,6 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
       rpcCallsMade: 0,
     };
 
-    // Skip reorg check temporarily to speed up catch-up
-    // if (!skipReorgCheck && lastIndexedBlock > 0) {
-    //   const reorgResult = await detectAndHandleReorg(supabase, provider, lastIndexedBlock, lastBlockHash);
-    //   if (reorgResult.error) {
-    //     results.errors.push(`Reorg detection error: ${reorgResult.error}`);
-    //   }
-    //   if (reorgResult.reorgDetected) {
-    //     results.reorgDetected = true;
-    //     const rollbackData = await rollbackToBlock(supabase, reorgResult.rollbackToBlock);
-    //     results.rollbackData = rollbackData;
-    //     await supabase
-    //       .from("indexer_state")
-    //       .update({
-    //         last_indexed_block: reorgResult.rollbackToBlock,
-    //         last_block_hash: null,
-    //         updated_at: new Date().toISOString(),
-    //       })
-    //       .eq("id", indexerState.id);
-    //     console.log(`Rolled back to block ${reorgResult.rollbackToBlock}`, rollbackData);
-    //   }
-    // }
-
     const currentBlock = await provider.getBlockNumber();
     const safeBlock = currentBlock - confirmationDepth;
 
@@ -527,7 +491,6 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
 
     let endBlock = toBlock !== undefined ? toBlock : safeBlock;
 
-    // Use adaptive block range based on how far behind we are
     const blocksBehind = safeBlock - startBlock;
     const adaptiveBlockRange = calculateBlockRange(blocksBehind);
 
@@ -648,7 +611,6 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
       try {
         let tokens: any[] = [];
 
-        // Use tier-based querying if tier specified
         if (tier) {
           const effectiveBatchSize = batchSize || (tier === 'hot' ? 20 : tier === 'warm' ? 50 : tier === 'cold' ? 100 : 200);
           const { data: tierTokens, error: tierError } = await supabase.rpc('get_tokens_by_tier', {
@@ -663,7 +625,6 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
             tokens = tierTokens || [];
           }
         } else {
-          // Fallback: query all tokens (legacy mode)
           const { data: allTokens } = await supabase
             .from("tokens")
             .select("token_address, amm_address, block_number, last_checked_block, last_swap_at, swap_count_24h")
@@ -676,7 +637,7 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
           results.tokensProcessed = tokens.length;
 
           const processToken = async (token: any) => {
-            results.rpcCallsMade += 2; // Estimate: queryFilter + getReserves
+            results.rpcCallsMade += 2;
             return await processTokenSwaps(
               token,
               startBlock,
@@ -690,7 +651,6 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
             );
           };
 
-          // Adjust parallel limit based on tier
           const effectiveParallelLimit = tier === 'hot' ? 15 : tier === 'warm' ? 10 : PARALLEL_TOKEN_LIMIT;
 
           for (let i = 0; i < tokens.length; i += effectiveParallelLimit) {
@@ -715,7 +675,6 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
               break;
             }
 
-            // Smaller delay for hot tier, longer for others
             const delayMs = tier === 'hot' ? 50 : tier === 'warm' ? 100 : 200;
             if (i + effectiveParallelLimit < tokens.length) {
               await new Promise(resolve => setTimeout(resolve, delayMs));
@@ -765,7 +724,6 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
     contractCache.clear();
     results.executionTimeMs = Date.now() - startTime;
 
-    // Record metrics in database
     try {
       await supabase.from('indexer_metrics').insert({
         run_type: tier || 'legacy',
@@ -781,7 +739,6 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
       console.error('Failed to record indexer metrics:', err);
     }
 
-    // Add monitoring information
     const responseData = {
       ...results,
       blocksBehind: safeBlock - (lastProcessedBlockNumber || lastIndexedBlock),
