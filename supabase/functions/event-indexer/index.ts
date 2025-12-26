@@ -394,6 +394,38 @@ async function processTokenSwaps(
             p_token_address: token.token_address
           });
         }
+
+        // Create price snapshots for immediate UI update
+        const { data: ethPriceData } = await supabase
+          .from("eth_price_history")
+          .select("price_usd")
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        const ethPriceUsd = ethPriceData?.price_usd || 3000;
+
+        // Create a snapshot with the final reserves after all swaps
+        const finalReserveEth = parseFloat(ethReserveFormatted);
+        const finalReserveToken = parseFloat(tokenReserveFormatted);
+        const finalPriceEth = finalReserveEth / finalReserveToken;
+
+        const finalSnapshot = {
+          token_address: token.token_address,
+          price_eth: finalPriceEth.toString(),
+          eth_reserve: ethReserveFormatted,
+          token_reserve: tokenReserveFormatted,
+          created_at: mostRecentSwap.created_at,
+          eth_price_usd: ethPriceUsd,
+          is_interpolated: false,
+          block_number: mostRecentSwap.block_number,
+        };
+
+        await supabase
+          .from("price_snapshots")
+          .upsert(finalSnapshot, {
+            onConflict: "token_address,block_number",
+          });
       }
     }
   } catch (err: any) {
