@@ -1,7 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.4";
 import { ethers } from "npm:ethers@6.16.0";
-import { withLock } from "../_shared/lockManager.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -30,7 +29,7 @@ const RPC_PROVIDERS = [
 
 const MAX_BLOCK_RANGE = 500;
 const MAX_EXECUTION_TIME_MS = 23000;
-const PARALLEL_TOKEN_LIMIT = 8;
+const PARALLEL_TOKEN_LIMIT = 3; // Reduced from 8 to avoid rate limiting
 
 let currentProviderIndex = 0;
 
@@ -53,15 +52,26 @@ async function createProviderWithFailover(): Promise<ethers.JsonRpcProvider> {
 async function retryWithBackoff<T>(
   fn: () => Promise<T>,
   maxRetries = 3,
-  initialDelay = 100
+  initialDelay = 1000
 ): Promise<T> {
   let lastError;
   for (let i = 0; i < maxRetries; i++) {
     try {
       return await fn();
-    } catch (error) {
+    } catch (error: any) {
       lastError = error;
-      if (i < maxRetries - 1) {
+
+      // Check if it's a rate limit error
+      const isRateLimitError = error?.message?.includes('429') ||
+                               error?.message?.includes('rate limit') ||
+                               error?.code === 429;
+
+      if (isRateLimitError && i < maxRetries - 1) {
+        // For rate limit errors, wait much longer
+        const delay = Math.min(initialDelay * Math.pow(3, i), 60000);
+        console.log(`Rate limit detected, waiting ${delay}ms before retry ${i + 1}/${maxRetries}`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      } else if (i < maxRetries - 1) {
         const delay = initialDelay * Math.pow(2, i);
         await new Promise(resolve => setTimeout(resolve, delay));
       }
@@ -230,7 +240,10 @@ async function processTokenSwaps(
 
     const amm = new ethers.Contract(token.amm_address, AMM_ABI, provider);
     const filter = amm.filters.Swap();
-    const events = await amm.queryFilter(filter, queryStartBlock, endBlock);
+    const events = await retryWithBackoff(() => amm.queryFilter(filter, queryStartBlock, endBlock));
+
+    // Add small delay to avoid rate limiting
+    await new Promise(resolve => setTimeout(resolve, 200));
 
     if (events.length === 0) {
       return { swapsIndexed, errors, timedOut };
@@ -276,10 +289,10 @@ async function processTokenSwaps(
         swapsIndexed = count || 0;
 
         const lastEvent = events[events.length - 1];
-        const [reserveETH, reserveToken] = await Promise.all([
+        const [reserveETH, reserveToken] = await retryWithBackoff(() => Promise.all([
           amm.reserveETH(),
           amm.reserveToken(),
-        ]);
+        ]));
 
         let totalEthVolume = 0;
         for (const swap of swapsToInsert) {
@@ -333,25 +346,16 @@ Deno.serve(async (req: Request) => {
   const startTime = Date.now();
 
   try {
-    return await withLock("event_indexer_lock", async () => {
-      return await processIndexing(req, startTime);
-    }, {
-      timeoutSeconds: 300,
-      autoRenew: true,
-      renewIntervalMs: 30000,
-    });
+    return await processIndexing(req, startTime);
   } catch (err: any) {
-    console.error("Error acquiring lock or executing event-indexer:", err);
+    console.error("Error executing event-indexer:", err);
     return new Response(
       JSON.stringify({
         error: err.message,
-        executionTimeMs: Date.now() - startTime,
-        message: err.message.includes("Failed to acquire lock")
-          ? "Event indexer is busy processing. This request will be retried automatically."
-          : undefined
+        executionTimeMs: Date.now() - startTime
       }),
       {
-        status: err.message.includes("Failed to acquire lock") ? 503 : 500,
+        status: 500,
         headers: {
           ...corsHeaders,
           "Content-Type": "application/json",
@@ -587,6 +591,11 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
 
             if (results.timedOut) {
               break;
+            }
+
+            // Add delay between batches to avoid rate limiting
+            if (i + PARALLEL_TOKEN_LIMIT < tokens.length) {
+              await new Promise(resolve => setTimeout(resolve, 500));
             }
           }
         }
