@@ -252,7 +252,7 @@
       "locking": {
         "title": "Token Locking Fees",
         "amount": "$0",
-        "description": "Lock any ERC-20 token for any duration completely free. You only pay Ethereum network gas fees."
+        "description": "Lock McFun tokens for any duration completely free. You only pay Ethereum network gas fees."
       },
       "trading": {
         "title": "Trading Fees",
@@ -346,10 +346,10 @@
     "trackHoldingsDescription": "The Portfolio page makes it effortless to monitor the value of all your McFun token holdings in one place. Simply connect your wallet to see real-time values of your ETH balance and all tokens you own that are traded on McFun.",
     "realtimeTracking": "Real-Time Portfolio Tracking",
     "realtimeTrackingDescription": "View your total portfolio value, individual token balances, current prices, and the USD value of each position. Everything updates automatically so you always know exactly what your holdings are worth.",
-    "tokenLocking": "Free Token Locking",
-    "tokenLockingDescription": "McFun provides a secure, trustless token locking service that's completely free to use. Lock any ERC20 token for any duration to demonstrate commitment, build trust with your community, or create vesting schedules.",
-    "lockAnyToken": "Lock Any ERC20 Token",
-    "lockAnyTokenDescription": "Lock tokens from any project - whether they're McFun tokens or any other ERC20 token on Ethereum. Set your own lock duration from days to years.",
+    "tokenLocking": "Free McFun Token Locking",
+    "tokenLockingDescription": "McFun provides a secure, trustless token locking service that's completely free to use. Lock any McFun token for any duration to demonstrate commitment, build trust with your community, or create vesting schedules.",
+    "lockAnyToken": "Lock McFun Tokens",
+    "lockAnyTokenDescription": "Lock any token launched on McFun. Set your own lock duration from days to years and demonstrate long-term commitment to your community.",
     "completlyFree": "Completely Free - No Fees",
     "completlyFreeDescription": "Unlike other locking services that charge platform fees, McFun's token locker is completely free. You only pay network gas fees - no hidden costs or service charges.",
     "proveTrust": "Prove Trust & Commitment",
@@ -437,10 +437,10 @@
   },
   "lock": {
     "title": "Lock Tokens",
-    "subtitle": "Lock any ERC20 token for as long as you want - completely free",
+    "subtitle": "Lock McFun tokens for as long as you want - completely free",
     "lockTokens": "Lock Your Tokens",
     "connectWallet": "Connect your wallet to lock tokens",
-    "tokenAddress": "Token Address",
+    "tokenAddress": "McFun Token Address",
     "token": "Token",
     "yourBalance": "Your Balance",
     "amountToLock": "Amount to Lock",
@@ -468,7 +468,7 @@
     "minutes": "minutes",
     "howItWorks": "How Token Locking Works",
     "step1Title": "Enter Token Details",
-    "step1Description": "Paste the contract address of any ERC20 token you want to lock",
+    "step1Description": "Paste the contract address of any McFun token you want to lock",
     "step2Title": "Set Amount and Duration",
     "step2Description": "Choose how many tokens to lock and for how many days",
     "step3Title": "Lock and Track",
