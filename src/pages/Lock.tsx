@@ -655,6 +655,149 @@ export function Lock({ onShowToast }: LockPageProps) {
           </div>
         )}
 
+        {urlTokenAddress && allLocks.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+              <LockIcon className="w-6 h-6 mr-2" />
+              {t('lock.allLocks')}
+            </h2>
+            <div className="space-y-4">
+              {allLocks.map((lock) => {
+                const now = Math.floor(Date.now() / 1000);
+                const unlockDate = new Date(lock.unlock_timestamp);
+                const lockDate = new Date(lock.lock_timestamp);
+                const isUnlockable = now >= Math.floor(unlockDate.getTime() / 1000);
+                const isWithdrawn = lock.is_withdrawn;
+
+                return (
+                  <div
+                    key={lock.id}
+                    className={`bg-white rounded-xl border-2 ${
+                      isWithdrawn ? 'border-gray-200 bg-gray-50' : 'border-gray-200'
+                    } p-6 hover:shadow-lg transition-all`}
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-3 mb-2 flex-wrap">
+                          <h3 className="text-2xl font-bold text-gray-900 whitespace-nowrap">
+                            {lock.token_symbol}
+                          </h3>
+                          <span className="text-sm text-gray-500 truncate max-w-[200px]">
+                            {lock.user_address.substring(0, 6)}...{lock.user_address.substring(38)}
+                          </span>
+                          {isWithdrawn && (
+                            <span className="px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                              {t('lock.withdrawn')}
+                            </span>
+                          )}
+                          {!isWithdrawn && isUnlockable && (
+                            <span className="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                              {t('lock.unlockable')}
+                            </span>
+                          )}
+                          {!isWithdrawn && !isUnlockable && (
+                            <span className="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                              {t('lock.active')}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        {lock.value_usd && lock.value_usd > 0 ? (
+                          <>
+                            <div className="text-3xl font-bold text-gray-900 mb-1">
+                              {formatCurrency(lock.value_usd)}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {formatLargeTokenAmount(lock.amount_locked, lock.token_decimals)} {lock.token_symbol}
+                            </div>
+                          </>
+                        ) : (
+                          <div className="text-3xl font-bold text-gray-900">
+                            {formatLargeTokenAmount(lock.amount_locked, lock.token_decimals)} {lock.token_symbol}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                      <div className="bg-gray-50 rounded-lg p-4">
+                        <div className="text-xs text-gray-500 mb-1">{t('lock.lockedOn')}</div>
+                        <div className="text-sm font-semibold text-gray-900">
+                          {lockDate.toLocaleDateString()}
+                        </div>
+                      </div>
+                      <div className="bg-gray-50 rounded-lg p-4">
+                        <div className="text-xs text-gray-500 mb-1">{t('lock.lockDuration')}</div>
+                        <div className="text-sm font-semibold text-gray-900">
+                          {lock.lock_duration_days} {lock.lock_duration_days === 1 ? t('lock.day') : t('lock.days')}
+                        </div>
+                      </div>
+                      <div className="bg-gray-50 rounded-lg p-4">
+                        <div className="text-xs text-gray-500 mb-1 flex items-center">
+                          <Clock className="w-3 h-3 mr-1" />
+                          {isUnlockable ? t('lock.unlockedOn') : t('lock.unlocksOn')}
+                        </div>
+                        <div className="text-sm font-semibold text-gray-900">
+                          {unlockDate.toLocaleDateString()}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      {lock.tx_hash ? (
+                        <a
+                          href={`${getExplorerUrl(chainId || 1)}/tx/${lock.withdraw_tx_hash || lock.tx_hash}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                        >
+                          {t('lock.viewTransaction')}
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      ) : (
+                        <div className="text-sm text-gray-400">
+                          {t('lock.viewTransaction')}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {totalCount > ITEMS_PER_PAGE && (
+              <div className="flex justify-center items-center gap-4 mt-6">
+                <button
+                  onClick={() => {
+                    const newPage = currentPage - 1;
+                    setCurrentPage(newPage);
+                    loadLocks(newPage);
+                  }}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {t('lock.previous')}
+                </button>
+                <span className="text-gray-600">
+                  {t('lock.page')} {currentPage} {t('lock.of')} {Math.ceil(totalCount / ITEMS_PER_PAGE)}
+                </span>
+                <button
+                  onClick={() => {
+                    const newPage = currentPage + 1;
+                    setCurrentPage(newPage);
+                    loadLocks(newPage);
+                  }}
+                  disabled={currentPage >= Math.ceil(totalCount / ITEMS_PER_PAGE)}
+                  className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {t('lock.next')}
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
         {!urlTokenAddress && (
         <div className="grid lg:grid-cols-2 gap-8 mb-12">
           <div className="bg-white rounded-xl shadow-lg p-6">

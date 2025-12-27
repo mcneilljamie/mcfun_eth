@@ -460,11 +460,17 @@
     "withdrawn": "Withdrawn",
     "unlockable": "Unlocked",
     "locked": "Locked",
+    "active": "Active",
     "status": {
       "active": "Active",
       "unlockable": "Unlocked",
       "withdrawn": "Withdrawn"
     },
+    "lockedOn": "Locked On",
+    "unlocksOn": "Unlocks On",
+    "unlockedOn": "Unlocked On",
+    "viewTransaction": "View Transaction",
+    "day": "day",
     "days": "days",
     "hours": "hours",
     "minutes": "minutes",
