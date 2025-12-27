@@ -319,7 +319,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                                     ? 'text-green-600'
                                     : 'text-red-600'
                                 }`}>
-                                  {change >= 0 ? '+' : ''}{change.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
+                                  {change === 0 ? '–' : `${change >= 0 ? '+' : ''}${change.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`}
                                 </div>
                                 <div className="text-xs text-gray-500 mt-0.5">
                                   {isNew ? t('tokens.table.sinceLaunch') : t('tokens.table.24h')}
@@ -422,7 +422,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                                     ? 'text-green-600'
                                     : 'text-red-600'
                                 }`}>
-                                  {change >= 0 ? '+' : ''}{change.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
+                                  {change === 0 ? '–' : `${change >= 0 ? '+' : ''}${change.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`}
                                 </span>
                                 <span className="text-xs text-gray-500">
                                   {isNew ? t('tokens.table.launch') : t('tokens.table.24h')}
