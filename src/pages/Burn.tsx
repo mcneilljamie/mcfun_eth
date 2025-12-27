@@ -195,24 +195,29 @@ export function Burn({ onShowToast }: BurnPageProps) {
   };
 
   const checkAllowance = async () => {
-    if (!provider || !account || !tokenInfo || !amount || !chainId) return;
-
-    try {
-      const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
-      const allowance = await tokenContract.allowance(account, BURN_ADDRESS);
-      const amountWei = ethers.parseUnits(amount, tokenInfo.decimals);
-      setNeedsApproval(false);
-    } catch (err) {
-      console.error('Failed to check allowance:', err);
-    }
+    setNeedsApproval(false);
   };
 
   const handleBurn = async () => {
-    if (!signer || !tokenInfo || !amount || !chainId) return;
+    console.log('handleBurn called', {
+      signer: !!signer,
+      tokenInfo,
+      amount,
+      chainId,
+      confirmBurn,
+      tokenAddress,
+    });
+
+    if (!signer || !tokenInfo || !amount || !chainId) {
+      console.log('Missing required fields - returning');
+      return;
+    }
 
     const amountNum = parseFloat(amount);
+    console.log('Amount parsed:', amountNum, 'Balance:', tokenInfo.balance);
 
     if (amountNum <= 0) {
+      console.log('Invalid amount - must be > 0');
       onShowToast({
         message: t('burn.errors.invalidInput'),
         type: 'error',
@@ -221,6 +226,7 @@ export function Burn({ onShowToast }: BurnPageProps) {
     }
 
     if (amountNum > parseFloat(tokenInfo.balance)) {
+      console.log('Insufficient balance');
       onShowToast({
         message: t('burn.errors.insufficientBalance'),
         type: 'error',
@@ -229,22 +235,32 @@ export function Burn({ onShowToast }: BurnPageProps) {
     }
 
     if (!confirmBurn) {
+      console.log('Setting confirmBurn to true');
       setConfirmBurn(true);
       return;
     }
 
     try {
       setIsBurning(true);
+      console.log('Creating token contract for address:', tokenAddress);
+      console.log('Using signer:', await signer.getAddress());
       const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, signer);
       const amountWei = ethers.parseUnits(amount, tokenInfo.decimals);
+      console.log('Amount in wei:', amountWei.toString());
+      console.log('Burn address:', BURN_ADDRESS);
 
+      console.log('Calling transfer...');
       const tx = await tokenContract.transfer(BURN_ADDRESS, amountWei);
+      console.log('Transaction sent:', tx.hash);
+
       onShowToast({
         message: t('burn.burning'),
         type: 'info',
       });
 
+      console.log('Waiting for confirmation...');
       const receipt = await tx.wait();
+      console.log('Transaction confirmed:', receipt);
 
       onShowToast({
         message: t('burn.success'),
@@ -261,18 +277,31 @@ export function Burn({ onShowToast }: BurnPageProps) {
       }, 2000);
     } catch (err: any) {
       console.error('Burn failed:', err);
+      console.error('Error details:', {
+        message: err.message,
+        code: err.code,
+        reason: err.reason,
+        data: err.data,
+        error: err.error,
+        shortMessage: err.shortMessage,
+      });
 
       let errorMessage = t('burn.errors.burnFailed');
 
-      if (err.message?.includes('NotMcFunToken') ||
-          err.data?.message?.includes('NotMcFunToken') ||
-          err.error?.message?.includes('NotMcFunToken')) {
-        errorMessage = t('burn.errors.notMcFunToken');
-      } else if (err.message?.includes('user rejected') ||
-                 err.message?.includes('User denied')) {
+      if (err.code === 'ACTION_REJECTED' ||
+          err.message?.includes('user rejected') ||
+          err.message?.includes('User denied') ||
+          err.code === 4001) {
         errorMessage = t('burn.errors.userRejected');
+      } else if (err.reason) {
+        errorMessage = `${t('burn.errors.burnFailed')}: ${err.reason}`;
+      } else if (err.shortMessage) {
+        errorMessage = `${t('burn.errors.burnFailed')}: ${err.shortMessage}`;
       } else if (err.message?.includes('insufficient')) {
         errorMessage = t('burn.errors.insufficientBalance');
+      } else if (err.message) {
+        const cleanMessage = err.message.split('\n')[0].substring(0, 100);
+        errorMessage = `${t('burn.errors.burnFailed')}: ${cleanMessage}`;
       }
 
       onShowToast({
