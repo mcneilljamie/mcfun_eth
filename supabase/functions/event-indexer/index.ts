@@ -300,13 +300,42 @@ async function processTokenSwaps(
 
     const amm = contractCache.getContract(token.amm_address, AMM_ABI, provider);
     const filter = amm.filters.Swap();
-    const events = await retryWithBackoff(() => amm.queryFilter(filter, queryStartBlock, endBlock));
+
+    let events;
+    let querySucceeded = false;
+
+    try {
+      events = await retryWithBackoff(() => amm.queryFilter(filter, queryStartBlock, endBlock));
+      querySucceeded = true;
+    } catch (err: any) {
+      // If the query explicitly failed, don't mark blocks as checked
+      errors.push(`RPC query failed for ${token.token_address} blocks ${queryStartBlock}-${endBlock}: ${err.message}`);
+      return { swapsIndexed, errors, timedOut, blocksScanned: 0 };
+    }
 
     if (events.length === 0) {
-      await supabase
-        .from("tokens")
-        .update({ last_checked_block: endBlock })
-        .eq("token_address", token.token_address);
+      // Verify RPC is responsive before advancing checkpoint
+      // This prevents data loss when RPC silently fails and returns []
+      try {
+        // Quick sanity check: can we get current block number?
+        const currentBlock = await provider.getBlockNumber();
+
+        if (currentBlock === 0) {
+          errors.push(`RPC returned block 0 for ${token.token_address} - likely failed, not advancing checkpoint`);
+          return { swapsIndexed, errors, timedOut, blocksScanned: 0 };
+        }
+
+        // Only advance checkpoint if query explicitly succeeded and RPC is responsive
+        await supabase
+          .from("tokens")
+          .update({ last_checked_block: endBlock })
+          .eq("token_address", token.token_address);
+      } catch (verifyErr: any) {
+        // RPC verification failed - don't advance checkpoint
+        errors.push(`RPC verification failed for ${token.token_address}, not advancing checkpoint: ${verifyErr.message}`);
+        return { swapsIndexed, errors, timedOut, blocksScanned: 0 };
+      }
+
       return { swapsIndexed, errors, timedOut, blocksScanned };
     }
 
@@ -757,6 +786,13 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
     results.executionTimeMs = Date.now() - startTime;
 
     try {
+      // Count RPC verification failures (when checkpoints weren't advanced)
+      const rpcFailureCount = results.errors.filter(e =>
+        e.includes('RPC query failed') ||
+        e.includes('RPC verification failed') ||
+        e.includes('not advancing checkpoint')
+      ).length;
+
       await supabase.from('indexer_metrics').insert({
         run_type: tier || 'legacy',
         tokens_processed: results.tokensProcessed,
@@ -765,8 +801,20 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
         rpc_calls_made: results.rpcCallsMade,
         processing_time_ms: results.executionTimeMs,
         errors_count: results.errors.length,
-        error_details: results.errors.length > 0 ? { errors: results.errors } : null,
+        error_details: results.errors.length > 0 ? {
+          errors: results.errors,
+          rpc_failures: rpcFailureCount,
+          critical_data_loss_prevented: rpcFailureCount > 0
+        } : null,
       });
+
+      // Log critical RPC failures for monitoring
+      if (rpcFailureCount > 0) {
+        console.error(`⚠️ CRITICAL: ${rpcFailureCount} tokens failed RPC verification, checkpoints NOT advanced to prevent data loss`);
+        console.error('Affected errors:', results.errors.filter(e =>
+          e.includes('RPC') || e.includes('checkpoint')
+        ));
+      }
     } catch (err: any) {
       console.error('Failed to record indexer metrics:', err);
     }
