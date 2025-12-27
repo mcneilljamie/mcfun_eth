@@ -7,8 +7,8 @@ import { Loader2, Lock as LockIcon, Clock, User, Coins, AlertCircle, ExternalLin
 import { useTranslation } from 'react-i18next';
 import { LockCelebration } from '../components/LockCelebration';
 import { ToastMessage } from '../App';
-import { getExplorerUrl, getLockerAddress } from '../contracts/addresses';
-import { ERC20_ABI, TOKEN_LOCKER_ABI } from '../contracts/abis';
+import { getExplorerUrl, getLockerAddress, getFactoryAddress } from '../contracts/addresses';
+import { ERC20_ABI, TOKEN_LOCKER_ABI, MCFUN_FACTORY_ABI } from '../contracts/abis';
 
 interface TokenLock {
   id: string;
@@ -66,10 +66,11 @@ export function Lock({ onShowToast }: LockPageProps) {
   const [tokenAddress, setTokenAddress] = useState('');
   const [amount, setAmount] = useState('');
   const [duration, setDuration] = useState('');
-  const [tokenInfo, setTokenInfo] = useState<{ name: string; symbol: string; decimals: number; balance: string } | null>(null);
+  const [tokenInfo, setTokenInfo] = useState<{ name: string; symbol: string; decimals: number; balance: string; isMcFunToken: boolean } | null>(null);
   const [isLocking, setIsLocking] = useState(false);
   const [needsApproval, setNeedsApproval] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
+  const [tokenValidationError, setTokenValidationError] = useState<string | null>(null);
 
   const [celebration, setCelebration] = useState<{
     lockId: number;
@@ -198,9 +199,23 @@ export function Lock({ onShowToast }: LockPageProps) {
   };
 
   const loadTokenInfo = async () => {
-    if (!provider || !account) return;
+    if (!provider || !account || !chainId) return;
 
     try {
+      setTokenValidationError(null);
+
+      // First check if it's a McFun token
+      const factoryAddress = getFactoryAddress(chainId);
+      const factoryContract = new ethers.Contract(factoryAddress, MCFUN_FACTORY_ABI, provider);
+      const ammAddress = await factoryContract.tokenToAMM(tokenAddress);
+      const isMcFunToken = ammAddress !== ethers.ZeroAddress;
+
+      if (!isMcFunToken) {
+        setTokenInfo(null);
+        setTokenValidationError(t('lock.errors.notMcFunToken'));
+        return;
+      }
+
       const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
       const [name, symbol, decimals, balance] = await Promise.all([
         tokenContract.name(),
@@ -214,14 +229,12 @@ export function Lock({ onShowToast }: LockPageProps) {
         symbol,
         decimals: Number(decimals),
         balance: ethers.formatUnits(balance, decimals),
+        isMcFunToken,
       });
     } catch (err) {
       console.error('Failed to load token info:', err);
       setTokenInfo(null);
-      onShowToast({
-        message: t('lock.errors.invalidToken'),
-        type: 'error',
-      });
+      setTokenValidationError(t('lock.errors.invalidToken'));
     }
   };
 
@@ -606,10 +619,23 @@ export function Lock({ onShowToast }: LockPageProps) {
                   <input
                     type="text"
                     value={tokenAddress}
-                    onChange={(e) => setTokenAddress(e.target.value)}
+                    onChange={(e) => {
+                      setTokenAddress(e.target.value);
+                      setTokenValidationError(null);
+                    }}
                     placeholder="0x..."
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
+                  {tokenValidationError && (
+                    <div className="mt-2 bg-red-50 border border-red-200 rounded-lg p-3">
+                      <div className="flex items-start">
+                        <AlertCircle className="w-5 h-5 text-red-600 mr-2 mt-0.5" />
+                        <div className="text-sm text-red-800">
+                          {tokenValidationError}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {tokenInfo && (
@@ -689,7 +715,7 @@ export function Lock({ onShowToast }: LockPageProps) {
                 ) : (
                   <button
                     onClick={handleLock}
-                    disabled={isLocking || !tokenInfo || !amount || !duration}
+                    disabled={isLocking || !tokenInfo || !tokenInfo.isMcFunToken || !amount || !duration}
                     className="w-full bg-gray-900 text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                   >
                     {isLocking ? (

@@ -7,6 +7,10 @@ interface IERC20 {
     function balanceOf(address account) external view returns (uint256);
 }
 
+interface IMcFunFactory {
+    function tokenToAMM(address tokenAddress) external view returns (address);
+}
+
 contract TokenLocker {
     struct Lock {
         address owner;
@@ -16,8 +20,16 @@ contract TokenLocker {
         bool withdrawn;
     }
 
+    address public immutable mcFunFactory;
     mapping(uint256 => Lock) public locks;
     uint256 public nextLockId;
+
+    error NotMcFunToken();
+
+    constructor(address _mcFunFactory) {
+        require(_mcFunFactory != address(0), "Invalid factory address");
+        mcFunFactory = _mcFunFactory;
+    }
 
     event TokensLocked(
         uint256 indexed lockId,
@@ -42,6 +54,10 @@ contract TokenLocker {
         require(tokenAddress != address(0), "Invalid token address");
         require(amount > 0, "Amount must be greater than 0");
         require(durationDays > 0, "Duration must be at least 1 day");
+
+        // Verify token was created through McFun factory
+        address ammAddress = IMcFunFactory(mcFunFactory).tokenToAMM(tokenAddress);
+        if (ammAddress == address(0)) revert NotMcFunToken();
 
         IERC20 token = IERC20(tokenAddress);
         require(
@@ -106,5 +122,10 @@ contract TokenLocker {
             return 0;
         }
         return lock.unlockTime - block.timestamp;
+    }
+
+    function isMcFunToken(address tokenAddress) external view returns (bool) {
+        address ammAddress = IMcFunFactory(mcFunFactory).tokenToAMM(tokenAddress);
+        return ammAddress != address(0);
     }
 }

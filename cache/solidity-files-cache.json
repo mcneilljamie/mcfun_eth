@@ -79,8 +79,8 @@
       ]
     },
     "/tmp/cc-agent/61154910/project/src/contracts/TokenLocker.sol": {
-      "lastModificationDate": 1766150932648,
-      "contentHash": "d6dfa2cb98ef39dc3ffbaf014401141c",
+      "lastModificationDate": 1766794121538,
+      "contentHash": "ee823c3d5ce3a56bc820b00eef3bd23a",
       "sourceName": "src/contracts/TokenLocker.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -112,6 +112,7 @@
       ],
       "artifacts": [
         "IERC20",
+        "IMcFunFactory",
         "TokenLocker"
       ]
     }
