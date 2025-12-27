@@ -420,8 +420,22 @@ export function Lock({ onShowToast }: LockPageProps) {
       }
     } catch (err: any) {
       console.error('Lock failed:', err);
+
+      let errorMessage = t('lock.errors.lockFailed');
+
+      if (err.message?.includes('NotMcFunToken') ||
+          err.data?.message?.includes('NotMcFunToken') ||
+          err.error?.message?.includes('NotMcFunToken')) {
+        errorMessage = t('lock.errors.notMcFunToken');
+      } else if (err.message?.includes('user rejected') ||
+                 err.message?.includes('User denied')) {
+        errorMessage = t('lock.errors.userRejected');
+      } else if (err.message?.includes('insufficient')) {
+        errorMessage = t('lock.errors.insufficientBalance');
+      }
+
       onShowToast({
-        message: err.message || t('lock.errors.lockFailed'),
+        message: errorMessage,
         type: 'error',
       });
     } finally {
