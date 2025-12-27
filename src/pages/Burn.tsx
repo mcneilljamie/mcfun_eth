@@ -583,9 +583,10 @@ export function Burn({ onShowToast }: BurnPageProps) {
                 const totalValueUsd = burn.total_value_usd || 0;
 
                 return (
-                  <div
+                  <button
                     key={burn.token_address}
-                    className="border border-gray-200 rounded-lg p-4 hover:border-red-400 hover:shadow-md transition-all"
+                    onClick={() => navigate(`/token/${burn.token_address}`)}
+                    className="w-full border border-gray-200 rounded-lg p-4 hover:border-red-400 hover:shadow-md transition-all cursor-pointer text-left"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3 flex-1">
@@ -617,7 +618,7 @@ export function Burn({ onShowToast }: BurnPageProps) {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </button>
                 );
               })}
             </div>
