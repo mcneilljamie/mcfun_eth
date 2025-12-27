@@ -111,6 +111,16 @@ export function Navigation({ currentPage, onNavigate, setToast }: NavigationProp
                 {t('nav.myLocks')}
               </button>
               <button
+                onClick={() => onNavigate('burn')}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  currentPage === 'burn'
+                    ? 'bg-gray-900 text-white'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                {t('nav.burn')}
+              </button>
+              <button
                 onClick={() => onNavigate('about')}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                   currentPage === 'about'
@@ -205,6 +215,16 @@ export function Navigation({ currentPage, onNavigate, setToast }: NavigationProp
             }`}
           >
             {t('nav.myLocksShort')}
+          </button>
+          <button
+            onClick={() => onNavigate('burn')}
+            className={`flex-1 px-2 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors touch-manipulation ${
+              currentPage === 'burn'
+                ? 'bg-gray-900 text-white'
+                : 'text-gray-700 hover:bg-gray-100'
+            }`}
+          >
+            {t('nav.burn')}
           </button>
           <button
             onClick={() => onNavigate('about')}

@@ -7,6 +7,7 @@
     "portfolio": "Portfolio",
     "lock": "Lock",
     "myLocks": "My Locks",
+    "burn": "Burn",
     "about": "About",
     "connectWallet": "Connect Wallet",
     "connecting": "Connecting...",
@@ -605,6 +606,44 @@
     "toasts": {
       "withdrawSubmitted": "Withdrawal transaction submitted...",
       "withdrawSuccess": "Successfully withdrawn {{symbol}}!"
+    }
+  },
+  "burn": {
+    "title": "Burn Tokens",
+    "subtitle": "Permanently destroy McFun tokens to reduce supply - this action cannot be undone",
+    "burnTokens": "Burn Your Tokens",
+    "connectWallet": "Connect your wallet to burn tokens",
+    "tokenAddress": "McFun Token Address",
+    "popularTokensDropdown": "Popular McFun Tokens",
+    "token": "Token",
+    "yourBalance": "Your Balance",
+    "amountToBurn": "Amount to Burn",
+    "warning": "PERMANENT ACTION - THIS CANNOT BE UNDONE",
+    "warningDescription": "Burned tokens are sent to the zero address (0x000...000) and are permanently removed from circulation. There is no way to recover them.",
+    "burnButton": "Burn Tokens",
+    "confirmButton": "I Understand - Burn Tokens",
+    "cancelButton": "Cancel",
+    "burning": "Burning tokens...",
+    "success": "Tokens burned successfully",
+    "topBurnedTokens": "Top Burned McFun Tokens by Total Value",
+    "totalBurned": "Total Burned",
+    "burnCount": "Burn Count",
+    "burns": "burns",
+    "totalValue": "Total Value",
+    "howItWorks": "How Token Burning Works",
+    "step1Title": "Enter Token Details",
+    "step1Description": "Paste the contract address of any McFun token you want to burn",
+    "step2Title": "Specify Amount",
+    "step2Description": "Choose how many tokens you want to permanently destroy",
+    "step3Title": "Confirm and Burn",
+    "step3Description": "Confirm the action to permanently send tokens to the zero address",
+    "errors": {
+      "invalidToken": "Invalid token address or failed to load token information",
+      "notMcFunToken": "This token was not launched on McFun. Only tokens launched on McFun can be burned through this interface.",
+      "invalidInput": "Please enter a valid amount",
+      "insufficientBalance": "Insufficient token balance",
+      "burnFailed": "Failed to burn tokens",
+      "userRejected": "Transaction was rejected by user"
     }
   }
 }

@@ -12,6 +12,7 @@ import { TokenDetail } from './pages/TokenDetail';
 import Portfolio from './pages/Portfolio';
 import { Lock } from './pages/Lock';
 import { MyLocks } from './pages/MyLocks';
+import { Burn } from './pages/Burn';
 import { About } from './pages/About';
 import { Token } from './lib/supabase';
 
@@ -34,6 +35,7 @@ function AppContent() {
     else if (page === 'portfolio') navigate('/portfolio');
     else if (page === 'lock') navigate('/lock');
     else if (page === 'my-locks') navigate('/my-locks');
+    else if (page === 'burn') navigate('/burn');
     else if (page === 'token-detail' && tokenAddress) navigate(`/token/${tokenAddress}`);
     else if (page === 'about') navigate('/about');
   };
@@ -56,6 +58,7 @@ function AppContent() {
     if (path === '/portfolio') return 'portfolio';
     if (path === '/lock' || path.startsWith('/lock/')) return 'lock';
     if (path === '/my-locks') return 'my-locks';
+    if (path === '/burn') return 'burn';
     if (path.startsWith('/token/')) return 'token-detail';
     if (path === '/about') return 'about';
     return 'home';
@@ -93,6 +96,7 @@ function AppContent() {
             <Route path="/lock" element={<Lock onShowToast={setToast} />} />
             <Route path="/lock/:tokenAddress" element={<Lock onShowToast={setToast} />} />
             <Route path="/my-locks" element={<MyLocks onShowToast={setToast} />} />
+            <Route path="/burn" element={<Burn onShowToast={setToast} />} />
             <Route path="/about" element={<About />} />
           </Routes>
         </div>
