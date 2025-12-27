@@ -72,7 +72,7 @@ export function Lock({ onShowToast }: LockPageProps) {
   const [isApproving, setIsApproving] = useState(false);
   const [tokenValidationError, setTokenValidationError] = useState<string | null>(null);
   const [showTokenDropdown, setShowTokenDropdown] = useState(false);
-  const [popularTokens, setPopularTokens] = useState<Array<{ token_address: string; name: string; symbol: string; current_eth_reserve: number }>>([]);
+  const [popularTokens, setPopularTokens] = useState<Array<{ token_address: string; name: string; symbol: string; current_eth_reserve: number; current_token_reserve: number; total_volume_eth: number }>>([]);
 
   const [celebration, setCelebration] = useState<{
     lockId: number;
@@ -205,9 +205,10 @@ export function Lock({ onShowToast }: LockPageProps) {
     try {
       const { data, error } = await supabase
         .from('tokens')
-        .select('token_address, name, symbol, current_eth_reserve')
+        .select('token_address, name, symbol, current_eth_reserve, current_token_reserve, total_volume_eth')
         .not('current_eth_reserve', 'is', null)
-        .order('current_eth_reserve', { ascending: false })
+        .not('current_token_reserve', 'is', null)
+        .order('total_volume_eth', { ascending: false, nullsFirst: false })
         .limit(10);
 
       if (!error && data) {
@@ -675,9 +676,16 @@ export function Lock({ onShowToast }: LockPageProps) {
                             </div>
                             <div className="ml-2 text-right">
                               <div className="text-sm font-semibold text-gray-900">
-                                {parseFloat(token.current_eth_reserve.toString()).toFixed(4)} ETH
+                                {(() => {
+                                  const ethReserve = parseFloat(token.current_eth_reserve.toString());
+                                  const tokenReserve = parseFloat(token.current_token_reserve.toString());
+                                  const priceInEth = ethReserve / tokenReserve;
+                                  // Approximate market cap as pool value * 2
+                                  const estimatedMarketCap = ethReserve * 2;
+                                  return estimatedMarketCap.toFixed(4);
+                                })()} ETH
                               </div>
-                              <div className="text-xs text-gray-500">Liquidity</div>
+                              <div className="text-xs text-gray-500">Est. Market Cap</div>
                             </div>
                           </div>
                         </button>
