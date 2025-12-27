@@ -411,6 +411,7 @@
   },
   "launchCelebration": {
     "title": "تبریک!",
+    "tokenNumberMessage": "شما توکن شماره {{number}} را در McFun راه‌اندازی کردید!",
     "subtitle": "توکن {{name}} ({{symbol}}) شما با موفقیت راه‌اندازی شد!",
     "shareToken": "توکن خود را به اشتراک بگذارید",
     "shareableLink": "لینک قابل اشتراک‌گذاری",

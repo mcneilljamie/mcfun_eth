@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '../lib/web3';
 import { getExplorerUrl } from '../contracts/addresses';
 import { ToastMessage } from '../App';
+import { getOrdinalSuffix } from '../lib/utils';
 
 interface LaunchCelebrationProps {
   tokenName: string;
@@ -11,6 +12,7 @@ interface LaunchCelebrationProps {
   tokenAddress: string;
   ammAddress: string;
   txHash: string;
+  tokenNumber: number;
   onClose: () => void;
   onViewToken: () => void;
   onShowToast: (toast: ToastMessage) => void;
@@ -22,6 +24,7 @@ export function LaunchCelebration({
   tokenAddress,
   ammAddress,
   txHash,
+  tokenNumber,
   onClose,
   onViewToken,
   onShowToast,
@@ -152,6 +155,14 @@ export function LaunchCelebration({
             <h2 className="text-3xl font-bold text-gray-900 mb-2">
               {t('launchCelebration.title')}
             </h2>
+            {tokenNumber > 0 && (
+              <p className="text-xl font-semibold text-gray-900 mb-2">
+                {t('launchCelebration.tokenNumberMessage', {
+                  number: tokenNumber,
+                  suffix: getOrdinalSuffix(tokenNumber)
+                })}
+              </p>
+            )}
             <p className="text-lg text-gray-600">
               {t('launchCelebration.subtitle', { name: tokenName, symbol: tokenSymbol })}
             </p>

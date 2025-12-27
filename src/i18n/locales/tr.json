@@ -411,6 +411,7 @@
   },
   "launchCelebration": {
     "title": "Tebrikler!",
+    "tokenNumberMessage": "McFun'da {{number}} numaralı token'ı başlattınız!",
     "subtitle": "Token'ınız {{name}} ({{symbol}}) başarıyla başlatıldı!",
     "shareToken": "Token'ınızı Paylaşın",
     "shareableLink": "Paylaşılabilir Bağlantı",

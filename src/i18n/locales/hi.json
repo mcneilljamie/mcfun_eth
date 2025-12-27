@@ -411,6 +411,7 @@
   },
   "launchCelebration": {
     "title": "बधाई हो!",
+    "tokenNumberMessage": "आपने McFun पर टोकन नंबर {{number}} लॉन्च किया है!",
     "subtitle": "आपका टोकन {{name}} ({{symbol}}) सफलतापूर्वक लॉन्च हो गया है!",
     "shareToken": "अपना टोकन साझा करें",
     "shareableLink": "साझा करने योग्य लिंक",

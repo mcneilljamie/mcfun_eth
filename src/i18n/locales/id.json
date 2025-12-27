@@ -411,6 +411,7 @@
   },
   "launchCelebration": {
     "title": "Selamat!",
+    "tokenNumberMessage": "Anda telah meluncurkan token nomor {{number}} di McFun!",
     "subtitle": "Token Anda {{name}} ({{symbol}}) telah berhasil diluncurkan!",
     "shareToken": "Bagikan Token Anda",
     "shareableLink": "Tautan yang Dapat Dibagikan",

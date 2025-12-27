@@ -411,6 +411,7 @@
   },
   "launchCelebration": {
     "title": "恭喜！",
+    "tokenNumberMessage": "您在 McFun 上发行了第 {{number}} 个代币！",
     "subtitle": "您的代币 {{name}} ({{symbol}}) 已成功发行！",
     "shareToken": "分享您的代币",
     "shareableLink": "可分享链接",

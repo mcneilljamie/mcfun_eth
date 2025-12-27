@@ -411,6 +411,7 @@
   },
   "launchCelebration": {
     "title": "გილოცავთ!",
+    "tokenNumberMessage": "თქვენ გაუშვით ტოკენი ნომერი {{number}} McFun-ზე!",
     "subtitle": "თქვენი ტოკენი {{name}} ({{symbol}}) წარმატებით გაშვებულია!",
     "shareToken": "გააზიარეთ თქვენი ტოკენი",
     "shareableLink": "გაზიარებადი ბმული",

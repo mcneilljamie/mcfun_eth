@@ -411,6 +411,7 @@
   },
   "launchCelebration": {
     "title": "Поздравляем!",
+    "tokenNumberMessage": "Вы запустили токен номер {{number}} на McFun!",
     "subtitle": "Ваш токен {{name}} ({{symbol}}) успешно запущен!",
     "shareToken": "Поделиться токеном",
     "shareableLink": "Общедоступная ссылка",

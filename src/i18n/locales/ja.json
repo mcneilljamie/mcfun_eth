@@ -411,6 +411,7 @@
   },
   "launchCelebration": {
     "title": "おめでとうございます！",
+    "tokenNumberMessage": "McFunで{{number}}番目のトークンをローンチしました！",
     "subtitle": "トークン{{name}}（{{symbol}}）が正常にローンチされました！",
     "shareToken": "トークンを共有",
     "shareableLink": "共有可能なリンク",

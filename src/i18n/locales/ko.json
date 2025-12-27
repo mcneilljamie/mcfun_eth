@@ -411,6 +411,7 @@
   },
   "launchCelebration": {
     "title": "축하합니다!",
+    "tokenNumberMessage": "McFun에서 {{number}}번째 토큰을 출시했습니다!",
     "subtitle": "토큰 {{name}} ({{symbol}})이 성공적으로 출시되었습니다!",
     "shareToken": "토큰 공유하기",
     "shareableLink": "공유 가능한 링크",

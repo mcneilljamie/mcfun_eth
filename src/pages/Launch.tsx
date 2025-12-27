@@ -37,6 +37,7 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
     txHash: string;
     tokenName: string;
     tokenSymbol: string;
+    tokenNumber: number;
   } | null>(null);
 
   const tokensToLiquidity = (TOTAL_SUPPLY * liquidityPercent) / 100;
@@ -126,6 +127,18 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
       const normalizedTokenAddress = result.tokenAddress.toLowerCase();
       const normalizedAmmAddress = result.ammAddress.toLowerCase();
 
+      // Fetch the total token count from database
+      let tokenNumber = 0;
+      try {
+        const { supabase } = await import('../lib/supabase');
+        const { count } = await supabase
+          .from('tokens')
+          .select('*', { count: 'exact', head: true });
+        tokenNumber = (count || 0) + 1;
+      } catch (err) {
+        console.error('Failed to fetch token count:', err);
+      }
+
       // Show success immediately after blockchain confirmation
       setSuccess({
         tokenAddress: normalizedTokenAddress,
@@ -133,6 +146,7 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
         txHash: result.txHash,
         tokenName: name.trim(),
         tokenSymbol: symbol.trim().toUpperCase(),
+        tokenNumber,
       });
 
       setName('');
@@ -247,6 +261,7 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
           tokenAddress={success.tokenAddress}
           ammAddress={success.ammAddress}
           txHash={success.txHash}
+          tokenNumber={success.tokenNumber}
           onClose={() => setSuccess(null)}
           onViewToken={() => onNavigate('token-detail', success.tokenAddress)}
           onShowToast={onShowToast}
