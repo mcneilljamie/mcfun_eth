@@ -8,7 +8,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-const BURN_ADDRESS = "0x0000000000000000000000000000000000000000";
+const BURN_ADDRESS = "0x000000000000000000000000000000000000dEaD";
 
 const ERC20_ABI = [
   "event Transfer(address indexed from, address indexed to, uint256 value)"

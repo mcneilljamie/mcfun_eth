@@ -11,7 +11,7 @@ import { ERC20_ABI, MCFUN_FACTORY_ABI } from '../contracts/abis';
 import { getEthPriceUSD } from '../lib/ethPrice';
 import { formatUSD, formatNumber as formatNumberWithCommas } from '../lib/utils';
 
-const BURN_ADDRESS = '0x0000000000000000000000000000000000000000';
+const BURN_ADDRESS = '0x000000000000000000000000000000000000dEaD';
 
 interface TokenBurn {
   token_address: string;

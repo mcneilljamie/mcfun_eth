@@ -619,7 +619,7 @@
     "yourBalance": "Your Balance",
     "amountToBurn": "Amount to Burn",
     "warning": "PERMANENT ACTION - THIS CANNOT BE UNDONE",
-    "warningDescription": "Burned tokens are sent to the zero address (0x000...000) and are permanently removed from circulation. There is no way to recover them.",
+    "warningDescription": "Burned tokens are sent to the dead address (0x000...dEaD) and are permanently removed from circulation. There is no way to recover them.",
     "burnButton": "Burn Tokens",
     "confirmButton": "I Understand - Burn Tokens",
     "cancelButton": "Cancel",
@@ -636,7 +636,7 @@
     "step2Title": "Specify Amount",
     "step2Description": "Choose how many tokens you want to permanently destroy",
     "step3Title": "Confirm and Burn",
-    "step3Description": "Confirm the action to permanently send tokens to the zero address",
+    "step3Description": "Confirm the action to permanently send tokens to the dead address",
     "errors": {
       "invalidToken": "Invalid token address or failed to load token information",
       "notMcFunToken": "This token was not launched on McFun. Only tokens launched on McFun can be burned through this interface.",
