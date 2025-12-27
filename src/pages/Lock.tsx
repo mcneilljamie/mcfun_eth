@@ -435,8 +435,8 @@ export function Lock({ onShowToast }: LockPageProps) {
       return !lock.is_withdrawn;
     })
     .sort((a, b) => {
-      // Sort by unlock timestamp (all locks are non-withdrawn due to filter above)
-      return new Date(a.unlock_timestamp).getTime() - new Date(b.unlock_timestamp).getTime();
+      // Sort by lock timestamp (when token was first locked)
+      return new Date(a.lock_timestamp).getTime() - new Date(b.lock_timestamp).getTime();
     });
 
   const topLockedTokens = aggregatedLocks
