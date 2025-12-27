@@ -83,7 +83,7 @@ Deno.serve(async (req: Request) => {
 
         const fromBlock = lastBurnData && lastBurnData.length > 0
           ? lastBurnData[0].block_number + 1
-          : currentBlock - 10000; // Look back 10000 blocks for new tokens
+          : currentBlock - 50000; // Look back 50000 blocks for new tokens
 
         const toBlock = Math.min(fromBlock + MAX_BLOCK_RANGE, currentBlock);
 
