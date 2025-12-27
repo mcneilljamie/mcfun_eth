@@ -10,6 +10,7 @@ import { getExplorerUrl, getFactoryAddress } from '../contracts/addresses';
 import { ERC20_ABI, MCFUN_FACTORY_ABI } from '../contracts/abis';
 import { getEthPriceUSD } from '../lib/ethPrice';
 import { formatUSD, formatNumber as formatNumberWithCommas } from '../lib/utils';
+import { BurnSuccess } from '../components/BurnSuccess';
 
 const BURN_ADDRESS = '0x000000000000000000000000000000000000dEaD';
 
@@ -56,6 +57,14 @@ export function Burn({ onShowToast }: BurnPageProps) {
   const [popularTokens, setPopularTokens] = useState<Array<{ token_address: string; name: string; symbol: string; current_eth_reserve: number; current_token_reserve: number; total_volume_eth: number }>>([]);
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
   const [confirmBurn, setConfirmBurn] = useState(false);
+  const [showBurnSuccess, setShowBurnSuccess] = useState(false);
+  const [burnSuccessData, setBurnSuccessData] = useState<{
+    tokenSymbol: string;
+    tokenName: string;
+    tokenAddress: string;
+    amountBurned: string;
+    txHash: string;
+  } | null>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -262,10 +271,14 @@ export function Burn({ onShowToast }: BurnPageProps) {
       const receipt = await tx.wait();
       console.log('Transaction confirmed:', receipt);
 
-      onShowToast({
-        message: t('burn.success'),
-        type: 'success',
+      setBurnSuccessData({
+        tokenSymbol: tokenInfo.symbol,
+        tokenName: tokenInfo.name,
+        tokenAddress: tokenAddress,
+        amountBurned: amount,
+        txHash: tx.hash,
       });
+      setShowBurnSuccess(true);
 
       setTokenAddress('');
       setAmount('');
@@ -625,6 +638,21 @@ export function Burn({ onShowToast }: BurnPageProps) {
           </div>
         )}
       </div>
+
+      {showBurnSuccess && burnSuccessData && (
+        <BurnSuccess
+          tokenSymbol={burnSuccessData.tokenSymbol}
+          tokenName={burnSuccessData.tokenName}
+          tokenAddress={burnSuccessData.tokenAddress}
+          amountBurned={burnSuccessData.amountBurned}
+          txHash={burnSuccessData.txHash}
+          onClose={() => {
+            setShowBurnSuccess(false);
+            setBurnSuccessData(null);
+          }}
+          onShowToast={onShowToast}
+        />
+      )}
     </div>
   );
 }
