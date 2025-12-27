@@ -71,6 +71,8 @@ export function Lock({ onShowToast }: LockPageProps) {
   const [needsApproval, setNeedsApproval] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
   const [tokenValidationError, setTokenValidationError] = useState<string | null>(null);
+  const [showTokenDropdown, setShowTokenDropdown] = useState(false);
+  const [popularTokens, setPopularTokens] = useState<Array<{ address: string; name: string; symbol: string; market_cap_usd: number }>>([]);
 
   const [celebration, setCelebration] = useState<{
     lockId: number;
@@ -92,6 +94,7 @@ export function Lock({ onShowToast }: LockPageProps) {
     } else {
       loadTokenStats();
     }
+    loadPopularTokens();
   }, [urlTokenAddress]);
 
   // Reload locks when page changes
@@ -195,6 +198,22 @@ export function Lock({ onShowToast }: LockPageProps) {
       }
     } catch (err) {
       console.error('Failed to load aggregated locks:', err);
+    }
+  };
+
+  const loadPopularTokens = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('tokens')
+        .select('address, name, symbol, market_cap_usd')
+        .order('market_cap_usd', { ascending: false })
+        .limit(10);
+
+      if (!error && data) {
+        setPopularTokens(data);
+      }
+    } catch (err) {
+      console.error('Failed to load popular tokens:', err);
     }
   };
 
@@ -612,7 +631,7 @@ export function Lock({ onShowToast }: LockPageProps) {
               </div>
             ) : (
               <div className="space-y-4">
-                <div>
+                <div className="relative">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     {t('lock.tokenAddress')}
                   </label>
@@ -623,9 +642,44 @@ export function Lock({ onShowToast }: LockPageProps) {
                       setTokenAddress(e.target.value);
                       setTokenValidationError(null);
                     }}
+                    onFocus={() => setShowTokenDropdown(true)}
+                    onBlur={() => setTimeout(() => setShowTokenDropdown(false), 200)}
                     placeholder="0x..."
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
+                  {showTokenDropdown && popularTokens.length > 0 && (
+                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-64 overflow-y-auto">
+                      <div className="p-2 border-b border-gray-200 bg-gray-50">
+                        <div className="text-xs font-semibold text-gray-600 uppercase">{t('lock.popularTokensDropdown')}</div>
+                      </div>
+                      {popularTokens.map((token) => (
+                        <button
+                          key={token.address}
+                          onClick={() => {
+                            setTokenAddress(token.address);
+                            setShowTokenDropdown(false);
+                          }}
+                          className="w-full text-left px-4 py-3 hover:bg-blue-50 transition-colors border-b border-gray-100 last:border-b-0"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="font-semibold text-gray-900">{token.symbol}</span>
+                                <span className="text-sm text-gray-600 truncate">{token.name}</span>
+                              </div>
+                              <div className="text-xs text-gray-500 font-mono truncate mt-1">{token.address}</div>
+                            </div>
+                            <div className="ml-2 text-right">
+                              <div className="text-sm font-semibold text-gray-900">
+                                {formatCurrency(token.market_cap_usd)}
+                              </div>
+                              <div className="text-xs text-gray-500">{t('lock.marketCap')}</div>
+                            </div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                   {tokenValidationError && (
                     <div className="mt-2 bg-red-50 border border-red-200 rounded-lg p-3">
                       <div className="flex items-start">
