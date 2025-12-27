@@ -72,7 +72,7 @@ export function Lock({ onShowToast }: LockPageProps) {
   const [isApproving, setIsApproving] = useState(false);
   const [tokenValidationError, setTokenValidationError] = useState<string | null>(null);
   const [showTokenDropdown, setShowTokenDropdown] = useState(false);
-  const [popularTokens, setPopularTokens] = useState<Array<{ address: string; name: string; symbol: string; market_cap_usd: number }>>([]);
+  const [popularTokens, setPopularTokens] = useState<Array<{ token_address: string; name: string; symbol: string; current_eth_reserve: number }>>([]);
 
   const [celebration, setCelebration] = useState<{
     lockId: number;
@@ -205,12 +205,16 @@ export function Lock({ onShowToast }: LockPageProps) {
     try {
       const { data, error } = await supabase
         .from('tokens')
-        .select('address, name, symbol, market_cap_usd')
-        .order('market_cap_usd', { ascending: false })
+        .select('token_address, name, symbol, current_eth_reserve')
+        .not('current_eth_reserve', 'is', null)
+        .order('current_eth_reserve', { ascending: false })
         .limit(10);
 
       if (!error && data) {
+        console.log('Loaded popular tokens:', data);
         setPopularTokens(data);
+      } else {
+        console.error('Error loading popular tokens:', error);
       }
     } catch (err) {
       console.error('Failed to load popular tokens:', err);
@@ -654,9 +658,9 @@ export function Lock({ onShowToast }: LockPageProps) {
                       </div>
                       {popularTokens.map((token) => (
                         <button
-                          key={token.address}
+                          key={token.token_address}
                           onClick={() => {
-                            setTokenAddress(token.address);
+                            setTokenAddress(token.token_address);
                             setShowTokenDropdown(false);
                           }}
                           className="w-full text-left px-4 py-3 hover:bg-blue-50 transition-colors border-b border-gray-100 last:border-b-0"
@@ -667,13 +671,13 @@ export function Lock({ onShowToast }: LockPageProps) {
                                 <span className="font-semibold text-gray-900">{token.symbol}</span>
                                 <span className="text-sm text-gray-600 truncate">{token.name}</span>
                               </div>
-                              <div className="text-xs text-gray-500 font-mono truncate mt-1">{token.address}</div>
+                              <div className="text-xs text-gray-500 font-mono truncate mt-1">{token.token_address}</div>
                             </div>
                             <div className="ml-2 text-right">
                               <div className="text-sm font-semibold text-gray-900">
-                                {formatCurrency(token.market_cap_usd)}
+                                {parseFloat(token.current_eth_reserve.toString()).toFixed(4)} ETH
                               </div>
-                              <div className="text-xs text-gray-500">{t('lock.marketCap')}</div>
+                              <div className="text-xs text-gray-500">Liquidity</div>
                             </div>
                           </div>
                         </button>
