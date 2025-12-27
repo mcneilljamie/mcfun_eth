@@ -287,7 +287,9 @@
     "eth": "ETH",
     "copiedToClipboard": "Copied to clipboard!",
     "character": "character",
-    "characters": "characters"
+    "characters": "characters",
+    "refresh": "Refresh",
+    "close": "Close"
   },
   "tokenDetail": {
     "loadingToken": "Loading token...",
@@ -650,6 +652,10 @@
     "viewOnExplorer": "View on block explorer",
     "viewTxOnExplorer": "View transaction on block explorer",
     "viewToken": "View Token Details",
+    "noBurnsYet": "No Burns Yet",
+    "noBurnsDescription": "Be the first to burn tokens and appear on the leaderboard!",
+    "indexingNote": "Note:",
+    "indexingDescription": "Burns are automatically indexed every 5 minutes. If you just burned tokens, they will appear here shortly.",
     "errors": {
       "invalidToken": "Invalid token address or failed to load token information",
       "notMcFunToken": "This token was not launched on McFun. Only tokens launched on McFun can be burned through this interface.",

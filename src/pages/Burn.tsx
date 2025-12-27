@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useWeb3 } from '../lib/web3';
 import { supabase } from '../lib/supabase';
 import { ethers } from 'ethers';
-import { Loader2, Flame, AlertTriangle, User, TrendingUp, Trophy, ArrowLeft, Share2, ExternalLink } from 'lucide-react';
+import { Loader2, Flame, AlertTriangle, User, TrendingUp, Trophy, ArrowLeft, Share2, ExternalLink, RefreshCw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { ToastMessage } from '../App';
 import { getExplorerUrl, getFactoryAddress } from '../contracts/addresses';
@@ -65,6 +65,7 @@ export function Burn({ onShowToast }: BurnPageProps) {
     amountBurned: string;
     txHash: string;
   } | null>(null);
+  const [isRefreshingBurns, setIsRefreshingBurns] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -105,12 +106,19 @@ export function Burn({ onShowToast }: BurnPageProps) {
     setEthPriceUSD(price);
   };
 
-  const loadAggregatedBurns = async () => {
+  const loadAggregatedBurns = async (showLoading = false) => {
     try {
+      if (showLoading) {
+        setIsRefreshingBurns(true);
+      }
+
       const { data, error } = await supabase.rpc('get_aggregated_burns');
 
       if (error) {
         console.error('Supabase error loading aggregated burns:', error);
+        if (showLoading) {
+          setIsRefreshingBurns(false);
+        }
         return;
       }
 
@@ -126,6 +134,10 @@ export function Burn({ onShowToast }: BurnPageProps) {
       }
     } catch (err) {
       console.error('Failed to load aggregated burns:', err);
+    } finally {
+      if (showLoading) {
+        setIsRefreshingBurns(false);
+      }
     }
   };
 
@@ -571,12 +583,23 @@ export function Burn({ onShowToast }: BurnPageProps) {
           </div>
         </div>
 
-        {topBurnedTokens.length > 0 && (
-          <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 flex items-center">
               <Trophy className="w-6 h-6 mr-2 text-red-600" />
               {t('burn.topBurnedTokens')}
             </h2>
+            <button
+              onClick={() => loadAggregatedBurns(true)}
+              disabled={isRefreshingBurns}
+              className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <RefreshCw className={`w-4 h-4 ${isRefreshingBurns ? 'animate-spin' : ''}`} />
+              <span className="text-sm font-medium">{t('common.refresh')}</span>
+            </button>
+          </div>
+
+          {topBurnedTokens.length > 0 ? (
             <div className="space-y-3">
               {topBurnedTokens.map((burn, index) => {
                 const burnCount = burn.burn_count || 0;
@@ -635,8 +658,19 @@ export function Burn({ onShowToast }: BurnPageProps) {
                 );
               })}
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="text-center py-12">
+              <Flame className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('burn.noBurnsYet')}</h3>
+              <p className="text-gray-600 mb-4">{t('burn.noBurnsDescription')}</p>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-md mx-auto">
+                <p className="text-sm text-blue-800">
+                  <span className="font-semibold">{t('burn.indexingNote')}</span> {t('burn.indexingDescription')}
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {showBurnSuccess && burnSuccessData && (
