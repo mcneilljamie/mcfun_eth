@@ -156,6 +156,16 @@ async function processLockIndexing(req: Request): Promise<Response> {
     const provider = await retryWithBackoff(() => createProviderWithFailover());
     const lockerContract = new ethers.Contract(LOCKER_ADDRESS, LOCKER_ABI, provider);
 
+    // Get blocks to skip
+    const { data: skipBlocksData } = await supabase
+      .from("skip_blocks")
+      .select("block_number")
+      .in("indexer_type", ["lock", "all"]);
+
+    const skipBlocks = new Set(
+      skipBlocksData?.map(sb => sb.block_number) || []
+    );
+
     // Check for custom start block from request body
     let requestedStartBlock: number | null = null;
     if (req.method === "POST") {
@@ -244,6 +254,12 @@ async function processLockIndexing(req: Request): Promise<Response> {
     for (let i = 0; i < allLockedEvents.length; i++) {
       const event = allLockedEvents[i];
       try {
+        // Skip blocks marked as erroneous
+        if (skipBlocks.has(event.blockNumber)) {
+          console.log(`Skipping lock event in block ${event.blockNumber} (marked as erroneous)`);
+          continue;
+        }
+
         const lockId = Number(event.args[0]);
 
         if (existingLockIds.has(lockId)) {
@@ -318,6 +334,12 @@ async function processLockIndexing(req: Request): Promise<Response> {
     // Process unlock events
     for (const event of allUnlockedEvents) {
       try {
+        // Skip blocks marked as erroneous
+        if (skipBlocks.has(event.blockNumber)) {
+          console.log(`Skipping unlock event in block ${event.blockNumber} (marked as erroneous)`);
+          continue;
+        }
+
         const lockId = Number(event.args[0]);
 
         const { error: updateError } = await supabase

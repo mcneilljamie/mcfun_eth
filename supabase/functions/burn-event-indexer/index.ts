@@ -47,6 +47,16 @@ Deno.serve(async (req: Request) => {
   );
 
   try {
+    // Get blocks to skip
+    const { data: skipBlocksData } = await supabase
+      .from("skip_blocks")
+      .select("block_number")
+      .in("indexer_type", ["burn", "all"]);
+
+    const skipBlocks = new Set(
+      skipBlocksData?.map(sb => sb.block_number) || []
+    );
+
     // Get all McFun tokens
     const { data: tokens, error: tokensError } = await supabase
       .from("tokens")
@@ -65,6 +75,7 @@ Deno.serve(async (req: Request) => {
 
     let processedCount = 0;
     let errorCount = 0;
+    let skippedCount = 0;
 
     // Process each token
     for (const token of tokens) {
@@ -114,41 +125,53 @@ Deno.serve(async (req: Request) => {
 
         // Process burn events
         for (const event of events) {
-          const block = await provider.getBlock(event.blockNumber);
-          const timestamp = new Date(block!.timestamp * 1000).toISOString();
+          // Skip blocks marked as erroneous
+          if (skipBlocks.has(event.blockNumber)) {
+            console.log(`Skipping burn event in block ${event.blockNumber} (marked as erroneous)`);
+            skippedCount++;
+            continue;
+          }
 
-          // Get ETH price at that time
-          const { data: ethPriceData } = await supabase
-            .from("eth_price_history")
-            .select("price_usd")
-            .lte("timestamp", timestamp)
-            .order("timestamp", { ascending: false })
-            .limit(1);
+          try {
+            const block = await provider.getBlock(event.blockNumber);
+            const timestamp = new Date(block!.timestamp * 1000).toISOString();
 
-          const ethPriceUsd = ethPriceData && ethPriceData.length > 0
-            ? ethPriceData[0].price_usd
-            : 3000;
+            // Get ETH price at that time
+            const { data: ethPriceData } = await supabase
+              .from("eth_price_history")
+              .select("price_usd")
+              .lte("timestamp", timestamp)
+              .order("timestamp", { ascending: false })
+              .limit(1);
 
-          // Insert burn record
-          const { error: insertError } = await supabase
-            .from("token_burns")
-            .upsert({
-              token_address: token.token_address.toLowerCase(),
-              burner_address: event.args![0].toLowerCase(),
-              amount: event.args![2].toString(),
-              tx_hash: event.transactionHash,
-              block_number: event.blockNumber,
-              timestamp,
-              eth_price_usd: ethPriceUsd,
-            }, {
-              onConflict: "token_address,tx_hash",
-            });
+            const ethPriceUsd = ethPriceData && ethPriceData.length > 0
+              ? ethPriceData[0].price_usd
+              : 3000;
 
-          if (insertError) {
-            console.error(`Failed to insert burn for ${token.token_address}:`, insertError);
+            // Insert burn record
+            const { error: insertError } = await supabase
+              .from("token_burns")
+              .upsert({
+                token_address: token.token_address.toLowerCase(),
+                burner_address: event.args![0].toLowerCase(),
+                amount: event.args![2].toString(),
+                tx_hash: event.transactionHash,
+                block_number: event.blockNumber,
+                timestamp,
+                eth_price_usd: ethPriceUsd,
+              }, {
+                onConflict: "token_address,tx_hash",
+              });
+
+            if (insertError) {
+              console.error(`Failed to insert burn for ${token.token_address}:`, insertError);
+              errorCount++;
+            } else {
+              processedCount++;
+            }
+          } catch (eventErr) {
+            console.error(`Error processing burn event in block ${event.blockNumber}:`, eventErr);
             errorCount++;
-          } else {
-            processedCount++;
           }
         }
       } catch (err) {
@@ -160,8 +183,9 @@ Deno.serve(async (req: Request) => {
     return new Response(
       JSON.stringify({
         success: true,
-        message: `Processed ${processedCount} burns with ${errorCount} errors`,
+        message: `Processed ${processedCount} burns, skipped ${skippedCount} erroneous blocks, ${errorCount} errors`,
         processedCount,
+        skippedCount,
         errorCount,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }

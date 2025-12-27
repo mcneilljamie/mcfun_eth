@@ -348,6 +348,12 @@ async function processTokenSwaps(
         break;
       }
 
+      // Skip blocks marked as erroneous
+      if (skipBlocks.has(event.blockNumber)) {
+        console.log(`Skipping swap event in block ${event.blockNumber} (marked as erroneous)`);
+        continue;
+      }
+
       const args = event.args!;
       uniqueBlocks.add(event.blockNumber);
 
@@ -503,6 +509,16 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
     const provider = await retryWithBackoff(() => createProviderWithFailover());
     const blockCache = new BlockCache();
     const contractCache = new ContractCache();
+
+    // Get blocks to skip
+    const { data: skipBlocksData } = await supabase
+      .from("skip_blocks")
+      .select("block_number")
+      .in("indexer_type", ["swap", "all"]);
+
+    const skipBlocks = new Set(
+      skipBlocksData?.map(sb => sb.block_number) || []
+    );
 
     const {
       fromBlock,
