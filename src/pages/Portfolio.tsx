@@ -376,7 +376,7 @@ export default function Portfolio() {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center justify-center">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+          <Loader2 className="w-8 h-8 animate-spin text-green-700" />
           <span className="ml-3 text-gray-600">{t('portfolio.loading')}</span>
         </div>
       </div>
@@ -386,27 +386,27 @@ export default function Portfolio() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Portfolio Summary */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-8 mb-8 text-white">
+      <div className="bg-gradient-to-r from-green-700 to-green-800 rounded-2xl p-8 mb-8 text-white">
         <h1 className="text-3xl font-bold mb-2">{t('portfolio.portfolioValue')}</h1>
         <div className="text-5xl font-bold mb-6">{formatCurrency(totalValueUsd)}</div>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
           <div className="bg-white/10 backdrop-blur rounded-lg p-4">
-            <div className="text-blue-100 text-sm mb-2">{t('portfolio.ethBalance')}</div>
+            <div className="text-green-50 text-sm mb-2">{t('portfolio.ethBalance')}</div>
             <div className="text-2xl font-bold mb-1">
               {parseFloat(ethBalance).toLocaleString('en-US', { minimumFractionDigits: 4, maximumFractionDigits: 4 })} ETH
             </div>
-            <div className="text-blue-100 text-sm">
+            <div className="text-green-50 text-sm">
               {formatCurrency(parseFloat(ethBalance) * ethPriceUsd)}
             </div>
           </div>
           <div className="bg-white/10 backdrop-blur rounded-lg p-4">
-            <div className="text-blue-100 text-sm mb-2">{t('portfolio.tokensValue')}</div>
+            <div className="text-green-50 text-sm mb-2">{t('portfolio.tokensValue')}</div>
             <div className="text-2xl font-bold">
               {formatCurrency(tokens.reduce((sum, t) => sum + t.valueUsd, 0))}
             </div>
           </div>
           <div className="bg-white/10 backdrop-blur rounded-lg p-4">
-            <div className="text-blue-100 text-sm mb-2 flex items-center">
+            <div className="text-green-50 text-sm mb-2 flex items-center">
               <LockIcon className="w-4 h-4 mr-1" />
               {t('portfolio.lockedValue')}
             </div>
@@ -418,8 +418,8 @@ export default function Portfolio() {
       </div>
 
       {/* Info Message */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-        <p className="text-sm text-blue-800">
+      <div className="bg-green-50 border border-green-300 rounded-lg p-4 mb-6">
+        <p className="text-sm text-green-900">
           {t('portfolio.infoMessage')}
         </p>
       </div>
@@ -430,7 +430,7 @@ export default function Portfolio() {
           <p className="text-gray-600 text-lg mb-6">{t('portfolio.noHoldings')}</p>
           <Link
             to="/tokens"
-            className="inline-block px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-md"
+            className="inline-block px-8 py-3 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors shadow-md"
           >
             {t('portfolio.browseTokens')}
           </Link>
@@ -442,7 +442,7 @@ export default function Portfolio() {
             <div
               key={token.tokenAddress}
               onClick={() => navigate(`/token/${token.tokenAddress}`)}
-              className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg hover:border-blue-300 transition-all cursor-pointer"
+              className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg hover:border-green-400 transition-all cursor-pointer"
             >
               <div className="flex items-center justify-between">
                 <div className="flex-1 min-w-0">
@@ -473,12 +473,12 @@ export default function Portfolio() {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-gray-900 flex items-center">
-              <LockIcon className="w-5 h-5 mr-2 text-blue-600" />
+              <LockIcon className="w-5 h-5 mr-2 text-green-700" />
               {t('portfolio.lockedTokens')}
             </h2>
             <Link
               to="/my-locks"
-              className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+              className="text-green-700 hover:text-green-800 text-sm font-medium"
             >
               {t('portfolio.viewAllLocks')} →
             </Link>
