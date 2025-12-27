@@ -81,11 +81,18 @@ Deno.serve(async (req: Request) => {
           .order("block_number", { ascending: false })
           .limit(1);
 
-        const fromBlock = lastBurnData && lastBurnData.length > 0
-          ? lastBurnData[0].block_number + 1
-          : currentBlock - 50000; // Look back 50000 blocks for new tokens
+        let fromBlock: number;
+        let toBlock: number;
 
-        const toBlock = Math.min(fromBlock + MAX_BLOCK_RANGE, currentBlock);
+        if (lastBurnData && lastBurnData.length > 0) {
+          // Continue from last processed block
+          fromBlock = lastBurnData[0].block_number + 1;
+          toBlock = Math.min(fromBlock + MAX_BLOCK_RANGE, currentBlock);
+        } else {
+          // For new tokens, start from recent blocks and work backwards if needed
+          toBlock = currentBlock;
+          fromBlock = Math.max(currentBlock - MAX_BLOCK_RANGE, 0);
+        }
 
         if (fromBlock > currentBlock) {
           continue;
