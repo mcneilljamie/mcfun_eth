@@ -580,7 +580,6 @@ export function Burn({ onShowToast }: BurnPageProps) {
           {topBurnedTokens.length > 0 ? (
             <div className="space-y-3">
               {topBurnedTokens.map((burn, index) => {
-                const burnCount = burn.burn_count || 0;
                 const totalValueUsd = burn.total_value_usd || 0;
 
                 return (
@@ -605,23 +604,9 @@ export function Burn({ onShowToast }: BurnPageProps) {
                           <span className="font-bold text-gray-500 text-lg">#{index + 1}</span>
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                          <div className="flex items-center gap-2 flex-wrap">
                             <h3 className="text-lg font-bold text-gray-900 whitespace-nowrap">{burn.token_symbol}</h3>
                             <span className="text-sm text-gray-500 break-words">{burn.token_name || 'Unknown'}</span>
-                          </div>
-                          <div className="grid grid-cols-2 gap-4 text-sm">
-                            <div>
-                              <span className="text-gray-600">{t('burn.totalBurned')}:</span>
-                              <span className="ml-2 font-semibold text-gray-900">
-                                {formatNumber(burn.total_amount_burned)} {burn.token_symbol}
-                              </span>
-                            </div>
-                            <div>
-                              <span className="text-gray-600">{t('burn.burnCount')}:</span>
-                              <span className="ml-2 font-semibold text-gray-900">
-                                {burnCount} {t('burn.burns')}
-                              </span>
-                            </div>
                           </div>
                         </div>
                       </div>
