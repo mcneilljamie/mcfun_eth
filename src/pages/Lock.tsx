@@ -9,6 +9,8 @@ import { LockCelebration } from '../components/LockCelebration';
 import { ToastMessage } from '../App';
 import { getExplorerUrl, getLockerAddress, getFactoryAddress } from '../contracts/addresses';
 import { ERC20_ABI, TOKEN_LOCKER_ABI, MCFUN_FACTORY_ABI } from '../contracts/abis';
+import { getEthPriceUSD } from '../lib/ethPrice';
+import { formatUSD } from '../lib/utils';
 
 interface TokenLock {
   id: string;
@@ -73,6 +75,7 @@ export function Lock({ onShowToast }: LockPageProps) {
   const [tokenValidationError, setTokenValidationError] = useState<string | null>(null);
   const [showTokenDropdown, setShowTokenDropdown] = useState(false);
   const [popularTokens, setPopularTokens] = useState<Array<{ token_address: string; name: string; symbol: string; current_eth_reserve: number; current_token_reserve: number; total_volume_eth: number }>>([]);
+  const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
 
   const [celebration, setCelebration] = useState<{
     lockId: number;
@@ -94,7 +97,6 @@ export function Lock({ onShowToast }: LockPageProps) {
     } else {
       loadTokenStats();
     }
-    loadPopularTokens();
   }, [urlTokenAddress]);
 
   // Reload locks when page changes
@@ -118,6 +120,23 @@ export function Lock({ onShowToast }: LockPageProps) {
       setNeedsApproval(false);
     }
   }, [tokenInfo, amount, account, provider]);
+
+  useEffect(() => {
+    loadEthPrice();
+    const interval = setInterval(loadEthPrice, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (ethPriceUSD > 0) {
+      loadPopularTokens();
+    }
+  }, [ethPriceUSD]);
+
+  const loadEthPrice = async () => {
+    const price = await getEthPriceUSD();
+    setEthPriceUSD(price);
+  };
 
   const loadLocks = async (page = 1) => {
     try {
@@ -207,13 +226,28 @@ export function Lock({ onShowToast }: LockPageProps) {
         .from('tokens')
         .select('token_address, name, symbol, current_eth_reserve, current_token_reserve, total_volume_eth')
         .not('current_eth_reserve', 'is', null)
-        .not('current_token_reserve', 'is', null)
-        .order('total_volume_eth', { ascending: false, nullsFirst: false })
-        .limit(10);
+        .not('current_token_reserve', 'is', null);
 
       if (!error && data) {
-        console.log('Loaded popular tokens:', data);
-        setPopularTokens(data);
+        const TOKEN_TOTAL_SUPPLY = 1000000;
+        // Sort by market cap (same calculation as Tokens page)
+        const sorted = data
+          .map(token => ({
+            ...token,
+            marketCap: (() => {
+              const ethReserve = parseFloat(token.current_eth_reserve.toString());
+              const tokenReserve = parseFloat(token.current_token_reserve.toString());
+              if (tokenReserve === 0) return 0;
+              const priceInEth = ethReserve / tokenReserve;
+              const priceUSD = priceInEth * ethPriceUSD;
+              return priceUSD * TOKEN_TOTAL_SUPPLY;
+            })()
+          }))
+          .sort((a, b) => b.marketCap - a.marketCap)
+          .slice(0, 10);
+
+        console.log('Loaded popular tokens:', sorted);
+        setPopularTokens(sorted);
       } else {
         console.error('Error loading popular tokens:', error);
       }
@@ -677,15 +711,17 @@ export function Lock({ onShowToast }: LockPageProps) {
                             <div className="ml-2 text-right">
                               <div className="text-sm font-semibold text-gray-900">
                                 {(() => {
+                                  const TOKEN_TOTAL_SUPPLY = 1000000;
                                   const ethReserve = parseFloat(token.current_eth_reserve.toString());
                                   const tokenReserve = parseFloat(token.current_token_reserve.toString());
+                                  if (tokenReserve === 0) return '$0';
                                   const priceInEth = ethReserve / tokenReserve;
-                                  // Approximate market cap as pool value * 2
-                                  const estimatedMarketCap = ethReserve * 2;
-                                  return estimatedMarketCap.toFixed(4);
-                                })()} ETH
+                                  const priceUSD = priceInEth * ethPriceUSD;
+                                  const marketCap = priceUSD * TOKEN_TOTAL_SUPPLY;
+                                  return formatUSD(marketCap);
+                                })()}
                               </div>
-                              <div className="text-xs text-gray-500">Est. Market Cap</div>
+                              <div className="text-xs text-gray-500">Market Cap</div>
                             </div>
                           </div>
                         </button>
