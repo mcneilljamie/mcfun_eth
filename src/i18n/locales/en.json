@@ -639,7 +639,7 @@
     "step2Description": "Choose how many tokens you want to permanently destroy",
     "step3Title": "Confirm and Burn",
     "step3Description": "Confirm the action to permanently send tokens to the dead address",
-    "successDescription": "Successfully burned {amount} {symbol}",
+    "successDescription": "Successfully burned {{amount}} {{symbol}}",
     "burnDetails": "Burn Details",
     "amountBurned": "Amount Burned",
     "status": "Status",
