@@ -78,7 +78,14 @@ export function formatUSD(value: number, abbreviated: boolean = false): string {
     }
   }
 
-  const decimals = value < 1 ? 4 : 2;
+  let decimals: number;
+  if (value < 1) {
+    decimals = 4;
+  } else if (value >= 1000) {
+    decimals = 0;
+  } else {
+    decimals = 2;
+  }
 
   return value.toLocaleString('en-US', {
     style: 'currency',
