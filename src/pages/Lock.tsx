@@ -10,7 +10,7 @@ import { ToastMessage } from '../App';
 import { getExplorerUrl, getLockerAddress, getFactoryAddress } from '../contracts/addresses';
 import { ERC20_ABI, TOKEN_LOCKER_ABI, MCFUN_FACTORY_ABI } from '../contracts/abis';
 import { getEthPriceUSD } from '../lib/ethPrice';
-import { formatUSD } from '../lib/utils';
+import { formatUSD, formatNumber as formatNumberWithCommas } from '../lib/utils';
 
 interface TokenLock {
   id: string;
@@ -751,7 +751,7 @@ export function Lock({ onShowToast }: LockPageProps) {
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-600">{t('lock.yourBalance')}:</span>
                       <span className="font-semibold text-gray-900">
-                        {parseFloat(tokenInfo.balance).toFixed(4)} {tokenInfo.symbol}
+                        {formatNumberWithCommas(tokenInfo.balance, 4)} {tokenInfo.symbol}
                       </span>
                     </div>
                   </div>
