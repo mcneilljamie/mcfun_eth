@@ -30,6 +30,7 @@ interface AggregatedBurn {
   token_symbol: string;
   total_amount_burned: string;
   total_value_usd: number;
+  percent_supply_burned: number;
   burn_count: number;
   last_burn_timestamp: string;
 }
@@ -615,6 +616,15 @@ export function Burn({ onShowToast }: BurnPageProps) {
                         <div className="text-sm text-gray-500 mb-1">{t('burn.totalValue')}</div>
                         <div className="text-2xl font-bold text-gray-900">
                           {formatCurrency(totalValueUsd)}
+                        </div>
+                        <div className="text-sm text-gray-600 mt-1">
+                          {burn.percent_supply_burned ? (
+                            <span className="font-semibold">
+                              {burn.percent_supply_burned.toFixed(2)}% of supply
+                            </span>
+                          ) : (
+                            <span className="text-gray-400">-</span>
+                          )}
                         </div>
                       </div>
                     </div>
