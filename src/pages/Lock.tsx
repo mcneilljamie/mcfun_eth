@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useWeb3 } from '../lib/web3';
 import { supabase } from '../lib/supabase';
@@ -11,6 +11,7 @@ import { getExplorerUrl, getLockerAddress, getFactoryAddress } from '../contract
 import { ERC20_ABI, TOKEN_LOCKER_ABI, MCFUN_FACTORY_ABI } from '../contracts/abis';
 import { getEthPriceUSD } from '../lib/ethPrice';
 import { formatUSD, formatNumber as formatNumberWithCommas } from '../lib/utils';
+import { useOnChainTokenLocks } from '../hooks/useOnChainTokenLocks';
 
 interface TokenLock {
   id: string;
@@ -65,6 +66,12 @@ export function Lock({ onShowToast }: LockPageProps) {
   const [totalCount, setTotalCount] = useState(0);
   const ITEMS_PER_PAGE = 20;
 
+  const { locks: onChainTokenLocks, loading: onChainLoading, error: onChainError } = useOnChainTokenLocks(
+    provider,
+    chainId,
+    urlTokenAddress || null
+  );
+
   const [tokenAddress, setTokenAddress] = useState('');
   const [amount, setAmount] = useState('');
   const [duration, setDuration] = useState('');
@@ -91,18 +98,74 @@ export function Lock({ onShowToast }: LockPageProps) {
   useEffect(() => {
     window.scrollTo(0, 0);
     setCurrentPage(1);
-    loadLocks(1);
     if (!urlTokenAddress) {
+      loadLocks(1);
       loadAggregatedLocks();
-    } else {
-      loadTokenStats();
     }
   }, [urlTokenAddress]);
 
-  // Reload locks when page changes
   useEffect(() => {
-    loadLocks(currentPage);
-  }, [currentPage]);
+    if (urlTokenAddress && onChainTokenLocks.length > 0) {
+      const nonWithdrawnLocks = onChainTokenLocks.filter(lock => !lock.withdrawn);
+
+      const convertedLocks: TokenLock[] = nonWithdrawnLocks.map(lock => ({
+        id: `lock-${lock.lockId}`,
+        lock_id: lock.lockId,
+        user_address: lock.owner,
+        token_address: lock.tokenAddress,
+        token_symbol: lock.tokenSymbol || 'UNKNOWN',
+        token_name: lock.tokenName || 'Unknown Token',
+        token_decimals: lock.tokenDecimals || 18,
+        amount_locked: lock.amount.toString(),
+        lock_duration_days: 0,
+        lock_timestamp: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+        unlock_timestamp: new Date(lock.unlockTime * 1000).toISOString(),
+        is_withdrawn: lock.withdrawn,
+        tx_hash: '',
+      }));
+
+      const totalLocks = convertedLocks.length;
+      setTotalCount(totalLocks);
+
+      const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+      const endIndex = startIndex + ITEMS_PER_PAGE;
+      const paginatedLocks = convertedLocks.slice(startIndex, endIndex);
+
+      setAllLocks(paginatedLocks);
+
+      const totalAmountLocked = nonWithdrawnLocks.reduce((sum, lock) => {
+        return sum + lock.amount;
+      }, BigInt(0));
+
+      const decimals = nonWithdrawnLocks[0]?.tokenDecimals || 18;
+      const formattedAmount = parseFloat(ethers.formatUnits(totalAmountLocked, decimals));
+
+      setTokenStats({
+        token_address: urlTokenAddress,
+        token_symbol: nonWithdrawnLocks[0]?.tokenSymbol || 'UNKNOWN',
+        token_name: nonWithdrawnLocks[0]?.tokenName || 'Unknown Token',
+        active_locks: totalLocks,
+        total_quantity_locked: formattedAmount,
+      });
+    } else if (urlTokenAddress && !onChainLoading) {
+      setAllLocks([]);
+      setTotalCount(0);
+      setTokenStats({
+        token_address: urlTokenAddress,
+        token_symbol: 'UNKNOWN',
+        token_name: 'Unknown Token',
+        active_locks: 0,
+        total_quantity_locked: 0,
+      });
+    }
+  }, [urlTokenAddress, onChainTokenLocks, onChainLoading, currentPage]);
+
+  // Reload locks when page changes (only for "all locks" view)
+  useEffect(() => {
+    if (!urlTokenAddress) {
+      loadLocks(currentPage);
+    }
+  }, [currentPage, urlTokenAddress]);
 
   useEffect(() => {
     if (tokenAddress && ethers.isAddress(tokenAddress) && provider) {
