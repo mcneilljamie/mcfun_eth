@@ -214,6 +214,26 @@ async function processPriceSnapshot(): Promise<Response> {
               return { success: false, error: `Zero reserves for ${token.symbol}`, skipped: true };
             }
 
+            // Check if price has changed since last snapshot
+            const { data: lastSnapshot } = await supabase
+              .from("price_snapshots")
+              .select("price_eth")
+              .eq("token_address", token.token_address)
+              .order("created_at", { ascending: false })
+              .limit(1)
+              .maybeSingle();
+
+            // Skip if price hasn't changed (tolerance of 0.01% to account for rounding)
+            if (lastSnapshot) {
+              const lastPrice = parseFloat(lastSnapshot.price_eth);
+              const currentPrice = parseFloat(priceFormatted);
+              const priceChangePct = Math.abs((currentPrice - lastPrice) / lastPrice);
+
+              if (priceChangePct < 0.0001) {
+                return { success: false, error: `No price change for ${token.symbol}`, skipped: true };
+              }
+            }
+
             return {
               success: true,
               token,
