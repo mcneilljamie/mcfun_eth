@@ -9,7 +9,7 @@ const corsHeaders = {
 };
 
 const BURN_ADDRESS = "0x000000000000000000000000000000000000dEaD";
-const TOKEN_SUPPLY = 1_000_000_000n * (10n ** 18n);
+const TOKEN_SUPPLY = 1_000_000n * (10n ** 18n);
 
 const RPC_PROVIDERS = [
   Deno.env.get("ETHEREUM_RPC_URL") || "https://ethereum-sepolia-rpc.publicnode.com",
