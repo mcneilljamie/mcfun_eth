@@ -11,7 +11,6 @@ import { getExplorerUrl, getLockerAddress, getFactoryAddress } from '../contract
 import { ERC20_ABI, TOKEN_LOCKER_ABI, MCFUN_FACTORY_ABI } from '../contracts/abis';
 import { getEthPriceUSD } from '../lib/ethPrice';
 import { formatUSD, formatNumber as formatNumberWithCommas } from '../lib/utils';
-import { useOnChainTokenLocks } from '../hooks/useOnChainTokenLocks';
 
 interface TokenLock {
   id: string;
@@ -66,11 +65,6 @@ export function Lock({ onShowToast }: LockPageProps) {
   const [totalCount, setTotalCount] = useState(0);
   const ITEMS_PER_PAGE = 20;
 
-  const { locks: onChainTokenLocks, loading: onChainLoading, error: onChainError } = useOnChainTokenLocks(
-    provider,
-    chainId,
-    urlTokenAddress || null
-  );
 
   const [tokenAddress, setTokenAddress] = useState('');
   const [amount, setAmount] = useState('');
@@ -105,139 +99,11 @@ export function Lock({ onShowToast }: LockPageProps) {
   }, [urlTokenAddress]);
 
   useEffect(() => {
-    const loadTokenStatsWithPrice = async () => {
-      if (urlTokenAddress && onChainTokenLocks.length > 0) {
-        const nonWithdrawnLocks = onChainTokenLocks.filter(lock => !lock.withdrawn);
-        const decimals = nonWithdrawnLocks[0]?.tokenDecimals || 18;
-
-        // Get token price from database
-        let priceEth = 0;
-        let priceUsd = 0;
-        try {
-          const { data: tokenData } = await supabase
-            .from('tokens')
-            .select('current_eth_reserve, current_token_reserve')
-            .eq('token_address', urlTokenAddress.toLowerCase())
-            .single();
-
-          if (tokenData?.current_eth_reserve && tokenData?.current_token_reserve) {
-            const ethReserve = parseFloat(tokenData.current_eth_reserve.toString());
-            const tokenReserve = parseFloat(tokenData.current_token_reserve.toString());
-            if (tokenReserve > 0) {
-              priceEth = ethReserve / tokenReserve;
-              priceUsd = priceEth * ethPriceUSD;
-            }
-          }
-        } catch (err) {
-          console.error('Failed to get token price:', err);
-        }
-
-        // Get historical lock data from database
-        const { data: dbLocks } = await supabase
-          .from('token_locks')
-          .select('lock_id, lock_timestamp, unlock_timestamp, tx_hash, withdraw_tx_hash')
-          .eq('token_address', urlTokenAddress.toLowerCase())
-          .in('lock_id', nonWithdrawnLocks.map(l => l.lockId));
-
-        const dbLockMap = new Map(dbLocks?.map(l => [l.lock_id, l]) || []);
-
-        const convertedLocks: TokenLock[] = nonWithdrawnLocks.map(lock => {
-          const amountNum = parseFloat(ethers.formatUnits(lock.amount, decimals));
-          const valueEth = amountNum * priceEth;
-          const valueUsd = amountNum * priceUsd;
-
-          const dbLock = dbLockMap.get(lock.lockId);
-          const unlockTimestamp = dbLock?.unlock_timestamp || new Date(lock.unlockTime * 1000).toISOString();
-
-          let lockTimestamp: string;
-          let durationDays: number;
-
-          if (dbLock?.lock_timestamp) {
-            lockTimestamp = dbLock.lock_timestamp;
-            const lockDate = new Date(lockTimestamp).getTime();
-            const unlockDate = new Date(unlockTimestamp).getTime();
-            durationDays = Math.floor((unlockDate - lockDate) / (1000 * 60 * 60 * 24));
-          } else {
-            const now = Math.floor(Date.now() / 1000);
-            const timeUntilUnlock = Math.max(0, lock.unlockTime - now);
-            durationDays = Math.floor(timeUntilUnlock / 86400);
-            const estimatedLockTime = now - (86400 * 7);
-            lockTimestamp = new Date(estimatedLockTime * 1000).toISOString();
-          }
-
-          return {
-            id: `lock-${lock.lockId}`,
-            lock_id: lock.lockId,
-            user_address: lock.owner,
-            token_address: lock.tokenAddress,
-            token_symbol: lock.tokenSymbol || 'UNKNOWN',
-            token_name: lock.tokenName || 'Unknown Token',
-            token_decimals: decimals,
-            amount_locked: lock.amount.toString(),
-            lock_duration_days: durationDays,
-            lock_timestamp: lockTimestamp,
-            unlock_timestamp: unlockTimestamp,
-            is_withdrawn: lock.withdrawn,
-            tx_hash: dbLock?.tx_hash || '',
-            value_eth: valueEth,
-            value_usd: valueUsd,
-            current_price_eth: priceEth,
-            current_price_usd: priceUsd,
-          };
-        });
-
-        const totalLocks = convertedLocks.length;
-        setTotalCount(totalLocks);
-
-        const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-        const endIndex = startIndex + ITEMS_PER_PAGE;
-        const paginatedLocks = convertedLocks.slice(startIndex, endIndex);
-
-        setAllLocks(paginatedLocks);
-
-        const totalAmountLocked = nonWithdrawnLocks.reduce((sum, lock) => {
-          return sum + lock.amount;
-        }, BigInt(0));
-
-        const totalAmountString = totalAmountLocked.toString();
-        const formattedAmount = parseFloat(ethers.formatUnits(totalAmountLocked, decimals));
-        const totalValueEth = formattedAmount * priceEth;
-        const totalValueUsd = formattedAmount * priceUsd;
-
-        setTokenStats({
-          token_address: urlTokenAddress,
-          token_symbol: nonWithdrawnLocks[0]?.tokenSymbol || 'UNKNOWN',
-          token_name: nonWithdrawnLocks[0]?.tokenName || 'Unknown Token',
-          token_decimals: decimals,
-          active_locks_count: totalLocks,
-          total_quantity_locked: totalAmountString,
-          non_withdrawn_amount_locked: totalAmountString,
-          current_price_eth: priceEth,
-          current_price_usd: priceUsd,
-          total_value_eth: totalValueEth,
-          total_value_usd: totalValueUsd,
-        });
-      } else if (urlTokenAddress && !onChainLoading) {
-        setAllLocks([]);
-        setTotalCount(0);
-        setTokenStats({
-          token_address: urlTokenAddress,
-          token_symbol: 'UNKNOWN',
-          token_name: 'Unknown Token',
-          token_decimals: 18,
-          active_locks_count: 0,
-          total_quantity_locked: 0,
-          non_withdrawn_amount_locked: 0,
-          current_price_eth: 0,
-          current_price_usd: 0,
-          total_value_eth: 0,
-          total_value_usd: 0,
-        });
-      }
-    };
-
-    loadTokenStatsWithPrice();
-  }, [urlTokenAddress, onChainTokenLocks, onChainLoading, currentPage, ethPriceUSD]);
+    if (urlTokenAddress) {
+      loadLocks(currentPage);
+      loadTokenStats();
+    }
+  }, [urlTokenAddress, currentPage]);
 
   // Reload locks when page changes (only for "all locks" view)
   useEffect(() => {
