@@ -108,7 +108,7 @@ export function Burn({ onShowToast }: BurnPageProps) {
 
   const loadAggregatedBurns = async () => {
     try {
-      const { data, error } = await supabase.rpc('get_aggregated_burns');
+      const { data, error } = await supabase.rpc('get_top_burned_tokens', { limit_count: 100 });
 
       if (error) {
         console.error('Supabase error loading aggregated burns:', error);

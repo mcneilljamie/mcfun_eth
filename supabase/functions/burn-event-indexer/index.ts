@@ -9,6 +9,7 @@ const corsHeaders = {
 };
 
 const BURN_ADDRESS = "0x000000000000000000000000000000000000dEaD";
+const TOKEN_SUPPLY = 1_000_000_000n * (10n ** 18n);
 
 const ERC20_ABI = [
   "event Transfer(address indexed from, address indexed to, uint256 value)"
@@ -84,23 +85,25 @@ Deno.serve(async (req: Request) => {
       }
 
       try {
-        // Get last processed block for this token's burns
-        const { data: lastBurnData } = await supabase
-          .from("token_burns")
-          .select("block_number")
+        // Get current totals and last processed block for this token
+        const { data: totalsData } = await supabase
+          .from("token_burn_totals")
+          .select("*")
           .eq("token_address", token.token_address.toLowerCase())
-          .order("block_number", { ascending: false })
-          .limit(1);
+          .single();
 
         let fromBlock: number;
         let toBlock: number;
+        let currentTotalBurned = totalsData?.total_amount_burned || "0";
+        let currentTotalValue = totalsData?.total_value_usd || "0";
+        let currentBurnCount = totalsData?.burn_count || 0;
 
-        if (lastBurnData && lastBurnData.length > 0) {
+        if (totalsData && totalsData.last_burn_block > 0) {
           // Continue from last processed block
-          fromBlock = lastBurnData[0].block_number + 1;
+          fromBlock = totalsData.last_burn_block + 1;
           toBlock = Math.min(fromBlock + MAX_BLOCK_RANGE, currentBlock);
         } else {
-          // For new tokens, start from recent blocks and work backwards if needed
+          // For new tokens, start from recent blocks
           toBlock = currentBlock;
           fromBlock = Math.max(currentBlock - MAX_BLOCK_RANGE, 0);
         }
@@ -123,7 +126,13 @@ Deno.serve(async (req: Request) => {
           toBlock
         );
 
-        // Process burn events
+        // Aggregate burn events
+        let newBurnAmount = 0n;
+        let newBurnValue = 0;
+        let newBurnCount = 0;
+        let lastTimestamp: string | null = null;
+        let lastBlock = totalsData?.last_burn_block || 0;
+
         for (const event of events) {
           // Skip blocks marked as erroneous
           if (skipBlocks.has(event.blockNumber)) {
@@ -145,33 +154,55 @@ Deno.serve(async (req: Request) => {
               .limit(1);
 
             const ethPriceUsd = ethPriceData && ethPriceData.length > 0
-              ? ethPriceData[0].price_usd
+              ? parseFloat(ethPriceData[0].price_usd)
               : 3000;
 
-            // Insert burn record
-            const { error: insertError } = await supabase
-              .from("token_burns")
-              .upsert({
-                token_address: token.token_address.toLowerCase(),
-                burner_address: event.args![0].toLowerCase(),
-                amount: event.args![2].toString(),
-                tx_hash: event.transactionHash,
-                block_number: event.blockNumber,
-                timestamp,
-                eth_price_usd: ethPriceUsd,
-              }, {
-                onConflict: "token_address,tx_hash",
-              });
+            const burnAmount = BigInt(event.args![2].toString());
+            newBurnAmount += burnAmount;
 
-            if (insertError) {
-              console.error(`Failed to insert burn for ${token.token_address}:`, insertError);
-              errorCount++;
-            } else {
-              processedCount++;
-            }
+            // Calculate USD value (assuming 18 decimals)
+            const burnAmountFloat = Number(burnAmount) / 1e18;
+            newBurnValue += burnAmountFloat * ethPriceUsd;
+
+            newBurnCount++;
+            lastTimestamp = timestamp;
+            lastBlock = Math.max(lastBlock, event.blockNumber);
+
           } catch (eventErr) {
             console.error(`Error processing burn event in block ${event.blockNumber}:`, eventErr);
             errorCount++;
+          }
+        }
+
+        // Update totals if we found new burns, or just update last_burn_block to track progress
+        if (newBurnCount > 0 || toBlock > (totalsData?.last_burn_block || 0)) {
+          const totalBurned = BigInt(currentTotalBurned) + newBurnAmount;
+          const totalValue = parseFloat(currentTotalValue) + newBurnValue;
+          const totalCount = currentBurnCount + newBurnCount;
+
+          // Calculate percent of supply burned
+          const percentBurned = (Number(totalBurned) / Number(TOKEN_SUPPLY)) * 100;
+
+          const { error: upsertError } = await supabase
+            .from("token_burn_totals")
+            .upsert({
+              token_address: token.token_address.toLowerCase(),
+              total_amount_burned: totalBurned.toString(),
+              total_value_usd: totalValue.toString(),
+              burn_count: totalCount,
+              percent_supply_burned: percentBurned.toString(),
+              last_burn_timestamp: lastTimestamp || totalsData?.last_burn_timestamp,
+              last_burn_block: lastBlock,
+              updated_at: new Date().toISOString(),
+            }, {
+              onConflict: "token_address",
+            });
+
+          if (upsertError) {
+            console.error(`Failed to update burn totals for ${token.token_address}:`, upsertError);
+            errorCount++;
+          } else {
+            processedCount += newBurnCount;
           }
         }
       } catch (err) {
