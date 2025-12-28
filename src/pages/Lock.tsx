@@ -147,13 +147,23 @@ export function Lock({ onShowToast }: LockPageProps) {
           const valueUsd = amountNum * priceUsd;
 
           const dbLock = dbLockMap.get(lock.lockId);
-          const lockTimestamp = dbLock?.lock_timestamp || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
           const unlockTimestamp = dbLock?.unlock_timestamp || new Date(lock.unlockTime * 1000).toISOString();
 
-          // Calculate duration from timestamps
-          const lockDate = new Date(lockTimestamp).getTime();
-          const unlockDate = new Date(unlockTimestamp).getTime();
-          const durationDays = Math.floor((unlockDate - lockDate) / (1000 * 60 * 60 * 24));
+          let lockTimestamp: string;
+          let durationDays: number;
+
+          if (dbLock?.lock_timestamp) {
+            lockTimestamp = dbLock.lock_timestamp;
+            const lockDate = new Date(lockTimestamp).getTime();
+            const unlockDate = new Date(unlockTimestamp).getTime();
+            durationDays = Math.floor((unlockDate - lockDate) / (1000 * 60 * 60 * 24));
+          } else {
+            const now = Math.floor(Date.now() / 1000);
+            const timeUntilUnlock = Math.max(0, lock.unlockTime - now);
+            durationDays = Math.floor(timeUntilUnlock / 86400);
+            const estimatedLockTime = now - (86400 * 7);
+            lockTimestamp = new Date(estimatedLockTime * 1000).toISOString();
+          }
 
           return {
             id: `lock-${lock.lockId}`,
@@ -189,6 +199,7 @@ export function Lock({ onShowToast }: LockPageProps) {
           return sum + lock.amount;
         }, BigInt(0));
 
+        const totalAmountString = totalAmountLocked.toString();
         const formattedAmount = parseFloat(ethers.formatUnits(totalAmountLocked, decimals));
         const totalValueEth = formattedAmount * priceEth;
         const totalValueUsd = formattedAmount * priceUsd;
@@ -199,8 +210,8 @@ export function Lock({ onShowToast }: LockPageProps) {
           token_name: nonWithdrawnLocks[0]?.tokenName || 'Unknown Token',
           token_decimals: decimals,
           active_locks_count: totalLocks,
-          total_quantity_locked: formattedAmount,
-          non_withdrawn_amount_locked: formattedAmount,
+          total_quantity_locked: totalAmountString,
+          non_withdrawn_amount_locked: totalAmountString,
           current_price_eth: priceEth,
           current_price_usd: priceUsd,
           total_value_eth: totalValueEth,
