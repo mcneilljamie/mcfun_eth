@@ -261,6 +261,9 @@ export default function Portfolio() {
               const formattedAmount = parseFloat(ethers.formatUnits(totalAmount, decimals));
               const valueUsd = formattedAmount * priceUsd;
 
+              // Check if ANY lock is currently unlockable (time has passed and not withdrawn)
+              const hasUnlockable = locks.some((l: any) => l.unlockTime <= Math.floor(Date.now() / 1000));
+
               onChainLockedTokens.push({
                 id: tokenAddr,
                 lock_id: locks[0].lockId,
@@ -271,7 +274,7 @@ export default function Portfolio() {
                 amount_locked_formatted: formattedAmount,
                 lock_count: locks.length,
                 unlock_timestamp: new Date(Math.min(...locks.map((l: any) => l.unlockTime)) * 1000).toISOString(),
-                is_unlockable: Math.min(...locks.map((l: any) => l.unlockTime)) < Math.floor(Date.now() / 1000),
+                is_unlockable: hasUnlockable,
                 current_price_usd: priceUsd,
                 value_usd: valueUsd,
               });
