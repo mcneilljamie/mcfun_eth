@@ -516,7 +516,6 @@
     "priceUsd": "Price (USD)",
     "amount": "Amount",
     "timeRemaining": "Time Remaining",
-    "viewAllByWallet": "View all locks by this wallet",
     "table": {
       "token": "Token",
       "amount": "Amount",
@@ -601,13 +600,11 @@
     "minutes": "minutes",
     "remaining": "remaining",
     "viewTransaction": "View Transaction",
-    "viewWithdrawalTx": "View Withdrawal Transaction",
     "withdrawing": "Withdrawing...",
     "withdraw": "Withdraw",
     "withdrawnLocks": "Withdrawn Locks",
     "withdrawn": "Withdrawn",
     "lockedFor": "Locked for",
-    "unlocked": "Unlocked",
     "errors": {
       "failedToLoad": "Failed to load your locks",
       "connectWallet": "Please connect your wallet",
@@ -621,21 +618,6 @@
       "withdrawSubmitted": "Withdrawal transaction submitted...",
       "withdrawSuccess": "Successfully withdrawn {{symbol}}!"
     }
-  },
-  "walletLocks": {
-    "title": "Wallet Locks",
-    "backToHome": "Back to Home",
-    "copyAddress": "Copy wallet address",
-    "addressCopied": "Address copied to clipboard!",
-    "viewOnExplorer": "View wallet on explorer",
-    "totalLockedValue": "Total Locked Value",
-    "activeLocks": "Active Locks",
-    "activeLocksTitle": "Active Locks",
-    "withdrawnLocksTitle": "Withdrawn Locks",
-    "noLocks": "No Locks Found",
-    "noLocksDescription": "This wallet has no token locks",
-    "readyToUnlock": "Ready to Unlock",
-    "loadError": "Failed to Load"
   },
   "burn": {
     "title": "Burn Tokens",
