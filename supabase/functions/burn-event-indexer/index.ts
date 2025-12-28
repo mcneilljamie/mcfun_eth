@@ -11,17 +11,12 @@ const corsHeaders = {
 const BURN_ADDRESS = "0x000000000000000000000000000000000000dEaD";
 const TOKEN_SUPPLY = 1_000_000_000n * (10n ** 18n);
 
-const ERC20_ABI = [
-  "event Transfer(address indexed from, address indexed to, uint256 value)"
-];
-
 const RPC_PROVIDERS = [
   Deno.env.get("ETHEREUM_RPC_URL") || "https://ethereum-sepolia-rpc.publicnode.com",
   "https://rpc.sepolia.org",
   "https://ethereum-sepolia.blockpi.network/v1/rpc/public",
 ];
 
-const MAX_BLOCK_RANGE = 2000;
 const MAX_EXECUTION_TIME_MS = 23000;
 
 let currentProviderIndex = 0;
@@ -48,16 +43,6 @@ Deno.serve(async (req: Request) => {
   );
 
   try {
-    // Get blocks to skip
-    const { data: skipBlocksData } = await supabase
-      .from("skip_blocks")
-      .select("block_number")
-      .in("indexer_type", ["burn", "all"]);
-
-    const skipBlocks = new Set(
-      skipBlocksData?.map(sb => sb.block_number) || []
-    );
-
     // Get all McFun tokens
     const { data: tokens, error: tokensError } = await supabase
       .from("tokens")
@@ -76,7 +61,6 @@ Deno.serve(async (req: Request) => {
 
     let processedCount = 0;
     let errorCount = 0;
-    let skippedCount = 0;
 
     // Process each token
     for (const token of tokens) {
@@ -92,132 +76,82 @@ Deno.serve(async (req: Request) => {
           .eq("token_address", token.token_address.toLowerCase())
           .maybeSingle();
 
-        // Get current totals and last processed block for this token
-        const { data: totalsData } = await supabase
-          .from("token_burn_totals")
-          .select("*")
-          .eq("token_address", token.token_address.toLowerCase())
-          .maybeSingle();
-
-        let fromBlock: number;
-        let toBlock: number;
-        let currentTotalBurned = totalsData?.total_amount_burned || "0";
-        let currentTotalValue = totalsData?.total_value_usd || "0";
-        let currentBurnCount = totalsData?.burn_count || 0;
-
-        if (totalsData && totalsData.last_burn_block > 0) {
-          // Continue from last processed block
-          fromBlock = totalsData.last_burn_block + 1;
-          toBlock = Math.min(fromBlock + MAX_BLOCK_RANGE, currentBlock);
-        } else {
-          // For new tokens, start from creation block or fallback to recent blocks
-          toBlock = currentBlock;
-          const creationBlock = tokenData?.block_number || 0;
-          fromBlock = creationBlock > 0 ? creationBlock : Math.max(currentBlock - MAX_BLOCK_RANGE * 5, 0);
-        }
-
-        if (fromBlock > currentBlock) {
-          continue;
-        }
-
-        // Get Transfer events to burn address
+        // Get current balance of dead address for this token
         const tokenContract = new ethers.Contract(
           token.token_address,
-          ERC20_ABI,
+          [
+            "function balanceOf(address) view returns (uint256)",
+            "event Transfer(address indexed from, address indexed to, uint256 value)"
+          ],
           provider
         );
 
+        const burnedBalance = await tokenContract.balanceOf(BURN_ADDRESS);
+
+        // Get current token price from most recent price snapshot
+        const { data: priceData } = await supabase
+          .from("price_snapshots")
+          .select("price_eth, eth_price_usd")
+          .eq("token_address", token.token_address.toLowerCase())
+          .order("block_number", { ascending: false })
+          .limit(1);
+
+        // Skip if we don't have price data
+        if (!priceData || priceData.length === 0) {
+          console.log(`No price data found for token ${token.token_address}`);
+          continue;
+        }
+
+        const tokenPriceEth = parseFloat(priceData[0].price_eth);
+        const ethPriceUsd = parseFloat(priceData[0].eth_price_usd || "3000");
+
+        // Calculate USD value using current price: burned_tokens * token_price_in_eth * eth_price_in_usd
+        const burnedAmount = burnedBalance.toString();
+        const burnedAmountFloat = Number(burnedBalance) / 1e18;
+        const totalValueUsd = burnedAmountFloat * tokenPriceEth * ethPriceUsd;
+
+        // Calculate percent of supply burned
+        const percentBurned = (Number(burnedBalance) / Number(TOKEN_SUPPLY)) * 100;
+
+        // Count burn transactions (how many times tokens were sent to dead address)
         const transferFilter = tokenContract.filters.Transfer(null, BURN_ADDRESS);
         const events = await tokenContract.queryFilter(
           transferFilter,
-          fromBlock,
-          toBlock
+          tokenData?.block_number || 0,
+          currentBlock
         );
+        const burnCount = events.length;
 
-        // Aggregate burn events
-        let newBurnAmount = 0n;
-        let newBurnValue = 0;
-        let newBurnCount = 0;
-        let lastTimestamp: string | null = null;
-        let lastBlock = totalsData?.last_burn_block || 0;
-
-        for (const event of events) {
-          // Skip blocks marked as erroneous
-          if (skipBlocks.has(event.blockNumber)) {
-            console.log(`Skipping burn event in block ${event.blockNumber} (marked as erroneous)`);
-            skippedCount++;
-            continue;
-          }
-
-          try {
-            const block = await provider.getBlock(event.blockNumber);
-            const timestamp = new Date(block!.timestamp * 1000).toISOString();
-
-            // Get token price at that block from price snapshots
-            const { data: priceData } = await supabase
-              .from("price_snapshots")
-              .select("price_eth, eth_price_usd")
-              .eq("token_address", token.token_address.toLowerCase())
-              .lte("block_number", event.blockNumber)
-              .order("block_number", { ascending: false })
-              .limit(1);
-
-            // Skip if we don't have price data for this burn
-            if (!priceData || priceData.length === 0) {
-              console.log(`No price data found for burn at block ${event.blockNumber}`);
-              continue;
-            }
-
-            const tokenPriceEth = parseFloat(priceData[0].price_eth);
-            const ethPriceUsd = parseFloat(priceData[0].eth_price_usd || "3000");
-
-            const burnAmount = BigInt(event.args![2].toString());
-            newBurnAmount += burnAmount;
-
-            // Calculate USD value: burned_tokens * token_price_in_eth * eth_price_in_usd
-            const burnAmountFloat = Number(burnAmount) / 1e18;
-            const burnValueUsd = burnAmountFloat * tokenPriceEth * ethPriceUsd;
-            newBurnValue += burnValueUsd;
-
-            newBurnCount++;
-            lastTimestamp = timestamp;
-            lastBlock = Math.max(lastBlock, event.blockNumber);
-
-          } catch (eventErr) {
-            console.error(`Error processing burn event in block ${event.blockNumber}:`, eventErr);
-            errorCount++;
-          }
+        // Get last burn timestamp if there were burns
+        let lastBurnTimestamp: string | null = null;
+        if (events.length > 0) {
+          const lastEvent = events[events.length - 1];
+          const block = await provider.getBlock(lastEvent.blockNumber);
+          lastBurnTimestamp = new Date(block!.timestamp * 1000).toISOString();
         }
 
-        // Update totals if we found new burns, or just update last_burn_block to track progress
-        if (newBurnCount > 0 || toBlock > (totalsData?.last_burn_block || 0)) {
-          const totalBurned = BigInt(currentTotalBurned) + newBurnAmount;
-          const totalValue = parseFloat(currentTotalValue) + newBurnValue;
-          const totalCount = currentBurnCount + newBurnCount;
+        // Update totals
+        const { error: upsertError } = await supabase
+          .from("token_burn_totals")
+          .upsert({
+            token_address: token.token_address.toLowerCase(),
+            total_amount_burned: burnedAmount,
+            total_value_usd: totalValueUsd.toString(),
+            burn_count: burnCount,
+            percent_supply_burned: percentBurned.toString(),
+            last_burn_timestamp: lastBurnTimestamp,
+            last_burn_block: currentBlock,
+            updated_at: new Date().toISOString(),
+          }, {
+            onConflict: "token_address",
+          });
 
-          // Calculate percent of supply burned
-          const percentBurned = (Number(totalBurned) / Number(TOKEN_SUPPLY)) * 100;
-
-          const { error: upsertError } = await supabase
-            .from("token_burn_totals")
-            .upsert({
-              token_address: token.token_address.toLowerCase(),
-              total_amount_burned: totalBurned.toString(),
-              total_value_usd: totalValue.toString(),
-              burn_count: totalCount,
-              percent_supply_burned: percentBurned.toString(),
-              last_burn_timestamp: lastTimestamp || totalsData?.last_burn_timestamp,
-              last_burn_block: lastBlock,
-              updated_at: new Date().toISOString(),
-            }, {
-              onConflict: "token_address",
-            });
-
-          if (upsertError) {
-            console.error(`Failed to update burn totals for ${token.token_address}:`, upsertError);
-            errorCount++;
-          } else {
-            processedCount += newBurnCount;
+        if (upsertError) {
+          console.error(`Failed to update burn totals for ${token.token_address}:`, upsertError);
+          errorCount++;
+        } else {
+          if (burnCount > 0) {
+            processedCount++;
           }
         }
       } catch (err) {
@@ -229,9 +163,8 @@ Deno.serve(async (req: Request) => {
     return new Response(
       JSON.stringify({
         success: true,
-        message: `Processed ${processedCount} burns, skipped ${skippedCount} erroneous blocks, ${errorCount} errors`,
+        message: `Processed ${processedCount} tokens with burns, ${errorCount} errors`,
         processedCount,
-        skippedCount,
         errorCount,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
