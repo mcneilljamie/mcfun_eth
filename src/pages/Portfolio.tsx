@@ -483,17 +483,25 @@ export default function Portfolio() {
       {/* Locked Tokens Section */}
       {aggregatedLockedTokens.length > 0 && (
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
             <h2 className="text-xl font-bold text-gray-900 flex items-center">
               <LockIcon className="w-5 h-5 mr-2 text-green-700" />
               {t('portfolio.lockedTokens')}
             </h2>
-            <Link
-              to="/my-locks"
-              className="text-green-700 hover:text-green-800 text-sm font-medium"
-            >
-              {t('portfolio.viewAllLocks')} →
-            </Link>
+            <div className="flex items-center gap-4">
+              <Link
+                to={`/wallet/${account}`}
+                className="text-green-700 hover:text-green-800 text-sm font-medium"
+              >
+                {t('portfolio.viewAllByWallet')} →
+              </Link>
+              <Link
+                to="/my-locks"
+                className="text-green-700 hover:text-green-800 text-sm font-medium"
+              >
+                {t('portfolio.viewAllLocks')} →
+              </Link>
+            </div>
           </div>
           <div className="space-y-3">
             {aggregatedLockedTokens.map((aggLock) => {
