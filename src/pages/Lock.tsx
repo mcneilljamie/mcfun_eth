@@ -105,60 +105,110 @@ export function Lock({ onShowToast }: LockPageProps) {
   }, [urlTokenAddress]);
 
   useEffect(() => {
-    if (urlTokenAddress && onChainTokenLocks.length > 0) {
-      const nonWithdrawnLocks = onChainTokenLocks.filter(lock => !lock.withdrawn);
+    const loadTokenStatsWithPrice = async () => {
+      if (urlTokenAddress && onChainTokenLocks.length > 0) {
+        const nonWithdrawnLocks = onChainTokenLocks.filter(lock => !lock.withdrawn);
+        const decimals = nonWithdrawnLocks[0]?.tokenDecimals || 18;
 
-      const convertedLocks: TokenLock[] = nonWithdrawnLocks.map(lock => ({
-        id: `lock-${lock.lockId}`,
-        lock_id: lock.lockId,
-        user_address: lock.owner,
-        token_address: lock.tokenAddress,
-        token_symbol: lock.tokenSymbol || 'UNKNOWN',
-        token_name: lock.tokenName || 'Unknown Token',
-        token_decimals: lock.tokenDecimals || 18,
-        amount_locked: lock.amount.toString(),
-        lock_duration_days: 0,
-        lock_timestamp: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-        unlock_timestamp: new Date(lock.unlockTime * 1000).toISOString(),
-        is_withdrawn: lock.withdrawn,
-        tx_hash: '',
-      }));
+        // Get token price from database
+        let priceEth = 0;
+        let priceUsd = 0;
+        try {
+          const { data: tokenData } = await supabase
+            .from('tokens')
+            .select('current_eth_reserve, current_token_reserve')
+            .eq('token_address', urlTokenAddress.toLowerCase())
+            .single();
 
-      const totalLocks = convertedLocks.length;
-      setTotalCount(totalLocks);
+          if (tokenData?.current_eth_reserve && tokenData?.current_token_reserve) {
+            const ethReserve = parseFloat(tokenData.current_eth_reserve.toString());
+            const tokenReserve = parseFloat(tokenData.current_token_reserve.toString());
+            if (tokenReserve > 0) {
+              priceEth = ethReserve / tokenReserve;
+              priceUsd = priceEth * ethPriceUSD;
+            }
+          }
+        } catch (err) {
+          console.error('Failed to get token price:', err);
+        }
 
-      const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-      const endIndex = startIndex + ITEMS_PER_PAGE;
-      const paginatedLocks = convertedLocks.slice(startIndex, endIndex);
+        const convertedLocks: TokenLock[] = nonWithdrawnLocks.map(lock => {
+          const amountNum = parseFloat(ethers.formatUnits(lock.amount, decimals));
+          const valueEth = amountNum * priceEth;
+          const valueUsd = amountNum * priceUsd;
 
-      setAllLocks(paginatedLocks);
+          return {
+            id: `lock-${lock.lockId}`,
+            lock_id: lock.lockId,
+            user_address: lock.owner,
+            token_address: lock.tokenAddress,
+            token_symbol: lock.tokenSymbol || 'UNKNOWN',
+            token_name: lock.tokenName || 'Unknown Token',
+            token_decimals: decimals,
+            amount_locked: lock.amount.toString(),
+            lock_duration_days: Math.floor((lock.unlockTime - Math.floor(Date.now() / 1000)) / 86400),
+            lock_timestamp: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+            unlock_timestamp: new Date(lock.unlockTime * 1000).toISOString(),
+            is_withdrawn: lock.withdrawn,
+            tx_hash: '',
+            value_eth: valueEth,
+            value_usd: valueUsd,
+            current_price_eth: priceEth,
+            current_price_usd: priceUsd,
+          };
+        });
 
-      const totalAmountLocked = nonWithdrawnLocks.reduce((sum, lock) => {
-        return sum + lock.amount;
-      }, BigInt(0));
+        const totalLocks = convertedLocks.length;
+        setTotalCount(totalLocks);
 
-      const decimals = nonWithdrawnLocks[0]?.tokenDecimals || 18;
-      const formattedAmount = parseFloat(ethers.formatUnits(totalAmountLocked, decimals));
+        const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+        const endIndex = startIndex + ITEMS_PER_PAGE;
+        const paginatedLocks = convertedLocks.slice(startIndex, endIndex);
 
-      setTokenStats({
-        token_address: urlTokenAddress,
-        token_symbol: nonWithdrawnLocks[0]?.tokenSymbol || 'UNKNOWN',
-        token_name: nonWithdrawnLocks[0]?.tokenName || 'Unknown Token',
-        active_locks: totalLocks,
-        total_quantity_locked: formattedAmount,
-      });
-    } else if (urlTokenAddress && !onChainLoading) {
-      setAllLocks([]);
-      setTotalCount(0);
-      setTokenStats({
-        token_address: urlTokenAddress,
-        token_symbol: 'UNKNOWN',
-        token_name: 'Unknown Token',
-        active_locks: 0,
-        total_quantity_locked: 0,
-      });
-    }
-  }, [urlTokenAddress, onChainTokenLocks, onChainLoading, currentPage]);
+        setAllLocks(paginatedLocks);
+
+        const totalAmountLocked = nonWithdrawnLocks.reduce((sum, lock) => {
+          return sum + lock.amount;
+        }, BigInt(0));
+
+        const formattedAmount = parseFloat(ethers.formatUnits(totalAmountLocked, decimals));
+        const totalValueEth = formattedAmount * priceEth;
+        const totalValueUsd = formattedAmount * priceUsd;
+
+        setTokenStats({
+          token_address: urlTokenAddress,
+          token_symbol: nonWithdrawnLocks[0]?.tokenSymbol || 'UNKNOWN',
+          token_name: nonWithdrawnLocks[0]?.tokenName || 'Unknown Token',
+          token_decimals: decimals,
+          active_locks_count: totalLocks,
+          total_quantity_locked: formattedAmount,
+          non_withdrawn_amount_locked: formattedAmount,
+          current_price_eth: priceEth,
+          current_price_usd: priceUsd,
+          total_value_eth: totalValueEth,
+          total_value_usd: totalValueUsd,
+        });
+      } else if (urlTokenAddress && !onChainLoading) {
+        setAllLocks([]);
+        setTotalCount(0);
+        setTokenStats({
+          token_address: urlTokenAddress,
+          token_symbol: 'UNKNOWN',
+          token_name: 'Unknown Token',
+          token_decimals: 18,
+          active_locks_count: 0,
+          total_quantity_locked: 0,
+          non_withdrawn_amount_locked: 0,
+          current_price_eth: 0,
+          current_price_usd: 0,
+          total_value_eth: 0,
+          total_value_usd: 0,
+        });
+      }
+    };
+
+    loadTokenStatsWithPrice();
+  }, [urlTokenAddress, onChainTokenLocks, onChainLoading, currentPage, ethPriceUSD]);
 
   // Reload locks when page changes (only for "all locks" view)
   useEffect(() => {
@@ -673,7 +723,24 @@ export function Lock({ onShowToast }: LockPageProps) {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {urlTokenAddress && tokenStats ? (
+        {urlTokenAddress && onChainLoading ? (
+          <div className="flex flex-col items-center justify-center py-20">
+            <Loader2 className="w-12 h-12 text-blue-600 animate-spin mb-4" />
+            <p className="text-gray-600 text-lg">Loading locks from blockchain...</p>
+          </div>
+        ) : urlTokenAddress && onChainError ? (
+          <div className="flex flex-col items-center justify-center py-20">
+            <AlertCircle className="w-12 h-12 text-red-600 mb-4" />
+            <p className="text-gray-900 text-lg font-semibold mb-2">Error Loading Locks</p>
+            <p className="text-gray-600">{onChainError}</p>
+            <button
+              onClick={() => navigate('/lock')}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Back to All Locks
+            </button>
+          </div>
+        ) : urlTokenAddress && tokenStats ? (
           <div className="mb-8">
             <button
               onClick={() => navigate('/lock')}
