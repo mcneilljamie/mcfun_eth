@@ -552,32 +552,22 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between flex-wrap gap-2">
-                    <div className="flex items-center gap-4 flex-wrap">
-                      {lock.tx_hash ? (
-                        <a
-                          href={`${getExplorerUrl(chainId || 1)}/tx/${lock.withdraw_tx_hash || lock.tx_hash}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
-                        >
-                          {t('myLocks.viewTransaction')}
-                          <ExternalLink className="w-3 h-3" />
-                        </a>
-                      ) : (
-                        <div className="text-sm text-gray-400">
-                          {t('myLocks.viewTransaction')}
-                        </div>
-                      )}
-
-                      <button
-                        onClick={() => navigate(`/wallet/${account}`)}
+                  <div className="flex items-center justify-between">
+                    {lock.tx_hash ? (
+                      <a
+                        href={`${getExplorerUrl(chainId || 1)}/tx/${lock.withdraw_tx_hash || lock.tx_hash}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
                       >
-                        {t('myLocks.viewAllByWallet')}
+                        {t('myLocks.viewTransaction')}
                         <ExternalLink className="w-3 h-3" />
-                      </button>
-                    </div>
+                      </a>
+                    ) : (
+                      <div className="text-sm text-gray-400">
+                        {t('myLocks.viewTransaction')}
+                      </div>
+                    )}
 
                     {isUnlockable && (
                       <button

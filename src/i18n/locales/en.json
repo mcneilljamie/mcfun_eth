@@ -327,7 +327,6 @@
     "lockedValue": "Locked Tokens Value",
     "lockedTokens": "Locked Tokens",
     "viewAllLocks": "View All My Locks",
-    "viewAllByWallet": "View All by Wallet",
     "locked": "Locked",
     "unlockable": "Unlocked",
     "readyToUnlock": "Ready to unlock",
@@ -517,6 +516,7 @@
     "priceUsd": "Price (USD)",
     "amount": "Amount",
     "timeRemaining": "Time Remaining",
+    "viewAllByWallet": "View all locks by this wallet",
     "table": {
       "token": "Token",
       "amount": "Amount",
@@ -589,7 +589,6 @@
     "activeLocks": "active locks",
     "readyToUnlock": "Ready to Unlock",
     "viewAllForToken": "View all locks for this token",
-    "viewAllByWallet": "View all locks by this wallet",
     "lockedOn": "Locked On",
     "lockDuration": "Lock Duration",
     "unlocksOn": "Unlocks On",
