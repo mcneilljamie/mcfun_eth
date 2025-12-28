@@ -1,25 +1,25 @@
 /*
   # Setup Lock Withdrawal Sync Cron Job
-  
+
   1. Purpose
     - Automatically sync lock withdrawal status from blockchain to database
-    - Run every 30 seconds to keep UI in sync with on-chain state
+    - Run every 5 minutes to keep UI in sync with on-chain state
     - Essential for My Locks page to show correct withdrawal status
-  
+
   2. Cron Schedule
-    - Runs every 30 seconds
+    - Runs every 5 minutes
     - Checks all non-withdrawn locks against blockchain
     - Updates database when withdrawals are detected
-  
+
   3. Function Call
     - Calls sync-lock-withdrawals edge function
     - Uses service role for authentication
 */
 
--- Create cron job to sync lock withdrawals every 30 seconds
+-- Create cron job to sync lock withdrawals every 5 minutes
 SELECT cron.schedule(
   'sync-lock-withdrawal-status-v1',
-  '30 seconds',
+  '*/5 * * * *',
   $$
   SELECT
     net.http_post(
