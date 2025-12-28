@@ -73,6 +73,33 @@ export default function Portfolio() {
     }
   }, [account, provider]);
 
+  useEffect(() => {
+    if (!account) return;
+
+    const channel = supabase
+      .channel('portfolio-lock-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'token_locks',
+          filter: `user_address=eq.${account.toLowerCase()}`,
+        },
+        (payload) => {
+          console.log('Lock updated, reloading portfolio:', payload);
+          if (payload.new.is_withdrawn) {
+            loadPortfolio();
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [account]);
+
   const loadPortfolio = async () => {
     if (!account || !provider) return;
 
