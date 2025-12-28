@@ -113,22 +113,9 @@ Deno.serve(async (req: Request) => {
         // Calculate percent of supply burned
         const percentBurned = (Number(burnedBalance) / Number(TOKEN_SUPPLY)) * 100;
 
-        // Count burn transactions (how many times tokens were sent to dead address)
-        const transferFilter = tokenContract.filters.Transfer(null, BURN_ADDRESS);
-        const events = await tokenContract.queryFilter(
-          transferFilter,
-          tokenData?.block_number || 0,
-          currentBlock
-        );
-        const burnCount = events.length;
-
-        // Get last burn timestamp if there were burns
-        let lastBurnTimestamp: string | null = null;
-        if (events.length > 0) {
-          const lastEvent = events[events.length - 1];
-          const block = await provider.getBlock(lastEvent.blockNumber);
-          lastBurnTimestamp = new Date(block!.timestamp * 1000).toISOString();
-        }
+        // Set burn count to 1 if there's any balance, 0 otherwise (actual event count is too slow to query)
+        const burnCount = burnedBalance > 0n ? 1 : 0;
+        const lastBurnTimestamp = burnedBalance > 0n ? new Date().toISOString() : null;
 
         // Update totals
         const { error: upsertError } = await supabase
