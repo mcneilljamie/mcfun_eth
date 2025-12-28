@@ -595,9 +595,27 @@ export function Lock({ onShowToast }: LockPageProps) {
       return new Date(a.lock_timestamp).getTime() - new Date(b.lock_timestamp).getTime();
     });
 
-  const topLockedTokens = aggregatedLocks
-    .filter(lock => lock.is_mcfun_token)
-    .sort((a, b) => (b.total_value_usd || 0) - (a.total_value_usd || 0));
+  const topLockedTokens = useMemo(() => {
+    if (urlTokenAddress && tokenStats) {
+      return [{
+        token_address: tokenStats.token_address,
+        token_symbol: tokenStats.token_symbol,
+        token_name: tokenStats.token_name,
+        token_decimals: tokenStats.token_decimals,
+        total_amount_locked: tokenStats.total_quantity_locked,
+        lock_count: tokenStats.active_locks_count,
+        current_price_eth: tokenStats.current_price_eth,
+        current_price_usd: tokenStats.current_price_usd,
+        total_value_eth: tokenStats.total_value_eth,
+        total_value_usd: tokenStats.total_value_usd,
+        is_mcfun_token: true,
+      }];
+    }
+
+    return aggregatedLocks
+      .filter(lock => lock.is_mcfun_token)
+      .sort((a, b) => (b.total_value_usd || 0) - (a.total_value_usd || 0));
+  }, [urlTokenAddress, tokenStats, aggregatedLocks]);
 
   const formatTimeRemaining = (unlockTimestamp: string) => {
     const now = new Date();
@@ -903,7 +921,16 @@ export function Lock({ onShowToast }: LockPageProps) {
                       <div className="bg-gray-50 rounded-lg p-4">
                         <div className="text-xs text-gray-500 mb-1">{t('lock.lockDuration')}</div>
                         <div className="text-sm font-semibold text-gray-900">
-                          {lock.lock_duration_days} {lock.lock_duration_days === 1 ? t('lock.day') : t('lock.days')}
+                          {lock.lock_duration_days === 0 ? (
+                            (() => {
+                              const unlockTime = new Date(lock.unlock_timestamp).getTime();
+                              const now = Date.now();
+                              const hoursRemaining = Math.max(0, Math.ceil((unlockTime - now) / (1000 * 60 * 60)));
+                              return hoursRemaining === 1 ? `${hoursRemaining} hour` : `${hoursRemaining} hours`;
+                            })()
+                          ) : (
+                            `${lock.lock_duration_days} ${lock.lock_duration_days === 1 ? t('lock.day') : t('lock.days')}`
+                          )}
                         </div>
                       </div>
                       <div className="bg-gray-50 rounded-lg p-4">
