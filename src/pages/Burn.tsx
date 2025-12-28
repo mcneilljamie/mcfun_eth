@@ -620,7 +620,9 @@ export function Burn({ onShowToast }: BurnPageProps) {
                         <div className="text-sm text-gray-600 mt-1">
                           {burn.percent_supply_burned ? (
                             <span className="font-semibold">
-                              {burn.percent_supply_burned.toFixed(2)}% of supply
+                              {burn.percent_supply_burned < 0.01
+                                ? burn.percent_supply_burned.toFixed(4)
+                                : burn.percent_supply_burned.toFixed(2)}% of supply
                             </span>
                           ) : (
                             <span className="text-gray-400">-</span>
