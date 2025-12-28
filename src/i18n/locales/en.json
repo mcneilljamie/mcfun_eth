@@ -330,6 +330,7 @@
     "locked": "Locked",
     "unlockable": "Unlocked",
     "readyToUnlock": "Ready to unlock",
+    "readyToWithdraw": "Ready to Withdraw",
     "daysRemaining": "days remaining",
     "unlocks": "Next unlock",
     "infoMessage": "This page tracks your ETH balance and tokens that are traded on McFun.",
