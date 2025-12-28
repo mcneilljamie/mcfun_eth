@@ -132,10 +132,28 @@ export function Lock({ onShowToast }: LockPageProps) {
           console.error('Failed to get token price:', err);
         }
 
+        // Get historical lock data from database
+        const { data: dbLocks } = await supabase
+          .from('token_locks')
+          .select('lock_id, lock_timestamp, unlock_timestamp, tx_hash, withdraw_tx_hash')
+          .eq('token_address', urlTokenAddress.toLowerCase())
+          .in('lock_id', nonWithdrawnLocks.map(l => l.lockId));
+
+        const dbLockMap = new Map(dbLocks?.map(l => [l.lock_id, l]) || []);
+
         const convertedLocks: TokenLock[] = nonWithdrawnLocks.map(lock => {
           const amountNum = parseFloat(ethers.formatUnits(lock.amount, decimals));
           const valueEth = amountNum * priceEth;
           const valueUsd = amountNum * priceUsd;
+
+          const dbLock = dbLockMap.get(lock.lockId);
+          const lockTimestamp = dbLock?.lock_timestamp || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+          const unlockTimestamp = dbLock?.unlock_timestamp || new Date(lock.unlockTime * 1000).toISOString();
+
+          // Calculate duration from timestamps
+          const lockDate = new Date(lockTimestamp).getTime();
+          const unlockDate = new Date(unlockTimestamp).getTime();
+          const durationDays = Math.floor((unlockDate - lockDate) / (1000 * 60 * 60 * 24));
 
           return {
             id: `lock-${lock.lockId}`,
@@ -146,11 +164,11 @@ export function Lock({ onShowToast }: LockPageProps) {
             token_name: lock.tokenName || 'Unknown Token',
             token_decimals: decimals,
             amount_locked: lock.amount.toString(),
-            lock_duration_days: Math.floor((lock.unlockTime - Math.floor(Date.now() / 1000)) / 86400),
-            lock_timestamp: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-            unlock_timestamp: new Date(lock.unlockTime * 1000).toISOString(),
+            lock_duration_days: durationDays,
+            lock_timestamp: lockTimestamp,
+            unlock_timestamp: unlockTimestamp,
             is_withdrawn: lock.withdrawn,
-            tx_hash: '',
+            tx_hash: dbLock?.tx_hash || '',
             value_eth: valueEth,
             value_usd: valueUsd,
             current_price_eth: priceEth,
