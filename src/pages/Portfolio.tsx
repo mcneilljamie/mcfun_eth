@@ -271,7 +271,7 @@ export default function Portfolio() {
                 amount_locked_formatted: formattedAmount,
                 lock_count: locks.length,
                 unlock_timestamp: new Date(Math.min(...locks.map((l: any) => l.unlockTime)) * 1000).toISOString(),
-                is_unlockable: Math.min(...locks.map((l: any) => l.unlockTime)) <= Math.floor(Date.now() / 1000),
+                is_unlockable: Math.min(...locks.map((l: any) => l.unlockTime)) < Math.floor(Date.now() / 1000),
                 current_price_usd: priceUsd,
                 value_usd: valueUsd,
               });
