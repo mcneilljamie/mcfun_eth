@@ -85,12 +85,19 @@ Deno.serve(async (req: Request) => {
       }
 
       try {
+        // Get token creation block
+        const { data: tokenData } = await supabase
+          .from("tokens")
+          .select("block_number")
+          .eq("token_address", token.token_address.toLowerCase())
+          .maybeSingle();
+
         // Get current totals and last processed block for this token
         const { data: totalsData } = await supabase
           .from("token_burn_totals")
           .select("*")
           .eq("token_address", token.token_address.toLowerCase())
-          .single();
+          .maybeSingle();
 
         let fromBlock: number;
         let toBlock: number;
@@ -103,9 +110,10 @@ Deno.serve(async (req: Request) => {
           fromBlock = totalsData.last_burn_block + 1;
           toBlock = Math.min(fromBlock + MAX_BLOCK_RANGE, currentBlock);
         } else {
-          // For new tokens, start from recent blocks
+          // For new tokens, start from creation block or fallback to recent blocks
           toBlock = currentBlock;
-          fromBlock = Math.max(currentBlock - MAX_BLOCK_RANGE, 0);
+          const creationBlock = tokenData?.block_number || 0;
+          fromBlock = creationBlock > 0 ? creationBlock : Math.max(currentBlock - MAX_BLOCK_RANGE * 5, 0);
         }
 
         if (fromBlock > currentBlock) {
@@ -145,24 +153,31 @@ Deno.serve(async (req: Request) => {
             const block = await provider.getBlock(event.blockNumber);
             const timestamp = new Date(block!.timestamp * 1000).toISOString();
 
-            // Get ETH price at that time
-            const { data: ethPriceData } = await supabase
-              .from("eth_price_history")
-              .select("price_usd")
-              .lte("timestamp", timestamp)
-              .order("timestamp", { ascending: false })
+            // Get token price at that block from price snapshots
+            const { data: priceData } = await supabase
+              .from("price_snapshots")
+              .select("price_eth, eth_price_usd")
+              .eq("token_address", token.token_address.toLowerCase())
+              .lte("block_number", event.blockNumber)
+              .order("block_number", { ascending: false })
               .limit(1);
 
-            const ethPriceUsd = ethPriceData && ethPriceData.length > 0
-              ? parseFloat(ethPriceData[0].price_usd)
-              : 3000;
+            // Skip if we don't have price data for this burn
+            if (!priceData || priceData.length === 0) {
+              console.log(`No price data found for burn at block ${event.blockNumber}`);
+              continue;
+            }
+
+            const tokenPriceEth = parseFloat(priceData[0].price_eth);
+            const ethPriceUsd = parseFloat(priceData[0].eth_price_usd || "3000");
 
             const burnAmount = BigInt(event.args![2].toString());
             newBurnAmount += burnAmount;
 
-            // Calculate USD value (assuming 18 decimals)
+            // Calculate USD value: burned_tokens * token_price_in_eth * eth_price_in_usd
             const burnAmountFloat = Number(burnAmount) / 1e18;
-            newBurnValue += burnAmountFloat * ethPriceUsd;
+            const burnValueUsd = burnAmountFloat * tokenPriceEth * ethPriceUsd;
+            newBurnValue += burnValueUsd;
 
             newBurnCount++;
             lastTimestamp = timestamp;
