@@ -43,86 +43,8 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
   const [enrichedLocks, setEnrichedLocks] = useState<TokenLock[]>([]);
   const [tokenPrices, setTokenPrices] = useState<Map<string, { priceEth: number; priceUsd: number }>>(new Map());
 
-  // Use database as source of truth (indexed from on-chain)
-  const [onChainLocks, setOnChainLocks] = useState<OnChainLock[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  // Load locks from database (indexed from blockchain)
-  const loadLocks = async () => {
-    if (!account) {
-      setOnChainLocks([]);
-      setLoading(false);
-      return;
-    }
-
-    try {
-      setLoading(true);
-      setError(null);
-
-      const { data, error: queryError } = await supabase.rpc('get_user_locked_tokens', {
-        user_addr: account
-      });
-
-      if (queryError) throw queryError;
-
-      // Convert database format to OnChainLock format
-      const locks: OnChainLock[] = (data || []).map((lock: any) => ({
-        lockId: lock.lock_id,
-        owner: lock.user_address || account,
-        tokenAddress: lock.token_address,
-        amount: BigInt(lock.amount_locked),
-        unlockTime: Math.floor(new Date(lock.unlock_timestamp).getTime() / 1000),
-        withdrawn: lock.is_withdrawn,
-        tokenSymbol: lock.token_symbol,
-        tokenName: lock.token_name,
-        tokenDecimals: lock.token_decimals,
-      }));
-
-      setOnChainLocks(locks);
-    } catch (err: any) {
-      console.error('Failed to load locks from database:', err);
-      setError(err.message || 'Failed to load locks');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const reload = loadLocks;
-
-  // Load locks when account changes
-  useEffect(() => {
-    loadLocks();
-  }, [account]);
-
-  // Subscribe to real-time updates for lock withdrawals
-  useEffect(() => {
-    if (!account) return;
-
-    const channel = supabase
-      .channel('token_locks_changes')
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'token_locks',
-          filter: `user_address=eq.${account.toLowerCase()}`
-        },
-        (payload) => {
-          console.log('Lock updated:', payload);
-          // Reload locks when a withdrawal is detected
-          if (payload.new.is_withdrawn) {
-            loadLocks();
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [account]);
+  // Use on-chain data as source of truth
+  const { locks: onChainLocks, loading, error, reload } = useOnChainLocks(provider, chainId, account);
 
   // Load ETH price
   useEffect(() => {
