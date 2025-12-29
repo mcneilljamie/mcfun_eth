@@ -49,21 +49,35 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
   const priceChange = useMemo(() => {
     if (data.length === 0) return snapshotPriceChange;
 
-    // Get the baseline price (24h ago or oldest available)
-    const twentyFourHoursAgo = Date.now() / 1000 - (24 * 60 * 60);
+    const now = Date.now() / 1000;
+    const twentyFourHoursAgo = now - (24 * 60 * 60);
+    const dataInTimeOrder = [...data].sort((a, b) => a.time - b.time);
 
-    // Find price from 24h ago or use oldest available
+    // Find the baseline price for comparison
     let baselinePrice: number | null = null;
 
-    // First try to find a price point close to 24h ago
-    const dataInTimeOrder = [...data].sort((a, b) => a.time - b.time);
-    const price24hAgo = dataInTimeOrder.find(point => point.time >= twentyFourHoursAgo);
+    // Check if token is newer than 24 hours (use oldest/launch price)
+    const oldestPoint = dataInTimeOrder[0];
+    const newestPoint = dataInTimeOrder[dataInTimeOrder.length - 1];
+    const tokenAge = now - oldestPoint.time;
+    const isTokenNew = tokenAge < (24 * 60 * 60);
 
-    if (price24hAgo) {
-      baselinePrice = price24hAgo.value;
-    } else if (dataInTimeOrder.length > 0) {
-      // If no data from 24h ago, use oldest available
-      baselinePrice = dataInTimeOrder[0].value;
+    if (isTokenNew) {
+      // For new tokens, compare to launch price (oldest point)
+      baselinePrice = oldestPoint.value;
+    } else {
+      // For older tokens, try to find price from 24h ago
+      // Find the closest point to 24h ago
+      const price24hAgo = dataInTimeOrder.find(point => point.time >= twentyFourHoursAgo);
+
+      if (price24hAgo) {
+        // Found a point at or after 24h ago
+        baselinePrice = price24hAgo.value;
+      } else {
+        // No data from 24h ago (snapshots are stale)
+        // Use the most recent snapshot available instead of oldest
+        baselinePrice = newestPoint.value;
+      }
     }
 
     if (baselinePrice && baselinePrice > 0 && displayPrice > 0) {
