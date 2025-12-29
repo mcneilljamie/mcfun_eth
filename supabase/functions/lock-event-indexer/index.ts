@@ -202,11 +202,21 @@ async function processLockIndexing(req: Request): Promise<Response> {
     } else if (requestedStartBlock !== null) {
       fromBlock = requestedStartBlock;
       toBlock = currentBlock;
+      const MAX_RANGE = 5000;
+      if (toBlock - fromBlock > MAX_RANGE) {
+        toBlock = fromBlock + MAX_RANGE;
+        console.log(`Limiting scan range to ${MAX_RANGE} blocks to avoid timeout`);
+      }
     } else {
       fromBlock = lastIndexedLock?.block_number
         ? Math.max(0, Number(lastIndexedLock.block_number) - 2)
         : 0;
       toBlock = currentBlock;
+      const MAX_RANGE = 5000;
+      if (toBlock - fromBlock > MAX_RANGE) {
+        toBlock = fromBlock + MAX_RANGE;
+        console.log(`Limiting scan range to ${MAX_RANGE} blocks to avoid timeout`);
+      }
     }
 
     if (fromBlock > toBlock) {
