@@ -196,17 +196,25 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
   };
 
   const calculateTokenPriceUSD = (): number => {
-    // Use chart price from database for consistency with chart display
-    if (chartPrice > 0) return chartPrice;
-
     if (!token) return 0;
 
-    const ethReserve = liveReserves
-      ? parseFloat(liveReserves.reserveETH)
-      : parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
-    const tokenReserve = liveReserves
-      ? parseFloat(liveReserves.reserveToken)
-      : parseFloat(token.current_token_reserve?.toString() || '1000000');
+    // Priority 1: Use live reserves from blockchain (most accurate, real-time)
+    if (liveReserves) {
+      const ethReserve = parseFloat(liveReserves.reserveETH);
+      const tokenReserve = parseFloat(liveReserves.reserveToken);
+
+      if (tokenReserve === 0) return 0;
+
+      const priceInEth = ethReserve / tokenReserve;
+      return priceInEth * ethPriceUSD;
+    }
+
+    // Priority 2: Use chart price from database
+    if (chartPrice > 0) return chartPrice;
+
+    // Priority 3: Fallback to stored reserves
+    const ethReserve = parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
+    const tokenReserve = parseFloat(token.current_token_reserve?.toString() || '1000000');
 
     if (tokenReserve === 0) return 0;
 
