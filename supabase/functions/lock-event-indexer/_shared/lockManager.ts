@@ -58,7 +58,7 @@ async function acquireLock(
     lock_key: lockKey,
     requested_at: now.toISOString(),
     expires_at: expiresAt.toISOString(),
-    status: "active",
+    status: "processing",
   }).select().maybeSingle();
 
   if (error) {
@@ -81,7 +81,7 @@ async function renewLock(
       expires_at: newExpiresAt.toISOString(),
     })
     .eq("lock_key", lockKey)
-    .eq("status", "active");
+    .eq("status", "processing");
 
   if (error) {
     console.error("Failed to renew lock:", error);
@@ -93,7 +93,7 @@ async function releaseLock(lockKey: string): Promise<void> {
     .from("indexer_lock_queue")
     .update({ status: "completed" })
     .eq("lock_key", lockKey)
-    .eq("status", "active");
+    .eq("status", "processing");
 
   if (error) {
     console.error("Failed to release lock:", error);
