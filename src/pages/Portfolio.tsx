@@ -142,21 +142,23 @@ export default function Portfolio() {
       const TOKEN_TOTAL_SUPPLY = 1000000;
       const priceChangeMap = new Map<string, number>();
 
-      // Get prices from 24 hours ago
+      // Get prices from around 24 hours ago
       const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+      const twentyFiveHoursAgo = new Date(Date.now() - 25 * 60 * 60 * 1000).toISOString();
       const { data: oldSnapshots } = await supabase
         .from('price_snapshots')
-        .select('token_address, token_price_eth, eth_price_usd, created_at')
+        .select('token_address, price_eth, eth_price_usd')
         .in('token_address', allTokens.map(t => t.token_address))
-        .gte('created_at', twentyFourHoursAgo)
-        .order('created_at', { ascending: true });
+        .lte('created_at', twentyFourHoursAgo)
+        .gte('created_at', twentyFiveHoursAgo)
+        .order('created_at', { ascending: false });
 
-      // Group by token and get earliest snapshot (closest to 24h ago)
+      // Group by token and get most recent snapshot around 24h ago
       const priceMap24hAgo = new Map<string, { priceETH: number; ethPriceUSD: number }>();
       oldSnapshots?.forEach(snap => {
         if (!priceMap24hAgo.has(snap.token_address)) {
           priceMap24hAgo.set(snap.token_address, {
-            priceETH: parseFloat(snap.token_price_eth),
+            priceETH: parseFloat(snap.price_eth),
             ethPriceUSD: parseFloat(snap.eth_price_usd)
           });
         }
