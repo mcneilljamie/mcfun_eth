@@ -48,18 +48,12 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   useEffect(() => {
     if (tokens.length > 0) {
       loadLiveVolumes();
+      loadPriceChanges();
       const dataInterval = setInterval(() => {
         loadLiveVolumes();
+        loadPriceChanges();
       }, 30000);
       return () => clearInterval(dataInterval);
-    }
-  }, [tokens]);
-
-  useEffect(() => {
-    if (tokens.length > 0) {
-      loadPriceChanges();
-      const priceChangeInterval = setInterval(loadPriceChanges, 30000);
-      return () => clearInterval(priceChangeInterval);
     }
   }, [tokens]);
 
@@ -177,19 +171,18 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     if (tokens.length === 0) return;
 
     try {
+      // Use cached price_change_24h column from tokens instead of expensive RPC call
       const newChanges: Record<string, { change: number; isNew: boolean }> = {};
-      const now = new Date();
-      const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-
-      // Use cached price changes from the database
       tokens.forEach((token) => {
-        const tokenCreatedAt = new Date(token.created_at);
-        const isNew = tokenCreatedAt > twentyFourHoursAgo;
+        // Check if token is less than 24 hours old
+        const createdAt = new Date(token.created_at);
+        const hoursOld = (Date.now() - createdAt.getTime()) / (1000 * 60 * 60);
+        const isNew = hoursOld < 24;
 
-        // Use cached price_change_24h from the database (automatically updated by trigger)
-        const change = token.price_change_24h ? parseFloat(token.price_change_24h) : 0;
-
-        newChanges[token.token_address] = { change, isNew };
+        newChanges[token.token_address] = {
+          change: token.price_change_24h !== null ? parseFloat(token.price_change_24h.toString()) : 0,
+          isNew
+        };
       });
 
       setPriceChanges(newChanges);

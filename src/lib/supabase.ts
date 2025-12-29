@@ -27,9 +27,6 @@ export interface Token {
   discord_url?: string;
   x_url?: string;
   created_at: string;
-  price_24h_ago?: string;
-  price_change_24h?: string;
-  price_change_updated_at?: string;
 }
 
 export interface Swap {
