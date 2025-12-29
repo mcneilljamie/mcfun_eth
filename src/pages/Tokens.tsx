@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Trophy, Search, TrendingUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { supabase, Token } from '../lib/supabase';
@@ -56,19 +56,12 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   }, [tokens]);
 
   useEffect(() => {
-    console.log('[Tokens] Price change effect triggered:', {
-      tokensCount: tokens.length,
-      liveReservesCount: Object.keys(liveReserves).length,
-      ethPriceUSD
-    });
-
     if (tokens.length > 0 && Object.keys(liveReserves).length > 0) {
-      console.log('[Tokens] Calling loadPriceChanges...');
       loadPriceChanges();
       const priceChangeInterval = setInterval(loadPriceChanges, 30000);
       return () => clearInterval(priceChangeInterval);
     }
-  }, [tokens, liveReserves, ethPriceUSD, loadPriceChanges]);
+  }, [tokens, liveReserves, ethPriceUSD]);
 
   useEffect(() => {
     if (tokens.length > 0 && provider) {
@@ -180,22 +173,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     }
   };
 
-  const calculateTokenPriceUSD = useCallback((token: Token): number => {
-    const reserves = liveReserves[token.token_address];
-    const ethReserve = reserves
-      ? parseFloat(reserves.reserveETH)
-      : parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
-    const tokenReserve = reserves
-      ? parseFloat(reserves.reserveToken)
-      : parseFloat(token.current_token_reserve?.toString() || '1000000');
-
-    if (tokenReserve === 0) return 0;
-
-    const priceInEth = ethReserve / tokenReserve;
-    return priceInEth * ethPriceUSD;
-  }, [liveReserves, ethPriceUSD]);
-
-  const loadPriceChanges = useCallback(async () => {
+  const loadPriceChanges = async () => {
     if (tokens.length === 0) return;
 
     try {
@@ -228,10 +206,6 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
         const tokenSnapshots = snapshots?.filter(s => s.token_address === token.token_address) || [];
 
         if (tokenSnapshots.length === 0 || currentPrice === 0) {
-          console.log(`[Price Change] ${token.symbol}: No snapshots or current price is 0`, {
-            snapshots: tokenSnapshots.length,
-            currentPrice
-          });
           newChanges[token.token_address] = { change: 0, isNew };
           return;
         }
@@ -266,15 +240,6 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
           }
         }
 
-        console.log(`[Price Change] ${token.symbol}:`, {
-          isNew,
-          currentPrice,
-          baselinePrice,
-          change: baselinePrice && baselinePrice > 0 && currentPrice > 0
-            ? ((currentPrice - baselinePrice) / baselinePrice) * 100
-            : 0
-        });
-
         if (baselinePrice && baselinePrice > 0 && currentPrice > 0) {
           const change = ((currentPrice - baselinePrice) / baselinePrice) * 100;
           newChanges[token.token_address] = { change, isNew };
@@ -287,7 +252,23 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     } catch (err) {
       console.error('Failed to load price changes:', err);
     }
-  }, [tokens, calculateTokenPriceUSD]);
+  };
+
+
+  const calculateTokenPriceUSD = (token: Token): number => {
+    const reserves = liveReserves[token.token_address];
+    const ethReserve = reserves
+      ? parseFloat(reserves.reserveETH)
+      : parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
+    const tokenReserve = reserves
+      ? parseFloat(reserves.reserveToken)
+      : parseFloat(token.current_token_reserve?.toString() || '1000000');
+
+    if (tokenReserve === 0) return 0;
+
+    const priceInEth = ethReserve / tokenReserve;
+    return priceInEth * ethPriceUSD;
+  };
 
   const calculateMarketCap = (token: Token): number => {
     const TOKEN_TOTAL_SUPPLY = 1000000;
