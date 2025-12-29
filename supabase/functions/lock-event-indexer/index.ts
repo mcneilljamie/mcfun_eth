@@ -221,19 +221,32 @@ async function processLockIndexing(req: Request): Promise<Response> {
     const currentBlock = await provider.getBlockNumber();
 
     if (indexerState?.is_active) {
-      return new Response(
-        JSON.stringify({
-          success: true,
-          message: 'Indexer is already running',
-          skipped: true
-        }),
-        {
-          headers: {
-            ...corsHeaders,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const lastActiveTime = indexerState.last_indexed_at
+        ? new Date(indexerState.last_indexed_at).getTime()
+        : 0;
+      const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
+
+      if (lastActiveTime > fiveMinutesAgo) {
+        return new Response(
+          JSON.stringify({
+            success: true,
+            message: 'Indexer is already running',
+            skipped: true
+          }),
+          {
+            headers: {
+              ...corsHeaders,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      } else {
+        console.log('Stale is_active flag detected, resetting...');
+        await supabase
+          .from("lock_indexer_state")
+          .update({ is_active: false })
+          .eq("indexer_name", "lock_indexer");
+      }
     }
 
     await supabase
@@ -245,7 +258,26 @@ async function processLockIndexing(req: Request): Promise<Response> {
     let toBlock: number;
 
     const LOCKER_DEPLOYMENT_BLOCK = 7413490;
-    const MAX_RANGE = catchupMode ? 5000 : 100;
+
+    const lastIndexedBlock = indexerState?.last_indexed_block || LOCKER_DEPLOYMENT_BLOCK;
+    const blocksBehind = currentBlock - lastIndexedBlock;
+
+    let MAX_RANGE: number;
+    if (catchupMode) {
+      MAX_RANGE = 5000;
+    } else if (blocksBehind > 5000) {
+      MAX_RANGE = 5000;
+      console.log(`Adaptive mode: ${blocksBehind} blocks behind, processing 5000 blocks per run`);
+    } else if (blocksBehind > 1000) {
+      MAX_RANGE = 2000;
+      console.log(`Adaptive mode: ${blocksBehind} blocks behind, processing 2000 blocks per run`);
+    } else if (blocksBehind > 500) {
+      MAX_RANGE = 1000;
+      console.log(`Adaptive mode: ${blocksBehind} blocks behind, processing 1000 blocks per run`);
+    } else {
+      MAX_RANGE = 500;
+      console.log(`Adaptive mode: ${blocksBehind} blocks behind, processing 500 blocks per run`);
+    }
 
     if (catchupMode) {
       fromBlock = LOCKER_DEPLOYMENT_BLOCK;
@@ -355,11 +387,16 @@ async function processLockIndexing(req: Request): Promise<Response> {
         const amount = event.args[3];
         const unlockTime = Number(event.args[4]);
 
+        const cachedMetadata = tokenMetadataCache.get(tokenAddress.toLowerCase());
+        const needsMetadataFetch = !cachedMetadata;
+
         const { name, symbol, decimals } = await retryWithBackoff(
           () => getTokenMetadata(tokenAddress, provider, supabase)
         );
 
-        await rateLimit(300);
+        if (needsMetadataFetch) {
+          await rateLimit(100);
+        }
 
         const block = await retryWithBackoff(() => provider.getBlock(event.blockNumber));
         const lockTimestamp = block ? block.timestamp : Math.floor(Date.now() / 1000);
@@ -381,11 +418,6 @@ async function processLockIndexing(req: Request): Promise<Response> {
           block_number: event.blockNumber,
         });
         processedCount++;
-
-        if ((i + 1) % PROCESS_BATCH_SIZE === 0) {
-          console.log(`Processed ${i + 1}/${allLockedEvents.length} locks, pausing to avoid rate limits...`);
-          await rateLimit(2000);
-        }
       } catch (err: any) {
         console.error(`Error processing lock event ${Number(event.args[0])}:`, err);
 
@@ -440,6 +472,11 @@ async function processLockIndexing(req: Request): Promise<Response> {
       }
     }
 
+    const newBlocksBehind = currentBlock - toBlock;
+    const blocksProcessed = toBlock - fromBlock + 1;
+    const processingTimeSeconds = (Date.now() - new Date(indexerState?.last_indexed_at || Date.now()).getTime()) / 1000;
+    const blocksPerSecond = processingTimeSeconds > 0 ? (blocksProcessed / processingTimeSeconds).toFixed(2) : 0;
+
     await supabase
       .from("lock_indexer_state")
       .update({
@@ -448,14 +485,19 @@ async function processLockIndexing(req: Request): Promise<Response> {
         is_active: false,
         metadata: {
           last_run: new Date().toISOString(),
-          blocks_scanned: toBlock - fromBlock + 1,
+          blocks_scanned: blocksProcessed,
           locks_indexed: newLocks.length,
-          unlocks_indexed: allUnlockedEvents.length
+          unlocks_indexed: allUnlockedEvents.length,
+          blocks_behind: newBlocksBehind,
+          blocks_per_second: blocksPerSecond,
+          processing_time_seconds: processingTimeSeconds.toFixed(2),
+          max_range_used: MAX_RANGE,
+          current_block: currentBlock
         }
       })
       .eq("indexer_name", "lock_indexer");
 
-    console.log(`Updated indexer state: last_indexed_block = ${toBlock}`);
+    console.log(`Updated indexer state: last_indexed_block = ${toBlock}, blocks_behind = ${newBlocksBehind}, blocks/sec = ${blocksPerSecond}`);
 
     return new Response(
       JSON.stringify({
@@ -467,8 +509,12 @@ async function processLockIndexing(req: Request): Promise<Response> {
         },
         fromBlock,
         toBlock,
-        mode: forceReindex ? 'force-reindex' : (catchupMode ? 'catchup' : 'normal'),
-        blocksScanned: toBlock - fromBlock + 1,
+        mode: forceReindex ? 'force-reindex' : (catchupMode ? 'catchup' : 'adaptive'),
+        blocksScanned: blocksProcessed,
+        blocksBehind: newBlocksBehind,
+        blocksPerSecond: blocksPerSecond,
+        maxRangeUsed: MAX_RANGE,
+        currentBlock,
       }),
       {
         headers: {
