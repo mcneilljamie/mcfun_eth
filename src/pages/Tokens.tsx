@@ -24,7 +24,6 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
   const [liveReserves, setLiveReserves] = useState<Record<string, { reserveETH: string; reserveToken: string }>>({});
   const [, setLiveVolumes] = useState<Record<string, string>>({});
-  const [priceChanges, setPriceChanges] = useState<Record<string, { change: number; isNew: boolean }>>({});
 
   useEffect(() => {
     loadTokens();
@@ -48,10 +47,8 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   useEffect(() => {
     if (tokens.length > 0) {
       loadLiveVolumes();
-      loadPriceChanges();
       const dataInterval = setInterval(() => {
         loadLiveVolumes();
-        loadPriceChanges();
       }, 30000);
       return () => clearInterval(dataInterval);
     }
@@ -167,80 +164,6 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     }
   };
 
-  const loadPriceChanges = async () => {
-    if (tokens.length === 0) return;
-
-    try {
-      const newChanges: Record<string, { change: number; isNew: boolean }> = {};
-
-      // Get prices from around 24 hours ago from price_snapshots
-      const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-      const twentyFiveHoursAgo = new Date(Date.now() - 25 * 60 * 60 * 1000).toISOString();
-
-      const { data: oldSnapshots } = await supabase
-        .from('price_snapshots')
-        .select('token_address, price_eth, eth_price_usd')
-        .in('token_address', tokens.map(t => t.token_address))
-        .lte('created_at', twentyFourHoursAgo)
-        .gte('created_at', twentyFiveHoursAgo)
-        .order('created_at', { ascending: false });
-
-      // Group snapshots by token and get most recent one around 24h ago
-      const priceMap24hAgo = new Map<string, { priceETH: number; ethPriceUSD: number }>();
-      oldSnapshots?.forEach(snap => {
-        if (!priceMap24hAgo.has(snap.token_address)) {
-          priceMap24hAgo.set(snap.token_address, {
-            priceETH: parseFloat(snap.price_eth),
-            ethPriceUSD: parseFloat(snap.eth_price_usd)
-          });
-        }
-      });
-
-      tokens.forEach((token) => {
-        // Check if token is less than 24 hours old
-        const createdAt = new Date(token.created_at);
-        const hoursOld = (Date.now() - createdAt.getTime()) / (1000 * 60 * 60);
-        const isNew = hoursOld < 24;
-
-        // Calculate current price from live blockchain reserves
-        const currentPriceUSD = calculateTokenPriceUSD(token);
-
-        let change = 0;
-
-        if (isNew) {
-          // For tokens less than 24h old, show change since launch
-          const TOKEN_TOTAL_SUPPLY = 1000000;
-          const launchPriceETH = parseFloat(token.initial_liquidity_eth) / TOKEN_TOTAL_SUPPLY;
-          const launchEthPriceUSD = token.launch_eth_price_usd
-            ? parseFloat(token.launch_eth_price_usd)
-            : ethPriceUSD;
-          const launchPriceUSD = launchPriceETH * launchEthPriceUSD;
-
-          if (launchPriceUSD > 0) {
-            change = ((currentPriceUSD - launchPriceUSD) / launchPriceUSD) * 100;
-          }
-        } else {
-          // For tokens older than 24h, show 24h price change
-          const oldPrice = priceMap24hAgo.get(token.token_address);
-          if (oldPrice) {
-            const oldPriceUSD = oldPrice.priceETH * oldPrice.ethPriceUSD;
-            if (oldPriceUSD > 0) {
-              change = ((currentPriceUSD - oldPriceUSD) / oldPriceUSD) * 100;
-            }
-          }
-        }
-
-        newChanges[token.token_address] = {
-          change,
-          isNew
-        };
-      });
-
-      setPriceChanges(newChanges);
-    } catch (err) {
-      console.error('Failed to load price changes:', err);
-    }
-  };
 
 
   const calculateTokenPriceUSD = (token: Token): number => {
@@ -353,9 +276,10 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                         </td>
                         <td className="py-4 px-4">
                           {(() => {
-                            const priceChange = priceChanges[token.token_address];
-                            const change = priceChange?.change ?? 0;
-                            const isNew = priceChange?.isNew ?? false;
+                            const change = token.price_change_24h ? parseFloat(token.price_change_24h) : 0;
+                            const createdAt = new Date(token.created_at);
+                            const hoursOld = (Date.now() - createdAt.getTime()) / (1000 * 60 * 60);
+                            const isNew = hoursOld < 24;
 
                             return (
                               <div>
@@ -456,9 +380,10 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                             {formatUSD(calculateTokenPriceUSD(token), false)}
                           </div>
                           {(() => {
-                            const priceChange = priceChanges[token.token_address];
-                            const change = priceChange?.change ?? 0;
-                            const isNew = priceChange?.isNew ?? false;
+                            const change = token.price_change_24h ? parseFloat(token.price_change_24h) : 0;
+                            const createdAt = new Date(token.created_at);
+                            const hoursOld = (Date.now() - createdAt.getTime()) / (1000 * 60 * 60);
+                            const isNew = hoursOld < 24;
 
                             return (
                               <div className="flex items-center justify-end gap-1">
