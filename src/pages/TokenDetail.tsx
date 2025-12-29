@@ -5,11 +5,11 @@ import { useTranslation } from 'react-i18next';
 import { supabase, Token } from '../lib/supabase';
 import { formatCurrency, formatAddress, formatTimeAgo, formatUSD, ethToUSD } from '../lib/utils';
 import { getEthPriceUSD } from '../lib/ethPrice';
-import { getAMMReserves } from '../lib/contracts';
 import { useWeb3 } from '../lib/web3';
 import { getExplorerUrl } from '../contracts/addresses';
 import { PriceChart } from '../components/PriceChart';
 import { useChartData } from '../hooks/useChartData';
+import { useLiveReserves } from '../hooks/useLiveReserves';
 import { ToastMessage } from '../App';
 
 interface TokenDetailProps {
@@ -27,11 +27,11 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
   const [error, setError] = useState<string | null>(null);
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
-  const [liveReserves, setLiveReserves] = useState<{ reserveETH: string; reserveToken: string } | null>(null);
   const [snapshotCount, setSnapshotCount] = useState<number>(0);
   const { priceChangeSinceLaunch, currentPrice: chartPrice } = useChartData(tokenAddress || '', 'ALL');
   const [priceChange24h, setPriceChange24h] = useState<number | null>(null);
   const [activeLockCount, setActiveLockCount] = useState<number>(0);
+  const { reserves: liveReserves } = useLiveReserves(provider, token?.amm_address || null, 30000);
 
   const ensureProtocol = (url: string): string => {
     if (!url) return url;
@@ -74,13 +74,6 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
     };
   }, [tokenAddress]);
 
-  useEffect(() => {
-    if (token && provider) {
-      loadLiveReserves();
-      const reservesInterval = setInterval(loadLiveReserves, 30000);
-      return () => clearInterval(reservesInterval);
-    }
-  }, [token, provider]);
 
   const loadEthPrice = async () => {
     const price = await getEthPriceUSD();
@@ -170,19 +163,6 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
     }
   };
 
-  const loadLiveReserves = async () => {
-    if (!token || !provider) return;
-
-    try {
-      const reserves = await getAMMReserves(provider, token.amm_address);
-      setLiveReserves({
-        reserveETH: reserves.reserveETH,
-        reserveToken: reserves.reserveToken,
-      });
-    } catch (err) {
-      console.error('Failed to load live reserves:', err);
-    }
-  };
 
   const copyToClipboard = async (text: string, identifier: string) => {
     try {
@@ -455,6 +435,8 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
           tokenAddress={token.token_address}
           tokenSymbol={token.symbol}
           theme="light"
+          liveReserves={liveReserves}
+          ethPriceUSD={ethPriceUSD}
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
