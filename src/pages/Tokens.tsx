@@ -48,20 +48,14 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   useEffect(() => {
     if (tokens.length > 0) {
       loadLiveVolumes();
+      loadPriceChanges();
       const dataInterval = setInterval(() => {
         loadLiveVolumes();
+        loadPriceChanges();
       }, 30000);
       return () => clearInterval(dataInterval);
     }
   }, [tokens]);
-
-  useEffect(() => {
-    if (tokens.length > 0 && Object.keys(liveReserves).length > 0) {
-      loadPriceChanges();
-      const priceChangeInterval = setInterval(loadPriceChanges, 30000);
-      return () => clearInterval(priceChangeInterval);
-    }
-  }, [tokens, liveReserves, ethPriceUSD]);
 
   useEffect(() => {
     if (tokens.length > 0 && provider) {
@@ -177,23 +171,9 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     if (tokens.length === 0) return;
 
     try {
-      // Fetch recent snapshots to calculate live price changes
-      const tokenAddresses = tokens.map(t => t.token_address);
-
-      const { data: snapshots, error } = await supabase
-        .from('price_snapshots')
-        .select('token_address, created_at, price_eth, eth_price_usd')
-        .in('token_address', tokenAddresses)
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Failed to load snapshots:', error);
-        return;
-      }
-
+      // Use cached price_change_24h from tokens table
       const newChanges: Record<string, { change: number; isNew: boolean }> = {};
       const now = Date.now();
-      const twentyFourHoursAgo = now - (24 * 60 * 60 * 1000);
 
       tokens.forEach((token) => {
         // Check if token is less than 24 hours old
@@ -201,50 +181,10 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
         const tokenAge = now - createdAt.getTime();
         const isNew = tokenAge < (24 * 60 * 60 * 1000);
 
-        // Get current live price
-        const currentPrice = calculateTokenPriceUSD(token);
-
-        // Get snapshots for this token
-        const tokenSnapshots = snapshots?.filter(s => s.token_address === token.token_address) || [];
-
-        if (tokenSnapshots.length === 0 || currentPrice === 0) {
-          newChanges[token.token_address] = { change: 0, isNew };
-          return;
-        }
-
-        // Sort by time (oldest to newest)
-        const sortedSnapshots = [...tokenSnapshots].sort((a, b) =>
-          new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-        );
-
-        let baselinePrice: number | null = null;
-
-        if (isNew) {
-          // For new tokens, compare to oldest/launch price
-          const oldest = sortedSnapshots[0];
-          baselinePrice = parseFloat(oldest.price_eth) * parseFloat(oldest.eth_price_usd);
-        } else {
-          // For older tokens, try to find price from 24h ago
-          const snapshot24hAgo = sortedSnapshots.find(s =>
-            new Date(s.created_at).getTime() >= twentyFourHoursAgo
-          );
-
-          if (snapshot24hAgo) {
-            // Found snapshot from 24h ago or later
-            baselinePrice = parseFloat(snapshot24hAgo.price_eth) * parseFloat(snapshot24hAgo.eth_price_usd);
-          } else {
-            // No snapshot from 24h ago (stale data), use most recent snapshot
-            const newest = sortedSnapshots[sortedSnapshots.length - 1];
-            baselinePrice = parseFloat(newest.price_eth) * parseFloat(newest.eth_price_usd);
-          }
-        }
-
-        if (baselinePrice && baselinePrice > 0) {
-          const change = ((currentPrice - baselinePrice) / baselinePrice) * 100;
-          newChanges[token.token_address] = { change, isNew };
-        } else {
-          newChanges[token.token_address] = { change: 0, isNew };
-        }
+        newChanges[token.token_address] = {
+          change: token.price_change_24h !== null ? parseFloat(token.price_change_24h.toString()) : 0,
+          isNew
+        };
       });
 
       setPriceChanges(newChanges);
