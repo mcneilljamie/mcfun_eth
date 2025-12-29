@@ -138,36 +138,71 @@ export default function Portfolio() {
         return;
       }
 
-      // Calculate price changes from blockchain data
+      // Calculate 24h price changes
       const TOKEN_TOTAL_SUPPLY = 1000000;
       const priceChangeMap = new Map<string, number>();
 
+      // Get prices from 24 hours ago
+      const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+      const { data: oldSnapshots } = await supabase
+        .from('price_snapshots')
+        .select('token_address, token_price_eth, eth_price_usd, created_at')
+        .in('token_address', allTokens.map(t => t.token_address))
+        .gte('created_at', twentyFourHoursAgo)
+        .order('created_at', { ascending: true });
+
+      // Group by token and get earliest snapshot (closest to 24h ago)
+      const priceMap24hAgo = new Map<string, { priceETH: number; ethPriceUSD: number }>();
+      oldSnapshots?.forEach(snap => {
+        if (!priceMap24hAgo.has(snap.token_address)) {
+          priceMap24hAgo.set(snap.token_address, {
+            priceETH: parseFloat(snap.token_price_eth),
+            ethPriceUSD: parseFloat(snap.eth_price_usd)
+          });
+        }
+      });
+
       for (const token of allTokens) {
         try {
-          // Get launch price from immutable on-chain data
+          // Calculate current price from on-chain reserves
+          const currentEthReserve = parseFloat(token.current_eth_reserve);
+          const currentTokenReserve = parseFloat(token.current_token_reserve);
+          const currentPriceETH = currentEthReserve / currentTokenReserve;
+          const currentPriceUSD = currentPriceETH * ethPrice;
+
+          // Check if token is less than 24 hours old
           const { data: tokenData } = await supabase
             .from('tokens')
-            .select('initial_liquidity_eth, launch_eth_price_usd')
+            .select('created_at, initial_liquidity_eth, launch_eth_price_usd')
             .eq('token_address', token.token_address)
             .maybeSingle();
 
           if (tokenData) {
-            const launchPriceETH = parseFloat(tokenData.initial_liquidity_eth) / TOKEN_TOTAL_SUPPLY;
-            const launchEthPriceUSD = tokenData.launch_eth_price_usd
-              ? parseFloat(tokenData.launch_eth_price_usd)
-              : ethPrice;
-            const launchPriceUSD = launchPriceETH * launchEthPriceUSD;
+            const createdAt = new Date(tokenData.created_at);
+            const hoursOld = (Date.now() - createdAt.getTime()) / (1000 * 60 * 60);
 
-            // Calculate current price from on-chain reserves
-            const currentEthReserve = parseFloat(token.current_eth_reserve);
-            const currentTokenReserve = parseFloat(token.current_token_reserve);
-            const currentPriceETH = currentEthReserve / currentTokenReserve;
-            const currentPriceUSD = currentPriceETH * ethPrice;
+            if (hoursOld < 24) {
+              // For new tokens, show change since launch
+              const launchPriceETH = parseFloat(tokenData.initial_liquidity_eth) / TOKEN_TOTAL_SUPPLY;
+              const launchEthPriceUSD = tokenData.launch_eth_price_usd
+                ? parseFloat(tokenData.launch_eth_price_usd)
+                : ethPrice;
+              const launchPriceUSD = launchPriceETH * launchEthPriceUSD;
 
-            // Calculate percentage change
-            if (launchPriceUSD > 0) {
-              const change = ((currentPriceUSD - launchPriceUSD) / launchPriceUSD) * 100;
-              priceChangeMap.set(token.token_address, change);
+              if (launchPriceUSD > 0) {
+                const change = ((currentPriceUSD - launchPriceUSD) / launchPriceUSD) * 100;
+                priceChangeMap.set(token.token_address, change);
+              }
+            } else {
+              // For older tokens, show 24h price change
+              const oldPrice = priceMap24hAgo.get(token.token_address);
+              if (oldPrice) {
+                const oldPriceUSD = oldPrice.priceETH * oldPrice.ethPriceUSD;
+                if (oldPriceUSD > 0) {
+                  const change = ((currentPriceUSD - oldPriceUSD) / oldPriceUSD) * 100;
+                  priceChangeMap.set(token.token_address, change);
+                }
+              }
             }
           }
         } catch (err) {

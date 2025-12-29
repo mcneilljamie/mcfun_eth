@@ -171,9 +171,28 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     if (tokens.length === 0) return;
 
     try {
-      // Calculate price changes directly from blockchain data
-      const TOKEN_TOTAL_SUPPLY = 1000000;
       const newChanges: Record<string, { change: number; isNew: boolean }> = {};
+
+      // Get prices from 24 hours ago from price_snapshots
+      const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+
+      const { data: oldSnapshots } = await supabase
+        .from('price_snapshots')
+        .select('token_address, token_price_eth, eth_price_usd')
+        .in('token_address', tokens.map(t => t.token_address))
+        .gte('created_at', twentyFourHoursAgo)
+        .order('created_at', { ascending: true });
+
+      // Group snapshots by token and get earliest one (closest to 24h ago)
+      const priceMap24hAgo = new Map<string, { priceETH: number; ethPriceUSD: number }>();
+      oldSnapshots?.forEach(snap => {
+        if (!priceMap24hAgo.has(snap.token_address)) {
+          priceMap24hAgo.set(snap.token_address, {
+            priceETH: parseFloat(snap.token_price_eth),
+            ethPriceUSD: parseFloat(snap.eth_price_usd)
+          });
+        }
+      });
 
       tokens.forEach((token) => {
         // Check if token is less than 24 hours old
@@ -181,20 +200,32 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
         const hoursOld = (Date.now() - createdAt.getTime()) / (1000 * 60 * 60);
         const isNew = hoursOld < 24;
 
-        // Calculate launch price from immutable on-chain data
-        const launchPriceETH = parseFloat(token.initial_liquidity_eth) / TOKEN_TOTAL_SUPPLY;
-        const launchEthPriceUSD = token.launch_eth_price_usd
-          ? parseFloat(token.launch_eth_price_usd)
-          : ethPriceUSD; // Fallback to current ETH price if not available
-        const launchPriceUSD = launchPriceETH * launchEthPriceUSD;
-
         // Calculate current price from live blockchain reserves
         const currentPriceUSD = calculateTokenPriceUSD(token);
 
-        // Calculate percentage change
         let change = 0;
-        if (launchPriceUSD > 0) {
-          change = ((currentPriceUSD - launchPriceUSD) / launchPriceUSD) * 100;
+
+        if (isNew) {
+          // For tokens less than 24h old, show change since launch
+          const TOKEN_TOTAL_SUPPLY = 1000000;
+          const launchPriceETH = parseFloat(token.initial_liquidity_eth) / TOKEN_TOTAL_SUPPLY;
+          const launchEthPriceUSD = token.launch_eth_price_usd
+            ? parseFloat(token.launch_eth_price_usd)
+            : ethPriceUSD;
+          const launchPriceUSD = launchPriceETH * launchEthPriceUSD;
+
+          if (launchPriceUSD > 0) {
+            change = ((currentPriceUSD - launchPriceUSD) / launchPriceUSD) * 100;
+          }
+        } else {
+          // For tokens older than 24h, show 24h price change
+          const oldPrice = priceMap24hAgo.get(token.token_address);
+          if (oldPrice) {
+            const oldPriceUSD = oldPrice.priceETH * oldPrice.ethPriceUSD;
+            if (oldPriceUSD > 0) {
+              change = ((currentPriceUSD - oldPriceUSD) / oldPriceUSD) * 100;
+            }
+          }
         }
 
         newChanges[token.token_address] = {
