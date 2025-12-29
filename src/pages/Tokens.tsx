@@ -185,7 +185,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
           try {
             const { data, error } = await supabase.rpc('get_price_chart_data_optimized', {
               p_token_address: token.token_address.toLowerCase(),
-              p_hours_back: 8760, // Request full year to ensure metadata is populated
+              p_hours_back: 24,
               p_max_points: 1
             });
 
