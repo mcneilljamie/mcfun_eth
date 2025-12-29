@@ -737,9 +737,6 @@ export function Lock({ onShowToast }: LockPageProps) {
                           <span className="text-sm text-gray-500 truncate max-w-[200px]">
                             {lock.user_address.substring(0, 6)}...{lock.user_address.substring(38)}
                           </span>
-                          <span className="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                            {t('lock.active')}
-                          </span>
                         </div>
                       </div>
                       <div className="text-right">
