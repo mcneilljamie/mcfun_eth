@@ -607,15 +607,6 @@ export function Lock({ onShowToast }: LockPageProps) {
     }
   };
 
-  const safeDivide = (numerator: number | null | undefined, denominator: number | null | undefined): number => {
-    // Validate inputs
-    if (numerator == null || denominator == null || denominator === 0 || !isFinite(numerator) || !isFinite(denominator)) {
-      return 0;
-    }
-    const result = numerator / denominator;
-    return isFinite(result) ? result : 0;
-  };
-
   const explorerUrl = getExplorerUrl(chainId || 11155111);
 
   const handleShareLock = () => {
@@ -1077,10 +1068,7 @@ export function Lock({ onShowToast }: LockPageProps) {
             </h2>
             <div className="space-y-3">
               {topLockedTokens.map((aggLock, index) => {
-                const lockCount = aggLock.lock_count || 0;
                 const totalValueUsd = aggLock.total_value_usd || 0;
-                const totalValueEth = aggLock.total_value_eth || 0;
-                const avgPerLock = safeDivide(totalValueUsd, lockCount);
 
                 return (
                   <div
@@ -1109,25 +1097,11 @@ export function Lock({ onShowToast }: LockPageProps) {
                             <h3 className="text-lg font-bold text-gray-900 whitespace-nowrap">{aggLock.token_symbol}</h3>
                             <span className="text-sm text-gray-500 break-words">{aggLock.token_name || 'Unknown'}</span>
                           </div>
-                          <div className="grid grid-cols-3 gap-4 text-sm">
-                            <div>
-                              <span className="text-gray-600">{t('lock.totalLocked')}:</span>
-                              <span className="ml-2 font-semibold text-gray-900">
-                                {formatLargeTokenAmount(aggLock.total_amount_locked, aggLock.token_decimals || 18)} {aggLock.token_symbol}
-                              </span>
-                            </div>
-                            <div>
-                              <span className="text-gray-600">{t('lock.lockCount')}:</span>
-                              <span className="ml-2 font-semibold text-gray-900">
-                                {lockCount} {t('lock.locks')}
-                              </span>
-                            </div>
-                            <div>
-                              <span className="text-gray-600">{t('lock.avgPerLock')}:</span>
-                              <span className="ml-2 font-semibold text-gray-900">
-                                {formatCurrency(avgPerLock)}
-                              </span>
-                            </div>
+                          <div className="text-sm">
+                            <span className="text-gray-600">{t('lock.totalLocked')}:</span>
+                            <span className="ml-2 font-semibold text-gray-900">
+                              {formatLargeTokenAmount(aggLock.total_amount_locked, aggLock.token_decimals || 18)} {aggLock.token_symbol}
+                            </span>
                           </div>
                         </div>
                       </div>
