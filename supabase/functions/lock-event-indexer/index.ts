@@ -85,11 +85,31 @@ async function rateLimit(delayMs: number = 200) {
 
 async function getTokenMetadata(
   tokenAddress: string,
-  provider: ethers.JsonRpcProvider
+  provider: ethers.JsonRpcProvider,
+  supabase: any
 ): Promise<{ name: string; symbol: string; decimals: number }> {
-  const cached = tokenMetadataCache.get(tokenAddress.toLowerCase());
+  const normalizedAddress = tokenAddress.toLowerCase();
+
+  const cached = tokenMetadataCache.get(normalizedAddress);
   if (cached) {
     return cached;
+  }
+
+  const { data: dbCache } = await supabase
+    .from('token_metadata_cache')
+    .select('name, symbol, decimals')
+    .eq('token_address', normalizedAddress)
+    .eq('is_valid', true)
+    .maybeSingle();
+
+  if (dbCache) {
+    const metadata = {
+      name: dbCache.name,
+      symbol: dbCache.symbol,
+      decimals: dbCache.decimals
+    };
+    tokenMetadataCache.set(normalizedAddress, metadata);
+    return metadata;
   }
 
   const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
@@ -100,7 +120,20 @@ async function getTokenMetadata(
   ]);
 
   const metadata = { name, symbol, decimals: Number(decimals) };
-  tokenMetadataCache.set(tokenAddress.toLowerCase(), metadata);
+
+  tokenMetadataCache.set(normalizedAddress, metadata);
+
+  await supabase
+    .from('token_metadata_cache')
+    .upsert({
+      token_address: normalizedAddress,
+      name,
+      symbol,
+      decimals: Number(decimals),
+      cached_at: new Date().toISOString(),
+      is_valid: true
+    });
+
   return metadata;
 }
 
@@ -175,47 +208,85 @@ async function processLockIndexing(req: Request): Promise<Response> {
       }
     }
 
-    const { data: lastIndexedLock } = await supabase
-      .from("token_locks")
-      .select("block_number")
-      .order("block_number", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    const { data: firstIndexedLock } = await supabase
-      .from("token_locks")
-      .select("block_number")
-      .order("block_number", { ascending: true })
-      .limit(1)
+    const { data: indexerState } = await supabase
+      .from("lock_indexer_state")
+      .select("*")
+      .eq("indexer_name", "lock_indexer")
       .maybeSingle();
 
     const currentBlock = await provider.getBlockNumber();
 
+    if (indexerState?.is_active) {
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message: 'Indexer is already running',
+          skipped: true
+        }),
+        {
+          headers: {
+            ...corsHeaders,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    await supabase
+      .from("lock_indexer_state")
+      .update({ is_active: true })
+      .eq("indexer_name", "lock_indexer");
+
     let fromBlock: number;
     let toBlock: number;
 
+    const LOCKER_DEPLOYMENT_BLOCK = 7413490;
+    const MAX_RANGE = catchupMode ? 5000 : 100;
+
     if (catchupMode) {
-      const LOCKER_DEPLOYMENT_BLOCK = 7413490;
       fromBlock = LOCKER_DEPLOYMENT_BLOCK;
       toBlock = currentBlock;
       console.log('Running in CATCHUP mode - scanning entire history');
     } else if (requestedStartBlock !== null) {
       fromBlock = requestedStartBlock;
       toBlock = currentBlock;
-      const MAX_RANGE = 5000;
       if (toBlock - fromBlock > MAX_RANGE) {
         toBlock = fromBlock + MAX_RANGE;
         console.log(`Limiting scan range to ${MAX_RANGE} blocks to avoid timeout`);
       }
     } else {
-      fromBlock = lastIndexedLock?.block_number
-        ? Math.max(0, Number(lastIndexedLock.block_number) - 2)
-        : 0;
+      fromBlock = indexerState?.last_indexed_block
+        ? Math.max(LOCKER_DEPLOYMENT_BLOCK, indexerState.last_indexed_block + 1)
+        : LOCKER_DEPLOYMENT_BLOCK;
+
       toBlock = currentBlock;
-      const MAX_RANGE = 5000;
+
+      if (fromBlock >= currentBlock) {
+        await supabase
+          .from("lock_indexer_state")
+          .update({ is_active: false })
+          .eq("indexer_name", "lock_indexer");
+
+        return new Response(
+          JSON.stringify({
+            success: true,
+            message: 'No new blocks to index',
+            skipped: true,
+            currentBlock,
+            lastIndexedBlock: indexerState?.last_indexed_block
+          }),
+          {
+            headers: {
+              ...corsHeaders,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
+
       if (toBlock - fromBlock > MAX_RANGE) {
         toBlock = fromBlock + MAX_RANGE;
-        console.log(`Limiting scan range to ${MAX_RANGE} blocks to avoid timeout`);
+        console.log(`Limiting scan range to ${MAX_RANGE} blocks to reduce RPC calls`);
       }
     }
 
@@ -290,7 +361,7 @@ async function processLockIndexing(req: Request): Promise<Response> {
         const unlockTime = Number(event.args[4]);
 
         const { name, symbol, decimals } = await retryWithBackoff(
-          () => getTokenMetadata(tokenAddress, provider)
+          () => getTokenMetadata(tokenAddress, provider, supabase)
         );
 
         await rateLimit(300);
@@ -370,6 +441,23 @@ async function processLockIndexing(req: Request): Promise<Response> {
       }
     }
 
+    await supabase
+      .from("lock_indexer_state")
+      .update({
+        last_indexed_block: toBlock,
+        last_indexed_at: new Date().toISOString(),
+        is_active: false,
+        metadata: {
+          last_run: new Date().toISOString(),
+          blocks_scanned: toBlock - fromBlock + 1,
+          locks_indexed: newLocks.length,
+          unlocks_indexed: allUnlockedEvents.length
+        }
+      })
+      .eq("indexer_name", "lock_indexer");
+
+    console.log(`Updated indexer state: last_indexed_block = ${toBlock}`);
+
     return new Response(
       JSON.stringify({
         success: true,
@@ -391,6 +479,17 @@ async function processLockIndexing(req: Request): Promise<Response> {
     );
   } catch (error: any) {
     console.error("Lock indexer error:", error);
+
+    await supabase
+      .from("lock_indexer_state")
+      .update({
+        is_active: false,
+        metadata: {
+          last_error: error.message,
+          last_error_at: new Date().toISOString()
+        }
+      })
+      .eq("indexer_name", "lock_indexer");
 
     return new Response(
       JSON.stringify({
