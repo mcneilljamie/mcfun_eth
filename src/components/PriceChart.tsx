@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import { createChart, IChartApi, ISeriesApi, LineData, Time, AreaSeries } from 'lightweight-charts';
 import { useChartData } from '../hooks/useChartData';
 import { TrendingUp, TrendingDown } from 'lucide-react';
@@ -25,7 +25,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
     const saved = localStorage.getItem('chartMode');
     return (saved === 'price' || saved === 'marketCap') ? saved : 'price';
   });
-  const { data, loading, error, priceChange, currentPrice, isNew, refetch } = useChartData(
+  const { data, loading, error, priceChange: snapshotPriceChange, currentPrice, isNew, refetch } = useChartData(
     tokenAddress,
     'ALL'
   );
@@ -44,6 +44,34 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
 
   const displayPrice = livePrice !== undefined ? livePrice : calculateLivePriceFromReserves();
   const displayValue = chartMode === 'marketCap' ? displayPrice * TOKEN_TOTAL_SUPPLY : displayPrice;
+
+  // Calculate price change using live price to reflect real-time changes
+  const priceChange = useMemo(() => {
+    if (data.length === 0) return snapshotPriceChange;
+
+    // Get the baseline price (24h ago or oldest available)
+    const twentyFourHoursAgo = Date.now() / 1000 - (24 * 60 * 60);
+
+    // Find price from 24h ago or use oldest available
+    let baselinePrice: number | null = null;
+
+    // First try to find a price point close to 24h ago
+    const dataInTimeOrder = [...data].sort((a, b) => a.time - b.time);
+    const price24hAgo = dataInTimeOrder.find(point => point.time >= twentyFourHoursAgo);
+
+    if (price24hAgo) {
+      baselinePrice = price24hAgo.value;
+    } else if (dataInTimeOrder.length > 0) {
+      // If no data from 24h ago, use oldest available
+      baselinePrice = dataInTimeOrder[0].value;
+    }
+
+    if (baselinePrice && baselinePrice > 0 && displayPrice > 0) {
+      return ((displayPrice - baselinePrice) / baselinePrice) * 100;
+    }
+
+    return snapshotPriceChange;
+  }, [data, displayPrice, snapshotPriceChange]);
 
   // Save chart mode preference to localStorage
   useEffect(() => {
