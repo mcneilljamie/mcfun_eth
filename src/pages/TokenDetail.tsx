@@ -67,10 +67,39 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
     loadAllData();
 
     const ethPriceInterval = setInterval(loadEthPrice, 60000);
-    const priceChangeInterval = setInterval(load24hPriceChange, 60000);
     return () => {
       clearInterval(ethPriceInterval);
-      clearInterval(priceChangeInterval);
+    };
+  }, [tokenAddress]);
+
+  // Subscribe to token updates for real-time price, reserve, and 24h change updates
+  useEffect(() => {
+    if (!tokenAddress) return;
+
+    const channel = supabase
+      .channel(`token-${tokenAddress}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'tokens',
+          filter: `token_address=eq.${tokenAddress.toLowerCase()}`
+        },
+        (payload) => {
+          if (payload.new) {
+            setToken(payload.new as Token);
+            // Update 24h price change from cached column
+            if (payload.new.price_change_24h !== undefined) {
+              setPriceChange24h(payload.new.price_change_24h);
+            }
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
     };
   }, [tokenAddress]);
 
@@ -100,16 +129,17 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
     if (!tokenAddress) return;
 
     try {
-      const { data, error } = await supabase.rpc('get_24h_price_changes');
+      // Use cached price_change_24h column from token instead of expensive RPC call
+      const { data, error } = await supabase
+        .from('tokens')
+        .select('price_change_24h')
+        .eq('token_address', tokenAddress.toLowerCase())
+        .maybeSingle();
 
       if (error) throw error;
 
-      const priceChange = data?.find((pc: any) =>
-        pc.token_address.toLowerCase() === tokenAddress.toLowerCase()
-      );
-
-      if (priceChange) {
-        setPriceChange24h(priceChange.price_change_24h);
+      if (data && data.price_change_24h !== null) {
+        setPriceChange24h(data.price_change_24h);
       }
     } catch (err) {
       console.error('Failed to load 24h price change:', err);
@@ -152,6 +182,10 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
 
       if (data) {
         setToken(data);
+        // Set initial 24h price change from cached column
+        if (data.price_change_24h !== null) {
+          setPriceChange24h(data.price_change_24h);
+        }
       } else {
         setError('Token not found');
       }
@@ -402,6 +436,11 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
               <div className="text-xl sm:text-2xl font-bold text-gray-900">
                 {formatUSD(calculateTokenPriceUSD())}
               </div>
+              {priceChange24h !== null && (
+                <div className={`text-sm font-medium mt-1 ${priceChange24h >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {priceChange24h >= 0 ? '+' : ''}{priceChange24h.toFixed(2)}% (24h)
+                </div>
+              )}
             </div>
 
             <div className="bg-gray-50 rounded-lg p-4">

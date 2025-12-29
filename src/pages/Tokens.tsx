@@ -171,21 +171,17 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     if (tokens.length === 0) return;
 
     try {
-      const { data, error } = await supabase
-        .rpc('get_24h_price_changes', {
-          p_token_addresses: tokens.map(t => t.token_address)
-        });
-
-      if (error) {
-        console.error('Database error loading price changes:', error);
-        return;
-      }
-
+      // Use cached price_change_24h column from tokens instead of expensive RPC call
       const newChanges: Record<string, { change: number; isNew: boolean }> = {};
-      data?.forEach((item: any) => {
-        newChanges[item.token_address] = {
-          change: item.price_change !== null ? parseFloat(item.price_change) : 0,
-          isNew: item.is_new
+      tokens.forEach((token) => {
+        // Check if token is less than 24 hours old
+        const createdAt = new Date(token.created_at);
+        const hoursOld = (Date.now() - createdAt.getTime()) / (1000 * 60 * 60);
+        const isNew = hoursOld < 24;
+
+        newChanges[token.token_address] = {
+          change: token.price_change_24h !== null ? parseFloat(token.price_change_24h.toString()) : 0,
+          isNew
         };
       });
 
