@@ -636,18 +636,18 @@ export function Lock({ onShowToast }: LockPageProps) {
           <div className="mb-8">
             <button
               onClick={() => navigate('/lock')}
-              className="flex items-center text-blue-600 hover:text-blue-700 mb-4 transition-colors"
+              className="flex items-center text-gray-600 hover:text-gray-700 mb-4 transition-colors"
             >
               <ArrowLeft className="w-5 h-5 mr-2" />
               {t('lock.backToAllLocks')}
             </button>
-            <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-8 text-white">
+            <div className="bg-gradient-to-r from-gray-700 to-gray-800 rounded-2xl p-8 text-white">
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <h1 className="text-4xl font-bold mb-2">
                     {tokenStats.token_symbol} {t('lock.locks')}
                   </h1>
-                  <p className="text-blue-100 text-lg">{tokenStats.token_name}</p>
+                  <p className="text-gray-300 text-lg">{tokenStats.token_name}</p>
                 </div>
                 <button
                   onClick={handleShareLock}
@@ -659,19 +659,19 @@ export function Lock({ onShowToast }: LockPageProps) {
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-white/10 backdrop-blur rounded-lg p-4">
-                  <div className="text-blue-100 text-sm mb-1">{t('lock.totalValue')}</div>
+                  <div className="text-gray-300 text-sm mb-1">{t('lock.totalValue')}</div>
                   <div className="text-2xl font-bold">{formatCurrency(tokenStats.total_value_usd)}</div>
                 </div>
                 <div className="bg-white/10 backdrop-blur rounded-lg p-4">
-                  <div className="text-blue-100 text-sm mb-1">{t('lock.priceUsd')}</div>
+                  <div className="text-gray-300 text-sm mb-1">{t('lock.priceUsd')}</div>
                   <div className="text-2xl font-bold">${tokenStats.current_price_usd.toFixed(6)}</div>
                 </div>
                 <div className="bg-white/10 backdrop-blur rounded-lg p-4">
-                  <div className="text-blue-100 text-sm mb-1">{t('lock.activeLocks')}</div>
+                  <div className="text-gray-300 text-sm mb-1">{t('lock.activeLocks')}</div>
                   <div className="text-2xl font-bold">{tokenStats.active_locks_count}</div>
                 </div>
                 <div className="bg-white/10 backdrop-blur rounded-lg p-4">
-                  <div className="text-blue-100 text-sm mb-1">{t('lock.totalQuantityLocked')}</div>
+                  <div className="text-gray-300 text-sm mb-1">{t('lock.totalQuantityLocked')}</div>
                   <div className="text-2xl font-bold">
                     {formatLargeTokenAmount(
                       tokenStats.non_withdrawn_amount_locked || tokenStats.active_amount_locked,
@@ -796,7 +796,7 @@ export function Lock({ onShowToast }: LockPageProps) {
                           href={`${getExplorerUrl(chainId || 1)}/tx/${lock.withdraw_tx_hash || lock.tx_hash}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                          className="text-sm text-gray-600 hover:text-gray-700 flex items-center gap-1"
                         >
                           {t('lock.viewTransaction')}
                           <ExternalLink className="w-3 h-3" />
