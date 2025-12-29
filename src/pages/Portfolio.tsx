@@ -3,7 +3,7 @@ import { useWeb3 } from '../lib/web3';
 import { supabase } from '../lib/supabase';
 import { ethers } from 'ethers';
 import { getEthPriceUSD } from '../lib/ethPrice';
-import { Loader2, Wallet, Lock as LockIcon, Unlock as UnlockIcon, Clock } from 'lucide-react';
+import { Loader2, Wallet, Lock as LockIcon, Clock } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -501,33 +501,19 @@ export default function Portfolio() {
               const unlockDate = new Date(aggLock.earliest_unlock);
               const timeRemaining = unlockDate.getTime() - now.getTime();
               const daysRemaining = Math.ceil(timeRemaining / (1000 * 60 * 60 * 24));
-              const isUnlockable = aggLock.has_unlockable;
 
               return (
                 <div
                   key={aggLock.token_address}
                   onClick={() => navigate(`/lock/${aggLock.token_address}`)}
-                  className={`rounded-xl border-2 p-6 hover:shadow-lg transition-all cursor-pointer ${
-                    isUnlockable
-                      ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-300'
-                      : 'bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200'
-                  }`}
+                  className="rounded-xl border-2 p-6 hover:shadow-lg transition-all cursor-pointer bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        {isUnlockable ? (
-                          <UnlockIcon className="w-5 h-5 text-green-600" />
-                        ) : (
-                          <LockIcon className="w-5 h-5 text-purple-600" />
-                        )}
+                        <LockIcon className="w-5 h-5 text-purple-600" />
                         <h3 className="text-xl font-bold text-gray-900">{aggLock.token_symbol}</h3>
                         <span className="text-sm text-gray-500">{aggLock.token_name}</span>
-                        {isUnlockable && (
-                          <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-500 text-white animate-pulse">
-                            {t('portfolio.readyToWithdraw')}
-                          </span>
-                        )}
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm">
                         <div className="text-gray-600">
