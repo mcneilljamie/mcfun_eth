@@ -636,22 +636,10 @@ export function Lock({ onShowToast }: LockPageProps) {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {urlTokenAddress && onChainLoading ? (
+        {urlTokenAddress && !tokenStats ? (
           <div className="flex flex-col items-center justify-center py-20">
             <Loader2 className="w-12 h-12 text-blue-600 animate-spin mb-4" />
-            <p className="text-gray-600 text-lg">Loading locks from blockchain...</p>
-          </div>
-        ) : urlTokenAddress && onChainError ? (
-          <div className="flex flex-col items-center justify-center py-20">
-            <AlertCircle className="w-12 h-12 text-red-600 mb-4" />
-            <p className="text-gray-900 text-lg font-semibold mb-2">Error Loading Locks</p>
-            <p className="text-gray-600">{onChainError}</p>
-            <button
-              onClick={() => navigate('/lock')}
-              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Back to All Locks
-            </button>
+            <p className="text-gray-600 text-lg">Loading token locks...</p>
           </div>
         ) : urlTokenAddress && tokenStats ? (
           <div className="mb-8">
