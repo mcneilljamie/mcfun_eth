@@ -56,12 +56,12 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   }, [tokens]);
 
   useEffect(() => {
-    if (tokens.length > 0 && Object.keys(liveReserves).length > 0) {
+    if (tokens.length > 0) {
       loadPriceChanges();
       const priceChangeInterval = setInterval(loadPriceChanges, 30000);
       return () => clearInterval(priceChangeInterval);
     }
-  }, [tokens, liveReserves, ethPriceUSD]);
+  }, [tokens]);
 
   useEffect(() => {
     if (tokens.length > 0 && provider) {
@@ -178,52 +178,19 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
 
     try {
       const newChanges: Record<string, { change: number; isNew: boolean }> = {};
+      const now = new Date();
+      const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
-      // Use the same function as the individual token page for consistency
-      await Promise.all(
-        tokens.map(async (token) => {
-          try {
-            const { data, error } = await supabase.rpc('get_price_chart_data_optimized', {
-              p_token_address: token.token_address.toLowerCase(),
-              p_hours_back: 24,
-              p_max_points: 1
-            });
+      // Use cached price changes from the database
+      tokens.forEach((token) => {
+        const tokenCreatedAt = new Date(token.created_at);
+        const isNew = tokenCreatedAt > twentyFourHoursAgo;
 
-            if (error || !data || data.length === 0) {
-              newChanges[token.token_address] = { change: 0, isNew: false };
-              return;
-            }
+        // Use cached price_change_24h from the database (automatically updated by trigger)
+        const change = token.price_change_24h ? parseFloat(token.price_change_24h) : 0;
 
-            const result = data[0];
-            const tokenCreatedAt = result.token_created_at ? new Date(result.token_created_at) : null;
-            const now = new Date();
-            const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-            const isNew = tokenCreatedAt ? tokenCreatedAt > twentyFourHoursAgo : false;
-
-            const launchPriceUsd = parseFloat(result.launch_price_usd || '0');
-            const lastPriceUsd = parseFloat(result.last_price_usd || '0');
-            const price24hAgoUsd = parseFloat(result.price_24h_ago_usd || '0');
-
-            let change = 0;
-            if (isNew) {
-              // For new tokens, show change since launch
-              if (launchPriceUsd > 0 && lastPriceUsd > 0) {
-                change = ((lastPriceUsd - launchPriceUsd) / launchPriceUsd) * 100;
-              }
-            } else {
-              // For older tokens, show 24h change
-              if (price24hAgoUsd > 0 && lastPriceUsd > 0) {
-                change = ((lastPriceUsd - price24hAgoUsd) / price24hAgoUsd) * 100;
-              }
-            }
-
-            newChanges[token.token_address] = { change, isNew };
-          } catch (err) {
-            console.error(`Failed to load price change for ${token.token_address}:`, err);
-            newChanges[token.token_address] = { change: 0, isNew: false };
-          }
-        })
-      );
+        newChanges[token.token_address] = { change, isNew };
+      });
 
       setPriceChanges(newChanges);
     } catch (err) {
