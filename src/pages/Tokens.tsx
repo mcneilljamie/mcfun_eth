@@ -171,17 +171,62 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     if (tokens.length === 0) return;
 
     try {
-      // Use cached price_change_24h column from tokens instead of expensive RPC call
-      const newChanges: Record<string, { change: number; isNew: boolean }> = {};
-      tokens.forEach((token) => {
-        // Check if token is less than 24 hours old
-        const createdAt = new Date(token.created_at);
-        const hoursOld = (Date.now() - createdAt.getTime()) / (1000 * 60 * 60);
-        const isNew = hoursOld < 24;
+      // Fetch price change data for each token using the same calculation as the chart
+      const priceChangePromises = tokens.map(async (token) => {
+        const { data, error } = await supabase
+          .rpc('get_price_chart_data_optimized', {
+            p_token_address: token.token_address.toLowerCase(),
+            p_hours_back: 24,
+            p_max_points: 2
+          });
 
-        newChanges[token.token_address] = {
-          change: token.price_change_24h !== null ? parseFloat(token.price_change_24h.toString()) : 0,
-          isNew
+        if (error || !data || data.length === 0) {
+          return {
+            address: token.token_address,
+            change: 0,
+            isNew: false
+          };
+        }
+
+        // Use same logic as chart (from useChartData hook)
+        const firstRow = data[0];
+        const tokenCreatedAt = firstRow.token_created_at ? new Date(firstRow.token_created_at) : null;
+        const now = new Date();
+        const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+        const isTokenNew = tokenCreatedAt ? tokenCreatedAt > twentyFourHoursAgo : false;
+
+        const launchPriceUsd = parseFloat(firstRow.launch_price_usd);
+        const lastPriceUsd = parseFloat(firstRow.last_price_usd);
+        const price24hAgoUsd = parseFloat(firstRow.price_24h_ago_usd);
+
+        let priceChange = 0;
+
+        if (isTokenNew) {
+          // For tokens < 24 hours old, show price change since launch
+          if (launchPriceUsd > 0 && lastPriceUsd > 0) {
+            priceChange = ((lastPriceUsd - launchPriceUsd) / launchPriceUsd) * 100;
+          }
+        } else {
+          // For tokens >= 24 hours old, calculate 24-hour price change
+          if (price24hAgoUsd > 0 && lastPriceUsd > 0) {
+            priceChange = ((lastPriceUsd - price24hAgoUsd) / price24hAgoUsd) * 100;
+          }
+        }
+
+        return {
+          address: token.token_address,
+          change: priceChange,
+          isNew: isTokenNew
+        };
+      });
+
+      const results = await Promise.all(priceChangePromises);
+
+      const newChanges: Record<string, { change: number; isNew: boolean }> = {};
+      results.forEach(result => {
+        newChanges[result.address] = {
+          change: result.change,
+          isNew: result.isNew
         };
       });
 
