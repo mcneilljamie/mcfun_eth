@@ -138,12 +138,42 @@ export default function Portfolio() {
         return;
       }
 
-      // Get 24h price changes
-      const { data: priceChanges } = await supabase.rpc('get_24h_price_changes');
+      // Calculate price changes from blockchain data
+      const TOKEN_TOTAL_SUPPLY = 1000000;
+      const priceChangeMap = new Map<string, number>();
 
-      const priceChangeMap = new Map(
-        priceChanges?.map((pc: any) => [pc.token_address, pc.price_change_24h]) || []
-      );
+      for (const token of allTokens) {
+        try {
+          // Get launch price from immutable on-chain data
+          const { data: tokenData } = await supabase
+            .from('tokens')
+            .select('initial_liquidity_eth, launch_eth_price_usd')
+            .eq('token_address', token.token_address)
+            .maybeSingle();
+
+          if (tokenData) {
+            const launchPriceETH = parseFloat(tokenData.initial_liquidity_eth) / TOKEN_TOTAL_SUPPLY;
+            const launchEthPriceUSD = tokenData.launch_eth_price_usd
+              ? parseFloat(tokenData.launch_eth_price_usd)
+              : ethPrice;
+            const launchPriceUSD = launchPriceETH * launchEthPriceUSD;
+
+            // Calculate current price from on-chain reserves
+            const currentEthReserve = parseFloat(token.current_eth_reserve);
+            const currentTokenReserve = parseFloat(token.current_token_reserve);
+            const currentPriceETH = currentEthReserve / currentTokenReserve;
+            const currentPriceUSD = currentPriceETH * ethPrice;
+
+            // Calculate percentage change
+            if (launchPriceUSD > 0) {
+              const change = ((currentPriceUSD - launchPriceUSD) / launchPriceUSD) * 100;
+              priceChangeMap.set(token.token_address, change);
+            }
+          }
+        } catch (err) {
+          console.error(`Failed to calculate price change for ${token.token_address}:`, err);
+        }
+      }
 
       // Check balances for each token
       const tokenBalances: TokenBalance[] = [];

@@ -26,6 +26,8 @@ export interface Token {
   telegram_url?: string;
   discord_url?: string;
   x_url?: string;
+  launch_eth_price_usd?: string;
+  price_change_24h?: string;
   created_at: string;
 }
 

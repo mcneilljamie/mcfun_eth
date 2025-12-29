@@ -171,16 +171,34 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     if (tokens.length === 0) return;
 
     try {
-      // Use cached price_change_24h column from tokens instead of expensive RPC call
+      // Calculate price changes directly from blockchain data
+      const TOKEN_TOTAL_SUPPLY = 1000000;
       const newChanges: Record<string, { change: number; isNew: boolean }> = {};
+
       tokens.forEach((token) => {
         // Check if token is less than 24 hours old
         const createdAt = new Date(token.created_at);
         const hoursOld = (Date.now() - createdAt.getTime()) / (1000 * 60 * 60);
         const isNew = hoursOld < 24;
 
+        // Calculate launch price from immutable on-chain data
+        const launchPriceETH = parseFloat(token.initial_liquidity_eth) / TOKEN_TOTAL_SUPPLY;
+        const launchEthPriceUSD = token.launch_eth_price_usd
+          ? parseFloat(token.launch_eth_price_usd)
+          : ethPriceUSD; // Fallback to current ETH price if not available
+        const launchPriceUSD = launchPriceETH * launchEthPriceUSD;
+
+        // Calculate current price from live blockchain reserves
+        const currentPriceUSD = calculateTokenPriceUSD(token);
+
+        // Calculate percentage change
+        let change = 0;
+        if (launchPriceUSD > 0) {
+          change = ((currentPriceUSD - launchPriceUSD) / launchPriceUSD) * 100;
+        }
+
         newChanges[token.token_address] = {
-          change: token.price_change_24h !== null ? parseFloat(token.price_change_24h.toString()) : 0,
+          change,
           isNew
         };
       });
