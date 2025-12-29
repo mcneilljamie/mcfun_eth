@@ -195,6 +195,7 @@ async function processLockIndexing(req: Request): Promise<Response> {
 
     let requestedStartBlock: number | null = null;
     let catchupMode = false;
+    let forceReindex = false;
     if (req.method === "POST") {
       try {
         const body = await req.json();
@@ -203,6 +204,9 @@ async function processLockIndexing(req: Request): Promise<Response> {
         }
         if (body.catchup === true) {
           catchupMode = true;
+        }
+        if (body.force === true) {
+          forceReindex = true;
         }
       } catch {
       }
@@ -328,32 +332,23 @@ async function processLockIndexing(req: Request): Promise<Response> {
     }
 
     console.log(`Found ${allLockedEvents.length} TokensLocked events`);
-
-    const lockIds = allLockedEvents.map(e => Number(e.args[0]));
-    const { data: existingLocks } = await supabase
-      .from('token_locks')
-      .select('lock_id')
-      .in('lock_id', lockIds);
-
-    const existingLockIds = new Set(existingLocks?.map(l => l.lock_id) || []);
+    console.log(`Force reindex mode: ${forceReindex}`);
 
     const newLocks = [];
     const PROCESS_BATCH_SIZE = 5;
+    let processedCount = 0;
+    let skippedCount = 0;
 
     for (let i = 0; i < allLockedEvents.length; i++) {
       const event = allLockedEvents[i];
       try {
         if (skipBlocks.has(event.blockNumber)) {
           console.log(`Skipping lock event in block ${event.blockNumber} (marked as erroneous)`);
+          skippedCount++;
           continue;
         }
 
         const lockId = Number(event.args[0]);
-
-        if (existingLockIds.has(lockId)) {
-          console.log(`Lock ${lockId} already indexed, skipping`);
-          continue;
-        }
 
         const owner = event.args[1];
         const tokenAddress = event.args[2];
@@ -385,6 +380,7 @@ async function processLockIndexing(req: Request): Promise<Response> {
           tx_hash: event.transactionHash,
           block_number: event.blockNumber,
         });
+        processedCount++;
 
         if ((i + 1) % PROCESS_BATCH_SIZE === 0) {
           console.log(`Processed ${i + 1}/${allLockedEvents.length} locks, pausing to avoid rate limits...`);
@@ -401,14 +397,17 @@ async function processLockIndexing(req: Request): Promise<Response> {
     }
 
     if (newLocks.length > 0) {
-      const { error: insertError } = await supabase
+      const { error: upsertError } = await supabase
         .from("token_locks")
-        .insert(newLocks);
+        .upsert(newLocks, {
+          onConflict: 'lock_id',
+          ignoreDuplicates: false
+        });
 
-      if (insertError) {
-        console.error('Failed to batch insert locks:', insertError);
+      if (upsertError) {
+        console.error('Failed to upsert locks:', upsertError);
       } else {
-        console.log(`Batch inserted ${newLocks.length} new locks`);
+        console.log(`Upserted ${newLocks.length} locks (${processedCount} processed, ${skippedCount} skipped)`);
       }
     }
 
@@ -462,12 +461,13 @@ async function processLockIndexing(req: Request): Promise<Response> {
       JSON.stringify({
         success: true,
         indexed: {
-          locked: newLocks.length,
+          locked: processedCount,
           unlocked: allUnlockedEvents.length,
+          skipped: skippedCount,
         },
         fromBlock,
         toBlock,
-        mode: catchupMode ? 'catchup' : 'normal',
+        mode: forceReindex ? 'force-reindex' : (catchupMode ? 'catchup' : 'normal'),
         blocksScanned: toBlock - fromBlock + 1,
       }),
       {
