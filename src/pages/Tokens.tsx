@@ -47,36 +47,19 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
       })
       .subscribe();
 
-    const swapsSubscription = supabase
-      .channel('swaps-channel')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'swaps' }, () => {
-        if (provider && tokens.length > 0 && ethPriceUSD > 0) {
-          loadTokenData();
-        }
-      })
-      .subscribe();
-
     return () => {
       clearInterval(ethPriceInterval);
       tokensSubscription.unsubscribe();
-      swapsSubscription.unsubscribe();
     };
-  }, [provider, tokens.length, ethPriceUSD]);
+  }, []);
 
   useEffect(() => {
     if (tokens.length > 0 && provider && ethPriceUSD > 0) {
       loadTokenData();
-      const dataInterval = setInterval(loadTokenData, 10000);
-
-      const blockListener = () => {
-        loadTokenData();
-      };
-
-      provider.on('block', blockListener);
+      const dataInterval = setInterval(loadTokenData, 60000);
 
       return () => {
         clearInterval(dataInterval);
-        provider.off('block', blockListener);
       };
     }
   }, [tokens, provider, ethPriceUSD]);
