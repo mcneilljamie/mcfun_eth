@@ -285,7 +285,9 @@ async function processTokenSwaps(
         queryStartBlock = Math.max(token.block_number, startBlock);
       }
     } else {
-      queryStartBlock = Math.max(queryStartBlock + 1, startBlock);
+      // Allow tokens to catch up from their own checkpoint
+      // Don't force them to start from global startBlock
+      queryStartBlock = queryStartBlock + 1;
     }
 
     if (queryStartBlock > endBlock) {
@@ -596,7 +598,9 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
 
     console.log(`Processing blocks ${startBlock} to ${endBlock} (${blocksBehind} blocks behind, using range: ${adaptiveBlockRange})`);
 
-    if (startBlock > endBlock) {
+    // Skip early return check when processing swaps
+    // Individual tokens may be behind even if global state is caught up
+    if (startBlock > endBlock && !indexSwaps) {
       results.executionTimeMs = Date.now() - startTime;
       return new Response(
         JSON.stringify({
