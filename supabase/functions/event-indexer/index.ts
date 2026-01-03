@@ -257,7 +257,8 @@ async function processTokenSwaps(
   supabase: any,
   blockCache: BlockCache,
   contractCache: ContractCache,
-  startTime: number
+  startTime: number,
+  skipBlocks: Set<number>
 ): Promise<{ swapsIndexed: number; errors: string[]; timedOut: boolean; blocksScanned: number }> {
   const errors: string[] = [];
   let swapsIndexed = 0;
@@ -307,16 +308,12 @@ async function processTokenSwaps(
       events = await retryWithBackoff(() => amm.queryFilter(filter, queryStartBlock, endBlock));
       querySucceeded = true;
     } catch (err: any) {
-      // If the query explicitly failed, don't mark blocks as checked
       errors.push(`RPC query failed for ${token.token_address} blocks ${queryStartBlock}-${endBlock}: ${err.message}`);
       return { swapsIndexed, errors, timedOut, blocksScanned: 0 };
     }
 
     if (events.length === 0) {
-      // Verify RPC is responsive before advancing checkpoint
-      // This prevents data loss when RPC silently fails and returns []
       try {
-        // Quick sanity check: can we get current block number?
         const currentBlock = await provider.getBlockNumber();
 
         if (currentBlock === 0) {
@@ -324,13 +321,11 @@ async function processTokenSwaps(
           return { swapsIndexed, errors, timedOut, blocksScanned: 0 };
         }
 
-        // Only advance checkpoint if query explicitly succeeded and RPC is responsive
         await supabase
           .from("tokens")
           .update({ last_checked_block: endBlock })
           .eq("token_address", token.token_address);
       } catch (verifyErr: any) {
-        // RPC verification failed - don't advance checkpoint
         errors.push(`RPC verification failed for ${token.token_address}, not advancing checkpoint: ${verifyErr.message}`);
         return { swapsIndexed, errors, timedOut, blocksScanned: 0 };
       }
@@ -347,7 +342,6 @@ async function processTokenSwaps(
         break;
       }
 
-      // Skip blocks marked as erroneous
       if (skipBlocks.has(event.blockNumber)) {
         console.log(`Skipping swap event in block ${event.blockNumber} (marked as erroneous)`);
         continue;
@@ -423,7 +417,6 @@ async function processTokenSwaps(
           });
         }
 
-        // Get ETH price once for all snapshots
         const { data: ethPriceData } = await supabase
           .from("eth_price_history")
           .select("price_usd")
@@ -433,18 +426,14 @@ async function processTokenSwaps(
 
         const ethPriceUsd = ethPriceData?.price_usd || 3000;
 
-        // Calculate reserves after EACH swap and create accurate snapshots
-        // Start with final reserves and work backwards
         let currentEthReserve = parseFloat(ethReserveFormatted);
         let currentTokenReserve = parseFloat(tokenReserveFormatted);
 
         const snapshotsToCreate = [];
 
-        // Process swaps in reverse order to calculate historical reserves
         for (let i = swapsToInsert.length - 1; i >= 0; i--) {
           const swap = swapsToInsert[i];
 
-          // For this swap, the reserves are the state AFTER it executed
           const priceEth = currentEthReserve / currentTokenReserve;
 
           snapshotsToCreate.push({
@@ -458,14 +447,12 @@ async function processTokenSwaps(
             block_number: swap.block_number,
           });
 
-          // Reverse the swap to get reserves BEFORE this swap (for next iteration)
           if (i > 0) {
             currentEthReserve = currentEthReserve - parseFloat(swap.eth_in) + parseFloat(swap.eth_out);
             currentTokenReserve = currentTokenReserve - parseFloat(swap.token_in) + parseFloat(swap.token_out);
           }
         }
 
-        // Insert all snapshots
         if (snapshotsToCreate.length > 0) {
           await supabase
             .from("price_snapshots")
@@ -522,7 +509,6 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
     const blockCache = new BlockCache();
     const contractCache = new ContractCache();
 
-    // Get blocks to skip
     const { data: skipBlocksData } = await supabase
       .from("skip_blocks")
       .select("block_number")
@@ -718,7 +704,8 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
               supabase,
               blockCache,
               contractCache,
-              startTime
+              startTime,
+              skipBlocks
             );
           };
 
@@ -793,7 +780,6 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
     results.executionTimeMs = Date.now() - startTime;
 
     try {
-      // Count RPC verification failures (when checkpoints weren't advanced)
       const rpcFailureCount = results.errors.filter(e =>
         e.includes('RPC query failed') ||
         e.includes('RPC verification failed') ||
@@ -815,7 +801,6 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
         } : null,
       });
 
-      // Log critical RPC failures for monitoring
       if (rpcFailureCount > 0) {
         console.error(`⚠️ CRITICAL: ${rpcFailureCount} tokens failed RPC verification, checkpoints NOT advanced to prevent data loss`);
         console.error('Affected errors:', results.errors.filter(e =>
