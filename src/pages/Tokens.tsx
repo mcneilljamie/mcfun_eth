@@ -55,7 +55,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   useEffect(() => {
     if (tokens.length > 0 && provider && ethPriceUSD > 0) {
       loadTokenData();
-      const dataInterval = setInterval(loadTokenData, 30000);
+      const dataInterval = setInterval(loadTokenData, 10000);
       return () => clearInterval(dataInterval);
     }
   }, [tokens, provider, ethPriceUSD]);
