@@ -26,6 +26,7 @@ export function useChartData(tokenAddress: string | undefined, timeRange: TimeRa
   const [priceChangeSinceLaunch, setPriceChangeSinceLaunch] = useState<number | null>(null);
   const [currentPrice, setCurrentPrice] = useState<number>(0);
   const [isNew, setIsNew] = useState(false);
+  const [hasTraded, setHasTraded] = useState(false);
 
   const fetchChartData = useCallback(async () => {
     if (!tokenAddress) {
@@ -76,9 +77,23 @@ export function useChartData(tokenAddress: string | undefined, timeRange: TimeRa
         setPriceChange(null);
         setPriceChangeSinceLaunch(null);
         setIsNew(false);
+        setHasTraded(false);
         setLoading(false);
         return;
       }
+
+      // Check if token has any trading volume
+      const { data: tokenData, error: tokenError } = await supabase
+        .from('tokens')
+        .select('total_volume_eth')
+        .eq('token_address', tokenAddress.toLowerCase())
+        .maybeSingle();
+
+      if (tokenError) throw tokenError;
+
+      const totalVolume = tokenData ? parseFloat(tokenData.total_volume_eth || '0') : 0;
+      const hasTrades = totalVolume > 0;
+      setHasTraded(hasTrades);
 
       // Extract metadata from first row (all rows have same metadata)
       const firstRow = chartData[0];
@@ -105,31 +120,38 @@ export function useChartData(tokenAddress: string | undefined, timeRange: TimeRa
 
       setCurrentPrice(lastPriceUsd);
 
-      // Always calculate price change since launch (using actual launch price)
-      if (launchPriceUsd > 0 && lastPriceUsd > 0) {
-        const changeSinceLaunch = ((lastPriceUsd - launchPriceUsd) / launchPriceUsd) * 100;
-        setPriceChangeSinceLaunch(changeSinceLaunch);
-      } else {
-        setPriceChangeSinceLaunch(null);
-      }
-
-      // Calculate price change based on token age (for chart display)
-      if (isTokenNew) {
-        // For tokens < 24 hours old, show price change since inception (using actual launch price)
+      // Only show price changes if token has trading volume
+      if (hasTrades) {
+        // Always calculate price change since launch (using actual launch price)
         if (launchPriceUsd > 0 && lastPriceUsd > 0) {
-          const change = ((lastPriceUsd - launchPriceUsd) / launchPriceUsd) * 100;
-          setPriceChange(change);
+          const changeSinceLaunch = ((lastPriceUsd - launchPriceUsd) / launchPriceUsd) * 100;
+          setPriceChangeSinceLaunch(changeSinceLaunch);
         } else {
-          setPriceChange(null);
+          setPriceChangeSinceLaunch(null);
+        }
+
+        // Calculate price change based on token age (for chart display)
+        if (isTokenNew) {
+          // For tokens < 24 hours old, show price change since inception (using actual launch price)
+          if (launchPriceUsd > 0 && lastPriceUsd > 0) {
+            const change = ((lastPriceUsd - launchPriceUsd) / launchPriceUsd) * 100;
+            setPriceChange(change);
+          } else {
+            setPriceChange(null);
+          }
+        } else {
+          // For tokens >= 24 hours old, calculate 24-hour price change
+          if (price24hAgoUsd > 0 && lastPriceUsd > 0) {
+            const change24h = ((lastPriceUsd - price24hAgoUsd) / price24hAgoUsd) * 100;
+            setPriceChange(change24h);
+          } else {
+            setPriceChange(null);
+          }
         }
       } else {
-        // For tokens >= 24 hours old, calculate 24-hour price change
-        if (price24hAgoUsd > 0 && lastPriceUsd > 0) {
-          const change24h = ((lastPriceUsd - price24hAgoUsd) / price24hAgoUsd) * 100;
-          setPriceChange(change24h);
-        } else {
-          setPriceChange(null);
-        }
+        // No trades yet, don't show any price change
+        setPriceChange(null);
+        setPriceChangeSinceLaunch(null);
       }
     } catch (err) {
       console.error('Error fetching chart data:', err);
@@ -175,6 +197,7 @@ export function useChartData(tokenAddress: string | undefined, timeRange: TimeRa
     priceChangeSinceLaunch,
     currentPrice,
     isNew,
+    hasTraded,
     refetch: fetchChartData
   };
 }

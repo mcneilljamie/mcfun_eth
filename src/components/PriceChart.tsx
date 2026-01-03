@@ -25,7 +25,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
     const saved = localStorage.getItem('chartMode');
     return (saved === 'price' || saved === 'marketCap') ? saved : 'price';
   });
-  const { data, loading, error, priceChange: snapshotPriceChange, currentPrice, isNew, refetch } = useChartData(
+  const { data, loading, error, priceChange: snapshotPriceChange, currentPrice, isNew, hasTraded, refetch } = useChartData(
     tokenAddress,
     'ALL'
   );
@@ -47,6 +47,9 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
 
   // Calculate price change using live price to reflect real-time changes
   const priceChange = useMemo(() => {
+    // Don't show price change if token hasn't been traded yet
+    if (!hasTraded) return null;
+
     if (data.length === 0) return snapshotPriceChange;
 
     const now = Date.now() / 1000;
@@ -85,7 +88,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
     }
 
     return snapshotPriceChange;
-  }, [data, displayPrice, snapshotPriceChange]);
+  }, [data, displayPrice, snapshotPriceChange, hasTraded]);
 
   // Save chart mode preference to localStorage
   useEffect(() => {
