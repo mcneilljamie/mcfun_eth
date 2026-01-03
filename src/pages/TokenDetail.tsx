@@ -28,7 +28,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
   const [snapshotCount, setSnapshotCount] = useState<number>(0);
-  const { priceChangeSinceLaunch, currentPrice: chartPrice } = useChartData(tokenAddress || '', 'ALL');
+  const { currentPrice: chartPrice } = useChartData(tokenAddress || '', 'ALL');
   const [activeLockCount, setActiveLockCount] = useState<number>(0);
   const { reserves: liveReserves } = useLiveReserves(provider, token?.amm_address || null, 30000);
 
@@ -231,6 +231,17 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
     return priceUSD * TOKEN_TOTAL_SUPPLY;
   };
 
+  const calculateReturnSinceLaunch = (): number => {
+    if (!token?.launch_price_eth || !token?.launch_eth_price_usd) return 1.0;
+
+    const launchPriceUSD = parseFloat(token.launch_price_eth) * parseFloat(token.launch_eth_price_usd);
+    const currentPriceUSD = calculateTokenPriceUSD();
+
+    if (launchPriceUSD === 0 || currentPriceUSD === 0) return 1.0;
+
+    return currentPriceUSD / launchPriceUSD;
+  };
+
 
   if (isLoading) {
     return (
@@ -427,7 +438,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="text-sm text-gray-600 mb-1">{t('tokens.table.returnMultiple')}</div>
               <div className="text-xl sm:text-2xl font-bold text-gray-900">
-                {priceChangeSinceLaunch != null ? (1 + priceChangeSinceLaunch / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '1.00'}x
+                {calculateReturnSinceLaunch().toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}x
               </div>
             </div>
           </div>
