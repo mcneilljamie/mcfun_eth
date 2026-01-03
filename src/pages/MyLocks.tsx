@@ -165,7 +165,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
 
       const enriched: TokenLock[] = dbLocks.map(lock => {
         const price = tokenPrices.get(lock.token_address);
-        const amountFormatted = parseFloat(ethers.formatUnits(lock.amount_locked, lock.token_decimals));
+        const amountFormatted = parseFloat(ethers.formatUnits(BigInt(lock.amount_locked), lock.token_decimals));
         const unlockTime = Math.floor(new Date(lock.unlock_timestamp).getTime() / 1000);
 
         const valueEth = price ? amountFormatted * price.priceEth : undefined;
