@@ -124,24 +124,20 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
       const ammAddresses = tokens.map(t => t.amm_address);
       const reservesMap = await getMultipleReserves(provider, ammAddresses);
 
-      // Fetch latest snapshots for all tokens in a single batch query
-      const tokenAddresses = tokens.map(t => t.token_address.toLowerCase());
-      const { data: latestSnapshots } = await supabase
-        .from('price_snapshots')
-        .select('token_address, price_eth, eth_price_usd, created_at')
-        .in('token_address', tokenAddresses)
-        .order('created_at', { ascending: false });
+      // Fetch chart data for all tokens to get accurate metadata (matches TokenDetail's useChartData)
+      // Using 100 points ensures we get reliable metadata (last_price_usd, price_24h_ago_usd, etc)
+      const chartDataMap = new Map<string, any>();
+      for (const token of tokens) {
+        const { data, error } = await supabase
+          .rpc('get_price_chart_data_optimized', {
+            p_token_address: token.token_address.toLowerCase(),
+            p_hours_back: 8760, // ALL time (matches TokenDetail)
+            p_max_points: 100 // Enough points for accurate metadata
+          });
 
-      // Create a map of token_address -> latest snapshot (first occurrence after ordering by created_at DESC)
-      const snapshotMap = new Map<string, { price_eth: string; eth_price_usd: string }>();
-      if (latestSnapshots) {
-        for (const snap of latestSnapshots) {
-          if (!snapshotMap.has(snap.token_address)) {
-            snapshotMap.set(snap.token_address, {
-              price_eth: snap.price_eth,
-              eth_price_usd: snap.eth_price_usd
-            });
-          }
+        if (!error && data && data.length > 0) {
+          // Store the first row which contains all metadata fields
+          chartDataMap.set(token.token_address, data[0]);
         }
       }
 
@@ -149,8 +145,9 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
 
       for (const token of tokens) {
         const reserves = reservesMap.get(token.amm_address);
-        const snapshot = snapshotMap.get(token.token_address.toLowerCase());
+        const chartData = chartDataMap.get(token.token_address);
 
+        // This matches TokenDetail's calculateTokenPriceUSD() exactly
         const calculateCurrentPrice = (): number => {
           // Priority 1: Use live reserves from blockchain (most accurate, real-time)
           if (reserves) {
@@ -163,11 +160,10 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
             return priceInEth * ethPriceUSD;
           }
 
-          // Priority 2: Use latest snapshot price from database
-          if (snapshot) {
-            const priceEth = parseFloat(snapshot.price_eth);
-            const snapshotEthUsd = parseFloat(snapshot.eth_price_usd);
-            return priceEth * snapshotEthUsd;
+          // Priority 2: Use chart price from database (matches TokenDetail line 216)
+          if (chartData) {
+            const chartPrice = parseFloat(chartData.last_price_usd || '0');
+            if (chartPrice > 0) return chartPrice;
           }
 
           // Priority 3: Fallback to stored reserves
@@ -184,6 +180,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
         const TOKEN_TOTAL_SUPPLY = 1000000;
         const marketCap = currentPriceUSD * TOKEN_TOTAL_SUPPLY;
 
+        // Match TokenDetail's liquidity calculation exactly (line 420)
         const liquidityETH = reserves?.reserveETH || token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString();
 
         const now = Date.now();
@@ -191,8 +188,25 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
         const twentyFourHoursAgo = new Date(now - 24 * 60 * 60 * 1000);
         const isNew = createdAt > twentyFourHoursAgo;
 
-        // Use pre-calculated price change from database (maintained by trigger)
-        const priceChange = token.price_change_24h ? parseFloat(token.price_change_24h.toString()) : null;
+        // Calculate price change from chart metadata (matches useChartData logic lines 116-133)
+        let priceChange: number | null = null;
+        if (chartData) {
+          const launchPriceUsd = parseFloat(chartData.launch_price_usd || '0');
+          const price24hAgoUsd = parseFloat(chartData.price_24h_ago_usd || '0');
+          const lastPriceUsd = parseFloat(chartData.last_price_usd || '0');
+
+          if (isNew) {
+            // For tokens < 24 hours old, show price change since launch
+            if (launchPriceUsd > 0 && lastPriceUsd > 0) {
+              priceChange = ((lastPriceUsd - launchPriceUsd) / launchPriceUsd) * 100;
+            }
+          } else {
+            // For tokens >= 24 hours old, show 24-hour price change
+            if (price24hAgoUsd > 0 && lastPriceUsd > 0) {
+              priceChange = ((lastPriceUsd - price24hAgoUsd) / price24hAgoUsd) * 100;
+            }
+          }
+        }
 
         newTokenData[token.token_address] = {
           currentPriceUSD,
