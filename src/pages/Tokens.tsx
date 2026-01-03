@@ -124,17 +124,24 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
       const ammAddresses = tokens.map(t => t.amm_address);
       const reservesMap = await getMultipleReserves(provider, ammAddresses);
 
-      const chartDataByToken: Record<string, any> = {};
-      for (const token of tokens) {
-        const { data, error } = await supabase
-          .rpc('get_price_chart_data_optimized', {
-            p_token_address: token.token_address.toLowerCase(),
-            p_hours_back: 8760,
-            p_max_points: 2
-          });
+      // Fetch latest snapshots for all tokens in a single batch query
+      const tokenAddresses = tokens.map(t => t.token_address.toLowerCase());
+      const { data: latestSnapshots } = await supabase
+        .from('price_snapshots')
+        .select('token_address, price_eth, eth_price_usd, created_at')
+        .in('token_address', tokenAddresses)
+        .order('created_at', { ascending: false });
 
-        if (!error && data && data.length > 0) {
-          chartDataByToken[token.token_address] = data[0];
+      // Create a map of token_address -> latest snapshot (first occurrence after ordering by created_at DESC)
+      const snapshotMap = new Map<string, { price_eth: string; eth_price_usd: string }>();
+      if (latestSnapshots) {
+        for (const snap of latestSnapshots) {
+          if (!snapshotMap.has(snap.token_address)) {
+            snapshotMap.set(snap.token_address, {
+              price_eth: snap.price_eth,
+              eth_price_usd: snap.eth_price_usd
+            });
+          }
         }
       }
 
@@ -142,9 +149,10 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
 
       for (const token of tokens) {
         const reserves = reservesMap.get(token.amm_address);
-        const chartData = chartDataByToken[token.token_address];
+        const snapshot = snapshotMap.get(token.token_address.toLowerCase());
 
         const calculateCurrentPrice = (): number => {
+          // Priority 1: Use live reserves from blockchain (most accurate, real-time)
           if (reserves) {
             const ethReserve = parseFloat(reserves.reserveETH);
             const tokenReserve = parseFloat(reserves.reserveToken);
@@ -155,6 +163,14 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
             return priceInEth * ethPriceUSD;
           }
 
+          // Priority 2: Use latest snapshot price from database
+          if (snapshot) {
+            const priceEth = parseFloat(snapshot.price_eth);
+            const snapshotEthUsd = parseFloat(snapshot.eth_price_usd);
+            return priceEth * snapshotEthUsd;
+          }
+
+          // Priority 3: Fallback to stored reserves
           const ethReserve = parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
           const tokenReserve = parseFloat(token.current_token_reserve?.toString() || '1000000');
 
@@ -175,22 +191,8 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
         const twentyFourHoursAgo = new Date(now - 24 * 60 * 60 * 1000);
         const isNew = createdAt > twentyFourHoursAgo;
 
-        let priceChange: number | null = null;
-
-        if (chartData) {
-          const launchPriceUsd = parseFloat(chartData.launch_price_usd || '0');
-          const price24hAgoUsd = parseFloat(chartData.price_24h_ago_usd || '0');
-
-          if (isNew) {
-            if (launchPriceUsd > 0 && currentPriceUSD > 0) {
-              priceChange = ((currentPriceUSD - launchPriceUsd) / launchPriceUsd) * 100;
-            }
-          } else {
-            if (price24hAgoUsd > 0 && currentPriceUSD > 0) {
-              priceChange = ((currentPriceUSD - price24hAgoUsd) / price24hAgoUsd) * 100;
-            }
-          }
-        }
+        // Use pre-calculated price change from database (maintained by trigger)
+        const priceChange = token.price_change_24h ? parseFloat(token.price_change_24h.toString()) : null;
 
         newTokenData[token.token_address] = {
           currentPriceUSD,
