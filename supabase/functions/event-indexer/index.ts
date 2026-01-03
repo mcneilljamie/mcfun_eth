@@ -258,7 +258,8 @@ async function processTokenSwaps(
   supabase: any,
   blockCache: BlockCache,
   contractCache: ContractCache,
-  startTime: number
+  startTime: number,
+  skipBlocks: Set<number>
 ): Promise<{ swapsIndexed: number; errors: string[]; timedOut: boolean; blocksScanned: number }> {
   const errors: string[] = [];
   let swapsIndexed = 0;
@@ -747,7 +748,8 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
               supabase,
               blockCache,
               contractCache,
-              startTime
+              startTime,
+              skipBlocks
             );
           };
 
