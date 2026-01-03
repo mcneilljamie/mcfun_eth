@@ -34,7 +34,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   const [tokenDataMap, setTokenDataMap] = useState<Record<string, TokenEnrichedData>>({});
   const [currentPage, setCurrentPage] = useState(1);
   const [isUpdating, setIsUpdating] = useState(false);
-  const TOKENS_PER_PAGE = 1000;
+  const TOKENS_PER_PAGE = 10;
 
   const readOnlyProvider = useMemo(() => {
     const rpcUrl = DEFAULT_CHAIN_ID === 11155111
@@ -65,7 +65,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   useEffect(() => {
     const activeProvider = provider || readOnlyProvider;
 
-    if (tokens.length > 0 && activeProvider && ethPriceUSD > 0) {
+    if (filteredTokens.length > 0 && activeProvider && ethPriceUSD > 0) {
       loadTokenData();
       const dataInterval = setInterval(loadTokenData, 60000);
 
@@ -85,7 +85,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
         activeProvider.off('block', blockListener);
       };
     }
-  }, [tokens, provider, readOnlyProvider, ethPriceUSD]);
+  }, [filteredTokens, currentPage, provider, readOnlyProvider, ethPriceUSD]);
 
   const loadEthPrice = async () => {
     const price = await getEthPriceUSD();
@@ -145,18 +145,23 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
 
   const loadTokenData = async () => {
     const activeProvider = provider || readOnlyProvider;
-    if (!activeProvider || tokens.length === 0 || ethPriceUSD === 0 || isUpdating) return;
+    if (!activeProvider || filteredTokens.length === 0 || ethPriceUSD === 0 || isUpdating) return;
 
     setIsUpdating(true);
 
     try {
       const { getMultipleReserves } = await import('../lib/multicall');
-      const ammAddresses = tokens.map(t => t.amm_address);
+
+      const startIndex = (currentPage - 1) * TOKENS_PER_PAGE;
+      const endIndex = startIndex + TOKENS_PER_PAGE;
+      const visibleTokens = filteredTokens.slice(startIndex, endIndex);
+
+      const ammAddresses = visibleTokens.map(t => t.amm_address);
       const reservesMap = await getMultipleReserves(activeProvider, ammAddresses);
 
-      const newTokenData: Record<string, TokenEnrichedData> = {};
+      const newTokenData: Record<string, TokenEnrichedData> = { ...tokenDataMap };
 
-      for (const token of tokens) {
+      for (const token of visibleTokens) {
         const reserves = reservesMap.get(token.amm_address);
 
         const calculateCurrentPrice = (): number => {
