@@ -197,7 +197,9 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
 
         let priceChange: number | null = null;
 
-        if (isNew && token.launch_price_eth && token.launch_eth_price_usd) {
+        const totalVolume = parseFloat(token.total_volume_eth || '0');
+
+        if (isNew && token.launch_price_eth && token.launch_eth_price_usd && totalVolume > 0) {
           const launchPriceUSD = parseFloat(token.launch_price_eth) * parseFloat(token.launch_eth_price_usd);
           if (launchPriceUSD > 0 && currentPriceUSD > 0) {
             priceChange = ((currentPriceUSD - launchPriceUSD) / launchPriceUSD) * 100;
