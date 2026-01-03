@@ -9,11 +9,18 @@ import { WithdrawSuccess } from '../components/WithdrawSuccess';
 import { ToastMessage } from '../App';
 import { getExplorerUrl, getLockerAddress } from '../contracts/addresses';
 import { TOKEN_LOCKER_ABI } from '../contracts/abis';
-import { useOnChainLocks, OnChainLock } from '../hooks/useOnChainLocks';
-import { useLiveReserves } from '../hooks/useLiveReserves';
 import { getEthPriceUSD } from '../lib/ethPrice';
 
-interface TokenLock extends OnChainLock {
+interface TokenLock {
+  lockId: number;
+  owner: string;
+  tokenAddress: string;
+  amount: bigint;
+  unlockTime: number;
+  withdrawn: boolean;
+  tokenSymbol?: string;
+  tokenName?: string;
+  tokenDecimals?: number;
   lock_timestamp?: string;
   tx_hash?: string;
   withdraw_tx_hash?: string;
@@ -43,8 +50,10 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
   const [enrichedLocks, setEnrichedLocks] = useState<TokenLock[]>([]);
   const [tokenPrices, setTokenPrices] = useState<Map<string, { priceEth: number; priceUsd: number }>>(new Map());
 
-  // Use on-chain data as source of truth
-  const { locks: onChainLocks, loading, error, reload } = useOnChainLocks(provider, chainId, account);
+  // Use database as primary source to avoid rate limits
+  const [dbLocks, setDbLocks] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Load ETH price
   useEffect(() => {
@@ -57,12 +66,62 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
     return () => clearInterval(interval);
   }, []);
 
+  // Load locks from database
+  useEffect(() => {
+    const loadLocks = async () => {
+      if (!account) {
+        setDbLocks([]);
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        const { data, error: dbError } = await supabase
+          .from('token_locks')
+          .select('*')
+          .eq('user_address', account.toLowerCase())
+          .order('lock_id', { ascending: false });
+
+        if (dbError) throw dbError;
+
+        setDbLocks(data || []);
+      } catch (err: any) {
+        console.error('Failed to load locks from database:', err);
+        setError(err.message || 'Failed to load locks');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadLocks();
+
+    // Subscribe to realtime updates
+    const subscription = supabase
+      .channel('user-locks')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'token_locks',
+        filter: `user_address=eq.${account?.toLowerCase()}`
+      }, () => {
+        loadLocks();
+      })
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [account]);
+
   // Load token prices for each unique token
   useEffect(() => {
-    if (!provider || onChainLocks.length === 0) return;
+    if (!provider || dbLocks.length === 0) return;
 
     const loadPrices = async () => {
-      const uniqueTokens = new Set(onChainLocks.map(lock => lock.tokenAddress.toLowerCase()));
+      const uniqueTokens = new Set(dbLocks.map(lock => lock.token_address));
       const prices = new Map<string, { priceEth: number; priceUsd: number }>();
 
       // Get token info from database to find AMM addresses
@@ -72,15 +131,13 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
         .in('token_address', Array.from(uniqueTokens));
 
       if (tokensData) {
-        const { useLiveReserves } = await import('../hooks/useLiveReserves');
-
         for (const tokenData of tokensData) {
           try {
             const reserves = await import('../lib/contracts').then(m =>
               m.getAMMReserves(provider, tokenData.amm_address)
             );
             const priceEth = parseFloat(reserves.reserveETH) / parseFloat(reserves.reserveToken);
-            prices.set(tokenData.token_address.toLowerCase(), {
+            prices.set(tokenData.token_address, {
               priceEth,
               priceUsd: priceEth * ethPriceUsd,
             });
@@ -96,58 +153,43 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
     loadPrices();
     const interval = setInterval(loadPrices, 30000);
     return () => clearInterval(interval);
-  }, [provider, onChainLocks, ethPriceUsd]);
+  }, [provider, dbLocks, ethPriceUsd]);
 
-  // Enrich on-chain locks with metadata from indexer (non-blocking)
+  // Enrich database locks with price data
   useEffect(() => {
     const enrichLocks = async () => {
-      if (onChainLocks.length === 0) {
+      if (dbLocks.length === 0) {
         setEnrichedLocks([]);
         return;
       }
 
-      // Try to load metadata from indexer but don't block on it
-      let indexerData: any[] = [];
-      try {
-        const { data } = await supabase
-          .from('token_locks')
-          .select('lock_id, lock_timestamp, tx_hash, withdraw_tx_hash')
-          .in('lock_id', onChainLocks.map(l => l.lockId));
-
-        if (data) {
-          indexerData = data;
-        }
-      } catch (err) {
-        console.warn('Failed to load lock metadata from indexer:', err);
-      }
-
-      const indexerMap = new Map(indexerData.map(d => [d.lock_id, d]));
-
-      const enriched: TokenLock[] = onChainLocks.map(lock => {
-        const metadata = indexerMap.get(lock.lockId);
-        const price = tokenPrices.get(lock.tokenAddress.toLowerCase());
-        const amountFormatted = lock.tokenDecimals
-          ? parseFloat(ethers.formatUnits(lock.amount, lock.tokenDecimals))
-          : parseFloat(ethers.formatEther(lock.amount));
+      const enriched: TokenLock[] = dbLocks.map(lock => {
+        const price = tokenPrices.get(lock.token_address);
+        const amountFormatted = parseFloat(ethers.formatUnits(lock.amount_locked, lock.token_decimals));
+        const unlockTime = Math.floor(new Date(lock.unlock_timestamp).getTime() / 1000);
 
         const valueEth = price ? amountFormatted * price.priceEth : undefined;
         const valueUsd = price ? amountFormatted * price.priceUsd : undefined;
 
-        // Calculate duration from unlock time
-        const lockTimestamp = metadata?.lock_timestamp ? new Date(metadata.lock_timestamp).getTime() / 1000 : lock.unlockTime - (30 * 24 * 60 * 60); // fallback estimate
-        const durationDays = Math.floor((lock.unlockTime - lockTimestamp) / 86400);
-
         return {
-          ...lock,
-          lock_timestamp: metadata?.lock_timestamp,
-          tx_hash: metadata?.tx_hash,
-          withdraw_tx_hash: metadata?.withdraw_tx_hash,
+          lockId: lock.lock_id,
+          owner: lock.user_address,
+          tokenAddress: lock.token_address,
+          amount: BigInt(lock.amount_locked),
+          unlockTime,
+          withdrawn: lock.is_withdrawn,
+          tokenSymbol: lock.token_symbol,
+          tokenName: lock.token_name,
+          tokenDecimals: lock.token_decimals,
+          lock_timestamp: lock.lock_timestamp,
+          tx_hash: lock.tx_hash,
+          withdraw_tx_hash: lock.withdraw_tx_hash,
           value_eth: valueEth,
           value_usd: valueUsd,
           current_price_eth: price?.priceEth,
           current_price_usd: price?.priceUsd,
           amount_locked_formatted: amountFormatted,
-          lock_duration_days: durationDays,
+          lock_duration_days: lock.lock_duration_days,
         };
       });
 
@@ -155,7 +197,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
     };
 
     enrichLocks();
-  }, [onChainLocks, tokenPrices]);
+  }, [dbLocks, tokenPrices]);
 
   const handleWithdraw = async (lock: TokenLock) => {
     if (!signer || !chainId) {
@@ -198,8 +240,6 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
           type: 'error'
         });
         setWithdrawing(null);
-        // Reload on-chain data to update UI
-        await reload();
         return;
       }
 
@@ -221,8 +261,18 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
         amount: parseFloat(formattedAmount).toFixed(4),
       });
 
-      // Reload on-chain locks immediately after transaction confirms
-      await reload();
+      // Reload database locks after a short delay to allow indexer to catch up
+      setTimeout(() => {
+        const reloadLocks = async () => {
+          const { data } = await supabase
+            .from('token_locks')
+            .select('*')
+            .eq('user_address', account!.toLowerCase())
+            .order('lock_id', { ascending: false });
+          if (data) setDbLocks(data);
+        };
+        reloadLocks();
+      }, 2000);
     } catch (error: any) {
       console.error('Withdrawal error:', error);
       let errorMessage = t('myLocks.errors.withdrawFailed');
