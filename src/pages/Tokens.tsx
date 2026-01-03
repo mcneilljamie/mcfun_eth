@@ -58,8 +58,20 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
       loadTokenData();
       const dataInterval = setInterval(loadTokenData, 60000);
 
+      let lastBlockUpdate = Date.now();
+      const blockListener = () => {
+        const now = Date.now();
+        if (now - lastBlockUpdate >= 60000) {
+          lastBlockUpdate = now;
+          loadTokenData();
+        }
+      };
+
+      provider.on('block', blockListener);
+
       return () => {
         clearInterval(dataInterval);
+        provider.off('block', blockListener);
       };
     }
   }, [tokens, provider, ethPriceUSD]);
