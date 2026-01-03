@@ -484,6 +484,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                     <div className="flex items-center space-x-1">
                       {Array.from({ length: Math.ceil(filteredTokens.length / TOKENS_PER_PAGE) }, (_, i) => i + 1)
                         .filter(page => {
+                          if (page < 1) return false; // Never show page 0
                           const totalPages = Math.ceil(filteredTokens.length / TOKENS_PER_PAGE);
                           if (totalPages <= 7) return true;
                           if (page === 1 || page === totalPages) return true;
@@ -493,7 +494,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                           return false;
                         })
                         .map((page, index, array) => {
-                          const prevPage = index > 0 ? array[index - 1] : 0;
+                          const prevPage = index > 0 ? array[index - 1] : 1;
                           const showEllipsis = prevPage && page - prevPage > 1;
 
                           return (
