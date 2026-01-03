@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Trophy, Search, TrendingUp } from 'lucide-react';
+import { Trophy, Search, TrendingUp, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { supabase, Token } from '../lib/supabase';
 import { formatCurrency, formatTimeAgo, formatUSD } from '../lib/utils';
 import { getEthPriceUSD } from '../lib/ethPrice';
-import { getAMMReserves } from '../lib/contracts';
 import { useWeb3 } from '../lib/web3';
 import { ToastMessage } from '../App';
 
@@ -12,6 +11,14 @@ interface TokensProps {
   onSelectToken: (token: Token) => void;
   onViewToken: (tokenAddress: string) => void;
   onShowToast: (toast: ToastMessage) => void;
+}
+
+interface TokenEnrichedData {
+  currentPriceUSD: number;
+  marketCap: number;
+  priceChange: number | null;
+  isNew: boolean;
+  liquidityETH: string;
 }
 
 export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
@@ -22,15 +29,15 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
-  const [liveReserves, setLiveReserves] = useState<Record<string, { reserveETH: string; reserveToken: string }>>({});
-  const [, setLiveVolumes] = useState<Record<string, string>>({});
-  const [priceChanges, setPriceChanges] = useState<Record<string, number>>({});
+  const [tokenDataMap, setTokenDataMap] = useState<Record<string, TokenEnrichedData>>({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const TOKENS_PER_PAGE = 10;
 
   useEffect(() => {
     loadTokens();
     loadEthPrice();
 
-    const interval = setInterval(loadEthPrice, 60000);
+    const ethPriceInterval = setInterval(loadEthPrice, 60000);
 
     const subscription = supabase
       .channel('tokens-channel')
@@ -40,34 +47,18 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
       .subscribe();
 
     return () => {
-      clearInterval(interval);
+      clearInterval(ethPriceInterval);
       subscription.unsubscribe();
     };
   }, []);
 
   useEffect(() => {
-    if (tokens.length > 0) {
-      loadLiveVolumes();
-      const dataInterval = setInterval(() => {
-        loadLiveVolumes();
-      }, 30000);
+    if (tokens.length > 0 && provider && ethPriceUSD > 0) {
+      loadTokenData();
+      const dataInterval = setInterval(loadTokenData, 30000);
       return () => clearInterval(dataInterval);
     }
-  }, [tokens]);
-
-  useEffect(() => {
-    if (tokens.length > 0 && provider) {
-      loadLiveReserves();
-      const reservesInterval = setInterval(loadLiveReserves, 30000);
-      return () => clearInterval(reservesInterval);
-    }
-  }, [tokens, provider]);
-
-  useEffect(() => {
-    if (tokens.length > 0 && Object.keys(liveReserves).length > 0) {
-      calculatePriceChanges();
-    }
-  }, [tokens, liveReserves, ethPriceUSD]);
+  }, [tokens, provider, ethPriceUSD]);
 
   const loadEthPrice = async () => {
     const price = await getEthPriceUSD();
@@ -88,13 +79,16 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     }
 
     const sorted = [...result].sort((a, b) => {
-      const aMarketCap = calculateMarketCap(a);
-      const bMarketCap = calculateMarketCap(b);
+      const aData = tokenDataMap[a.token_address];
+      const bData = tokenDataMap[b.token_address];
+      const aMarketCap = aData?.marketCap || 0;
+      const bMarketCap = bData?.marketCap || 0;
       return bMarketCap - aMarketCap;
     });
 
     setFilteredTokens(sorted);
-  }, [searchQuery, tokens, liveReserves, ethPriceUSD]);
+    setCurrentPage(1);
+  }, [searchQuery, tokens, tokenDataMap]);
 
   const loadTokens = async () => {
     setIsLoading(true);
@@ -122,144 +116,111 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     }
   };
 
-  const loadLiveReserves = async () => {
-    if (!provider || tokens.length === 0) return;
+  const loadTokenData = async () => {
+    if (!provider || tokens.length === 0 || ethPriceUSD === 0) return;
 
     try {
-      // Use multicall to batch all reserve requests into a single RPC call
       const { getMultipleReserves } = await import('../lib/multicall');
       const ammAddresses = tokens.map(t => t.amm_address);
       const reservesMap = await getMultipleReserves(provider, ammAddresses);
 
-      const newReserves: Record<string, { reserveETH: string; reserveToken: string }> = {};
+      const tokenAddresses = tokens.map(t => t.token_address.toLowerCase());
+      const { data: chartDataArray, error: chartError } = await supabase
+        .rpc('get_price_chart_data_optimized', {
+          p_token_address: tokenAddresses[0],
+          p_hours_back: 8760,
+          p_max_points: 500
+        });
 
-      tokens.forEach((token) => {
-        const reserves = reservesMap.get(token.amm_address);
-        if (reserves) {
-          newReserves[token.token_address] = reserves;
-        }
-      });
-
-      setLiveReserves(newReserves);
-    } catch (err) {
-      console.error('Failed to load live reserves:', err);
-    }
-  };
-
-  const loadLiveVolumes = async () => {
-    if (tokens.length === 0) return;
-
-    try {
-      const { data, error } = await supabase
-        .from('tokens')
-        .select('token_address, total_volume_eth')
-        .in('token_address', tokens.map(t => t.token_address));
-
-      if (error) {
-        console.error('Database error loading volumes:', error);
-        return;
+      if (chartError) {
+        console.error('Error fetching chart data:', chartError);
       }
 
-      const newVolumes: Record<string, string> = {};
-      data?.forEach(token => {
-        newVolumes[token.token_address] = token.total_volume_eth;
-      });
+      const chartDataByToken: Record<string, any> = {};
+      for (const token of tokens) {
+        const { data, error } = await supabase
+          .rpc('get_price_chart_data_optimized', {
+            p_token_address: token.token_address.toLowerCase(),
+            p_hours_back: 8760,
+            p_max_points: 2
+          });
 
-      setLiveVolumes(newVolumes);
-    } catch (err) {
-      console.error('Failed to load live volumes:', err);
-    }
-  };
+        if (!error && data && data.length > 0) {
+          chartDataByToken[token.token_address] = data[0];
+        }
+      }
 
-
-
-  const calculateTokenPriceUSD = (token: Token): number => {
-    const reserves = liveReserves[token.token_address];
-    const ethReserve = reserves
-      ? parseFloat(reserves.reserveETH)
-      : parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
-    const tokenReserve = reserves
-      ? parseFloat(reserves.reserveToken)
-      : parseFloat(token.current_token_reserve?.toString() || '1000000');
-
-    if (tokenReserve === 0) return 0;
-
-    const priceInEth = ethReserve / tokenReserve;
-    return priceInEth * ethPriceUSD;
-  };
-
-  const calculateMarketCap = (token: Token): number => {
-    const TOKEN_TOTAL_SUPPLY = 1000000;
-    const priceUSD = calculateTokenPriceUSD(token);
-    return priceUSD * TOKEN_TOTAL_SUPPLY;
-  };
-
-  const calculatePriceChanges = async () => {
-    try {
-      const now = Date.now();
-      const twentyFourHoursAgo = new Date(now - 24 * 60 * 60 * 1000);
-
-      const changes: Record<string, number> = {};
+      const newTokenData: Record<string, TokenEnrichedData> = {};
 
       for (const token of tokens) {
-        const currentPriceUSD = calculateTokenPriceUSD(token);
+        const reserves = reservesMap.get(token.amm_address);
+        const chartData = chartDataByToken[token.token_address];
 
-        if (currentPriceUSD === 0) continue;
+        const calculatePrice = (): number => {
+          if (reserves) {
+            const ethReserve = parseFloat(reserves.reserveETH);
+            const tokenReserve = parseFloat(reserves.reserveToken);
 
-        const createdAt = new Date(token.created_at);
-        const isNew = (now - createdAt.getTime()) < (24 * 60 * 60 * 1000);
+            if (tokenReserve === 0) return 0;
 
-        if (isNew) {
-          // For new tokens, compare to launch price
-          const launchPriceEth = parseFloat(token.launch_price_eth || '0');
-          const launchEthPriceUsd = parseFloat(token.launch_eth_price_usd || '0');
-
-          if (launchPriceEth > 0 && launchEthPriceUsd > 0) {
-            const launchPriceUsd = launchPriceEth * launchEthPriceUsd;
-            const change = ((currentPriceUSD - launchPriceUsd) / launchPriceUsd) * 100;
-            changes[token.token_address] = change;
+            const priceInEth = ethReserve / tokenReserve;
+            return priceInEth * ethPriceUSD;
           }
-        } else {
-          // For older tokens, get snapshot from 24h ago
-          const { data: snapshot } = await supabase
-            .from('price_snapshots')
-            .select('price_eth, eth_price_usd')
-            .eq('token_address', token.token_address.toLowerCase())
-            .gte('created_at', twentyFourHoursAgo.toISOString())
-            .order('created_at', { ascending: true })
-            .limit(1)
-            .maybeSingle();
 
-          let baselinePriceUsd: number | null = null;
+          if (chartData && chartData.last_price_usd) {
+            return parseFloat(chartData.last_price_usd);
+          }
 
-          if (snapshot) {
-            // Found snapshot at or after 24h ago
-            baselinePriceUsd = parseFloat(snapshot.price_eth) * parseFloat(snapshot.eth_price_usd);
+          const ethReserve = parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
+          const tokenReserve = parseFloat(token.current_token_reserve?.toString() || '1000000');
+
+          if (tokenReserve === 0) return 0;
+
+          const priceInEth = ethReserve / tokenReserve;
+          return priceInEth * ethPriceUSD;
+        };
+
+        const currentPriceUSD = calculatePrice();
+        const TOKEN_TOTAL_SUPPLY = 1000000;
+        const marketCap = currentPriceUSD * TOKEN_TOTAL_SUPPLY;
+
+        const liquidityETH = reserves?.reserveETH || token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString();
+
+        const now = Date.now();
+        const createdAt = new Date(token.created_at);
+        const twentyFourHoursAgo = new Date(now - 24 * 60 * 60 * 1000);
+        const isNew = createdAt > twentyFourHoursAgo;
+
+        let priceChange: number | null = null;
+
+        if (chartData) {
+          const launchPriceUsd = parseFloat(chartData.launch_price_usd || '0');
+          const lastPriceUsd = parseFloat(chartData.last_price_usd || '0');
+          const price24hAgoUsd = parseFloat(chartData.price_24h_ago_usd || '0');
+
+          if (isNew) {
+            if (launchPriceUsd > 0 && lastPriceUsd > 0) {
+              priceChange = ((lastPriceUsd - launchPriceUsd) / launchPriceUsd) * 100;
+            }
           } else {
-            // No 24h snapshot, use newest available
-            const { data: newestSnapshot } = await supabase
-              .from('price_snapshots')
-              .select('price_eth, eth_price_usd')
-              .eq('token_address', token.token_address.toLowerCase())
-              .order('created_at', { ascending: false })
-              .limit(1)
-              .maybeSingle();
-
-            if (newestSnapshot) {
-              baselinePriceUsd = parseFloat(newestSnapshot.price_eth) * parseFloat(newestSnapshot.eth_price_usd);
+            if (price24hAgoUsd > 0 && lastPriceUsd > 0) {
+              priceChange = ((lastPriceUsd - price24hAgoUsd) / price24hAgoUsd) * 100;
             }
           }
-
-          if (baselinePriceUsd && baselinePriceUsd > 0) {
-            const change = ((currentPriceUSD - baselinePriceUsd) / baselinePriceUsd) * 100;
-            changes[token.token_address] = change;
-          }
         }
+
+        newTokenData[token.token_address] = {
+          currentPriceUSD,
+          marketCap,
+          priceChange,
+          isNew,
+          liquidityETH
+        };
       }
 
-      setPriceChanges(changes);
+      setTokenDataMap(newTokenData);
     } catch (err) {
-      console.error('Failed to calculate price changes:', err);
+      console.error('Failed to load token data:', err);
     }
   };
 
@@ -317,7 +278,10 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredTokens.map((token, index) => (
+                    {filteredTokens.slice((currentPage - 1) * TOKENS_PER_PAGE, currentPage * TOKENS_PER_PAGE).map((token, index) => {
+                      const tokenData = tokenDataMap[token.token_address];
+                      const actualIndex = (currentPage - 1) * TOKENS_PER_PAGE + index;
+                      return (
                       <tr
                         key={token.id}
                         className="border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer"
@@ -325,18 +289,18 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                       >
                         <td className="py-4 px-4">
                           <div className="flex items-center space-x-2">
-                            {index < 3 && (
+                            {actualIndex < 3 && (
                               <Trophy
                                 className={`w-4 h-4 ${
-                                  index === 0
+                                  actualIndex === 0
                                     ? 'text-yellow-500'
-                                    : index === 1
+                                    : actualIndex === 1
                                     ? 'text-gray-400'
                                     : 'text-amber-700'
                                 }`}
                               />
                             )}
-                            <span className="font-medium text-gray-900">{index + 1}</span>
+                            <span className="font-medium text-gray-900">{actualIndex + 1}</span>
                           </div>
                         </td>
                         <td className="py-4 px-4">
@@ -347,42 +311,37 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                         </td>
                         <td className="py-4 px-4">
                           <div className="font-semibold text-gray-900">
-                            {formatUSD(calculateTokenPriceUSD(token), false)}
+                            {tokenData ? formatUSD(tokenData.currentPriceUSD, false) : '–'}
                           </div>
                         </td>
                         <td className="py-4 px-4">
-                          {(() => {
-                            const change = priceChanges[token.token_address] ?? 0;
-                            const createdAt = new Date(token.created_at);
-                            const hoursOld = (Date.now() - createdAt.getTime()) / (1000 * 60 * 60);
-                            const isNew = hoursOld < 24;
-
-                            return (
-                              <div>
-                                <div className={`font-semibold ${
-                                  change === 0
-                                    ? 'text-gray-500'
-                                    : change > 0
-                                    ? 'text-green-600'
-                                    : 'text-red-600'
-                                }`}>
-                                  {change === 0 ? '–' : `${change >= 0 ? '+' : ''}${change.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`}
-                                </div>
-                                <div className="text-xs text-gray-500 mt-0.5">
-                                  {isNew ? t('tokens.table.sinceLaunch') : t('tokens.table.24h')}
-                                </div>
+                          {tokenData ? (
+                            <div>
+                              <div className={`font-semibold ${
+                                tokenData.priceChange === null || tokenData.priceChange === 0
+                                  ? 'text-gray-500'
+                                  : tokenData.priceChange > 0
+                                  ? 'text-green-600'
+                                  : 'text-red-600'
+                              }`}>
+                                {tokenData.priceChange === null || tokenData.priceChange === 0 ? '–' : `${tokenData.priceChange >= 0 ? '+' : ''}${tokenData.priceChange.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`}
                               </div>
-                            );
-                          })()}
+                              <div className="text-xs text-gray-500 mt-0.5">
+                                {tokenData.isNew ? t('tokens.table.sinceLaunch') : t('tokens.table.24h')}
+                              </div>
+                            </div>
+                          ) : (
+                            <span className="text-gray-500">–</span>
+                          )}
                         </td>
                         <td className="py-4 px-4">
                           <div className="font-semibold text-gray-900">
-                            {formatUSD(calculateMarketCap(token), true)}
+                            {tokenData ? formatUSD(tokenData.marketCap, true) : '–'}
                           </div>
                         </td>
                         <td className="py-4 px-4">
                           <div className="font-semibold text-gray-900">
-                            {formatCurrency(liveReserves[token.token_address]?.reserveETH || token.current_eth_reserve || token.initial_liquidity_eth)}
+                            {tokenData ? formatCurrency(tokenData.liquidityETH) : '–'}
                           </div>
                         </td>
                         <td className="py-4 px-4">
@@ -403,14 +362,18 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                           </button>
                         </td>
                       </tr>
-                    ))}
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
 
               {/* Mobile Card View */}
               <div className="lg:hidden space-y-4">
-                {filteredTokens.map((token, index) => (
+                {filteredTokens.slice((currentPage - 1) * TOKENS_PER_PAGE, currentPage * TOKENS_PER_PAGE).map((token, index) => {
+                  const tokenData = tokenDataMap[token.token_address];
+                  const actualIndex = (currentPage - 1) * TOKENS_PER_PAGE + index;
+                  return (
                   <div
                     key={token.id}
                     className="bg-gray-50 rounded-lg p-4 border border-gray-200 cursor-pointer hover:border-gray-300 transition-colors"
@@ -418,18 +381,18 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                   >
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center space-x-2">
-                        {index < 3 && (
+                        {actualIndex < 3 && (
                           <Trophy
                             className={`w-4 h-4 ${
-                              index === 0
+                              actualIndex === 0
                                 ? 'text-yellow-500'
-                                : index === 1
+                                : actualIndex === 1
                                 ? 'text-gray-400'
                                 : 'text-amber-700'
                             }`}
                           />
                         )}
-                        <span className="font-medium text-gray-500 text-sm">#{index + 1}</span>
+                        <span className="font-medium text-gray-500 text-sm">#{actualIndex + 1}</span>
                       </div>
                       <button
                         onClick={(e) => {
@@ -453,45 +416,38 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                         <span className="text-sm text-gray-600">{t('tokens.table.price')}:</span>
                         <div className="text-right">
                           <div className="font-semibold text-gray-900">
-                            {formatUSD(calculateTokenPriceUSD(token), false)}
+                            {tokenData ? formatUSD(tokenData.currentPriceUSD, false) : '–'}
                           </div>
-                          {(() => {
-                            const change = priceChanges[token.token_address] ?? 0;
-                            const createdAt = new Date(token.created_at);
-                            const hoursOld = (Date.now() - createdAt.getTime()) / (1000 * 60 * 60);
-                            const isNew = hoursOld < 24;
-
-                            return (
-                              <div className="flex items-center justify-end gap-1">
-                                <span className={`text-xs font-medium ${
-                                  change === 0
-                                    ? 'text-gray-500'
-                                    : change > 0
-                                    ? 'text-green-600'
-                                    : 'text-red-600'
-                                }`}>
-                                  {change === 0 ? '–' : `${change >= 0 ? '+' : ''}${change.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`}
-                                </span>
-                                <span className="text-xs text-gray-500">
-                                  {isNew ? t('tokens.table.launch') : t('tokens.table.24h')}
-                                </span>
-                              </div>
-                            );
-                          })()}
+                          {tokenData && (
+                            <div className="flex items-center justify-end gap-1">
+                              <span className={`text-xs font-medium ${
+                                tokenData.priceChange === null || tokenData.priceChange === 0
+                                  ? 'text-gray-500'
+                                  : tokenData.priceChange > 0
+                                  ? 'text-green-600'
+                                  : 'text-red-600'
+                              }`}>
+                                {tokenData.priceChange === null || tokenData.priceChange === 0 ? '–' : `${tokenData.priceChange >= 0 ? '+' : ''}${tokenData.priceChange.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`}
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                {tokenData.isNew ? t('tokens.table.launch') : t('tokens.table.24h')}
+                              </span>
+                            </div>
+                          )}
                         </div>
                       </div>
 
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">{t('tokens.table.marketCap')}:</span>
                         <span className="font-semibold text-gray-900">
-                          {formatUSD(calculateMarketCap(token), true)}
+                          {tokenData ? formatUSD(tokenData.marketCap, true) : '–'}
                         </span>
                       </div>
 
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">{t('tokens.table.liquidity')}:</span>
                         <span className="font-semibold text-gray-900">
-                          {formatCurrency(liveReserves[token.token_address]?.reserveETH || token.current_eth_reserve || token.initial_liquidity_eth)}
+                          {tokenData ? formatCurrency(tokenData.liquidityETH) : '–'}
                         </span>
                       </div>
 
@@ -503,14 +459,74 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                       </div>
                     </div>
                   </div>
-                ))}
+                  );
+                })}
               </div>
             </>
           )}
 
           {!isLoading && filteredTokens.length > 0 && (
-            <div className="mt-6 text-center text-sm text-gray-500">
-              {t('tokens.showing', { count: filteredTokens.length })}
+            <div className="mt-6">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="text-sm text-gray-500">
+                  Showing {Math.min((currentPage - 1) * TOKENS_PER_PAGE + 1, filteredTokens.length)} to {Math.min(currentPage * TOKENS_PER_PAGE, filteredTokens.length)} of {filteredTokens.length} tokens
+                </div>
+
+                {filteredTokens.length > TOKENS_PER_PAGE && (
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                      disabled={currentPage === 1}
+                      className="px-3 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center space-x-1"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                      <span className="hidden sm:inline">Previous</span>
+                    </button>
+
+                    <div className="flex items-center space-x-1">
+                      {Array.from({ length: Math.ceil(filteredTokens.length / TOKENS_PER_PAGE) }, (_, i) => i + 1)
+                        .filter(page => {
+                          const totalPages = Math.ceil(filteredTokens.length / TOKENS_PER_PAGE);
+                          if (totalPages <= 7) return true;
+                          if (page === 1 || page === totalPages) return true;
+                          if (page >= currentPage - 1 && page <= currentPage + 1) return true;
+                          if (page === 2 && currentPage <= 3) return true;
+                          if (page === totalPages - 1 && currentPage >= totalPages - 2) return true;
+                          return false;
+                        })
+                        .map((page, index, array) => {
+                          const prevPage = index > 0 ? array[index - 1] : 0;
+                          const showEllipsis = prevPage && page - prevPage > 1;
+
+                          return (
+                            <div key={page} className="flex items-center">
+                              {showEllipsis && <span className="px-2 text-gray-400">...</span>}
+                              <button
+                                onClick={() => setCurrentPage(page)}
+                                className={`min-w-[2.5rem] px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                  currentPage === page
+                                    ? 'bg-gray-900 text-white'
+                                    : 'text-gray-700 hover:bg-gray-100'
+                                }`}
+                              >
+                                {page}
+                              </button>
+                            </div>
+                          );
+                        })}
+                    </div>
+
+                    <button
+                      onClick={() => setCurrentPage(prev => Math.min(Math.ceil(filteredTokens.length / TOKENS_PER_PAGE), prev + 1))}
+                      disabled={currentPage >= Math.ceil(filteredTokens.length / TOKENS_PER_PAGE)}
+                      className="px-3 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center space-x-1"
+                    >
+                      <span className="hidden sm:inline">Next</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>
