@@ -427,7 +427,10 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
             <div className="mt-6">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="text-sm text-gray-500">
-                  Showing {Math.min((currentPage - 1) * TOKENS_PER_PAGE + 1, filteredTokens.length)} to {Math.min(currentPage * TOKENS_PER_PAGE, filteredTokens.length)} of {filteredTokens.length} tokens
+                  {filteredTokens.length <= TOKENS_PER_PAGE
+                    ? `Showing all ${filteredTokens.length} tokens`
+                    : `Showing ${Math.min((currentPage - 1) * TOKENS_PER_PAGE + 1, filteredTokens.length)} to ${Math.min(currentPage * TOKENS_PER_PAGE, filteredTokens.length)} of ${filteredTokens.length} tokens`
+                  }
                 </div>
 
                 {filteredTokens.length > TOKENS_PER_PAGE && (
