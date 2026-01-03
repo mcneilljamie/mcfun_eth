@@ -146,6 +146,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
       topColor: (priceChange !== null && priceChange >= 0) ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)',
       bottomColor: (priceChange !== null && priceChange >= 0) ? 'rgba(16, 185, 129, 0.0)' : 'rgba(239, 68, 68, 0.0)',
       lineWidth: 2,
+      lineType: 2,
       priceFormat: {
         type: 'custom',
         minMove: minMove,
@@ -214,23 +215,26 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
   useEffect(() => {
     if (!seriesRef.current || !data || data.length === 0) return;
 
-    const chartData: LineData[] = data.map((point) => ({
+    // Sort data by time to ensure proper ordering
+    const sortedData = [...data].sort((a, b) => a.time - b.time);
+
+    const chartData: LineData[] = sortedData.map((point) => ({
       time: point.time as Time,
-      value: chartMode === 'marketCap' ? Math.round(point.value * TOKEN_TOTAL_SUPPLY) : point.value,
+      value: chartMode === 'marketCap' ? point.value * TOKEN_TOTAL_SUPPLY : point.value,
     }));
 
     // Append live data point if we have live reserves
-    if (liveReserves && data.length > 0) {
+    if (liveReserves && sortedData.length > 0) {
       const livePrice = calculateLivePriceFromReserves();
       const currentTime = Math.floor(Date.now() / 1000);
-      const lastDataPoint = data[data.length - 1];
+      const lastDataPoint = sortedData[sortedData.length - 1];
 
       // Only add if the live price is different from the last data point
       // and the time is after the last snapshot
       if (currentTime > lastDataPoint.time && Math.abs(livePrice - lastDataPoint.value) > 0.00001) {
         chartData.push({
           time: currentTime as Time,
-          value: chartMode === 'marketCap' ? Math.round(livePrice * TOKEN_TOTAL_SUPPLY) : livePrice,
+          value: chartMode === 'marketCap' ? livePrice * TOKEN_TOTAL_SUPPLY : livePrice,
         });
       }
     }
