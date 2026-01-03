@@ -468,7 +468,7 @@ export function Lock({ onShowToast }: LockPageProps) {
         token_symbol: tokenStats.token_symbol,
         token_name: tokenStats.token_name,
         token_decimals: tokenStats.token_decimals,
-        total_amount_locked: tokenStats.total_quantity_locked,
+        total_amount_locked: tokenStats.active_amount_locked,
         lock_count: tokenStats.active_locks_count,
         current_price_eth: tokenStats.current_price_eth,
         current_price_usd: tokenStats.current_price_usd,
