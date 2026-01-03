@@ -124,18 +124,6 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
       const ammAddresses = tokens.map(t => t.amm_address);
       const reservesMap = await getMultipleReserves(provider, ammAddresses);
 
-      const tokenAddresses = tokens.map(t => t.token_address.toLowerCase());
-      const { data: chartDataArray, error: chartError } = await supabase
-        .rpc('get_price_chart_data_optimized', {
-          p_token_address: tokenAddresses[0],
-          p_hours_back: 8760,
-          p_max_points: 500
-        });
-
-      if (chartError) {
-        console.error('Error fetching chart data:', chartError);
-      }
-
       const chartDataByToken: Record<string, any> = {};
       for (const token of tokens) {
         const { data, error } = await supabase
@@ -156,7 +144,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
         const reserves = reservesMap.get(token.amm_address);
         const chartData = chartDataByToken[token.token_address];
 
-        const calculatePrice = (): number => {
+        const calculateCurrentPrice = (): number => {
           if (reserves) {
             const ethReserve = parseFloat(reserves.reserveETH);
             const tokenReserve = parseFloat(reserves.reserveToken);
@@ -165,10 +153,6 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
 
             const priceInEth = ethReserve / tokenReserve;
             return priceInEth * ethPriceUSD;
-          }
-
-          if (chartData && chartData.last_price_usd) {
-            return parseFloat(chartData.last_price_usd);
           }
 
           const ethReserve = parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
@@ -180,7 +164,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
           return priceInEth * ethPriceUSD;
         };
 
-        const currentPriceUSD = calculatePrice();
+        const currentPriceUSD = calculateCurrentPrice();
         const TOKEN_TOTAL_SUPPLY = 1000000;
         const marketCap = currentPriceUSD * TOKEN_TOTAL_SUPPLY;
 
@@ -195,16 +179,15 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
 
         if (chartData) {
           const launchPriceUsd = parseFloat(chartData.launch_price_usd || '0');
-          const lastPriceUsd = parseFloat(chartData.last_price_usd || '0');
           const price24hAgoUsd = parseFloat(chartData.price_24h_ago_usd || '0');
 
           if (isNew) {
-            if (launchPriceUsd > 0 && lastPriceUsd > 0) {
-              priceChange = ((lastPriceUsd - launchPriceUsd) / launchPriceUsd) * 100;
+            if (launchPriceUsd > 0 && currentPriceUSD > 0) {
+              priceChange = ((currentPriceUSD - launchPriceUsd) / launchPriceUsd) * 100;
             }
           } else {
-            if (price24hAgoUsd > 0 && lastPriceUsd > 0) {
-              priceChange = ((lastPriceUsd - price24hAgoUsd) / price24hAgoUsd) * 100;
+            if (price24hAgoUsd > 0 && currentPriceUSD > 0) {
+              priceChange = ((currentPriceUSD - price24hAgoUsd) / price24hAgoUsd) * 100;
             }
           }
         }
