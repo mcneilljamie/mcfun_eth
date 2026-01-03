@@ -124,35 +124,10 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
       const ammAddresses = tokens.map(t => t.amm_address);
       const reservesMap = await getMultipleReserves(provider, ammAddresses);
 
-      const tokenAddresses = tokens.map(t => t.token_address.toLowerCase());
-
-      const rpcMetadataPromises = tokenAddresses.map(async (tokenAddress) => {
-        const { data, error } = await supabase
-          .rpc('get_price_chart_data_optimized', {
-            p_token_address: tokenAddress,
-            p_hours_back: 8760,
-            p_max_points: 2
-          });
-
-        if (!error && data && data.length > 0) {
-          return { tokenAddress, metadata: data[0] };
-        }
-        return { tokenAddress, metadata: null };
-      });
-
-      const rpcMetadataResults = await Promise.all(rpcMetadataPromises);
-      const rpcMetadataMap = new Map<string, any>();
-      rpcMetadataResults.forEach(({ tokenAddress, metadata }) => {
-        if (metadata) {
-          rpcMetadataMap.set(tokenAddress, metadata);
-        }
-      });
-
       const newTokenData: Record<string, TokenEnrichedData> = {};
 
       for (const token of tokens) {
         const reserves = reservesMap.get(token.amm_address);
-        const rpcMetadata = rpcMetadataMap.get(token.token_address.toLowerCase());
 
         const calculateCurrentPrice = (): number => {
           if (reserves) {
@@ -161,11 +136,6 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
             if (tokenReserve === 0) return 0;
             const priceInEth = ethReserve / tokenReserve;
             return priceInEth * ethPriceUSD;
-          }
-
-          if (rpcMetadata) {
-            const chartPrice = parseFloat(rpcMetadata.last_price_usd || '0');
-            if (chartPrice > 0) return chartPrice;
           }
 
           const ethReserve = parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
@@ -188,25 +158,13 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
 
         let priceChange: number | null = null;
 
-        if (rpcMetadata) {
-          const launchPriceUsd = parseFloat(rpcMetadata.launch_price_usd || '0');
-          const price24hAgoUsd = parseFloat(rpcMetadata.price_24h_ago_usd || '0');
-          const lastPriceUsd = parseFloat(rpcMetadata.last_price_usd || '0');
-
-          if (isNew) {
-            if (launchPriceUsd > 0 && lastPriceUsd > 0) {
-              priceChange = ((lastPriceUsd - launchPriceUsd) / launchPriceUsd) * 100;
-            }
-          } else {
-            if (price24hAgoUsd > 0 && lastPriceUsd > 0) {
-              priceChange = ((lastPriceUsd - price24hAgoUsd) / price24hAgoUsd) * 100;
-            }
-          }
-        } else if (isNew && token.launch_price_eth && token.launch_eth_price_usd) {
+        if (isNew && token.launch_price_eth && token.launch_eth_price_usd) {
           const launchPriceUSD = parseFloat(token.launch_price_eth) * parseFloat(token.launch_eth_price_usd);
           if (launchPriceUSD > 0 && currentPriceUSD > 0) {
             priceChange = ((currentPriceUSD - launchPriceUSD) / launchPriceUSD) * 100;
           }
+        } else if (token.price_change_24h && Math.abs(parseFloat(token.price_change_24h)) > 0.01) {
+          priceChange = parseFloat(token.price_change_24h);
         }
 
         newTokenData[token.token_address] = {
