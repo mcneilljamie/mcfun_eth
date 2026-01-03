@@ -29,8 +29,9 @@ const RPC_PROVIDERS = [
 
 const MIN_BLOCK_RANGE = 100;
 const MAX_BLOCK_RANGE = 2000;
-const MAX_EXECUTION_TIME_MS = 23000;
-const PARALLEL_TOKEN_LIMIT = 6;
+const MAX_EXECUTION_TIME_MS = 55000;
+const PARALLEL_TOKEN_LIMIT = 8;
+const BATCH_SIZE = 100;
 
 function calculateBlockRange(blocksBehind: number): number {
   if (blocksBehind > 10000) {
@@ -112,8 +113,6 @@ interface IndexRequest {
   indexSwaps?: boolean;
   skipReorgCheck?: boolean;
   backfillSwaps?: boolean;
-  tier?: 'hot' | 'warm' | 'cold' | 'dormant';
-  batchSize?: number;
 }
 
 class BlockCache {
@@ -417,12 +416,6 @@ async function processTokenSwaps(
           })
           .eq("token_address", token.token_address);
 
-        const mostRecentSwap = swapsToInsert[swapsToInsert.length - 1];
-        await supabase.rpc('record_token_swap_activity', {
-          token_addr: token.token_address,
-          swap_timestamp: mostRecentSwap.created_at
-        });
-
         const hasTokenSells = swapsToInsert.some(swap => parseFloat(swap.token_out) > 0);
         if (hasTokenSells) {
           await supabase.rpc('refresh_token_holder_count', {
@@ -545,9 +538,7 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
       indexTokenLaunches = true,
       indexSwaps = true,
       skipReorgCheck = false,
-      backfillSwaps = false,
-      tier,
-      batchSize
+      backfillSwaps = false
     }: IndexRequest = await req.json().catch(() => ({}));
 
     const { data: indexerState } = await supabase
@@ -570,7 +561,6 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
       toBlock: 0,
       executionTimeMs: 0,
       timedOut: false,
-      tier: tier || 'all',
       tokensProcessed: 0,
       blocksScanned: 0,
       rpcCallsMade: 0,
@@ -705,31 +695,16 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
 
     if (indexSwaps && !results.timedOut) {
       try {
-        let tokens: any[] = [];
+        const { data: allTokens } = await supabase
+          .from("tokens")
+          .select("token_address, amm_address, block_number, last_checked_block")
+          .lte("block_number", endBlock)
+          .limit(BATCH_SIZE);
 
-        if (tier) {
-          const effectiveBatchSize = batchSize || (tier === 'hot' ? 20 : tier === 'warm' ? 50 : tier === 'cold' ? 100 : 200);
-          const { data: tierTokens, error: tierError } = await supabase.rpc('get_tokens_by_tier', {
-            tier_name: tier,
-            batch_limit: effectiveBatchSize,
-            min_block_age: 0
-          });
+        const tokens = allTokens || [];
 
-          if (tierError) {
-            results.errors.push(`Failed to get tokens by tier: ${tierError.message}`);
-          } else {
-            tokens = tierTokens || [];
-          }
-        } else {
-          const { data: allTokens } = await supabase
-            .from("tokens")
-            .select("token_address, amm_address, block_number, last_checked_block, last_swap_at, swap_count_24h")
-            .lte("block_number", endBlock);
-          tokens = allTokens || [];
-        }
-
-        if (tokens && tokens.length > 0) {
-          console.log(`Processing swaps for ${tokens.length} tokens (tier: ${tier || 'all'})`);
+        if (tokens.length > 0) {
+          console.log(`Processing swaps for ${tokens.length} tokens`);
           results.tokensProcessed = tokens.length;
 
           const processToken = async (token: any) => {
@@ -747,15 +722,13 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
             );
           };
 
-          const effectiveParallelLimit = tier === 'hot' ? 15 : tier === 'warm' ? 10 : PARALLEL_TOKEN_LIMIT;
-
-          for (let i = 0; i < tokens.length; i += effectiveParallelLimit) {
+          for (let i = 0; i < tokens.length; i += PARALLEL_TOKEN_LIMIT) {
             if (Date.now() - startTime > MAX_EXECUTION_TIME_MS) {
               results.timedOut = true;
               break;
             }
 
-            const batch = tokens.slice(i, i + effectiveParallelLimit);
+            const batch = tokens.slice(i, i + PARALLEL_TOKEN_LIMIT);
             const batchResults = await Promise.all(batch.map(processToken));
 
             for (const result of batchResults) {
@@ -771,9 +744,8 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
               break;
             }
 
-            const delayMs = tier === 'hot' ? 50 : tier === 'warm' ? 100 : 200;
-            if (i + effectiveParallelLimit < tokens.length) {
-              await new Promise(resolve => setTimeout(resolve, delayMs));
+            if (i + PARALLEL_TOKEN_LIMIT < tokens.length) {
+              await new Promise(resolve => setTimeout(resolve, 100));
             }
           }
         }
@@ -829,7 +801,7 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
       ).length;
 
       await supabase.from('indexer_metrics').insert({
-        run_type: tier || 'legacy',
+        run_type: 'universal',
         tokens_processed: results.tokensProcessed,
         blocks_scanned: results.blocksScanned,
         swaps_found: results.swapsIndexed,
@@ -864,7 +836,7 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
       lastIndexedBlock: lastProcessedBlockNumber || lastIndexedBlock,
     };
 
-    console.log(`Indexing complete (tier: ${tier || 'all'}): ${responseData.tokensProcessed} tokens processed, ${responseData.swapsIndexed} swaps, ${responseData.blocksScanned} blocks scanned in ${responseData.executionTimeMs}ms`);
+    console.log(`Indexing complete: ${responseData.tokensProcessed} tokens processed, ${responseData.swapsIndexed} swaps, ${responseData.blocksScanned} blocks scanned in ${responseData.executionTimeMs}ms`);
     console.log(`Still ${responseData.blocksBehind} blocks behind (rate: ${responseData.blockProcessingRate} blocks/sec)`);
 
     return new Response(
