@@ -124,20 +124,27 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
       const ammAddresses = tokens.map(t => t.amm_address);
       const reservesMap = await getMultipleReserves(provider, ammAddresses);
 
-      // Fetch chart data for all tokens to get accurate metadata (matches TokenDetail's useChartData)
-      // Using 100 points ensures we get reliable metadata (last_price_usd, price_24h_ago_usd, etc)
-      const chartDataMap = new Map<string, any>();
-      for (const token of tokens) {
-        const { data, error } = await supabase
-          .rpc('get_price_chart_data_optimized', {
-            p_token_address: token.token_address.toLowerCase(),
-            p_hours_back: 8760, // ALL time (matches TokenDetail)
-            p_max_points: 100 // Enough points for accurate metadata
-          });
+      // Get 24h ago snapshots for price change calculation
+      const tokenAddresses = tokens.map(t => t.token_address.toLowerCase());
+      const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
-        if (!error && data && data.length > 0) {
-          // Store the first row which contains all metadata fields
-          chartDataMap.set(token.token_address, data[0]);
+      const { data: oldSnapshots } = await supabase
+        .from('price_snapshots')
+        .select('token_address, price_eth, eth_price_usd')
+        .in('token_address', tokenAddresses)
+        .lte('created_at', twentyFourHoursAgo)
+        .order('created_at', { ascending: false });
+
+      // Create map of token -> 24h ago snapshot (first one after filtering)
+      const oldSnapshotMap = new Map<string, { price_eth: string; eth_price_usd: string }>();
+      if (oldSnapshots) {
+        for (const snap of oldSnapshots) {
+          if (!oldSnapshotMap.has(snap.token_address)) {
+            oldSnapshotMap.set(snap.token_address, {
+              price_eth: snap.price_eth,
+              eth_price_usd: snap.eth_price_usd
+            });
+          }
         }
       }
 
@@ -145,33 +152,21 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
 
       for (const token of tokens) {
         const reserves = reservesMap.get(token.amm_address);
-        const chartData = chartDataMap.get(token.token_address);
 
-        // This matches TokenDetail's calculateTokenPriceUSD() exactly
+        // Calculate current price (matches TokenDetail Priority 1)
         const calculateCurrentPrice = (): number => {
-          // Priority 1: Use live reserves from blockchain (most accurate, real-time)
           if (reserves) {
             const ethReserve = parseFloat(reserves.reserveETH);
             const tokenReserve = parseFloat(reserves.reserveToken);
-
             if (tokenReserve === 0) return 0;
-
             const priceInEth = ethReserve / tokenReserve;
             return priceInEth * ethPriceUSD;
           }
 
-          // Priority 2: Use chart price from database (matches TokenDetail line 216)
-          if (chartData) {
-            const chartPrice = parseFloat(chartData.last_price_usd || '0');
-            if (chartPrice > 0) return chartPrice;
-          }
-
-          // Priority 3: Fallback to stored reserves
+          // Fallback to stored reserves
           const ethReserve = parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
           const tokenReserve = parseFloat(token.current_token_reserve?.toString() || '1000000');
-
           if (tokenReserve === 0) return 0;
-
           const priceInEth = ethReserve / tokenReserve;
           return priceInEth * ethPriceUSD;
         };
@@ -180,30 +175,31 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
         const TOKEN_TOTAL_SUPPLY = 1000000;
         const marketCap = currentPriceUSD * TOKEN_TOTAL_SUPPLY;
 
-        // Match TokenDetail's liquidity calculation exactly (line 420)
         const liquidityETH = reserves?.reserveETH || token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString();
 
         const now = Date.now();
         const createdAt = new Date(token.created_at);
-        const twentyFourHoursAgo = new Date(now - 24 * 60 * 60 * 1000);
-        const isNew = createdAt > twentyFourHoursAgo;
+        const twentyFourHoursAgoTime = new Date(now - 24 * 60 * 60 * 1000);
+        const isNew = createdAt > twentyFourHoursAgoTime;
 
-        // Calculate price change from chart metadata (matches useChartData logic lines 116-133)
+        // Calculate price change
         let priceChange: number | null = null;
-        if (chartData) {
-          const launchPriceUsd = parseFloat(chartData.launch_price_usd || '0');
-          const price24hAgoUsd = parseFloat(chartData.price_24h_ago_usd || '0');
-          const lastPriceUsd = parseFloat(chartData.last_price_usd || '0');
 
-          if (isNew) {
-            // For tokens < 24 hours old, show price change since launch
-            if (launchPriceUsd > 0 && lastPriceUsd > 0) {
-              priceChange = ((lastPriceUsd - launchPriceUsd) / launchPriceUsd) * 100;
+        if (isNew) {
+          // For new tokens, calculate change since launch
+          if (token.launch_price && token.launch_eth_price) {
+            const launchPriceUSD = parseFloat(token.launch_price) * parseFloat(token.launch_eth_price);
+            if (launchPriceUSD > 0 && currentPriceUSD > 0) {
+              priceChange = ((currentPriceUSD - launchPriceUSD) / launchPriceUSD) * 100;
             }
-          } else {
-            // For tokens >= 24 hours old, show 24-hour price change
-            if (price24hAgoUsd > 0 && lastPriceUsd > 0) {
-              priceChange = ((lastPriceUsd - price24hAgoUsd) / price24hAgoUsd) * 100;
+          }
+        } else {
+          // For older tokens, calculate 24h change
+          const oldSnapshot = oldSnapshotMap.get(token.token_address.toLowerCase());
+          if (oldSnapshot) {
+            const oldPriceUSD = parseFloat(oldSnapshot.price_eth) * parseFloat(oldSnapshot.eth_price_usd);
+            if (oldPriceUSD > 0 && currentPriceUSD > 0) {
+              priceChange = ((currentPriceUSD - oldPriceUSD) / oldPriceUSD) * 100;
             }
           }
         }
