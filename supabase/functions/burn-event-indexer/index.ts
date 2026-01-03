@@ -18,6 +18,7 @@ const RPC_PROVIDERS = [
 ];
 
 const MAX_EXECUTION_TIME_MS = 23000;
+const PARALLEL_TOKEN_LIMIT = 10;
 
 let currentProviderIndex = 0;
 
@@ -26,6 +27,13 @@ function getProvider(): ethers.JsonRpcProvider {
   currentProviderIndex = (currentProviderIndex + 1) % RPC_PROVIDERS.length;
   return new ethers.JsonRpcProvider(url);
 }
+
+interface TokenPriceCache {
+  tokenPriceEth: number;
+  ethPriceUsd: number;
+}
+
+const priceCache = new Map<string, TokenPriceCache>();
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -62,21 +70,8 @@ Deno.serve(async (req: Request) => {
     let processedCount = 0;
     let errorCount = 0;
 
-    // Process each token
-    for (const token of tokens) {
-      if (Date.now() - startTime > MAX_EXECUTION_TIME_MS) {
-        break;
-      }
-
+    const processToken = async (token: any) => {
       try {
-        // Get token creation block
-        const { data: tokenData } = await supabase
-          .from("tokens")
-          .select("block_number")
-          .eq("token_address", token.token_address.toLowerCase())
-          .maybeSingle();
-
-        // Get current balance of dead address for this token
         const tokenContract = new ethers.Contract(
           token.token_address,
           [
@@ -88,36 +83,39 @@ Deno.serve(async (req: Request) => {
 
         const burnedBalance = await tokenContract.balanceOf(BURN_ADDRESS);
 
-        // Get current token price from most recent price snapshot
-        const { data: priceData } = await supabase
-          .from("price_snapshots")
-          .select("price_eth, eth_price_usd")
-          .eq("token_address", token.token_address.toLowerCase())
-          .order("block_number", { ascending: false })
-          .limit(1);
+        let tokenPriceEth: number;
+        let ethPriceUsd: number;
 
-        // Skip if we don't have price data
-        if (!priceData || priceData.length === 0) {
-          console.log(`No price data found for token ${token.token_address}`);
-          continue;
+        const cached = priceCache.get(token.token_address.toLowerCase());
+        if (cached) {
+          tokenPriceEth = cached.tokenPriceEth;
+          ethPriceUsd = cached.ethPriceUsd;
+        } else {
+          const { data: priceData } = await supabase
+            .from("price_snapshots")
+            .select("price_eth, eth_price_usd")
+            .eq("token_address", token.token_address.toLowerCase())
+            .order("block_number", { ascending: false })
+            .limit(1);
+
+          if (!priceData || priceData.length === 0) {
+            console.log(`No price data found for token ${token.token_address}`);
+            return { success: false, hasBurn: false };
+          }
+
+          tokenPriceEth = parseFloat(priceData[0].price_eth);
+          ethPriceUsd = parseFloat(priceData[0].eth_price_usd || "3000");
+
+          priceCache.set(token.token_address.toLowerCase(), { tokenPriceEth, ethPriceUsd });
         }
 
-        const tokenPriceEth = parseFloat(priceData[0].price_eth);
-        const ethPriceUsd = parseFloat(priceData[0].eth_price_usd || "3000");
-
-        // Calculate USD value using current price: burned_tokens * token_price_in_eth * eth_price_in_usd
         const burnedAmount = burnedBalance.toString();
         const burnedAmountFloat = Number(burnedBalance) / 1e18;
         const totalValueUsd = burnedAmountFloat * tokenPriceEth * ethPriceUsd;
-
-        // Calculate percent of supply burned
         const percentBurned = (Number(burnedBalance) / Number(TOKEN_SUPPLY)) * 100;
-
-        // Set burn count to 1 if there's any balance, 0 otherwise (actual event count is too slow to query)
         const burnCount = burnedBalance > 0n ? 1 : 0;
         const lastBurnTimestamp = burnedBalance > 0n ? new Date().toISOString() : null;
 
-        // Update totals
         const { error: upsertError } = await supabase
           .from("token_burn_totals")
           .upsert({
@@ -135,15 +133,30 @@ Deno.serve(async (req: Request) => {
 
         if (upsertError) {
           console.error(`Failed to update burn totals for ${token.token_address}:`, upsertError);
-          errorCount++;
-        } else {
-          if (burnCount > 0) {
-            processedCount++;
-          }
+          return { success: false, hasBurn: burnCount > 0 };
         }
+
+        return { success: true, hasBurn: burnCount > 0 };
       } catch (err) {
         console.error(`Error processing burns for token ${token.token_address}:`, err);
-        errorCount++;
+        return { success: false, hasBurn: false };
+      }
+    };
+
+    for (let i = 0; i < tokens.length; i += PARALLEL_TOKEN_LIMIT) {
+      if (Date.now() - startTime > MAX_EXECUTION_TIME_MS) {
+        break;
+      }
+
+      const batch = tokens.slice(i, i + PARALLEL_TOKEN_LIMIT);
+      const results = await Promise.all(batch.map(processToken));
+
+      for (const result of results) {
+        if (!result.success) {
+          errorCount++;
+        } else if (result.hasBurn) {
+          processedCount++;
+        }
       }
     }
 

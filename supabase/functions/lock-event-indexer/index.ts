@@ -367,63 +367,103 @@ async function processLockIndexing(req: Request): Promise<Response> {
     console.log(`Force reindex mode: ${forceReindex}`);
 
     const newLocks = [];
-    const PROCESS_BATCH_SIZE = 5;
+    const PARALLEL_BATCH_SIZE = 10;
     let processedCount = 0;
     let skippedCount = 0;
 
-    for (let i = 0; i < allLockedEvents.length; i++) {
-      const event = allLockedEvents[i];
-      try {
-        if (skipBlocks.has(event.blockNumber)) {
-          console.log(`Skipping lock event in block ${event.blockNumber} (marked as erroneous)`);
+    const uniqueTokens = new Set<string>();
+    for (const event of allLockedEvents) {
+      if (!skipBlocks.has(event.blockNumber)) {
+        const tokenAddress = event.args[2].toLowerCase();
+        uniqueTokens.add(tokenAddress);
+      }
+    }
+
+    const tokensToFetch = Array.from(uniqueTokens).filter(
+      addr => !tokenMetadataCache.has(addr)
+    );
+
+    console.log(`Pre-fetching metadata for ${tokensToFetch.length} unique tokens in parallel`);
+
+    for (let i = 0; i < tokensToFetch.length; i += PARALLEL_BATCH_SIZE) {
+      const batch = tokensToFetch.slice(i, i + PARALLEL_BATCH_SIZE);
+      await Promise.all(
+        batch.map(tokenAddr =>
+          retryWithBackoff(() => getTokenMetadata(tokenAddr, provider, supabase))
+            .catch(err => {
+              console.error(`Failed to fetch metadata for ${tokenAddr}:`, err);
+              return null;
+            })
+        )
+      );
+      await rateLimit(200);
+    }
+
+    console.log(`Processing ${allLockedEvents.length} lock events with cached metadata`);
+
+    for (let i = 0; i < allLockedEvents.length; i += PARALLEL_BATCH_SIZE) {
+      const batch = allLockedEvents.slice(i, i + PARALLEL_BATCH_SIZE);
+
+      const batchResults = await Promise.all(
+        batch.map(async (event) => {
+          try {
+            if (skipBlocks.has(event.blockNumber)) {
+              return { skipped: true };
+            }
+
+            const lockId = Number(event.args[0]);
+            const owner = event.args[1];
+            const tokenAddress = event.args[2];
+            const amount = event.args[3];
+            const unlockTime = Number(event.args[4]);
+
+            const metadata = tokenMetadataCache.get(tokenAddress.toLowerCase());
+            if (!metadata) {
+              const fetched = await retryWithBackoff(
+                () => getTokenMetadata(tokenAddress, provider, supabase)
+              );
+              return { lock: null, metadata: fetched, event, owner, tokenAddress, amount, unlockTime, lockId };
+            }
+
+            const block = await retryWithBackoff(() => provider.getBlock(event.blockNumber));
+            const lockTimestamp = block ? block.timestamp : Math.floor(Date.now() / 1000);
+            const durationDays = Math.floor((unlockTime - lockTimestamp) / 86400);
+
+            return {
+              lock: {
+                lock_id: lockId,
+                user_address: owner.toLowerCase(),
+                token_address: tokenAddress.toLowerCase(),
+                token_symbol: metadata.symbol,
+                token_name: metadata.name,
+                token_decimals: metadata.decimals,
+                amount_locked: amount.toString(),
+                lock_duration_days: durationDays,
+                lock_timestamp: new Date(lockTimestamp * 1000).toISOString(),
+                unlock_timestamp: new Date(unlockTime * 1000).toISOString(),
+                is_withdrawn: false,
+                tx_hash: event.transactionHash,
+                block_number: event.blockNumber,
+              }
+            };
+          } catch (err: any) {
+            console.error(`Error processing lock event ${Number(event.args[0])}:`, err);
+            return { error: err.message };
+          }
+        })
+      );
+
+      for (const result of batchResults) {
+        if (result.skipped) {
           skippedCount++;
-          continue;
-        }
-
-        const lockId = Number(event.args[0]);
-
-        const owner = event.args[1];
-        const tokenAddress = event.args[2];
-        const amount = event.args[3];
-        const unlockTime = Number(event.args[4]);
-
-        const cachedMetadata = tokenMetadataCache.get(tokenAddress.toLowerCase());
-        const needsMetadataFetch = !cachedMetadata;
-
-        const { name, symbol, decimals } = await retryWithBackoff(
-          () => getTokenMetadata(tokenAddress, provider, supabase)
-        );
-
-        if (needsMetadataFetch) {
-          await rateLimit(100);
-        }
-
-        const block = await retryWithBackoff(() => provider.getBlock(event.blockNumber));
-        const lockTimestamp = block ? block.timestamp : Math.floor(Date.now() / 1000);
-        const durationDays = Math.floor((unlockTime - lockTimestamp) / 86400);
-
-        newLocks.push({
-          lock_id: lockId,
-          user_address: owner.toLowerCase(),
-          token_address: tokenAddress.toLowerCase(),
-          token_symbol: symbol,
-          token_name: name,
-          token_decimals: decimals,
-          amount_locked: amount.toString(),
-          lock_duration_days: durationDays,
-          lock_timestamp: new Date(lockTimestamp * 1000).toISOString(),
-          unlock_timestamp: new Date(unlockTime * 1000).toISOString(),
-          is_withdrawn: false,
-          tx_hash: event.transactionHash,
-          block_number: event.blockNumber,
-        });
-        processedCount++;
-      } catch (err: any) {
-        console.error(`Error processing lock event ${Number(event.args[0])}:`, err);
-
-        if (err?.message?.includes('429') || err?.message?.includes('rate limit')) {
-          console.log('Rate limit hit, waiting 10 seconds before continuing...');
-          await rateLimit(10000);
+        } else if (result.lock) {
+          newLocks.push(result.lock);
+          processedCount++;
+        } else if (result.error) {
+          if (result.error.includes('429') || result.error.includes('rate limit')) {
+            console.log('Rate limit hit, waiting 5 seconds before continuing...');
+            await rateLimit(5000);
+          }
         }
       }
     }

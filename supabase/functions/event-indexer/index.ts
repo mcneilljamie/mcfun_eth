@@ -30,8 +30,8 @@ const RPC_PROVIDERS = [
 const MIN_BLOCK_RANGE = 100;
 const MAX_BLOCK_RANGE = 2000;
 const MAX_EXECUTION_TIME_MS = 55000;
-const PARALLEL_TOKEN_LIMIT = 8;
-const BATCH_SIZE = 100;
+const PARALLEL_TOKEN_LIMIT = 15;
+const BATCH_SIZE = 150;
 
 function calculateBlockRange(blocksBehind: number): number {
   if (blocksBehind > 10000) {
@@ -335,36 +335,44 @@ async function processTokenSwaps(
 
     const swapsToInsert: any[] = [];
     const uniqueBlocks = new Set<number>();
+    const SWAP_PROCESS_BATCH = 20;
 
-    for (const event of events) {
+    for (let i = 0; i < events.length; i += SWAP_PROCESS_BATCH) {
       if (Date.now() - startTime > MAX_EXECUTION_TIME_MS) {
         timedOut = true;
         break;
       }
 
-      if (skipBlocks.has(event.blockNumber)) {
-        console.log(`Skipping swap event in block ${event.blockNumber} (marked as erroneous)`);
-        continue;
-      }
+      const batch = events.slice(i, i + SWAP_PROCESS_BATCH);
+      const batchSwaps = await Promise.all(
+        batch.map(async (event) => {
+          if (skipBlocks.has(event.blockNumber)) {
+            console.log(`Skipping swap event in block ${event.blockNumber} (marked as erroneous)`);
+            return null;
+          }
 
-      const args = event.args!;
-      uniqueBlocks.add(event.blockNumber);
+          const args = event.args!;
+          uniqueBlocks.add(event.blockNumber);
 
-      const block = await blockCache.getBlock(provider, event.blockNumber);
+          const block = await blockCache.getBlock(provider, event.blockNumber);
 
-      swapsToInsert.push({
-        token_address: token.token_address,
-        amm_address: token.amm_address,
-        user_address: args.user.toLowerCase(),
-        eth_in: ethers.formatEther(args.ethIn),
-        token_in: ethers.formatEther(args.tokenIn),
-        eth_out: ethers.formatEther(args.ethOut),
-        token_out: ethers.formatEther(args.tokenOut),
-        tx_hash: event.transactionHash,
-        created_at: new Date(block.timestamp * 1000).toISOString(),
-        block_number: block.number,
-        block_hash: block.hash,
-      });
+          return {
+            token_address: token.token_address,
+            amm_address: token.amm_address,
+            user_address: args.user.toLowerCase(),
+            eth_in: ethers.formatEther(args.ethIn),
+            token_in: ethers.formatEther(args.tokenIn),
+            eth_out: ethers.formatEther(args.ethOut),
+            token_out: ethers.formatEther(args.tokenOut),
+            tx_hash: event.transactionHash,
+            created_at: new Date(block.timestamp * 1000).toISOString(),
+            block_number: block.number,
+            block_hash: block.hash,
+          };
+        })
+      );
+
+      swapsToInsert.push(...batchSwaps.filter(swap => swap !== null));
     }
 
     if (swapsToInsert.length > 0) {
