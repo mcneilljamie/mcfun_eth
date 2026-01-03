@@ -1,11 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Trophy, Search, TrendingUp, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { JsonRpcProvider } from 'ethers';
 import { supabase, Token } from '../lib/supabase';
 import { formatCurrency, formatTimeAgo, formatUSD } from '../lib/utils';
 import { getEthPriceUSD } from '../lib/ethPrice';
 import { useWeb3 } from '../lib/web3';
 import { ToastMessage } from '../App';
+import { DEFAULT_CHAIN_ID } from '../contracts/addresses';
 
 interface TokensProps {
   onSelectToken: (token: Token) => void;
@@ -34,6 +36,13 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   const [isUpdating, setIsUpdating] = useState(false);
   const TOKENS_PER_PAGE = 1000;
 
+  const readOnlyProvider = useMemo(() => {
+    const rpcUrl = DEFAULT_CHAIN_ID === 11155111
+      ? import.meta.env.VITE_SEPOLIA_RPC_URL || 'https://ethereum-sepolia-rpc.publicnode.com'
+      : import.meta.env.VITE_MAINNET_RPC_URL || 'https://eth.llamarpc.com';
+    return new JsonRpcProvider(rpcUrl);
+  }, []);
+
   useEffect(() => {
     loadTokens();
     loadEthPrice();
@@ -54,7 +63,9 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   }, []);
 
   useEffect(() => {
-    if (tokens.length > 0 && provider && ethPriceUSD > 0) {
+    const activeProvider = provider || readOnlyProvider;
+
+    if (tokens.length > 0 && activeProvider && ethPriceUSD > 0) {
       loadTokenData();
       const dataInterval = setInterval(loadTokenData, 60000);
 
@@ -67,14 +78,14 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
         }
       };
 
-      provider.on('block', blockListener);
+      activeProvider.on('block', blockListener);
 
       return () => {
         clearInterval(dataInterval);
-        provider.off('block', blockListener);
+        activeProvider.off('block', blockListener);
       };
     }
-  }, [tokens, provider, ethPriceUSD]);
+  }, [tokens, provider, readOnlyProvider, ethPriceUSD]);
 
   const loadEthPrice = async () => {
     const price = await getEthPriceUSD();
@@ -133,14 +144,15 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   };
 
   const loadTokenData = async () => {
-    if (!provider || tokens.length === 0 || ethPriceUSD === 0 || isUpdating) return;
+    const activeProvider = provider || readOnlyProvider;
+    if (!activeProvider || tokens.length === 0 || ethPriceUSD === 0 || isUpdating) return;
 
     setIsUpdating(true);
 
     try {
       const { getMultipleReserves } = await import('../lib/multicall');
       const ammAddresses = tokens.map(t => t.amm_address);
-      const reservesMap = await getMultipleReserves(provider, ammAddresses);
+      const reservesMap = await getMultipleReserves(activeProvider, ammAddresses);
 
       const newTokenData: Record<string, TokenEnrichedData> = {};
 
