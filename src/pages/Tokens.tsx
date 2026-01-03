@@ -31,6 +31,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
   const [tokenDataMap, setTokenDataMap] = useState<Record<string, TokenEnrichedData>>({});
   const [currentPage, setCurrentPage] = useState(1);
+  const [isUpdating, setIsUpdating] = useState(false);
   const TOKENS_PER_PAGE = 1000;
 
   useEffect(() => {
@@ -39,24 +40,44 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
 
     const ethPriceInterval = setInterval(loadEthPrice, 60000);
 
-    const subscription = supabase
+    const tokensSubscription = supabase
       .channel('tokens-channel')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'tokens' }, () => {
         loadTokens();
       })
       .subscribe();
 
+    const swapsSubscription = supabase
+      .channel('swaps-channel')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'swaps' }, () => {
+        if (provider && tokens.length > 0 && ethPriceUSD > 0) {
+          loadTokenData();
+        }
+      })
+      .subscribe();
+
     return () => {
       clearInterval(ethPriceInterval);
-      subscription.unsubscribe();
+      tokensSubscription.unsubscribe();
+      swapsSubscription.unsubscribe();
     };
-  }, []);
+  }, [provider, tokens.length, ethPriceUSD]);
 
   useEffect(() => {
     if (tokens.length > 0 && provider && ethPriceUSD > 0) {
       loadTokenData();
       const dataInterval = setInterval(loadTokenData, 10000);
-      return () => clearInterval(dataInterval);
+
+      const blockListener = () => {
+        loadTokenData();
+      };
+
+      provider.on('block', blockListener);
+
+      return () => {
+        clearInterval(dataInterval);
+        provider.off('block', blockListener);
+      };
     }
   }, [tokens, provider, ethPriceUSD]);
 
@@ -117,7 +138,9 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   };
 
   const loadTokenData = async () => {
-    if (!provider || tokens.length === 0 || ethPriceUSD === 0) return;
+    if (!provider || tokens.length === 0 || ethPriceUSD === 0 || isUpdating) return;
+
+    setIsUpdating(true);
 
     try {
       const { getMultipleReserves } = await import('../lib/multicall');
@@ -130,17 +153,17 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
         const reserves = reservesMap.get(token.amm_address);
 
         const calculateCurrentPrice = (): number => {
-          if (reserves) {
+          if (reserves && reserves.reserveETH && reserves.reserveToken) {
             const ethReserve = parseFloat(reserves.reserveETH);
             const tokenReserve = parseFloat(reserves.reserveToken);
-            if (tokenReserve === 0) return 0;
+            if (tokenReserve === 0 || isNaN(ethReserve) || isNaN(tokenReserve)) return 0;
             const priceInEth = ethReserve / tokenReserve;
             return priceInEth * ethPriceUSD;
           }
 
           const ethReserve = parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
           const tokenReserve = parseFloat(token.current_token_reserve?.toString() || '1000000');
-          if (tokenReserve === 0) return 0;
+          if (tokenReserve === 0 || isNaN(ethReserve) || isNaN(tokenReserve)) return 0;
           const priceInEth = ethReserve / tokenReserve;
           return priceInEth * ethPriceUSD;
         };
@@ -179,6 +202,8 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
       setTokenDataMap(newTokenData);
     } catch (err) {
       console.error('Failed to load token data:', err);
+    } finally {
+      setIsUpdating(false);
     }
   };
 

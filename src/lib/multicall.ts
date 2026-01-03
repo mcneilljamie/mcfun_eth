@@ -45,6 +45,10 @@ export async function getMultipleReserves(
   provider: Provider,
   ammAddresses: string[]
 ): Promise<Map<string, { reserveETH: string; reserveToken: string } | null>> {
+  if (ammAddresses.length === 0) {
+    return new Map();
+  }
+
   const ammInterface = new Interface([
     'function getReserves() view returns (uint112 reserveETH, uint112 reserveToken)',
   ]);
@@ -60,17 +64,27 @@ export async function getMultipleReserves(
   results.forEach((result, index) => {
     const ammAddress = ammAddresses[index];
 
-    if (result.success && result.returnData !== '0x') {
+    if (result.success && result.returnData && result.returnData !== '0x') {
       try {
         const decoded = ammInterface.decodeFunctionResult('getReserves', result.returnData);
-        const reserveETH = decoded[0].toString();
-        const reserveToken = decoded[1].toString();
+        const reserveETH = decoded[0];
+        const reserveToken = decoded[1];
 
-        // Convert from wei to ether
-        reservesMap.set(ammAddress, {
-          reserveETH: (Number(reserveETH) / 1e18).toString(),
-          reserveToken: (Number(reserveToken) / 1e18).toString(),
-        });
+        if (reserveETH && reserveToken) {
+          const ethValue = Number(reserveETH) / 1e18;
+          const tokenValue = Number(reserveToken) / 1e18;
+
+          if (!isNaN(ethValue) && !isNaN(tokenValue) && ethValue > 0 && tokenValue > 0) {
+            reservesMap.set(ammAddress, {
+              reserveETH: ethValue.toString(),
+              reserveToken: tokenValue.toString(),
+            });
+          } else {
+            reservesMap.set(ammAddress, null);
+          }
+        } else {
+          reservesMap.set(ammAddress, null);
+        }
       } catch (error) {
         console.error(`Failed to decode reserves for ${ammAddress}:`, error);
         reservesMap.set(ammAddress, null);
