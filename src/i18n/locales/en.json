@@ -168,6 +168,8 @@
     "rankBy": "Rank by",
     "marketCap": "Market Cap",
     "liquidity": "Liquidity",
+    "ageNewest": "Newest",
+    "ageOldest": "Oldest",
     "table": {
       "rank": "#",
       "token": "Token",

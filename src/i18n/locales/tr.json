@@ -169,6 +169,8 @@
     "rankBy": "Sıralama",
     "marketCap": "Piyasa Değeri",
     "liquidity": "Likidite",
+    "ageNewest": "En Yeni",
+    "ageOldest": "En Eski",
     "table": {
       "rank": "#",
       "token": "Token",

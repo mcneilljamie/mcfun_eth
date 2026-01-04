@@ -169,6 +169,8 @@
     "rankBy": "Xếp hạng theo",
     "marketCap": "Vốn Hóa Thị Trường",
     "liquidity": "Thanh Khoản",
+    "ageNewest": "Mới Nhất",
+    "ageOldest": "Cũ Nhất",
     "table": {
       "rank": "#",
       "token": "Token",

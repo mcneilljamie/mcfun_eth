@@ -169,6 +169,8 @@
     "rankBy": "Classer par",
     "marketCap": "Capitalisation Boursière",
     "liquidity": "Liquidité",
+    "ageNewest": "Plus Récent",
+    "ageOldest": "Plus Ancien",
     "table": {
       "rank": "#",
       "token": "Token",

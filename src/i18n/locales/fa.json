@@ -169,6 +169,8 @@
     "rankBy": "رتبه‌بندی بر اساس",
     "marketCap": "ارزش بازار",
     "liquidity": "نقدینگی",
+    "ageNewest": "جدیدترین",
+    "ageOldest": "قدیمی‌ترین",
     "table": {
       "rank": "#",
       "token": "توکن",

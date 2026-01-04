@@ -169,6 +169,8 @@
     "rankBy": "排序方式",
     "marketCap": "市值",
     "liquidity": "流动性",
+    "ageNewest": "最新",
+    "ageOldest": "最旧",
     "table": {
       "rank": "#",
       "token": "代币",

@@ -34,7 +34,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   const [tokenDataMap, setTokenDataMap] = useState<Record<string, TokenEnrichedData>>({});
   const [currentPage, setCurrentPage] = useState(1);
   const [isUpdating, setIsUpdating] = useState(false);
-  const [sortBy, setSortBy] = useState<'marketCap' | 'liquidity'>('marketCap');
+  const [sortBy, setSortBy] = useState<'marketCap' | 'liquidity' | 'age-newest' | 'age-oldest'>('marketCap');
   const TOKENS_PER_PAGE = 10;
 
   const readOnlyProvider = useMemo(() => {
@@ -114,10 +114,18 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
         const aMarketCap = aData?.marketCap || 0;
         const bMarketCap = bData?.marketCap || 0;
         return bMarketCap - aMarketCap;
-      } else {
+      } else if (sortBy === 'liquidity') {
         const aLiquidity = parseFloat(aData?.liquidityETH || '0');
         const bLiquidity = parseFloat(bData?.liquidityETH || '0');
         return bLiquidity - aLiquidity;
+      } else if (sortBy === 'age-newest') {
+        const aTime = new Date(a.created_at).getTime();
+        const bTime = new Date(b.created_at).getTime();
+        return bTime - aTime;
+      } else {
+        const aTime = new Date(a.created_at).getTime();
+        const bTime = new Date(b.created_at).getTime();
+        return aTime - bTime;
       }
     });
 
@@ -258,12 +266,12 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
               </div>
             </div>
 
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="text-sm font-medium text-gray-700">{t('tokens.rankBy')}:</span>
-              <div className="inline-flex rounded-lg border border-gray-300 bg-white p-1">
+              <div className="inline-flex rounded-lg border border-gray-300 bg-white p-1 flex-wrap">
                 <button
                   onClick={() => setSortBy('marketCap')}
-                  className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all whitespace-nowrap ${
                     sortBy === 'marketCap'
                       ? 'bg-gray-900 text-white shadow-sm'
                       : 'text-gray-700 hover:text-gray-900'
@@ -273,13 +281,33 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                 </button>
                 <button
                   onClick={() => setSortBy('liquidity')}
-                  className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all whitespace-nowrap ${
                     sortBy === 'liquidity'
                       ? 'bg-gray-900 text-white shadow-sm'
                       : 'text-gray-700 hover:text-gray-900'
                   }`}
                 >
                   {t('tokens.liquidity')}
+                </button>
+                <button
+                  onClick={() => setSortBy('age-newest')}
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all whitespace-nowrap ${
+                    sortBy === 'age-newest'
+                      ? 'bg-gray-900 text-white shadow-sm'
+                      : 'text-gray-700 hover:text-gray-900'
+                  }`}
+                >
+                  {t('tokens.ageNewest')}
+                </button>
+                <button
+                  onClick={() => setSortBy('age-oldest')}
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all whitespace-nowrap ${
+                    sortBy === 'age-oldest'
+                      ? 'bg-gray-900 text-white shadow-sm'
+                      : 'text-gray-700 hover:text-gray-900'
+                  }`}
+                >
+                  {t('tokens.ageOldest')}
                 </button>
               </div>
             </div>

@@ -169,6 +169,8 @@
     "rankBy": "ترتيب حسب",
     "marketCap": "القيمة السوقية",
     "liquidity": "السيولة",
+    "ageNewest": "الأحدث",
+    "ageOldest": "الأقدم",
     "table": {
       "rank": "#",
       "token": "رمز",

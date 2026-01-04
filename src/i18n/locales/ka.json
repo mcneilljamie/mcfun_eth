@@ -169,6 +169,8 @@
     "rankBy": "რანჟირება",
     "marketCap": "საბაზრო კაპიტალიზაცია",
     "liquidity": "ლიკვიდურობა",
+    "ageNewest": "უახლესი",
+    "ageOldest": "უძველესი",
     "table": {
       "rank": "#",
       "token": "ტოკენი",

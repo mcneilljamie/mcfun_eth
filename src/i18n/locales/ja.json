@@ -169,6 +169,8 @@
     "rankBy": "並べ替え",
     "marketCap": "時価総額",
     "liquidity": "流動性",
+    "ageNewest": "新しい順",
+    "ageOldest": "古い順",
     "table": {
       "rank": "#",
       "token": "トークン",

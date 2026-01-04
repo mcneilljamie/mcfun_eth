@@ -169,6 +169,8 @@
     "rankBy": "रैंकिंग के आधार",
     "marketCap": "मार्केट कैप",
     "liquidity": "लिक्विडिटी",
+    "ageNewest": "नवीनतम",
+    "ageOldest": "सबसे पुराना",
     "table": {
       "rank": "#",
       "token": "टोकन",

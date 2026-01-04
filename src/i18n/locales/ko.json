@@ -169,6 +169,8 @@
     "rankBy": "정렬 기준",
     "marketCap": "시가총액",
     "liquidity": "유동성",
+    "ageNewest": "최신순",
+    "ageOldest": "오래된순",
     "table": {
       "rank": "#",
       "token": "토큰",

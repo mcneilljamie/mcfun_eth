@@ -169,6 +169,8 @@
     "rankBy": "Urutkan berdasarkan",
     "marketCap": "Kapitalisasi Pasar",
     "liquidity": "Likuiditas",
+    "ageNewest": "Terbaru",
+    "ageOldest": "Terlama",
     "table": {
       "rank": "#",
       "token": "Token",
