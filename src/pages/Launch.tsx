@@ -158,81 +158,49 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
       setLiquidityPercent(RECOMMENDED_LIQUIDITY_PERCENT);
       setEthAmount(MIN_LIQUIDITY_ETH);
 
-      // Handle database writes in background (non-blocking, with retry logic)
+      // Register token through secure validation endpoint (non-blocking)
       (async () => {
         try {
-          const { supabase } = await import('../lib/supabase');
-          const { getEthPriceUSD } = await import('../lib/ethPrice');
+          const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+          const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-          const tokenReserve = ((TOTAL_SUPPLY * liquidityPercent) / 100).toString();
-          const ethReserve = ethAmount;
+          const registrationData = {
+            txHash: result.txHash,
+            tokenAddress: normalizedTokenAddress,
+            ammAddress: normalizedAmmAddress,
+            name: name.trim(),
+            symbol: symbol.trim().toUpperCase(),
+            website: website.trim() || undefined,
+            telegramUrl: telegramUrl.trim() || undefined,
+            discordUrl: discordUrl.trim() || undefined,
+            xUrl: xUrl.trim() || undefined,
+          };
 
-          // Try to write token data with exponential backoff
-          let retries = 0;
-          const maxRetries = 3;
-          while (retries < maxRetries) {
-            try {
-              await supabase
-                .from('tokens')
-                .upsert({
-                  token_address: normalizedTokenAddress,
-                  amm_address: normalizedAmmAddress,
-                  name: name.trim(),
-                  symbol: symbol.trim().toUpperCase(),
-                  creator_address: account.toLowerCase(),
-                  liquidity_percent: liquidityPercent,
-                  initial_liquidity_eth: ethAmount,
-                  current_eth_reserve: ethReserve,
-                  current_token_reserve: tokenReserve,
-                  total_volume_eth: '0',
-                  website: website.trim() || null,
-                  telegram_url: telegramUrl.trim() || null,
-                  discord_url: discordUrl.trim() || null,
-                  x_url: xUrl.trim() || null,
-                  created_at: new Date().toISOString(),
-                  block_number: result.blockNumber,
-                  block_hash: result.blockHash,
-                }, {
-                  onConflict: 'token_address',
-                });
-              break;
-            } catch (dbError) {
-              retries++;
-              if (retries >= maxRetries) {
-                console.error('Failed to write token data after retries:', dbError);
-                // Store in localStorage for later retry
-                const failedWrites = JSON.parse(localStorage.getItem('failedTokenWrites') || '[]');
-                failedWrites.push({
-                  tokenAddress: normalizedTokenAddress,
-                  timestamp: Date.now(),
-                  data: { normalizedTokenAddress, normalizedAmmAddress, name: name.trim(), symbol: symbol.trim().toUpperCase() }
-                });
-                localStorage.setItem('failedTokenWrites', JSON.stringify(failedWrites));
-              } else {
-                await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, retries)));
-              }
-            }
-          }
+          console.log('Registering token through validation endpoint:', registrationData);
 
-          // Try to write price snapshot
-          try {
-            const priceEth = parseFloat(ethReserve) / parseFloat(tokenReserve);
-            const ethPriceUsd = await getEthPriceUSD();
+          const response = await fetch(`${supabaseUrl}/functions/v1/register-token-launch`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${supabaseAnonKey}`,
+            },
+            body: JSON.stringify(registrationData),
+          });
 
-            await supabase
-              .from('price_snapshots')
-              .insert({
-                token_address: normalizedTokenAddress,
-                price_eth: priceEth.toString(),
-                eth_reserve: ethReserve,
-                token_reserve: tokenReserve,
-                eth_price_usd: ethPriceUsd.toString(),
-              });
-          } catch (snapshotError) {
-            console.error('Failed to create price snapshot:', snapshotError);
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+            console.error('Token registration validation failed:', errorData);
+
+            // Log the error but don't interrupt user experience
+            // The event indexer will pick it up as a backup
+            console.warn('Token will be indexed by the event indexer as backup');
+          } else {
+            const result = await response.json();
+            console.log('Token successfully registered and validated:', result);
           }
         } catch (bgError) {
-          console.error('Background database write failed:', bgError);
+          console.error('Token registration request failed:', bgError);
+          console.warn('Token will be indexed by the event indexer as backup');
         }
       })();
     } catch (err: any) {
