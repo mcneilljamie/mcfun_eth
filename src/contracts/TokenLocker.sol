@@ -23,8 +23,10 @@ contract TokenLocker {
     address public immutable mcFunFactory;
     mapping(uint256 => Lock) public locks;
     uint256 public nextLockId;
+    uint256 public constant MIN_LOCK_AMOUNT = 1000 * 10**18;
 
     error NotMcFunToken();
+    error BelowMinimumLockAmount();
 
     constructor(address _mcFunFactory) {
         require(_mcFunFactory != address(0), "Invalid factory address");
@@ -53,6 +55,7 @@ contract TokenLocker {
     ) external returns (uint256) {
         require(tokenAddress != address(0), "Invalid token address");
         require(amount > 0, "Amount must be greater than 0");
+        if (amount < MIN_LOCK_AMOUNT) revert BelowMinimumLockAmount();
         require(durationDays > 0, "Duration must be at least 1 day");
 
         // Verify token was created through McFun factory

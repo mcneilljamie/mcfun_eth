@@ -77,6 +77,7 @@ export function Lock({ onShowToast }: LockPageProps) {
   const [showTokenDropdown, setShowTokenDropdown] = useState(false);
   const [popularTokens, setPopularTokens] = useState<Array<{ token_address: string; name: string; symbol: string; current_eth_reserve: number; current_token_reserve: number; total_volume_eth: number }>>([]);
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
+  const [minLockAmount, setMinLockAmount] = useState<string>('1000');
 
   const [celebration, setCelebration] = useState<{
     lockId: number;
@@ -130,6 +131,21 @@ export function Lock({ onShowToast }: LockPageProps) {
       tokensSubscription.unsubscribe();
     };
   }, [urlTokenAddress]);
+
+  useEffect(() => {
+    const fetchMinLockAmount = async () => {
+      if (!provider || !chainId) return;
+      try {
+        const lockerAddress = getLockerAddress(chainId);
+        const lockerContract = new ethers.Contract(lockerAddress, TOKEN_LOCKER_ABI, provider);
+        const minAmount = await lockerContract.MIN_LOCK_AMOUNT();
+        setMinLockAmount(ethers.formatUnits(minAmount, 18));
+      } catch (err) {
+        console.error('Failed to fetch MIN_LOCK_AMOUNT:', err);
+      }
+    };
+    fetchMinLockAmount();
+  }, [provider, chainId]);
 
   useEffect(() => {
     if (urlTokenAddress) {
@@ -423,10 +439,19 @@ export function Lock({ onShowToast }: LockPageProps) {
 
     const amountNum = parseFloat(amount);
     const durationNum = parseInt(duration);
+    const minLockAmountNum = parseFloat(minLockAmount);
 
     if (amountNum <= 0 || durationNum <= 0 || !Number.isInteger(parseFloat(duration))) {
       onShowToast({
         message: t('lock.errors.invalidInput'),
+        type: 'error',
+      });
+      return;
+    }
+
+    if (amountNum < minLockAmountNum) {
+      onShowToast({
+        message: t('lock.errors.belowMinimumLock', { minimum: formatNumberWithCommas(minLockAmount, 0) }),
         type: 'error',
       });
       return;
@@ -496,7 +521,11 @@ export function Lock({ onShowToast }: LockPageProps) {
 
       let errorMessage = t('lock.errors.lockFailed');
 
-      if (err.message?.includes('NotMcFunToken') ||
+      if (err.message?.includes('BelowMinimumLockAmount') ||
+          err.data?.message?.includes('BelowMinimumLockAmount') ||
+          err.error?.message?.includes('BelowMinimumLockAmount')) {
+        errorMessage = t('lock.errors.belowMinimumLock', { minimum: formatNumberWithCommas(minLockAmount, 0) });
+      } else if (err.message?.includes('NotMcFunToken') ||
           err.data?.message?.includes('NotMcFunToken') ||
           err.error?.message?.includes('NotMcFunToken')) {
         errorMessage = t('lock.errors.notMcFunToken');
@@ -1026,6 +1055,9 @@ export function Lock({ onShowToast }: LockPageProps) {
                     disabled={!tokenInfo}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
                   />
+                  <div className="mt-1 text-sm text-gray-500">
+                    {t('lock.minimumAmount')}: {formatNumberWithCommas(minLockAmount, 0)} tokens
+                  </div>
                 </div>
 
                 <div>

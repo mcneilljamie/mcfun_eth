@@ -48,7 +48,9 @@ export const TOKEN_LOCKER_ABI = [
   "function mcFunFactory() external view returns (address)",
   "function locks(uint256 lockId) external view returns (address owner, address tokenAddress, uint256 amount, uint256 unlockTime, bool withdrawn)",
   "function nextLockId() external view returns (uint256)",
+  "function MIN_LOCK_AMOUNT() external view returns (uint256)",
   "event TokensLocked(uint256 indexed lockId, address indexed owner, address indexed tokenAddress, uint256 amount, uint256 unlockTime)",
   "event TokensUnlocked(uint256 indexed lockId, address indexed owner, address indexed tokenAddress, uint256 amount)",
-  "error NotMcFunToken()"
+  "error NotMcFunToken()",
+  "error BelowMinimumLockAmount()"
 ];
