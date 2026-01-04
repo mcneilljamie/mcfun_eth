@@ -18,16 +18,8 @@ export interface AuthResult {
  */
 export function verifyCronSecret(req: Request): AuthResult {
   const expectedSecret = Deno.env.get("CRON_SECRET");
-
-  // If no secret is configured, fail closed (deny access)
-  if (!expectedSecret) {
-    console.error("CRON_SECRET not configured - denying access");
-    return {
-      authorized: false,
-      error: "Authentication not configured",
-      statusCode: 500,
-    };
-  }
+  const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
   // Check multiple possible header names for flexibility
   const providedSecret =
@@ -44,17 +36,27 @@ export function verifyCronSecret(req: Request): AuthResult {
     };
   }
 
-  // Use constant-time comparison to prevent timing attacks
-  if (!constantTimeCompare(providedSecret, expectedSecret)) {
-    console.warn("Invalid authentication secret provided");
-    return {
-      authorized: false,
-      error: "Invalid authentication",
-      statusCode: 403,
-    };
+  // Accept CRON_SECRET if configured
+  if (expectedSecret && constantTimeCompare(providedSecret, expectedSecret)) {
+    return { authorized: true };
   }
 
-  return { authorized: true };
+  // Accept Supabase anon key (for internal cron jobs)
+  if (anonKey && constantTimeCompare(providedSecret, anonKey)) {
+    return { authorized: true };
+  }
+
+  // Accept Supabase service role key
+  if (serviceKey && constantTimeCompare(providedSecret, serviceKey)) {
+    return { authorized: true };
+  }
+
+  console.warn("Invalid authentication secret provided");
+  return {
+    authorized: false,
+    error: "Invalid authentication",
+    statusCode: 403,
+  };
 }
 
 /**
