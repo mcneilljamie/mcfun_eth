@@ -96,12 +96,77 @@ export function Lock({ onShowToast }: LockPageProps) {
       loadLocks(1);
       loadAggregatedLocks();
     }
+
+    // Subscribe to realtime updates for locks and token prices
+    const locksSubscription = supabase
+      .channel('lock-page-locks')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'token_locks'
+      }, () => {
+        if (!urlTokenAddress) {
+          loadLocks(currentPage);
+          loadAggregatedLocks();
+        }
+      })
+      .subscribe();
+
+    const tokensSubscription = supabase
+      .channel('lock-page-tokens')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'tokens'
+      }, () => {
+        if (!urlTokenAddress) {
+          loadAggregatedLocks();
+        }
+      })
+      .subscribe();
+
+    return () => {
+      locksSubscription.unsubscribe();
+      tokensSubscription.unsubscribe();
+    };
   }, [urlTokenAddress]);
 
   useEffect(() => {
     if (urlTokenAddress) {
       loadLocks(currentPage);
       loadTokenStats();
+
+      // Subscribe to realtime updates for this token's locks
+      const tokenLocksSubscription = supabase
+        .channel('token-specific-locks')
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'token_locks',
+          filter: `token_address=eq.${urlTokenAddress.toLowerCase()}`
+        }, () => {
+          loadLocks(currentPage);
+          loadTokenStats();
+        })
+        .subscribe();
+
+      // Subscribe to price updates for this token
+      const tokenPriceSubscription = supabase
+        .channel('token-specific-price')
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'tokens',
+          filter: `token_address=eq.${urlTokenAddress.toLowerCase()}`
+        }, () => {
+          loadTokenStats();
+        })
+        .subscribe();
+
+      return () => {
+        tokenLocksSubscription.unsubscribe();
+        tokenPriceSubscription.unsubscribe();
+      };
     }
   }, [urlTokenAddress, currentPage]);
 
