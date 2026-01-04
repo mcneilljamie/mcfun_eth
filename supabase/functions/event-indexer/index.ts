@@ -9,7 +9,7 @@ const FACTORY_ABI = ["event TokenLaunched(address indexed tokenAddress, address 
 const AMM_ABI = ["event Swap(address indexed user, uint256 ethIn, uint256 tokenIn, uint256 ethOut, uint256 tokenOut)","function reserveToken() external view returns (uint256)","function reserveETH() external view returns (uint256)"];
 const RPC_PROVIDERS = [Deno.env.get("ETHEREUM_RPC_URL") || "https://ethereum-sepolia-rpc.publicnode.com","https://rpc.sepolia.org"];
 const MIN_BLOCK_RANGE = 100;
-const MAX_BLOCK_RANGE = 2000;
+const MAX_BLOCK_RANGE = 5000;
 const MAX_EXECUTION_TIME_MS = 55000;
 
 let currentProviderIndex = 0;
@@ -45,54 +45,120 @@ Deno.serve(async (req: Request) => {
     const lastIndexedBlock = indexerState?.last_indexed_block || 0;
     const currentBlock = await provider.getBlockNumber();
     const safeBlock = currentBlock - 2;
-    let startBlock = Math.max(lastIndexedBlock + 1, safeBlock - 2000);
-    let endBlock = Math.min(startBlock + 500, safeBlock);
-    if (startBlock > endBlock) {
-      return new Response(JSON.stringify({message: "No new blocks"}), { headers: corsHeaders });
+    const blocksBehind = safeBlock - lastIndexedBlock;
+
+    let blockRange: number;
+    if (blocksBehind > 10000) {
+      blockRange = MAX_BLOCK_RANGE;
+      console.log(`Adaptive mode: ${blocksBehind} blocks behind, using ${MAX_BLOCK_RANGE} block range`);
+    } else if (blocksBehind > 5000) {
+      blockRange = 3000;
+      console.log(`Adaptive mode: ${blocksBehind} blocks behind, using 3000 block range`);
+    } else if (blocksBehind > 2000) {
+      blockRange = 2000;
+      console.log(`Adaptive mode: ${blocksBehind} blocks behind, using 2000 block range`);
+    } else if (blocksBehind > 500) {
+      blockRange = 1000;
+      console.log(`Adaptive mode: ${blocksBehind} blocks behind, using 1000 block range`);
+    } else {
+      blockRange = 500;
     }
-    const { data: tokens } = await supabase.from("tokens").select("token_address, amm_address").limit(50);
+
+    let startBlock = Math.max(lastIndexedBlock + 1, safeBlock - blockRange);
+    let endBlock = Math.min(startBlock + blockRange, safeBlock);
+    if (startBlock > endBlock) {
+      return new Response(JSON.stringify({message: "No new blocks", blocksBehind: 0}), { headers: corsHeaders });
+    }
+
+    const { data: tokens } = await supabase.from("tokens").select("token_address, amm_address");
     let swapsIndexed = 0;
-    if (tokens) {
-      for (const token of tokens) {
-        if (Date.now() - startTime > MAX_EXECUTION_TIME_MS) break;
-        try {
-          const amm = new ethers.Contract(token.amm_address, AMM_ABI, provider);
-          const events = await amm.queryFilter(amm.filters.Swap(), startBlock, endBlock);
-          if (events.length > 0) {
-            const swaps = [];
-            for (const event of events) {
-              const block = await provider.getBlock(event.blockNumber);
-              swaps.push({
-                token_address: token.token_address,
-                amm_address: token.amm_address,
-                user_address: event.args!.user.toLowerCase(),
-                eth_in: ethers.formatEther(event.args!.ethIn),
-                token_in: ethers.formatEther(event.args!.tokenIn),
-                eth_out: ethers.formatEther(event.args!.ethOut),
-                token_out: ethers.formatEther(event.args!.tokenOut),
-                tx_hash: event.transactionHash,
-                created_at: new Date(block!.timestamp * 1000).toISOString(),
-                block_number: block!.number,
-                block_hash: block!.hash,
-              });
+    let tokensProcessed = 0;
+    const blockCache = new Map<number, any>();
+
+    if (tokens && tokens.length > 0) {
+      const PARALLEL_BATCH_SIZE = 5;
+
+      for (let i = 0; i < tokens.length; i += PARALLEL_BATCH_SIZE) {
+        if (Date.now() - startTime > MAX_EXECUTION_TIME_MS) {
+          console.log(`Timeout approaching, processed ${tokensProcessed}/${tokens.length} tokens`);
+          break;
+        }
+
+        const batch = tokens.slice(i, i + PARALLEL_BATCH_SIZE);
+        const batchResults = await Promise.allSettled(
+          batch.map(async (token) => {
+            try {
+              const amm = new ethers.Contract(token.amm_address, AMM_ABI, provider);
+              const events = await amm.queryFilter(amm.filters.Swap(), startBlock, endBlock);
+              if (events.length > 0) {
+                const swaps = [];
+                for (const event of events) {
+                  let block = blockCache.get(event.blockNumber);
+                  if (!block) {
+                    block = await provider.getBlock(event.blockNumber);
+                    blockCache.set(event.blockNumber, block);
+                  }
+                  swaps.push({
+                    token_address: token.token_address,
+                    amm_address: token.amm_address,
+                    user_address: event.args!.user.toLowerCase(),
+                    eth_in: ethers.formatEther(event.args!.ethIn),
+                    token_in: ethers.formatEther(event.args!.tokenIn),
+                    eth_out: ethers.formatEther(event.args!.ethOut),
+                    token_out: ethers.formatEther(event.args!.tokenOut),
+                    tx_hash: event.transactionHash,
+                    created_at: new Date(block!.timestamp * 1000).toISOString(),
+                    block_number: block!.number,
+                    block_hash: block!.hash,
+                  });
+                }
+                await supabase.from("swaps").upsert(swaps, { onConflict: "tx_hash" });
+                const [reserveETH, reserveToken] = await Promise.all([amm.reserveETH(), amm.reserveToken()]);
+                await supabase.from("tokens").update({
+                  current_eth_reserve: ethers.formatEther(reserveETH),
+                  current_token_reserve: ethers.formatEther(reserveToken),
+                }).eq("token_address", token.token_address);
+                return { swaps: swaps.length, token: token.token_address };
+              }
+              return { swaps: 0, token: token.token_address };
+            } catch (err) {
+              console.error(`Error indexing ${token.token_address}:`, err);
+              return { swaps: 0, token: token.token_address, error: err };
             }
-            await supabase.from("swaps").upsert(swaps, { onConflict: "tx_hash" });
-            swapsIndexed += swaps.length;
-            const [reserveETH, reserveToken] = await Promise.all([amm.reserveETH(), amm.reserveToken()]);
-            await supabase.from("tokens").update({
-              current_eth_reserve: ethers.formatEther(reserveETH),
-              current_token_reserve: ethers.formatEther(reserveToken),
-            }).eq("token_address", token.token_address);
+          })
+        );
+
+        for (const result of batchResults) {
+          if (result.status === 'fulfilled' && result.value) {
+            swapsIndexed += result.value.swaps;
+            tokensProcessed++;
           }
-        } catch (err) { console.error(`Error indexing ${token.token_address}:`, err); }
+        }
       }
     }
+
+    const processingTimeMs = Date.now() - startTime;
+    const blocksProcessed = endBlock - startBlock + 1;
+    const blocksPerSecond = (blocksProcessed / (processingTimeMs / 1000)).toFixed(2);
+
     await supabase.from("indexer_state").upsert({
       id: indexerState?.id,
       last_indexed_block: endBlock,
       updated_at: new Date().toISOString(),
     });
-    return new Response(JSON.stringify({swapsIndexed, fromBlock: startBlock, toBlock: endBlock}), { headers: corsHeaders });
+
+    console.log(`Indexed ${swapsIndexed} swaps from ${tokensProcessed} tokens, blocks ${startBlock}-${endBlock} (${blocksProcessed} blocks in ${processingTimeMs}ms, ${blocksPerSecond} blocks/sec)`);
+
+    return new Response(JSON.stringify({
+      swapsIndexed,
+      tokensProcessed,
+      fromBlock: startBlock,
+      toBlock: endBlock,
+      blocksBehind: safeBlock - endBlock,
+      blocksPerSecond,
+      processingTimeMs,
+      blockRangeUsed: blockRange
+    }), { headers: corsHeaders });
   } catch (err: any) {
     console.error("Error:", err);
     return new Response(JSON.stringify({error: err.message}), { status: 500, headers: corsHeaders });
