@@ -165,6 +165,9 @@
     "noTokens": "No tokens launched yet",
     "noResults": "No tokens found matching your search",
     "showing": "Showing {{count}} tokens",
+    "rankBy": "Rank by",
+    "marketCap": "Market Cap",
+    "liquidity": "Liquidity",
     "table": {
       "rank": "#",
       "token": "Token",

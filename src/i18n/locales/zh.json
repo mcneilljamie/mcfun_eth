@@ -166,6 +166,9 @@
     "noResults": "未找到与您的搜索匹配的代币",
     "showing": "显示{{count}}个代币",
     "showing_plural": "显示{{count}}个代币",
+    "rankBy": "排序方式",
+    "marketCap": "市值",
+    "liquidity": "流动性",
     "table": {
       "rank": "#",
       "token": "代币",

@@ -166,6 +166,9 @@
     "noResults": "Aramanızla eşleşen token bulunamadı",
     "showing": "{{count}} token gösteriliyor",
     "showing_plural": "{{count}} token gösteriliyor",
+    "rankBy": "Sıralama",
+    "marketCap": "Piyasa Değeri",
+    "liquidity": "Likidite",
     "table": {
       "rank": "#",
       "token": "Token",

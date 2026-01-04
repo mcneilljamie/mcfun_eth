@@ -166,6 +166,9 @@
     "noResults": "検索に一致するトークンが見つかりません",
     "showing": "{{count}}個のトークンを表示中",
     "showing_plural": "{{count}}個のトークンを表示中",
+    "rankBy": "並べ替え",
+    "marketCap": "時価総額",
+    "liquidity": "流動性",
     "table": {
       "rank": "#",
       "token": "トークン",

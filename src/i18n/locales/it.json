@@ -166,6 +166,9 @@
     "noResults": "Nessun token trovato corrispondente alla tua ricerca",
     "showing": "Visualizzazione di {{count}} token",
     "showing_plural": "Visualizzazione di {{count}} token",
+    "rankBy": "Classifica per",
+    "marketCap": "Capitalizzazione di Mercato",
+    "liquidity": "Liquidità",
     "table": {
       "rank": "#",
       "token": "Token",

@@ -166,6 +166,9 @@
     "noResults": "Không tìm thấy token nào phù hợp với tìm kiếm của bạn",
     "showing": "Hiển thị {{count}} token",
     "showing_plural": "Hiển thị {{count}} token",
+    "rankBy": "Xếp hạng theo",
+    "marketCap": "Vốn Hóa Thị Trường",
+    "liquidity": "Thanh Khoản",
     "table": {
       "rank": "#",
       "token": "Token",

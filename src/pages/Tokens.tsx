@@ -34,6 +34,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   const [tokenDataMap, setTokenDataMap] = useState<Record<string, TokenEnrichedData>>({});
   const [currentPage, setCurrentPage] = useState(1);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [sortBy, setSortBy] = useState<'marketCap' | 'liquidity'>('marketCap');
   const TOKENS_PER_PAGE = 10;
 
   const readOnlyProvider = useMemo(() => {
@@ -108,13 +109,20 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     const sorted = [...result].sort((a, b) => {
       const aData = tokenDataMap[a.token_address];
       const bData = tokenDataMap[b.token_address];
-      const aMarketCap = aData?.marketCap || 0;
-      const bMarketCap = bData?.marketCap || 0;
-      return bMarketCap - aMarketCap;
+
+      if (sortBy === 'marketCap') {
+        const aMarketCap = aData?.marketCap || 0;
+        const bMarketCap = bData?.marketCap || 0;
+        return bMarketCap - aMarketCap;
+      } else {
+        const aLiquidity = parseFloat(aData?.liquidityETH || '0');
+        const bLiquidity = parseFloat(bData?.liquidityETH || '0');
+        return bLiquidity - aLiquidity;
+      }
     });
 
     setFilteredTokens(sorted);
-  }, [searchQuery, tokens, tokenDataMap]);
+  }, [searchQuery, tokens, tokenDataMap, sortBy]);
 
   // Reset to page 1 only when search query or tokens list changes
   useEffect(() => {
@@ -229,23 +237,51 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6 sm:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-xl shadow-lg p-4 sm:p-8">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-            <div className="flex items-center space-x-3">
-              <div className="bg-gray-900 p-2 rounded-lg">
-                <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+          <div className="flex flex-col gap-4 mb-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-center space-x-3">
+                <div className="bg-gray-900 p-2 rounded-lg">
+                  <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                </div>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('tokens.title')}</h1>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('tokens.title')}</h1>
+
+              <div className="relative w-full sm:w-auto">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder={t('tokens.search')}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                />
+              </div>
             </div>
 
-            <div className="relative w-full sm:w-auto">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder={t('tokens.search')}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
-              />
+            <div className="flex items-center space-x-2">
+              <span className="text-sm font-medium text-gray-700">{t('tokens.rankBy')}:</span>
+              <div className="inline-flex rounded-lg border border-gray-300 bg-white p-1">
+                <button
+                  onClick={() => setSortBy('marketCap')}
+                  className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+                    sortBy === 'marketCap'
+                      ? 'bg-gray-900 text-white shadow-sm'
+                      : 'text-gray-700 hover:text-gray-900'
+                  }`}
+                >
+                  {t('tokens.marketCap')}
+                </button>
+                <button
+                  onClick={() => setSortBy('liquidity')}
+                  className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+                    sortBy === 'liquidity'
+                      ? 'bg-gray-900 text-white shadow-sm'
+                      : 'text-gray-700 hover:text-gray-900'
+                  }`}
+                >
+                  {t('tokens.liquidity')}
+                </button>
+              </div>
             </div>
           </div>
 

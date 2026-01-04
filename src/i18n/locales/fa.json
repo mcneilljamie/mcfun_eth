@@ -166,6 +166,9 @@
     "noResults": "توکنی مطابق با جستجوی شما یافت نشد",
     "showing": "نمایش {{count}} توکن",
     "showing_plural": "نمایش {{count}} توکن",
+    "rankBy": "رتبه‌بندی بر اساس",
+    "marketCap": "ارزش بازار",
+    "liquidity": "نقدینگی",
     "table": {
       "rank": "#",
       "token": "توکن",

@@ -166,6 +166,9 @@
     "noResults": "Tidak ada token yang cocok dengan pencarian Anda",
     "showing": "Menampilkan {{count}} token",
     "showing_plural": "Menampilkan {{count}} token",
+    "rankBy": "Urutkan berdasarkan",
+    "marketCap": "Kapitalisasi Pasar",
+    "liquidity": "Likuiditas",
     "table": {
       "rank": "#",
       "token": "Token",
