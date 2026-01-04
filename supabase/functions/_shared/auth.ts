@@ -20,6 +20,15 @@ export function verifyCronSecret(req: Request): AuthResult {
   const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
+  if (!anonKey && !serviceKey) {
+    console.error("SUPABASE_ANON_KEY and SUPABASE_SERVICE_ROLE_KEY environment variables are not set");
+    return {
+      authorized: false,
+      error: "Authentication not configured",
+      statusCode: 500,
+    };
+  }
+
   // Check multiple possible header names for flexibility
   const providedSecret =
     req.headers.get("Authorization")?.replace("Bearer ", "") ||

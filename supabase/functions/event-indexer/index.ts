@@ -105,377 +105,6 @@ async function retryWithBackoff<T>(
   throw lastError;
 }
 
-interface IndexRequest {
-  fromBlock?: number;
-  toBlock?: number;
-  indexTokenLaunches?: boolean;
-  indexSwaps?: boolean;
-  skipReorgCheck?: boolean;
-  backfillSwaps?: boolean;
-}
-
-class BlockCache {
-  private cache: Map<number, ethers.Block> = new Map();
-  private maxSize: number = 1000;
-
-  async getBlock(provider: ethers.JsonRpcProvider, blockNumber: number): Promise<ethers.Block> {
-    if (this.cache.has(blockNumber)) {
-      return this.cache.get(blockNumber)!;
-    }
-    const block = await provider.getBlock(blockNumber);
-    if (block) {
-      if (this.cache.size >= this.maxSize) {
-        const firstKey = this.cache.keys().next().value;
-        this.cache.delete(firstKey);
-      }
-      this.cache.set(blockNumber, block);
-    }
-    return block!;
-  }
-
-  clear() {
-    this.cache.clear();
-  }
-}
-
-class ContractCache {
-  private contracts: Map<string, ethers.Contract> = new Map();
-
-  getContract(address: string, abi: any[], provider: ethers.JsonRpcProvider): ethers.Contract {
-    const key = address.toLowerCase();
-    if (this.contracts.has(key)) {
-      return this.contracts.get(key)!;
-    }
-    const contract = new ethers.Contract(address, abi, provider);
-    this.contracts.set(key, contract);
-    return contract;
-  }
-
-  clear() {
-    this.contracts.clear();
-  }
-}
-
-async function detectAndHandleReorg(
-  supabase: any,
-  provider: ethers.JsonRpcProvider,
-  lastIndexedBlock: number,
-  lastBlockHash: string | null
-): Promise<{ reorgDetected: boolean; rollbackToBlock: number; error?: string }> {
-  if (!lastBlockHash || lastIndexedBlock === 0) {
-    return { reorgDetected: false, rollbackToBlock: lastIndexedBlock };
-  }
-
-  try {
-    const currentBlock = await provider.getBlock(lastIndexedBlock);
-
-    if (!currentBlock) {
-      console.warn(`Block ${lastIndexedBlock} not found, chain may have reorged`);
-      return { reorgDetected: true, rollbackToBlock: Math.max(0, lastIndexedBlock - 100) };
-    }
-
-    if (currentBlock.hash !== lastBlockHash) {
-      console.warn(`Reorg detected! Block ${lastIndexedBlock} hash mismatch`);
-      console.warn(`Stored: ${lastBlockHash}, Current: ${currentBlock.hash}`);
-
-      let rollbackBlock = lastIndexedBlock - 1;
-      while (rollbackBlock > Math.max(0, lastIndexedBlock - 100)) {
-        const { data: blockData } = await supabase
-          .from("tokens")
-          .select("block_hash")
-          .eq("block_number", rollbackBlock)
-          .limit(1)
-          .maybeSingle();
-
-        if (blockData?.block_hash) {
-          const chainBlock = await provider.getBlock(rollbackBlock);
-          if (chainBlock && chainBlock.hash === blockData.block_hash) {
-            return { reorgDetected: true, rollbackToBlock: rollbackBlock };
-          }
-        }
-        rollbackBlock--;
-      }
-
-      return { reorgDetected: true, rollbackToBlock: Math.max(0, lastIndexedBlock - 100) };
-    }
-
-    return { reorgDetected: false, rollbackToBlock: lastIndexedBlock };
-  } catch (err: any) {
-    console.error("Error detecting reorg:", err);
-    return { reorgDetected: false, rollbackToBlock: lastIndexedBlock, error: err.message };
-  }
-}
-
-async function rollbackToBlock(supabase: any, blockNumber: number): Promise<{ deletedTokens: number; deletedSwaps: number; deletedSnapshots: number }> {
-  console.log(`Rolling back data from blocks > ${blockNumber}`);
-
-  const { data: tokensToDelete } = await supabase
-    .from("tokens")
-    .select("token_address")
-    .gt("block_number", blockNumber);
-
-  const deletedTokenAddresses = tokensToDelete?.map((t: any) => t.token_address) || [];
-
-  const { count: deletedTokens } = await supabase
-    .from("tokens")
-    .delete({ count: "exact" })
-    .gt("block_number", blockNumber);
-
-  const { count: deletedSwaps } = await supabase
-    .from("swaps")
-    .delete({ count: "exact" })
-    .gt("block_number", blockNumber);
-
-  const { count: deletedSnapshots1 } = await supabase
-    .from("price_snapshots")
-    .delete({ count: "exact" })
-    .gt("block_number", blockNumber);
-
-  let deletedSnapshots2 = 0;
-  if (deletedTokenAddresses.length > 0) {
-    const { count: orphanedSnapshots } = await supabase
-      .from("price_snapshots")
-      .delete({ count: "exact" })
-      .in("token_address", deletedTokenAddresses);
-    deletedSnapshots2 = orphanedSnapshots || 0;
-  }
-
-  return {
-    deletedTokens: deletedTokens || 0,
-    deletedSwaps: deletedSwaps || 0,
-    deletedSnapshots: (deletedSnapshots1 || 0) + deletedSnapshots2,
-  };
-}
-
-async function processTokenSwaps(
-  token: any,
-  startBlock: number,
-  endBlock: number,
-  backfillSwaps: boolean,
-  provider: ethers.JsonRpcProvider,
-  supabase: any,
-  blockCache: BlockCache,
-  contractCache: ContractCache,
-  startTime: number,
-  skipBlocks: Set<number>
-): Promise<{ swapsIndexed: number; errors: string[]; timedOut: boolean; blocksScanned: number }> {
-  const errors: string[] = [];
-  let swapsIndexed = 0;
-  let timedOut = false;
-  let blocksScanned = 0;
-
-  try {
-    if (Date.now() - startTime > MAX_EXECUTION_TIME_MS) {
-      return { swapsIndexed, errors, timedOut: true, blocksScanned: 0 };
-    }
-
-    let queryStartBlock = token.last_checked_block || token.block_number || startBlock;
-
-    if (backfillSwaps) {
-      const { data: earliestSwap } = await supabase
-        .from("swaps")
-        .select("block_number")
-        .eq("token_address", token.token_address)
-        .order("block_number", { ascending: true })
-        .limit(1)
-        .maybeSingle();
-
-      if (!earliestSwap || earliestSwap.block_number > token.block_number + 1) {
-        queryStartBlock = Math.max(token.block_number, startBlock);
-      }
-    } else {
-      queryStartBlock = Math.max(queryStartBlock + 1, startBlock);
-    }
-
-    if (queryStartBlock > endBlock) {
-      await supabase
-        .from("tokens")
-        .update({ last_checked_block: endBlock })
-        .eq("token_address", token.token_address);
-      return { swapsIndexed, errors, timedOut, blocksScanned: 0 };
-    }
-
-    blocksScanned = endBlock - queryStartBlock + 1;
-
-    const amm = contractCache.getContract(token.amm_address, AMM_ABI, provider);
-    const filter = amm.filters.Swap();
-
-    let events;
-    let querySucceeded = false;
-
-    try {
-      events = await retryWithBackoff(() => amm.queryFilter(filter, queryStartBlock, endBlock));
-      querySucceeded = true;
-    } catch (err: any) {
-      errors.push(`RPC query failed for ${token.token_address} blocks ${queryStartBlock}-${endBlock}: ${err.message}`);
-      return { swapsIndexed, errors, timedOut, blocksScanned: 0 };
-    }
-
-    if (events.length === 0) {
-      try {
-        const currentBlock = await provider.getBlockNumber();
-
-        if (currentBlock === 0) {
-          errors.push(`RPC returned block 0 for ${token.token_address} - likely failed, not advancing checkpoint`);
-          return { swapsIndexed, errors, timedOut, blocksScanned: 0 };
-        }
-
-        await supabase
-          .from("tokens")
-          .update({ last_checked_block: endBlock })
-          .eq("token_address", token.token_address);
-      } catch (verifyErr: any) {
-        errors.push(`RPC verification failed for ${token.token_address}, not advancing checkpoint: ${verifyErr.message}`);
-        return { swapsIndexed, errors, timedOut, blocksScanned: 0 };
-      }
-
-      return { swapsIndexed, errors, timedOut, blocksScanned };
-    }
-
-    const swapsToInsert: any[] = [];
-    const uniqueBlocks = new Set<number>();
-    const SWAP_PROCESS_BATCH = 20;
-
-    for (let i = 0; i < events.length; i += SWAP_PROCESS_BATCH) {
-      if (Date.now() - startTime > MAX_EXECUTION_TIME_MS) {
-        timedOut = true;
-        break;
-      }
-
-      const batch = events.slice(i, i + SWAP_PROCESS_BATCH);
-      const batchSwaps = await Promise.all(
-        batch.map(async (event) => {
-          if (skipBlocks.has(event.blockNumber)) {
-            console.log(`Skipping swap event in block ${event.blockNumber} (marked as erroneous)`);
-            return null;
-          }
-
-          const args = event.args!;
-          uniqueBlocks.add(event.blockNumber);
-
-          const block = await blockCache.getBlock(provider, event.blockNumber);
-
-          return {
-            token_address: token.token_address,
-            amm_address: token.amm_address,
-            user_address: args.user.toLowerCase(),
-            eth_in: ethers.formatEther(args.ethIn),
-            token_in: ethers.formatEther(args.tokenIn),
-            eth_out: ethers.formatEther(args.ethOut),
-            token_out: ethers.formatEther(args.tokenOut),
-            tx_hash: event.transactionHash,
-            created_at: new Date(block.timestamp * 1000).toISOString(),
-            block_number: block.number,
-            block_hash: block.hash,
-          };
-        })
-      );
-
-      swapsToInsert.push(...batchSwaps.filter(swap => swap !== null));
-    }
-
-    if (swapsToInsert.length > 0) {
-      const { error: swapError, count } = await supabase
-        .from("swaps")
-        .upsert(swapsToInsert, { onConflict: "tx_hash", count: "exact" });
-
-      if (swapError) {
-        errors.push(`Failed to insert swaps for ${token.token_address}: ${swapError.message}`);
-      } else {
-        swapsIndexed = count || 0;
-
-        const lastEvent = events[events.length - 1];
-        const [reserveETH, reserveToken] = await retryWithBackoff(() => Promise.all([
-          amm.reserveETH(),
-          amm.reserveToken(),
-        ]));
-
-        let totalEthVolume = 0;
-        for (const swap of swapsToInsert) {
-          totalEthVolume += parseFloat(swap.eth_in) + parseFloat(swap.eth_out);
-        }
-
-        const { data: currentToken } = await supabase
-          .from("tokens")
-          .select("total_volume_eth")
-          .eq("token_address", token.token_address)
-          .maybeSingle();
-
-        const currentVolume = parseFloat(currentToken?.total_volume_eth || "0");
-        const newVolume = (currentVolume + totalEthVolume).toString();
-
-        const ethReserveFormatted = ethers.formatEther(reserveETH);
-        const tokenReserveFormatted = ethers.formatEther(reserveToken);
-
-        await supabase
-          .from("tokens")
-          .update({
-            current_eth_reserve: ethReserveFormatted,
-            current_token_reserve: tokenReserveFormatted,
-            total_volume_eth: newVolume,
-            last_checked_block: endBlock,
-          })
-          .eq("token_address", token.token_address);
-
-        const hasTokenSells = swapsToInsert.some(swap => parseFloat(swap.token_out) > 0);
-        if (hasTokenSells) {
-          await supabase.rpc('refresh_token_holder_count', {
-            p_token_address: token.token_address
-          });
-        }
-
-        const { data: ethPriceData } = await supabase
-          .from("eth_price_history")
-          .select("price_usd")
-          .order("created_at", { ascending: false })
-          .limit(1)
-          .maybeSingle();
-
-        const ethPriceUsd = ethPriceData?.price_usd || 3000;
-
-        let currentEthReserve = parseFloat(ethReserveFormatted);
-        let currentTokenReserve = parseFloat(tokenReserveFormatted);
-
-        const snapshotsToCreate = [];
-
-        for (let i = swapsToInsert.length - 1; i >= 0; i--) {
-          const swap = swapsToInsert[i];
-
-          const priceEth = currentEthReserve / currentTokenReserve;
-
-          snapshotsToCreate.push({
-            token_address: token.token_address,
-            price_eth: priceEth.toString(),
-            eth_reserve: currentEthReserve.toString(),
-            token_reserve: currentTokenReserve.toString(),
-            created_at: swap.created_at,
-            eth_price_usd: ethPriceUsd,
-            is_interpolated: false,
-            block_number: swap.block_number,
-          });
-
-          if (i > 0) {
-            currentEthReserve = currentEthReserve - parseFloat(swap.eth_in) + parseFloat(swap.eth_out);
-            currentTokenReserve = currentTokenReserve - parseFloat(swap.token_in) + parseFloat(swap.token_out);
-          }
-        }
-
-        if (snapshotsToCreate.length > 0) {
-          await supabase
-            .from("price_snapshots")
-            .upsert(snapshotsToCreate, {
-              onConflict: "token_address,block_number",
-            });
-        }
-      }
-    }
-  } catch (err: any) {
-    errors.push(`Failed to index swaps for ${token.token_address}: ${err.message}`);
-  }
-
-  return { swapsIndexed, errors, timedOut, blocksScanned };
-}
-
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, {
@@ -497,49 +126,11 @@ Deno.serve(async (req: Request) => {
   const startTime = Date.now();
 
   try {
-    return await processIndexing(req, startTime);
-  } catch (err: any) {
-    console.error("Error executing event-indexer:", err);
-    return new Response(
-      JSON.stringify({
-        error: err.message,
-        executionTimeMs: Date.now() - startTime
-      }),
-      {
-        status: 500,
-        headers: corsHeaders,
-      }
-    );
-  }
-});
-
-async function processIndexing(req: Request, startTime: number): Promise<Response> {
-  try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-
     const supabase = createClient(supabaseUrl, supabaseKey);
+
     const provider = await retryWithBackoff(() => createProviderWithFailover());
-    const blockCache = new BlockCache();
-    const contractCache = new ContractCache();
-
-    const { data: skipBlocksData } = await supabase
-      .from("skip_blocks")
-      .select("block_number")
-      .in("indexer_type", ["swap", "all"]);
-
-    const skipBlocks = new Set(
-      skipBlocksData?.map(sb => sb.block_number) || []
-    );
-
-    const {
-      fromBlock,
-      toBlock,
-      indexTokenLaunches = true,
-      indexSwaps = true,
-      skipReorgCheck = false,
-      backfillSwaps = false
-    }: IndexRequest = await req.json().catch(() => ({}));
 
     const { data: indexerState } = await supabase
       .from("indexer_state")
@@ -548,298 +139,121 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
       .maybeSingle();
 
     const lastIndexedBlock = indexerState?.last_indexed_block || 0;
-    const lastBlockHash = indexerState?.last_block_hash || null;
     const confirmationDepth = indexerState?.confirmation_depth || 2;
-
-    const results = {
-      tokensIndexed: 0,
-      swapsIndexed: 0,
-      errors: [] as string[],
-      reorgDetected: false,
-      rollbackData: null as any,
-      fromBlock: 0,
-      toBlock: 0,
-      executionTimeMs: 0,
-      timedOut: false,
-      tokensProcessed: 0,
-      blocksScanned: 0,
-      rpcCallsMade: 0,
-    };
 
     const currentBlock = await provider.getBlockNumber();
     const safeBlock = currentBlock - confirmationDepth;
 
-    let startBlock = fromBlock !== undefined ? fromBlock : Math.max(lastIndexedBlock + 1, 0);
-
+    let startBlock = Math.max(lastIndexedBlock + 1, 0);
     if (startBlock === 0 || startBlock < (safeBlock - 100000)) {
       startBlock = Math.max(safeBlock - 10000, 0);
     }
 
-    let endBlock = toBlock !== undefined ? toBlock : safeBlock;
-
     const blocksBehind = safeBlock - startBlock;
     const adaptiveBlockRange = calculateBlockRange(blocksBehind);
+    let endBlock = Math.min(startBlock + adaptiveBlockRange, safeBlock);
 
-    if (endBlock - startBlock > adaptiveBlockRange) {
-      endBlock = startBlock + adaptiveBlockRange;
-    }
-
-    console.log(`Processing blocks ${startBlock} to ${endBlock} (${blocksBehind} blocks behind, using range: ${adaptiveBlockRange})`);
+    console.log(`Processing blocks ${startBlock} to ${endBlock} (${blocksBehind} blocks behind)`);
 
     if (startBlock > endBlock) {
-      results.executionTimeMs = Date.now() - startTime;
       return new Response(
         JSON.stringify({
-          ...results,
           message: "No new blocks to index",
           lastIndexedBlock,
           currentBlock,
           safeBlock,
+          executionTimeMs: Date.now() - startTime
         }),
-        {
-          headers: corsHeaders,
-        }
+        { headers: corsHeaders }
       );
     }
 
-    results.fromBlock = startBlock;
-    results.toBlock = endBlock;
+    let swapsIndexed = 0;
+    let tokensIndexed = 0;
 
-    let lastProcessedBlockNumber = startBlock;
-    let lastProcessedBlockHash: string | null = null;
+    const { data: tokens } = await supabase
+      .from("tokens")
+      .select("token_address, amm_address, block_number")
+      .lte("block_number", endBlock)
+      .limit(BATCH_SIZE);
 
-    if (indexTokenLaunches && FACTORY_ADDRESS !== "0x0000000000000000000000000000000000000000") {
-      try {
-        const factory = contractCache.getContract(FACTORY_ADDRESS, FACTORY_ABI, provider);
-        const filter = factory.filters.TokenLaunched();
-        const events = await factory.queryFilter(filter, startBlock, endBlock);
+    if (tokens && tokens.length > 0) {
+      for (const token of tokens) {
+        if (Date.now() - startTime > MAX_EXECUTION_TIME_MS) break;
 
-        for (const event of events) {
-          if (Date.now() - startTime > MAX_EXECUTION_TIME_MS) {
-            results.timedOut = true;
-            break;
-          }
+        try {
+          const amm = new ethers.Contract(token.amm_address, AMM_ABI, provider);
+          const filter = amm.filters.Swap();
 
-          const args = event.args!;
-          const block = await blockCache.getBlock(provider, event.blockNumber);
+          const tokenStartBlock = Math.max(token.block_number, startBlock);
+          const events = await retryWithBackoff(() => amm.queryFilter(filter, tokenStartBlock, endBlock));
 
-          const initialLiquidityEth = parseFloat(ethers.formatEther(args.initialLiquidityETH));
-          const liquidityPercent = Number(args.liquidityPercent);
-          const initialTokenReserve = 1000000 * liquidityPercent / 100;
-          const launchPriceEth = initialLiquidityEth / initialTokenReserve;
+          if (events.length > 0) {
+            const swapsToInsert = [];
 
-          const { error } = await supabase
-            .from("tokens")
-            .upsert({
-              token_address: args.tokenAddress.toLowerCase(),
-              amm_address: args.ammAddress.toLowerCase(),
-              name: args.name,
-              symbol: args.symbol,
-              creator_address: args.creator.toLowerCase(),
-              liquidity_percent: liquidityPercent,
-              initial_liquidity_eth: initialLiquidityEth.toString(),
-              launch_price_eth: launchPriceEth.toString(),
-              current_eth_reserve: initialLiquidityEth.toString(),
-              current_token_reserve: initialTokenReserve.toString(),
-              total_volume_eth: "0",
-              created_at: new Date(block.timestamp * 1000).toISOString(),
-              block_number: block.number,
-              block_hash: block.hash,
-            }, {
-              onConflict: "token_address",
-            });
+            for (const event of events) {
+              const args = event.args!;
+              const block = await provider.getBlock(event.blockNumber);
 
-          if (error) {
-            results.errors.push(`Failed to insert token ${args.tokenAddress}: ${error.message}`);
-          } else {
-            results.tokensIndexed++;
-            lastProcessedBlockNumber = Math.max(lastProcessedBlockNumber, block.number);
-            lastProcessedBlockHash = block.hash;
-
-            try {
-              const historyResponse = await fetch(`${supabaseUrl}/functions/v1/generate-initial-history`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${supabaseKey}`,
-                },
-                body: JSON.stringify({
-                  tokenAddress: args.tokenAddress.toLowerCase(),
-                  initialPriceETH: launchPriceEth,
-                  initialEthReserve: initialLiquidityEth,
-                  initialTokenReserve: initialTokenReserve,
-                  createdAt: new Date(block.timestamp * 1000).toISOString(),
-                  hoursOfHistory: 24,
-                }),
+              swapsToInsert.push({
+                token_address: token.token_address,
+                amm_address: token.amm_address,
+                user_address: args.user.toLowerCase(),
+                eth_in: ethers.formatEther(args.ethIn),
+                token_in: ethers.formatEther(args.tokenIn),
+                eth_out: ethers.formatEther(args.ethOut),
+                token_out: ethers.formatEther(args.tokenOut),
+                tx_hash: event.transactionHash,
+                created_at: new Date(block!.timestamp * 1000).toISOString(),
+                block_number: block!.number,
+                block_hash: block!.hash,
               });
+            }
 
-              if (!historyResponse.ok) {
-                const errorText = await historyResponse.text();
-                console.error(`Failed to generate initial history for ${args.tokenAddress}: ${errorText}`);
-              } else {
-                const historyResult = await historyResponse.json();
-                console.log(`Generated ${historyResult.snapshotsCreated} initial snapshots for ${args.tokenAddress}`);
-              }
-            } catch (historyErr: any) {
-              console.error(`Error generating initial history for ${args.tokenAddress}:`, historyErr);
+            if (swapsToInsert.length > 0) {
+              await supabase.from("swaps").upsert(swapsToInsert, { onConflict: "tx_hash" });
+              swapsIndexed += swapsToInsert.length;
+
+              const [reserveETH, reserveToken] = await retryWithBackoff(() => Promise.all([
+                amm.reserveETH(),
+                amm.reserveToken(),
+              ]));
+
+              await supabase
+                .from("tokens")
+                .update({
+                  current_eth_reserve: ethers.formatEther(reserveETH),
+                  current_token_reserve: ethers.formatEther(reserveToken),
+                })
+                .eq("token_address", token.token_address);
             }
           }
+        } catch (err: any) {
+          console.error(`Error indexing swaps for ${token.token_address}:`, err);
         }
-      } catch (err: any) {
-        results.errors.push(`Token launch indexing error: ${err.message}`);
       }
     }
 
-    if (indexSwaps && !results.timedOut) {
-      try {
-        const { data: allTokens } = await supabase
-          .from("tokens")
-          .select("token_address, amm_address, block_number, last_checked_block")
-          .lte("block_number", endBlock)
-          .limit(BATCH_SIZE);
-
-        const tokens = allTokens || [];
-
-        if (tokens.length > 0) {
-          console.log(`Processing swaps for ${tokens.length} tokens`);
-          results.tokensProcessed = tokens.length;
-
-          const processToken = async (token: any) => {
-            results.rpcCallsMade += 2;
-            return await processTokenSwaps(
-              token,
-              startBlock,
-              endBlock,
-              backfillSwaps,
-              provider,
-              supabase,
-              blockCache,
-              contractCache,
-              startTime,
-              skipBlocks
-            );
-          };
-
-          for (let i = 0; i < tokens.length; i += PARALLEL_TOKEN_LIMIT) {
-            if (Date.now() - startTime > MAX_EXECUTION_TIME_MS) {
-              results.timedOut = true;
-              break;
-            }
-
-            const batch = tokens.slice(i, i + PARALLEL_TOKEN_LIMIT);
-            const batchResults = await Promise.all(batch.map(processToken));
-
-            for (const result of batchResults) {
-              results.swapsIndexed += result.swapsIndexed;
-              results.blocksScanned += result.blocksScanned;
-              results.errors.push(...result.errors);
-              if (result.timedOut) {
-                results.timedOut = true;
-              }
-            }
-
-            if (results.timedOut) {
-              break;
-            }
-
-            if (i + PARALLEL_TOKEN_LIMIT < tokens.length) {
-              await new Promise(resolve => setTimeout(resolve, 100));
-            }
-          }
-        }
-      } catch (err: any) {
-        results.errors.push(`Swap indexing error: ${err.message}`);
-      }
-    }
-
-    if (results.swapsIndexed > 0 || results.tokensIndexed > 0) {
-      try {
-        await supabase.rpc('update_platform_stats');
-      } catch (err: any) {
-        results.errors.push(`Failed to update platform stats: ${err.message}`);
-      }
-
-      if (!lastProcessedBlockHash) {
-        const block = await blockCache.getBlock(provider, lastProcessedBlockNumber);
-        lastProcessedBlockHash = block?.hash || null;
-      }
-
-      await supabase
-        .from("indexer_state")
-        .upsert({
-          id: indexerState?.id || undefined,
-          last_indexed_block: lastProcessedBlockNumber,
-          last_block_hash: lastProcessedBlockHash,
-          confirmation_depth: confirmationDepth,
-          updated_at: new Date().toISOString(),
-        });
-    } else if (endBlock > lastIndexedBlock && !results.timedOut) {
-      const block = await blockCache.getBlock(provider, endBlock);
-      await supabase
-        .from("indexer_state")
-        .upsert({
-          id: indexerState?.id || undefined,
-          last_indexed_block: endBlock,
-          last_block_hash: block?.hash || null,
-          confirmation_depth: confirmationDepth,
-          updated_at: new Date().toISOString(),
-        });
-    }
-
-    blockCache.clear();
-    contractCache.clear();
-    results.executionTimeMs = Date.now() - startTime;
-
-    try {
-      const rpcFailureCount = results.errors.filter(e =>
-        e.includes('RPC query failed') ||
-        e.includes('RPC verification failed') ||
-        e.includes('not advancing checkpoint')
-      ).length;
-
-      await supabase.from('indexer_metrics').insert({
-        run_type: 'universal',
-        tokens_processed: results.tokensProcessed,
-        blocks_scanned: results.blocksScanned,
-        swaps_found: results.swapsIndexed,
-        rpc_calls_made: results.rpcCallsMade,
-        processing_time_ms: results.executionTimeMs,
-        errors_count: results.errors.length,
-        error_details: results.errors.length > 0 ? {
-          errors: results.errors,
-          rpc_failures: rpcFailureCount,
-          critical_data_loss_prevented: rpcFailureCount > 0
-        } : null,
+    await supabase
+      .from("indexer_state")
+      .upsert({
+        id: indexerState?.id,
+        last_indexed_block: endBlock,
+        last_block_hash: (await provider.getBlock(endBlock))?.hash || null,
+        confirmation_depth: confirmationDepth,
+        updated_at: new Date().toISOString(),
       });
 
-      if (rpcFailureCount > 0) {
-        console.error(`⚠️ CRITICAL: ${rpcFailureCount} tokens failed RPC verification, checkpoints NOT advanced to prevent data loss`);
-        console.error('Affected errors:', results.errors.filter(e =>
-          e.includes('RPC') || e.includes('checkpoint')
-        ));
-      }
-    } catch (err: any) {
-      console.error('Failed to record indexer metrics:', err);
-    }
-
-    const responseData = {
-      ...results,
-      blocksBehind: safeBlock - (lastProcessedBlockNumber || lastIndexedBlock),
-      blocksProcessed: endBlock - startBlock,
-      blockProcessingRate: Math.round((endBlock - startBlock) / (results.executionTimeMs / 1000)),
-      currentBlock,
-      safeBlock,
-      lastIndexedBlock: lastProcessedBlockNumber || lastIndexedBlock,
-    };
-
-    console.log(`Indexing complete: ${responseData.tokensProcessed} tokens processed, ${responseData.swapsIndexed} swaps, ${responseData.blocksScanned} blocks scanned in ${responseData.executionTimeMs}ms`);
-    console.log(`Still ${responseData.blocksBehind} blocks behind (rate: ${responseData.blockProcessingRate} blocks/sec)`);
-
     return new Response(
-      JSON.stringify(responseData),
-      {
-        headers: corsHeaders,
-      }
+      JSON.stringify({
+        swapsIndexed,
+        tokensIndexed,
+        fromBlock: startBlock,
+        toBlock: endBlock,
+        blocksBehind: safeBlock - endBlock,
+        executionTimeMs: Date.now() - startTime
+      }),
+      { headers: corsHeaders }
     );
   } catch (err: any) {
     console.error("Error in event-indexer:", err);
@@ -854,4 +268,4 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
       }
     );
   }
-}
+});
