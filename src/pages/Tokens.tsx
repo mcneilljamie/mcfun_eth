@@ -34,7 +34,13 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   const [tokenDataMap, setTokenDataMap] = useState<Record<string, TokenEnrichedData>>({});
   const [currentPage, setCurrentPage] = useState(1);
   const [isUpdating, setIsUpdating] = useState(false);
-  const [sortBy, setSortBy] = useState<'marketCap' | 'liquidity' | 'age-newest' | 'age-oldest'>('marketCap');
+  const [sortBy, setSortBy] = useState<'marketCap' | 'liquidity' | 'age-newest' | 'age-oldest'>(() => {
+    const saved = localStorage.getItem('mcfun_tokens_sort_preference');
+    if (saved && ['marketCap', 'liquidity', 'age-newest', 'age-oldest'].includes(saved)) {
+      return saved as 'marketCap' | 'liquidity' | 'age-newest' | 'age-oldest';
+    }
+    return 'marketCap';
+  });
   const TOKENS_PER_PAGE = 10;
 
   const readOnlyProvider = useMemo(() => {
@@ -62,6 +68,10 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
       tokensSubscription.unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('mcfun_tokens_sort_preference', sortBy);
+  }, [sortBy]);
 
   useEffect(() => {
     const activeProvider = provider || readOnlyProvider;
