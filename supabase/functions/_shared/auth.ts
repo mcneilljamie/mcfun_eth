@@ -10,21 +10,20 @@ export interface AuthResult {
 }
 
 /**
- * Verify that the request includes a valid cron secret header
+ * Verify that the request includes a valid Supabase key
  * Used for cron-only functions that should not be publicly accessible
  *
  * @param req - The incoming request
  * @returns AuthResult indicating if the request is authorized
  */
 export function verifyCronSecret(req: Request): AuthResult {
-  const expectedSecret = Deno.env.get("CRON_SECRET");
   const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
   // Check multiple possible header names for flexibility
   const providedSecret =
-    req.headers.get("X-Cron-Secret") ||
     req.headers.get("Authorization")?.replace("Bearer ", "") ||
+    req.headers.get("X-Cron-Secret") ||
     req.headers.get("X-Secret");
 
   if (!providedSecret) {
@@ -34,11 +33,6 @@ export function verifyCronSecret(req: Request): AuthResult {
       error: "Authentication required",
       statusCode: 401,
     };
-  }
-
-  // Accept CRON_SECRET if configured
-  if (expectedSecret && constantTimeCompare(providedSecret, expectedSecret)) {
-    return { authorized: true };
   }
 
   // Accept Supabase anon key (for internal cron jobs)
