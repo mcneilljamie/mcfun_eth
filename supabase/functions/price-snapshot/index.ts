@@ -1,11 +1,10 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.4";
 import { ethers } from "npm:ethers@6.16.0";
+import { verifyCronSecret, createUnauthorizedResponse } from "../_shared/auth.ts";
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
+  "Content-Type": "application/json",
 };
 
 const AMM_ABI = [
@@ -93,6 +92,16 @@ Deno.serve(async (req: Request) => {
     });
   }
 
+  const authResult = verifyCronSecret(req);
+  if (!authResult.authorized) {
+    console.warn("Unauthorized access attempt to price-snapshot");
+    return createUnauthorizedResponse(
+      authResult.error || "Unauthorized",
+      authResult.statusCode,
+      corsHeaders
+    );
+  }
+
   try {
     return await processPriceSnapshot();
   } catch (err: any) {
@@ -103,10 +112,7 @@ Deno.serve(async (req: Request) => {
       }),
       {
         status: 500,
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json",
-        },
+        headers: corsHeaders,
       }
     );
   }
@@ -180,10 +186,7 @@ async function processPriceSnapshot(): Promise<Response> {
       return new Response(
         JSON.stringify({ message: "No active tokens found", ...results }),
         {
-          headers: {
-            ...corsHeaders,
-            "Content-Type": "application/json",
-          },
+          headers: corsHeaders,
         }
       );
     }
@@ -332,10 +335,7 @@ async function processPriceSnapshot(): Promise<Response> {
     return new Response(
       JSON.stringify(results),
       {
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json",
-        },
+        headers: corsHeaders,
       }
     );
   } catch (err: any) {
@@ -344,10 +344,7 @@ async function processPriceSnapshot(): Promise<Response> {
       JSON.stringify({ error: err.message }),
       {
         status: 500,
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json",
-        },
+        headers: corsHeaders,
       }
     );
   }

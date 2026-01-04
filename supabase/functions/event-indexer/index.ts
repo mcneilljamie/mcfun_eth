@@ -1,11 +1,10 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.4";
 import { ethers } from "npm:ethers@6.16.0";
+import { verifyCronSecret, createUnauthorizedResponse } from "../_shared/auth.ts";
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
+  "Content-Type": "application/json",
 };
 
 const FACTORY_ADDRESS = "0xDE377c1C3280C2De18479Acbe40a06a79E0B3831";
@@ -485,6 +484,16 @@ Deno.serve(async (req: Request) => {
     });
   }
 
+  const authResult = verifyCronSecret(req);
+  if (!authResult.authorized) {
+    console.warn("Unauthorized access attempt to event-indexer");
+    return createUnauthorizedResponse(
+      authResult.error || "Unauthorized",
+      authResult.statusCode,
+      corsHeaders
+    );
+  }
+
   const startTime = Date.now();
 
   try {
@@ -498,10 +507,7 @@ Deno.serve(async (req: Request) => {
       }),
       {
         status: 500,
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json",
-        },
+        headers: corsHeaders,
       }
     );
   }
@@ -591,10 +597,7 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
           safeBlock,
         }),
         {
-          headers: {
-            ...corsHeaders,
-            "Content-Type": "application/json",
-          },
+          headers: corsHeaders,
         }
       );
     }
@@ -835,10 +838,7 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
     return new Response(
       JSON.stringify(responseData),
       {
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json",
-        },
+        headers: corsHeaders,
       }
     );
   } catch (err: any) {
@@ -850,10 +850,7 @@ async function processIndexing(req: Request, startTime: number): Promise<Respons
       }),
       {
         status: 500,
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json",
-        },
+        headers: corsHeaders,
       }
     );
   }

@@ -1,6 +1,8 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.4";
 import { ethers } from "npm:ethers@6.16.0";
+import { getClientIP } from "../_shared/auth.ts";
+import { checkRateLimit, createRateLimitResponse } from "../_shared/rateLimit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -52,6 +54,22 @@ Deno.serve(async (req: Request) => {
       status: 200,
       headers: corsHeaders,
     });
+  }
+
+  const clientIP = getClientIP(req);
+  const rateLimitResult = await checkRateLimit(
+    clientIP,
+    "register-token-launch",
+    5,
+    60
+  );
+
+  if (!rateLimitResult.allowed) {
+    console.warn(`Rate limit exceeded for IP ${clientIP} on register-token-launch`);
+    return createRateLimitResponse(
+      rateLimitResult.error || "Rate limit exceeded",
+      corsHeaders
+    );
   }
 
   try {

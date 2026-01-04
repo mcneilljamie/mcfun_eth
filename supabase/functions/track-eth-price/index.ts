@@ -1,10 +1,9 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.4";
+import { verifyCronSecret, createUnauthorizedResponse } from "../_shared/auth.ts";
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
+  "Content-Type": "application/json",
 };
 
 async function fetchCurrentEthPrice(): Promise<number> {
@@ -24,6 +23,16 @@ Deno.serve(async (req: Request) => {
       status: 200,
       headers: corsHeaders,
     });
+  }
+
+  const authResult = verifyCronSecret(req);
+  if (!authResult.authorized) {
+    console.warn("Unauthorized access attempt to track-eth-price");
+    return createUnauthorizedResponse(
+      authResult.error || "Unauthorized",
+      authResult.statusCode,
+      corsHeaders
+    );
   }
 
   try {
@@ -57,10 +66,7 @@ Deno.serve(async (req: Request) => {
         price_usd: ethPriceUsd,
       }),
       {
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json",
-        },
+        headers: corsHeaders,
       }
     );
   } catch (err: any) {
@@ -69,10 +75,7 @@ Deno.serve(async (req: Request) => {
       JSON.stringify({ error: err.message }),
       {
         status: 500,
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json",
-        },
+        headers: corsHeaders,
       }
     );
   }

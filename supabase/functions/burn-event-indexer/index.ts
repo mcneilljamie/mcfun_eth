@@ -1,11 +1,10 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.4";
 import { ethers } from "npm:ethers@6.16.0";
+import { verifyCronSecret, createUnauthorizedResponse } from "../_shared/auth.ts";
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
+  "Content-Type": "application/json",
 };
 
 const BURN_ADDRESS = "0x000000000000000000000000000000000000dEaD";
@@ -41,6 +40,16 @@ Deno.serve(async (req: Request) => {
       status: 200,
       headers: corsHeaders,
     });
+  }
+
+  const authResult = verifyCronSecret(req);
+  if (!authResult.authorized) {
+    console.warn("Unauthorized access attempt to burn-event-indexer");
+    return createUnauthorizedResponse(
+      authResult.error || "Unauthorized",
+      authResult.statusCode,
+      corsHeaders
+    );
   }
 
   const startTime = Date.now();

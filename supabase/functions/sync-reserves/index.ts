@@ -2,11 +2,10 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.4";
 import { ethers } from "npm:ethers@6.16.0";
 import { withLock } from "../_shared/lockManager.ts";
+import { verifyCronSecret, createUnauthorizedResponse } from "../_shared/auth.ts";
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
+  "Content-Type": "application/json",
 };
 
 const AMM_ABI = [
@@ -20,6 +19,16 @@ Deno.serve(async (req: Request) => {
       status: 200,
       headers: corsHeaders,
     });
+  }
+
+  const authResult = verifyCronSecret(req);
+  if (!authResult.authorized) {
+    console.warn("Unauthorized access attempt to sync-reserves");
+    return createUnauthorizedResponse(
+      authResult.error || "Unauthorized",
+      authResult.statusCode,
+      corsHeaders
+    );
   }
 
   try {
@@ -40,10 +49,7 @@ Deno.serve(async (req: Request) => {
       }),
       {
         status: err.message.includes("Failed to acquire lock") ? 503 : 500,
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json",
-        },
+        headers: corsHeaders,
       }
     );
   }
@@ -75,10 +81,7 @@ async function processSyncReserves(): Promise<Response> {
       return new Response(
         JSON.stringify({ message: "No tokens found", ...results }),
         {
-          headers: {
-            ...corsHeaders,
-            "Content-Type": "application/json",
-          },
+          headers: corsHeaders,
         }
       );
     }
@@ -123,10 +126,7 @@ async function processSyncReserves(): Promise<Response> {
     return new Response(
       JSON.stringify(results),
       {
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json",
-        },
+        headers: corsHeaders,
       }
     );
   } catch (err: any) {
@@ -135,10 +135,7 @@ async function processSyncReserves(): Promise<Response> {
       JSON.stringify({ error: err.message }),
       {
         status: 500,
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json",
-        },
+        headers: corsHeaders,
       }
     );
   }
