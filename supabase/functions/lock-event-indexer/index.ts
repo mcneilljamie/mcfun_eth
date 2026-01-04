@@ -264,19 +264,19 @@ async function processLockIndexing(req: Request): Promise<Response> {
 
     let MAX_RANGE: number;
     if (catchupMode) {
-      MAX_RANGE = 5000;
+      MAX_RANGE = 10000;
     } else if (blocksBehind > 5000) {
+      MAX_RANGE = 10000;
+      console.log(`Adaptive mode: ${blocksBehind} blocks behind, processing 10000 blocks per run`);
+    } else if (blocksBehind > 1000) {
       MAX_RANGE = 5000;
       console.log(`Adaptive mode: ${blocksBehind} blocks behind, processing 5000 blocks per run`);
-    } else if (blocksBehind > 1000) {
+    } else if (blocksBehind > 500) {
       MAX_RANGE = 2000;
       console.log(`Adaptive mode: ${blocksBehind} blocks behind, processing 2000 blocks per run`);
-    } else if (blocksBehind > 500) {
+    } else {
       MAX_RANGE = 1000;
       console.log(`Adaptive mode: ${blocksBehind} blocks behind, processing 1000 blocks per run`);
-    } else {
-      MAX_RANGE = 500;
-      console.log(`Adaptive mode: ${blocksBehind} blocks behind, processing 500 blocks per run`);
     }
 
     if (catchupMode) {
