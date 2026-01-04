@@ -1,7 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.4";
 import { ethers } from "npm:ethers@6.16.0";
-import { verifyCronSecret, createUnauthorizedResponse } from "../_shared/auth.ts";
 
 const corsHeaders = {"Content-Type": "application/json"};
 const FACTORY_ADDRESS = "0xDE377c1C3280C2De18479Acbe40a06a79E0B3831";
@@ -32,11 +31,6 @@ async function createProviderWithFailover(): Promise<ethers.JsonRpcProvider> {
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") { return new Response(null, { status: 200, headers: corsHeaders }); }
-  const authResult = verifyCronSecret(req);
-  if (!authResult.authorized) {
-    console.warn("Unauthorized:", authResult.error);
-    return createUnauthorizedResponse(authResult.error || "Unauthorized", authResult.statusCode, corsHeaders);
-  }
   const startTime = Date.now();
   try {
     const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
