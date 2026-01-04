@@ -266,8 +266,8 @@ export function Lock({ onShowToast }: LockPageProps) {
 
   const loadAggregatedLocks = async () => {
     try {
-      // Use cached materialized view for better performance
-      const { data, error } = await supabase.rpc('get_aggregated_locks_cached', {
+      // Use live query for real-time data
+      const { data, error } = await supabase.rpc('get_aggregated_locks_live', {
         page_limit: 10,
         page_offset: 0
       });
@@ -278,7 +278,7 @@ export function Lock({ onShowToast }: LockPageProps) {
       }
 
       if (data) {
-        console.log('Loaded aggregated locks from cache:', data);
+        console.log('Loaded aggregated locks (live):', data);
         // Filter out any invalid entries
         const validLocks = data.filter((lock: any) =>
           lock &&
