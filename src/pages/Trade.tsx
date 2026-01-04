@@ -419,32 +419,7 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
             </div>
 
             {amountIn && amountOut && (
-              <>
-                {priceImpact > 3 && (
-                  <div className={`rounded-lg p-3 sm:p-4 border ${
-                    priceImpact > 10 ? 'bg-red-50 border-red-300' : priceImpact > 5 ? 'bg-orange-50 border-orange-300' : 'bg-yellow-50 border-yellow-300'
-                  }`}>
-                    <div className="flex items-start space-x-2">
-                      <AlertCircle className={`w-5 h-5 mt-0.5 flex-shrink-0 ${
-                        priceImpact > 10 ? 'text-red-600' : priceImpact > 5 ? 'text-orange-600' : 'text-yellow-600'
-                      }`} />
-                      <div>
-                        <p className={`text-sm font-semibold ${
-                          priceImpact > 10 ? 'text-red-900' : priceImpact > 5 ? 'text-orange-900' : 'text-yellow-900'
-                        }`}>
-                          {priceImpact > 10 ? 'Very High' : priceImpact > 5 ? 'High' : 'Moderate'} Price Impact
-                        </p>
-                        <p className={`text-xs mt-1 ${
-                          priceImpact > 10 ? 'text-red-800' : priceImpact > 5 ? 'text-orange-800' : 'text-yellow-800'
-                        }`}>
-                          This trade will significantly affect the token price. Consider reducing your trade size or increasing slippage tolerance if the transaction fails.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                <div className="bg-gray-50 rounded-lg p-3 sm:p-4 space-y-2 text-xs sm:text-sm">
+              <div className="bg-gray-50 rounded-lg p-3 sm:p-4 space-y-2 text-xs sm:text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-600">{t('trade.priceImpact')}</span>
                     <span className={`font-medium ${priceImpact > 5 ? 'text-red-600' : 'text-gray-900'}`}>
@@ -464,7 +439,6 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
                     </span>
                   </div>
                 </div>
-              </>
             )}
 
             <div>
