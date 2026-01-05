@@ -2,7 +2,6 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.4";
 import { ethers } from "npm:ethers@6.16.0";
 import { withLock } from "./_shared/lockManager.ts";
-import { verifyCronSecret, createUnauthorizedResponse } from "../_shared/auth.ts";
 
 const corsHeaders = {
   "Content-Type": "application/json",
@@ -142,16 +141,6 @@ Deno.serve(async (req: Request) => {
       status: 200,
       headers: corsHeaders,
     });
-  }
-
-  const authResult = verifyCronSecret(req);
-  if (!authResult.authorized) {
-    console.warn("Unauthorized access attempt to lock-event-indexer");
-    return createUnauthorizedResponse(
-      authResult.error || "Unauthorized",
-      authResult.statusCode,
-      corsHeaders
-    );
   }
 
   try {
