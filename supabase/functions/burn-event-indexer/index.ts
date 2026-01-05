@@ -99,6 +99,20 @@ Deno.serve(async (req: Request) => {
 
           const burnedBalance = await tokenContract.balanceOf(BURN_ADDRESS);
 
+          const { data: existingBurn } = await supabase
+            .from("token_burn_totals")
+            .select("total_amount_burned, burn_count, last_burn_timestamp")
+            .eq("token_address", token.token_address.toLowerCase())
+            .maybeSingle();
+
+          const previousBurnedAmount = existingBurn?.total_amount_burned
+            ? BigInt(existingBurn.total_amount_burned)
+            : 0n;
+
+          if (burnedBalance <= previousBurnedAmount) {
+            return { success: true, hasBurn: false };
+          }
+
           let tokenPriceEth: number;
           let ethPriceUsd: number;
 
@@ -135,8 +149,8 @@ Deno.serve(async (req: Request) => {
           const burnedAmountFloat = Number(burnedBalance) / 1e18;
           const totalValueUsd = burnedAmountFloat * tokenPriceEth * ethPriceUsd;
           const percentBurned = (Number(burnedBalance) / Number(TOKEN_SUPPLY)) * 100;
-          const burnCount = burnedBalance > 0n ? 1 : 0;
-          const lastBurnTimestamp = burnedBalance > 0n ? new Date().toISOString() : null;
+          const burnCount = (existingBurn?.burn_count || 0) + 1;
+          const lastBurnTimestamp = new Date().toISOString();
 
           const { error: upsertError } = await supabase
             .from("token_burn_totals")
@@ -155,10 +169,11 @@ Deno.serve(async (req: Request) => {
 
           if (upsertError) {
             console.error(`Failed to update burn totals for ${token.token_address}:`, upsertError);
-            return { success: false, hasBurn: burnCount > 0 };
+            return { success: false, hasBurn: true };
           }
 
-          return { success: true, hasBurn: burnCount > 0 };
+          console.log(`New burn detected for ${token.symbol}: ${burnedAmountFloat.toFixed(2)} tokens`);
+          return { success: true, hasBurn: true };
         })
       );
 
