@@ -142,10 +142,10 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     setFilteredTokens(sorted);
   }, [searchQuery, tokens, tokenDataMap, sortBy]);
 
-  // Reset to page 1 only when search query or tokens list changes
+  // Reset to page 1 only when search query changes or token count changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, tokens]);
+  }, [searchQuery, tokens.length]);
 
   const loadTokens = async () => {
     setIsLoading(true);
