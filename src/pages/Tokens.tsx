@@ -225,8 +225,12 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
 
         const totalVolume = parseFloat(token.total_volume_eth || '0');
 
-        // Only show price change if there has been trading volume
-        if (totalVolume > 0.0001) {
+        // Check if there have been trades in the last 24 hours
+        const lastSwapAt = token.last_swap_at ? new Date(token.last_swap_at) : null;
+        const hasRecentTrades = lastSwapAt && (now - lastSwapAt.getTime() < 24 * 60 * 60 * 1000);
+
+        // Only show price change if there has been recent trading activity
+        if (hasRecentTrades) {
           // For new tokens: calculate from live blockchain data (most accurate)
           // For older tokens: trust database's 24h calculation (prevents flickering)
           if (isNew && token.launch_price_eth && token.launch_eth_price_usd) {
