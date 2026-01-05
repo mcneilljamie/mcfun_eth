@@ -225,15 +225,18 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
 
         const totalVolume = parseFloat(token.total_volume_eth || '0');
 
-        // For new tokens: calculate from live blockchain data (most accurate)
-        // For older tokens: trust database's 24h calculation (prevents flickering)
-        if (isNew && token.launch_price_eth && token.launch_eth_price_usd && totalVolume > 0) {
-          const launchPriceUSD = parseFloat(token.launch_price_eth) * parseFloat(token.launch_eth_price_usd);
-          if (launchPriceUSD > 0 && currentPriceUSD > 0) {
-            priceChange = ((currentPriceUSD - launchPriceUSD) / launchPriceUSD) * 100;
+        // Only show price change if there has been trading volume
+        if (totalVolume > 0.0001) {
+          // For new tokens: calculate from live blockchain data (most accurate)
+          // For older tokens: trust database's 24h calculation (prevents flickering)
+          if (isNew && token.launch_price_eth && token.launch_eth_price_usd) {
+            const launchPriceUSD = parseFloat(token.launch_price_eth) * parseFloat(token.launch_eth_price_usd);
+            if (launchPriceUSD > 0 && currentPriceUSD > 0) {
+              priceChange = ((currentPriceUSD - launchPriceUSD) / launchPriceUSD) * 100;
+            }
+          } else if (token.price_change_24h && Math.abs(parseFloat(token.price_change_24h)) > 0.01) {
+            priceChange = parseFloat(token.price_change_24h);
           }
-        } else if (token.price_change_24h && Math.abs(parseFloat(token.price_change_24h)) > 0.01) {
-          priceChange = parseFloat(token.price_change_24h);
         }
 
         newTokenData[token.token_address] = {
