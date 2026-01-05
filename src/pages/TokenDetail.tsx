@@ -234,11 +234,6 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
   const calculateReturnSinceLaunch = (): number => {
     if (!token?.launch_price_eth || !token?.launch_eth_price_usd) return 1.0;
 
-    const totalVolume = parseFloat(token.total_volume_eth || '0');
-    if (totalVolume === 0 || snapshotCount < 2) {
-      return 1.0;
-    }
-
     const launchPriceUSD = parseFloat(token.launch_price_eth) * parseFloat(token.launch_eth_price_usd);
     const currentPriceUSD = calculateTokenPriceUSD();
 
