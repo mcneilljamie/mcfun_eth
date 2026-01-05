@@ -223,14 +223,9 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
 
         let priceChange: number | null = null;
 
-        const totalVolume = parseFloat(token.total_volume_eth || '0');
-
-        if (isNew && token.launch_price_eth && token.launch_eth_price_usd && totalVolume > 0) {
-          const launchPriceUSD = parseFloat(token.launch_price_eth) * parseFloat(token.launch_eth_price_usd);
-          if (launchPriceUSD > 0 && currentPriceUSD > 0) {
-            priceChange = ((currentPriceUSD - launchPriceUSD) / launchPriceUSD) * 100;
-          }
-        } else if (token.price_change_24h && Math.abs(parseFloat(token.price_change_24h)) > 0.01) {
+        // Trust database calculation when available (updated every 5 minutes)
+        // This prevents flickering caused by frontend recalculation conflicts
+        if (token.price_change_24h && Math.abs(parseFloat(token.price_change_24h)) > 0.01) {
           priceChange = parseFloat(token.price_change_24h);
         }
 
