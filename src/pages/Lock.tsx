@@ -295,12 +295,13 @@ export function Lock({ onShowToast }: LockPageProps) {
 
       if (data) {
         console.log('Loaded aggregated locks (live):', data);
-        // Filter out any invalid entries
+        // Filter out any invalid entries (keep tokens even with 0 locked amount for display)
         const validLocks = data.filter((lock: any) =>
           lock &&
           lock.token_address &&
           lock.token_symbol &&
-          lock.total_amount_locked
+          lock.total_amount_locked !== undefined &&
+          lock.total_amount_locked !== null
         );
         setAggregatedLocks(validLocks);
       }
