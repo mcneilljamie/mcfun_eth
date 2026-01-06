@@ -27,19 +27,19 @@
     "features": {
       "fast": {
         "title": "Lightning Fast",
-        "description": "Launch your token in seconds with a simple, straightforward interface."
+        "description": "Launch your token in seconds with a simple, straightforward interface"
       },
       "secure": {
         "title": "Unruggable",
-        "description": "Initial liquidity is permanently burned, making your token truly secure."
+        "description": "Initial liquidity is permanently burned, making your token truly secure"
       },
       "noFees": {
         "title": "No Token Creation Fees",
-        "description": "Only pay gas fees. No hidden costs or platform charges."
+        "description": "Only pay gas fees. No hidden costs or platform charges"
       },
       "fair": {
         "title": "Fair Launch",
-        "description": "Fixed 1M token supply with customizable liquidity allocation."
+        "description": "Fixed 1M token supply with customizable liquidity allocation"
       }
     },
     "howItWorks": {
