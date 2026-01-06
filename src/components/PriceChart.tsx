@@ -377,8 +377,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
 
       {/* Data info */}
       {data.length > 0 && (
-        <div className={`flex items-center justify-between text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'} pt-2 border-t ${isDark ? 'border-gray-800' : 'border-gray-200'}`}>
-          <span>{data.length} data points</span>
+        <div className={`flex items-center justify-end text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'} pt-2 border-t ${isDark ? 'border-gray-800' : 'border-gray-200'}`}>
           <span>Updates in real-time</span>
         </div>
       )}
