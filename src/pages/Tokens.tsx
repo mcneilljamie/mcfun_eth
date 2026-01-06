@@ -56,10 +56,15 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
 
     const ethPriceInterval = setInterval(loadEthPrice, 60000);
 
+    let lastTokenUpdate = Date.now();
     const tokensSubscription = supabase
       .channel('tokens-channel')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'tokens' }, () => {
-        loadTokens();
+        const now = Date.now();
+        if (now - lastTokenUpdate >= 5000) {
+          lastTokenUpdate = now;
+          loadTokens();
+        }
       })
       .subscribe();
 
@@ -78,22 +83,10 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
 
     if (filteredTokens.length > 0 && activeProvider && ethPriceUSD > 0) {
       loadTokenData();
-      const dataInterval = setInterval(loadTokenData, 60000);
-
-      let lastBlockUpdate = Date.now();
-      const blockListener = () => {
-        const now = Date.now();
-        if (now - lastBlockUpdate >= 60000) {
-          lastBlockUpdate = now;
-          loadTokenData();
-        }
-      };
-
-      activeProvider.on('block', blockListener);
+      const dataInterval = setInterval(loadTokenData, 30000);
 
       return () => {
         clearInterval(dataInterval);
-        activeProvider.off('block', blockListener);
       };
     }
   }, [filteredTokens, currentPage, provider, readOnlyProvider, ethPriceUSD]);
@@ -190,6 +183,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
       const reservesMap = await getMultipleReserves(activeProvider, ammAddresses);
 
       const newTokenData: Record<string, TokenEnrichedData> = { ...tokenDataMap };
+      let hasChanges = false;
 
       for (const token of visibleTokens) {
         const reserves = reservesMap.get(token.amm_address);
@@ -243,16 +237,30 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
           }
         }
 
-        newTokenData[token.token_address] = {
+        const existingData = newTokenData[token.token_address];
+        const newData: TokenEnrichedData = {
           currentPriceUSD,
           marketCap,
           priceChange,
           isNew,
           liquidityETH
         };
+
+        // Only update if data has meaningfully changed (> 0.1% difference)
+        if (!existingData ||
+            Math.abs(existingData.currentPriceUSD - newData.currentPriceUSD) / Math.max(existingData.currentPriceUSD, 0.00001) > 0.001 ||
+            Math.abs(existingData.marketCap - newData.marketCap) / Math.max(existingData.marketCap, 0.00001) > 0.001 ||
+            existingData.liquidityETH !== newData.liquidityETH ||
+            existingData.priceChange !== newData.priceChange) {
+          newTokenData[token.token_address] = newData;
+          hasChanges = true;
+        }
       }
 
-      setTokenDataMap(newTokenData);
+      // Only trigger re-render if there are actual changes
+      if (hasChanges) {
+        setTokenDataMap(newTokenData);
+      }
     } catch (err) {
       console.error('Failed to load token data:', err);
     } finally {
