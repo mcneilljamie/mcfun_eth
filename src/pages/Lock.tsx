@@ -726,7 +726,7 @@ export function Lock({ onShowToast }: LockPageProps) {
         {urlTokenAddress && !tokenStats ? (
           <div className="flex flex-col items-center justify-center py-20">
             <Loader2 className="w-12 h-12 text-blue-600 animate-spin mb-4" />
-            <p className="text-gray-600 text-lg">Loading token locks...</p>
+            <p className="text-gray-600 text-lg">{t('lock.loadingLocks')}</p>
           </div>
         ) : urlTokenAddress && tokenStats ? (
           <div className="mb-8">
@@ -803,7 +803,7 @@ export function Lock({ onShowToast }: LockPageProps) {
             return (
               <div className="mb-8 bg-white rounded-xl shadow-lg p-12 text-center">
                 <LockIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600 text-lg">No active locks for this token</p>
+                <p className="text-gray-600 text-lg">{t('lock.noActiveLocksForToken')}</p>
               </div>
             );
           }
@@ -1007,7 +1007,7 @@ export function Lock({ onShowToast }: LockPageProps) {
                                   return formatUSD(marketCap);
                                 })()}
                               </div>
-                              <div className="text-xs text-gray-500">Market Cap</div>
+                              <div className="text-xs text-gray-500">{t('lock.marketCap')}</div>
                             </div>
                           </div>
                         </button>
