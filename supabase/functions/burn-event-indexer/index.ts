@@ -1,7 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.4";
 import { ethers } from "npm:ethers@6.16.0";
-import { verifyCronSecret, createUnauthorizedResponse } from "../_shared/auth.ts";
+import { verifyCronSecret, createUnauthorizedResponse } from "./_shared/auth.ts";
 
 const corsHeaders = {
   "Content-Type": "application/json",
@@ -62,11 +62,17 @@ Deno.serve(async (req: Request) => {
   try {
     const currentBlock = await provider.getBlockNumber();
 
-    const { data: tokens, error: tokensError } = await supabase
+    // Get tokens with existing burns first (priority), then all other tokens
+    const { data: tokensWithBurns, error: burnsError } = await supabase
+      .from("token_burn_totals")
+      .select("token_address")
+      .order("last_burn_timestamp", { ascending: false });
+
+    const { data: allTokens, error: tokensError } = await supabase
       .from("tokens")
       .select("token_address, symbol, name");
 
-    if (tokensError || !tokens || tokens.length === 0) {
+    if (tokensError || !allTokens || allTokens.length === 0) {
       console.error("Failed to load tokens:", tokensError);
       return new Response(
         JSON.stringify({ success: false, error: "Failed to load tokens" }),
@@ -74,15 +80,30 @@ Deno.serve(async (req: Request) => {
       );
     }
 
+    // Prioritize tokens that have burns (check them first)
+    const burnAddresses = new Set(tokensWithBurns?.map(t => t.token_address.toLowerCase()) || []);
+    const tokensToCheck = allTokens.sort((a, b) => {
+      const aHasBurn = burnAddresses.has(a.token_address.toLowerCase()) ? 0 : 1;
+      const bHasBurn = burnAddresses.has(b.token_address.toLowerCase()) ? 0 : 1;
+      return aHasBurn - bHasBurn;
+    });
+
+    const tokens = tokensToCheck;
+
     const results = {
       tokensProcessed: 0,
       tokensWithBurns: 0,
+      tokensSkippedTimeout: 0,
       errors: [] as string[],
     };
 
+    console.log(`Processing ${tokens.length} tokens (${burnAddresses.size} with existing burns)`);
+
     for (let i = 0; i < tokens.length; i += PARALLEL_TOKEN_LIMIT) {
       if (Date.now() - startTime > MAX_EXECUTION_TIME_MS) {
-        console.log("Approaching timeout, stopping early");
+        const remaining = tokens.length - i;
+        results.tokensSkippedTimeout = remaining;
+        console.log(`Approaching timeout, stopping early (${remaining} tokens skipped)`);
         break;
       }
 
