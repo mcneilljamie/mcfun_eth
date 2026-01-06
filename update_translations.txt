@@ -1,0 +1,29 @@
+Summary of Lock Page Translation Updates
+
+COMPLETED LANGUAGES (Full translations):
+✅ English (en) - Reference language
+✅ French (fr) - Fully translated
+✅ Spanish (es) - Fully translated
+✅ Arabic (ar) - Fully translated
+✅ Hindi (hi) - Fully translated
+✅ Farsi/Persian (fa) - Fully translated
+
+PARTIALLY COMPLETED (Have most translations but missing new keys):
+⚠️ Indonesian (id) - Missing: loadingLocks, noActiveLocksForToken, marketCap
+⚠️ Italian (it) - Missing: loadingLocks, noActiveLocksForToken, marketCap
+⚠️ Japanese (ja) - Missing: loadingLocks, noActiveLocksForToken, marketCap
+⚠️ Georgian (ka) - Missing: loadingLocks, noActiveLocksForToken, marketCap
+⚠️ Korean (ko) - Missing: loadingLocks, noActiveLocksForToken, marketCap
+⚠️ Portuguese (pt) - Missing: loadingLocks, noActiveLocksForToken, marketCap
+⚠️ Russian (ru) - Missing: loadingLocks, noActiveLocksForToken, marketCap
+⚠️ Turkish (tr) - Missing: loadingLocks, noActiveLocksForToken, marketCap
+⚠️ Vietnamese (vi) - Missing: loadingLocks, noActiveLocksForToken, marketCap
+⚠️ Chinese (zh) - Missing: loadingLocks, noActiveLocksForToken, marketCap
+
+New keys that were added:
+- lock.loadingLocks: "Loading token locks..."
+- lock.noActiveLocksForToken: "No active locks for this token"
+- lock.marketCap: "Market Cap" (already existed in most)
+
+Build Status: ✅ SUCCESS
+All languages build correctly, though some are missing the newest translation keys.
