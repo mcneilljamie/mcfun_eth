@@ -284,8 +284,7 @@
         "title": "Open Source & Verifiable",
         "description": "All smart contracts can be viewed and verified on Etherscan. Audit the code yourself before using the platform."
       }
-    },
-    "founder": "McFun was founded and is maintained by Jamie McNeill."
+    }
   },
   "common": {
     "tokens": "tokens",

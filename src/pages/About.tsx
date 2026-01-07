@@ -505,9 +505,6 @@ export function About() {
           </div>
         </div>
 
-        <div className="text-center py-6">
-          <p className="text-sm text-gray-600">Founded by Jamie McNeill</p>
-        </div>
       </div>
     </div>
   );
