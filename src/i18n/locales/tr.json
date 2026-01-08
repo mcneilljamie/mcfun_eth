@@ -345,7 +345,8 @@
     "browseTokens": "Tokenlere Göz At",
     "yourHoldings": "Kilidi Açılmış Tokenleriniz",
     "balance": "Bakiye",
-    "perToken": "token başına"
+    "perToken": "token başına",
+    "readyToWithdraw": "Çekime Hazır"
   },
   "aboutPage": {
     "platformStats": "Platform İstatistikleri",
@@ -377,7 +378,24 @@
     "platformAvailabilityDescription": "Platform herhangi bir garanti olmaksızın \"olduğu gibi\" sağlanır. Kesintisiz erişim veya hatasız çalışma garantisi vermiyoruz.",
     "acknowledgement": "Bu platformu kullanarak, bu şartları okuduğunuzu, anladığınızı ve kabul ettiğinizi onaylıyorsunuz. Ticaret kararlarınız ve sonuçları için tam sorumluluk kabul ediyorsunuz.",
     "delistingRights": "Token Listeden Çıkarma Hakları:",
-    "delistingRightsDescription": "Platform, önceden haber vermeksizin kendi takdirine bağlı olarak herhangi bir tokeni ön uçtan listeden çıkarma hakkını saklı tutar. Ön uçtan listeden çıkarma, tokenin akıllı sözleşmesini veya zincir üzerindeki işlevselliğini etkilemez ve bunlar bağımsız olarak çalışmaya devam edecektir. Kullanıcılar tokenlarının tam sahipliğini ve kontrolünü korurlar ve blokzincir üzerinden doğrudan listeden çıkarılmış tokenlarla etkileşimde bulunabilirler."
+    "delistingRightsDescription": "Platform, önceden haber vermeksizin kendi takdirine bağlı olarak herhangi bir tokeni ön uçtan listeden çıkarma hakkını saklı tutar. Ön uçtan listeden çıkarma, tokenin akıllı sözleşmesini veya zincir üzerindeki işlevselliğini etkilemez ve bunlar bağımsız olarak çalışmaya devam edecektir. Kullanıcılar tokenlarının tam sahipliğini ve kontrolünü korurlar ve blokzincir üzerinden doğrudan listeden çıkarılmış tokenlarla etkileşimde bulunabilirler.",
+    "tokenLocking": "Ücretsiz McFun Token Kilitleme",
+    "tokenLockingDescription": "McFun, kullanımı tamamen ücretsiz olan güvenli, güvene gerek duymayan bir token kilitleme hizmeti sunar. Taahhüt göstermek, topluluğunuzla güven oluşturmak veya hak kazanma programları oluşturmak için herhangi bir süre boyunca herhangi bir McFun token'ını kilitleyin.",
+    "lockAnyToken": "McFun Tokenlarını Kilitle",
+    "lockAnyTokenDescription": "McFun'da başlatılan herhangi bir tokeni kilitleyin. Günlerden yıllara kadar kendi kilitleme sürenizi ayarlayın ve topluluğunuza uzun vadeli taahhüdünüzü gösterin.",
+    "completlyFree": "Tamamen Ücretsiz - Ücret Yok",
+    "completlyFreeDescription": "Platform ücreti alan diğer kilitleme hizmetlerinin aksine, McFun'un token kilitleyicisi tamamen ücretsizdir. Yalnızca ağ gaz ücretlerini ödersiniz - gizli maliyet veya hizmet ücreti yoktur.",
+    "proveTrust": "Güven ve Taahhüdü Kanıtlayın",
+    "proveTrustDescription": "Token kilitleme, bir projeye uzun vadeli taahhüdü gösterir. Tüm kilitlemeler halka açık olarak görülebilir ve zincirde doğrulanabilir, şeffaflık sağlar ve topluluğunuzda güven oluşturur.",
+    "tokenBurning": "Token Yakma",
+    "tokenBurningDescription": "McFun ücretsiz, şeffaf bir token yakma hizmeti sunar. Arzı azaltmak ve potansiyel olarak kıtlığı artırmak için tokenları kalıcı olarak dolaşımdan çıkarın. Tüm yakmalar zincirde kaydedilir ve halka açık olarak doğrulanabilir.",
+    "reduceSupply": "Dolaşımdaki Arzı Azaltın",
+    "reduceSupplyDescription": "Tokenları yakmak onları kalıcı olarak dolaşımdan çıkarır, toplam mevcut arzı azaltır. Bu, tokenları kurtarılamaz bir adrese gönderen geri dönüşü olmayan bir süreçtir.",
+    "increaseScarcity": "Token Kıtlığını Artırın",
+    "increaseScarcityDescription": "Arzı azaltarak, token yakma kıtlığı artırabilir. Birçok proje, zaman içinde token ekonomisini potansiyel olarak etkilemek için deflasyonist bir mekanizma olarak yakmayı kullanır.",
+    "permanentRemoval": "Kalıcı ve Doğrulanabilir Çıkarma",
+    "permanentRemovalDescription": "Tüm token yakmaları kalıcıdır ve blockchain üzerinde doğrulanabilir. Yakıldıktan sonra tokenlar kurtarılamaz veya yeniden kullanılamaz. Yakma geçmişi tam şeffaflık için halka açık olarak görülebilir.",
+    "readyToWithdraw": "Çekime Hazır"
   },
   "wallet": {
     "connectWallet": "Cüzdanınızı Bağlayın",

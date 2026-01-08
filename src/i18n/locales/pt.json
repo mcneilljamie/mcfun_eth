@@ -345,7 +345,8 @@
     "browseTokens": "Explorar Tokens",
     "yourHoldings": "Posições de Tokens Desbloqueados",
     "balance": "Saldo",
-    "perToken": "por token"
+    "perToken": "por token",
+    "readyToWithdraw": "Pronto para Sacar"
   },
   "aboutPage": {
     "platformStats": "Estatísticas da Plataforma",
@@ -377,7 +378,24 @@
     "platformAvailabilityDescription": "A plataforma é fornecida \"como está\" sem garantias de qualquer tipo. Não garantimos acesso ininterrupto ou operação sem erros.",
     "acknowledgement": "Ao usar esta plataforma, você reconhece que leu, compreendeu e concordou com estes termos. Você aceita total responsabilidade pelas suas decisões de negociação e seus resultados.",
     "delistingRights": "Direitos de remoção de tokens:",
-    "delistingRightsDescription": "A plataforma reserva-se o direito de remover qualquer token da interface a seu exclusivo critério sem aviso prévio. A remoção da interface não afeta o contrato inteligente do token ou sua funcionalidade na blockchain, que continuarão a operar de forma independente. Os usuários mantêm a propriedade total e o controle de seus tokens, e podem interagir com tokens removidos diretamente através da blockchain."
+    "delistingRightsDescription": "A plataforma reserva-se o direito de remover qualquer token da interface a seu exclusivo critério sem aviso prévio. A remoção da interface não afeta o contrato inteligente do token ou sua funcionalidade na blockchain, que continuarão a operar de forma independente. Os usuários mantêm a propriedade total e o controle de seus tokens, e podem interagir com tokens removidos diretamente através da blockchain.",
+    "tokenLocking": "Bloqueio Gratuito de Tokens McFun",
+    "tokenLockingDescription": "McFun fornece um serviço de bloqueio de tokens seguro, sem confiança e completamente gratuito. Bloqueie qualquer token McFun por qualquer duração para demonstrar compromisso, construir confiança com sua comunidade ou criar cronogramas de aquisição.",
+    "lockAnyToken": "Bloquear Tokens McFun",
+    "lockAnyTokenDescription": "Bloqueie qualquer token lançado no McFun. Defina sua própria duração de bloqueio de dias a anos e demonstre compromisso de longo prazo com sua comunidade.",
+    "completlyFree": "Completamente Gratuito - Sem Taxas",
+    "completlyFreeDescription": "Ao contrário de outros serviços de bloqueio que cobram taxas de plataforma, o bloqueador de tokens McFun é completamente gratuito. Você paga apenas taxas de gás de rede - sem custos ocultos ou taxas de serviço.",
+    "proveTrust": "Prove Confiança e Compromisso",
+    "proveTrustDescription": "Bloquear tokens demonstra compromisso de longo prazo com um projeto. Todos os bloqueios são publicamente visíveis e verificáveis na cadeia, fornecendo transparência e construindo confiança em sua comunidade.",
+    "tokenBurning": "Queima de Tokens",
+    "tokenBurningDescription": "McFun fornece um serviço de queima de tokens gratuito e transparente. Remova permanentemente tokens de circulação para reduzir o fornecimento e potencialmente aumentar a escassez. Todas as queimas são registradas na cadeia e publicamente verificáveis.",
+    "reduceSupply": "Reduzir Fornecimento Circulante",
+    "reduceSupplyDescription": "Queimar tokens os remove permanentemente de circulação, reduzindo o fornecimento total disponível. Este é um processo irreversível que envia tokens para um endereço irrecuperável.",
+    "increaseScarcity": "Aumentar Escassez do Token",
+    "increaseScarcityDescription": "Ao reduzir o fornecimento, a queima de tokens pode aumentar a escassez. Muitos projetos usam queimas como mecanismo deflacionário para impactar potencialmente a economia do token ao longo do tempo.",
+    "permanentRemoval": "Remoção Permanente e Verificável",
+    "permanentRemovalDescription": "Todas as queimas de tokens são permanentes e verificáveis na blockchain. Uma vez queimados, os tokens não podem ser recuperados ou reutilizados. O histórico de queimas é publicamente visível para completa transparência.",
+    "readyToWithdraw": "Pronto para Sacar"
   },
   "wallet": {
     "connectWallet": "Conectar Sua Carteira",

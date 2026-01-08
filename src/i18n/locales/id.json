@@ -345,7 +345,8 @@
     "browseTokens": "Jelajahi Token",
     "yourHoldings": "Token Anda",
     "balance": "Saldo",
-    "perToken": "per token"
+    "perToken": "per token",
+    "readyToWithdraw": "Siap Ditarik"
   },
   "aboutPage": {
     "platformStats": "Statistik Platform",
@@ -377,7 +378,24 @@
     "platformAvailabilityDescription": "Platform disediakan apa adanya tanpa jaminan apa pun.",
     "acknowledgement": "Dengan menggunakan platform ini, Anda mengakui telah membaca, memahami, dan menyetujui persyaratan ini. Anda menerima tanggung jawab penuh atas keputusan perdagangan dan hasilnya.",
     "delistingRights": "Hak Penghapusan Token:",
-    "delistingRightsDescription": "Platform berhak untuk menghapus token apa pun dari antarmuka sesuai kebijaksanaannya sendiri tanpa pemberitahuan sebelumnya. Penghapusan dari antarmuka tidak mempengaruhi kontrak pintar token atau fungsi on-chain, yang akan terus beroperasi secara independen. Pengguna mempertahankan kepemilikan penuh dan kontrol atas token mereka, dan dapat berinteraksi dengan token yang dihapus langsung melalui blockchain."
+    "delistingRightsDescription": "Platform berhak untuk menghapus token apa pun dari antarmuka sesuai kebijaksanaannya sendiri tanpa pemberitahuan sebelumnya. Penghapusan dari antarmuka tidak mempengaruhi kontrak pintar token atau fungsi on-chain, yang akan terus beroperasi secara independen. Pengguna mempertahankan kepemilikan penuh dan kontrol atas token mereka, dan dapat berinteraksi dengan token yang dihapus langsung melalui blockchain.",
+    "tokenLocking": "Penguncian Token McFun Gratis",
+    "tokenLockingDescription": "McFun menyediakan layanan penguncian token yang aman, tanpa kepercayaan, dan sepenuhnya gratis untuk digunakan. Kunci token McFun mana pun untuk durasi apa pun untuk menunjukkan komitmen, membangun kepercayaan dengan komunitas Anda, atau membuat jadwal vesting.",
+    "lockAnyToken": "Kunci Token McFun",
+    "lockAnyTokenDescription": "Kunci token apa pun yang diluncurkan di McFun. Tetapkan durasi penguncian Anda sendiri dari hari ke tahun dan tunjukkan komitmen jangka panjang kepada komunitas Anda.",
+    "completlyFree": "Sepenuhnya Gratis - Tanpa Biaya",
+    "completlyFreeDescription": "Tidak seperti layanan penguncian lain yang mengenakan biaya platform, pengunci token McFun sepenuhnya gratis. Anda hanya membayar biaya gas jaringan - tidak ada biaya tersembunyi atau biaya layanan.",
+    "proveTrust": "Buktikan Kepercayaan dan Komitmen",
+    "proveTrustDescription": "Mengunci token menunjukkan komitmen jangka panjang pada sebuah proyek. Semua kunci dapat dilihat dan diverifikasi secara publik di rantai, memberikan transparansi dan membangun kepercayaan di komunitas Anda.",
+    "tokenBurning": "Pembakaran Token",
+    "tokenBurningDescription": "McFun menyediakan layanan pembakaran token gratis dan transparan. Hapus token secara permanen dari peredaran untuk mengurangi pasokan dan berpotensi meningkatkan kelangkaan. Semua pembakaran dicatat di rantai dan dapat diverifikasi secara publik.",
+    "reduceSupply": "Kurangi Pasokan Beredar",
+    "reduceSupplyDescription": "Membakar token menghapusnya secara permanen dari peredaran, mengurangi total pasokan yang tersedia. Ini adalah proses yang tidak dapat dibalik yang mengirim token ke alamat yang tidak dapat dipulihkan.",
+    "increaseScarcity": "Tingkatkan Kelangkaan Token",
+    "increaseScarcityDescription": "Dengan mengurangi pasokan, pembakaran token dapat meningkatkan kelangkaan. Banyak proyek menggunakan pembakaran sebagai mekanisme deflasi untuk berpotensi mempengaruhi ekonomi token dari waktu ke waktu.",
+    "permanentRemoval": "Penghapusan Permanen dan Dapat Diverifikasi",
+    "permanentRemovalDescription": "Semua pembakaran token bersifat permanen dan dapat diverifikasi di blockchain. Setelah dibakar, token tidak dapat dipulihkan atau digunakan kembali. Riwayat pembakaran dapat dilihat secara publik untuk transparansi penuh.",
+    "readyToWithdraw": "Siap Ditarik"
   },
   "wallet": {
     "connectWallet": "Hubungkan Dompet Anda",

@@ -345,7 +345,8 @@
     "browseTokens": "浏览代币",
     "yourHoldings": "未锁定代币持仓",
     "balance": "余额",
-    "perToken": "每个代币"
+    "perToken": "每个代币",
+    "readyToWithdraw": "准备提取"
   },
   "aboutPage": {
     "platformStats": "平台统计",
@@ -377,7 +378,24 @@
     "platformAvailabilityDescription": "平台按\"原样\"提供，不提供任何形式的保证。我们不保证不间断访问或无错误操作。",
     "acknowledgement": "使用本平台即表示您承认您已阅读、理解并同意这些条款。您对您的交易决策及其结果承担全部责任。",
     "delistingRights": "代币下架权利：",
-    "delistingRightsDescription": "平台保留在无需事先通知的情况下自行决定从前端下架任何代币的权利。从前端下架不会影响代币的智能合约或链上功能，这些功能将继续独立运行。用户保留对其代币的完全所有权和控制权，并可以通过区块链直接与下架的代币交互。"
+    "delistingRightsDescription": "平台保留在无需事先通知的情况下自行决定从前端下架任何代币的权利。从前端下架不会影响代币的智能合约或链上功能，这些功能将继续独立运行。用户保留对其代币的完全所有权和控制权，并可以通过区块链直接与下架的代币交互。",
+    "tokenLocking": "免费 McFun 代币锁定",
+    "tokenLockingDescription": "McFun 提供一个安全、免信任且完全免费使用的代币锁定服务。锁定任何 McFun 代币任意时长，以展示承诺、与社区建立信任或创建归属时间表。",
+    "lockAnyToken": "锁定 McFun 代币",
+    "lockAnyTokenDescription": "锁定在 McFun 上启动的任何代币。设置从几天到几年的锁定期限，向您的社区展示长期承诺。",
+    "completlyFree": "完全免费 - 无费用",
+    "completlyFreeDescription": "与收取平台费用的其他锁定服务不同，McFun 的代币锁定器完全免费。您只需支付网络燃气费 - 没有隐藏成本或服务费。",
+    "proveTrust": "证明信任与承诺",
+    "proveTrustDescription": "锁定代币展示了对项目的长期承诺。所有锁定都在链上公开可见和可验证，提供透明度并在您的社区中建立信心。",
+    "tokenBurning": "代币销毁",
+    "tokenBurningDescription": "McFun 提供免费、透明的代币销毁服务。永久性地从流通中移除代币以减少供应并可能增加稀缺性。所有销毁都在链上记录并公开可验证。",
+    "reduceSupply": "减少流通供应",
+    "reduceSupplyDescription": "销毁代币将其永久性地从流通中移除，减少总可用供应。这是一个不可逆的过程，将代币发送到无法恢复的地址。",
+    "increaseScarcity": "增加代币稀缺性",
+    "increaseScarcityDescription": "通过减少供应，代币销毁可以增加稀缺性。许多项目使用销毁作为通缩机制，以随时间潜在地影响代币经济。",
+    "permanentRemoval": "永久且可验证的移除",
+    "permanentRemovalDescription": "所有代币销毁都是永久性的并在区块链上可验证。一旦销毁，代币无法恢复或重新使用。销毁历史公开可见，完全透明。",
+    "readyToWithdraw": "准备提取"
   },
   "wallet": {
     "connectWallet": "连接您的钱包",

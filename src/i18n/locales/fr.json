@@ -345,7 +345,8 @@
     "browseTokens": "Parcourir les Tokens",
     "yourHoldings": "Vos Tokens Débloqués",
     "balance": "Solde",
-    "perToken": "par token"
+    "perToken": "par token",
+    "readyToWithdraw": "Prêt à Retirer"
   },
   "aboutPage": {
     "platformStats": "Statistiques de la Plateforme",
@@ -377,7 +378,24 @@
     "platformAvailabilityDescription": "La plateforme est fournie \"telle quelle\" sans garanties d'aucune sorte. Nous ne garantissons pas un accès ininterrompu ou un fonctionnement sans erreur.",
     "acknowledgement": "En utilisant cette plateforme, vous reconnaissez avoir lu, compris et accepté ces conditions. Vous acceptez l'entière responsabilité de vos décisions de trading et de leurs résultats.",
     "delistingRights": "Droits de retrait de tokens:",
-    "delistingRightsDescription": "La plateforme se réserve le droit de retirer tout token de l'interface utilisateur à sa seule discrétion sans préavis. Le retrait de l'interface n'affecte pas le contrat intelligent du token ni sa fonctionnalité en chaîne, qui continueront à fonctionner de manière indépendante. Les utilisateurs conservent la pleine propriété et le contrôle de leurs tokens, et peuvent interagir avec les tokens retirés directement via la blockchain."
+    "delistingRightsDescription": "La plateforme se réserve le droit de retirer tout token de l'interface utilisateur à sa seule discrétion sans préavis. Le retrait de l'interface n'affecte pas le contrat intelligent du token ni sa fonctionnalité en chaîne, qui continueront à fonctionner de manière indépendante. Les utilisateurs conservent la pleine propriété et le contrôle de leurs tokens, et peuvent interagir avec les tokens retirés directement via la blockchain.",
+    "tokenLocking": "Verrouillage Gratuit de Tokens McFun",
+    "tokenLockingDescription": "McFun fournit un service de verrouillage de tokens sécurisé, sans confiance et entièrement gratuit. Verrouillez n'importe quel token McFun pour n'importe quelle durée pour démontrer l'engagement, renforcer la confiance avec votre communauté ou créer des calendriers d'acquisition.",
+    "lockAnyToken": "Verrouiller les Tokens McFun",
+    "lockAnyTokenDescription": "Verrouillez n'importe quel token lancé sur McFun. Définissez votre propre durée de verrouillage de quelques jours à des années et démontrez un engagement à long terme envers votre communauté.",
+    "completlyFree": "Entièrement Gratuit - Pas de Frais",
+    "completlyFreeDescription": "Contrairement à d'autres services de verrouillage qui facturent des frais de plateforme, le verrouilleur de tokens de McFun est entièrement gratuit. Vous ne payez que les frais de gas du réseau - pas de coûts cachés ni de frais de service.",
+    "proveTrust": "Prouvez la Confiance et l'Engagement",
+    "proveTrustDescription": "Verrouiller des tokens démontre un engagement à long terme envers un projet. Tous les verrouillages sont publiquement visibles et vérifiables on-chain, fournissant transparence et renforçant la confiance dans votre communauté.",
+    "tokenBurning": "Brûlage de Tokens",
+    "tokenBurningDescription": "McFun fournit un service de brûlage de tokens gratuit et transparent. Supprimez définitivement les tokens de la circulation pour réduire l'offre et potentiellement augmenter la rareté. Tous les brûlages sont enregistrés on-chain et publiquement vérifiables.",
+    "reduceSupply": "Réduire l'Offre Circulante",
+    "reduceSupplyDescription": "Brûler des tokens les supprime définitivement de la circulation, réduisant l'offre totale disponible. C'est un processus irréversible qui envoie les tokens vers une adresse irrécupérable.",
+    "increaseScarcity": "Augmenter la Rareté du Token",
+    "increaseScarcityDescription": "En réduisant l'offre, le brûlage de tokens peut augmenter la rareté. De nombreux projets utilisent le brûlage comme mécanisme déflationniste pour potentiellement impacter l'économie du token au fil du temps.",
+    "permanentRemoval": "Suppression Permanente et Vérifiable",
+    "permanentRemovalDescription": "Tous les brûlages de tokens sont permanents et vérifiables sur la blockchain. Une fois brûlés, les tokens ne peuvent être récupérés ou réutilisés. L'historique de brûlage est publiquement visible pour une transparence complète.",
+    "readyToWithdraw": "Prêt à Retirer"
   },
   "wallet": {
     "connectWallet": "Connecter Votre Portefeuille",

@@ -345,7 +345,8 @@
     "browseTokens": "Explorar Tokens",
     "yourHoldings": "Tenencias de Tokens Desbloqueados",
     "balance": "Balance",
-    "perToken": "por token"
+    "perToken": "por token",
+    "readyToWithdraw": "Listo para Retirar"
   },
   "aboutPage": {
     "platformStats": "Estadísticas de la Plataforma",
@@ -377,7 +378,24 @@
     "platformAvailabilityDescription": "La plataforma se proporciona \"tal cual\" sin garantías de ningún tipo. No garantizamos acceso ininterrumpido u operación sin errores.",
     "acknowledgement": "Al usar esta plataforma, reconoces que has leído, comprendido y aceptado estos términos. Aceptas la responsabilidad total de tus decisiones comerciales y sus resultados.",
     "delistingRights": "Derechos de eliminación de tokens:",
-    "delistingRightsDescription": "La plataforma se reserva el derecho de eliminar cualquier token del front end a su exclusiva discreción sin previo aviso. La eliminación del front end no afecta el contrato inteligente del token ni su funcionalidad en la cadena, que continuará operando de forma independiente. Los usuarios conservan la propiedad total y el control de sus tokens, y pueden interactuar con tokens eliminados directamente a través de la blockchain."
+    "delistingRightsDescription": "La plataforma se reserva el derecho de eliminar cualquier token del front end a su exclusiva discreción sin previo aviso. La eliminación del front end no afecta el contrato inteligente del token ni su funcionalidad en la cadena, que continuará operando de forma independiente. Los usuarios conservan la propiedad total y el control de sus tokens, y pueden interactuar con tokens eliminados directamente a través de la blockchain.",
+    "tokenLocking": "Bloqueo Gratuito de Tokens McFun",
+    "tokenLockingDescription": "McFun proporciona un servicio de bloqueo de tokens seguro, sin confianza y completamente gratuito. Bloquea cualquier token de McFun durante cualquier duración para demostrar compromiso, generar confianza con tu comunidad o crear calendarios de adquisición.",
+    "lockAnyToken": "Bloquear Tokens de McFun",
+    "lockAnyTokenDescription": "Bloquea cualquier token lanzado en McFun. Establece tu propia duración de bloqueo de días a años y demuestra compromiso a largo plazo con tu comunidad.",
+    "completlyFree": "Completamente Gratis - Sin Tarifas",
+    "completlyFreeDescription": "A diferencia de otros servicios de bloqueo que cobran tarifas de plataforma, el bloqueador de tokens de McFun es completamente gratuito. Solo pagas las tarifas de gas de la red - sin costos ocultos ni cargos de servicio.",
+    "proveTrust": "Demostrar Confianza y Compromiso",
+    "proveTrustDescription": "Bloquear tokens demuestra compromiso a largo plazo con un proyecto. Todos los bloqueos son públicamente visibles y verificables en la cadena, proporcionando transparencia y generando confianza en tu comunidad.",
+    "tokenBurning": "Quema de Tokens",
+    "tokenBurningDescription": "McFun proporciona un servicio de quema de tokens gratuito y transparente. Elimina permanentemente tokens de la circulación para reducir el suministro y potencialmente aumentar la escasez. Todas las quemas se registran en la cadena y son públicamente verificables.",
+    "reduceSupply": "Reducir Suministro Circulante",
+    "reduceSupplyDescription": "Quemar tokens los elimina permanentemente de la circulación, reduciendo el suministro total disponible. Este es un proceso irreversible que envía tokens a una dirección irrecuperable.",
+    "increaseScarcity": "Aumentar Escasez del Token",
+    "increaseScarcityDescription": "Al reducir el suministro, la quema de tokens puede aumentar la escasez. Muchos proyectos utilizan quemas como mecanismo deflacionario para impactar potencialmente la economía del token con el tiempo.",
+    "permanentRemoval": "Eliminación Permanente y Verificable",
+    "permanentRemovalDescription": "Todas las quemas de tokens son permanentes y verificables en la blockchain. Una vez quemados, los tokens no pueden ser recuperados o reutilizados. El historial de quemas es públicamente visible para completa transparencia.",
+    "readyToWithdraw": "Listo para Retirar"
   },
   "wallet": {
     "connectWallet": "Conecta Tu Billetera",

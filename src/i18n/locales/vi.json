@@ -345,7 +345,8 @@
     "browseTokens": "Duyệt Token",
     "yourHoldings": "Token Đã Mở Khóa của bạn",
     "balance": "Số dư",
-    "perToken": "mỗi token"
+    "perToken": "mỗi token",
+    "readyToWithdraw": "Sẵn Sàng Rút"
   },
   "aboutPage": {
     "platformStats": "Thống kê Nền tảng",
@@ -377,7 +378,24 @@
     "platformAvailabilityDescription": "Nền tảng được cung cấp \"như là\" không có bảo đảm dưới bất kỳ hình thức nào. Chúng tôi không đảm bảo truy cập không bị gián đoạn hoặc hoạt động không có lỗi.",
     "acknowledgement": "Bằng cách sử dụng nền tảng này, bạn xác nhận rằng bạn đã đọc, hiểu và đồng ý với các điều khoản này. Bạn chấp nhận toàn bộ trách nhiệm về quyết định giao dịch và kết quả của chúng.",
     "delistingRights": "Quyền Hủy Niêm Yết Token:",
-    "delistingRightsDescription": "Nền tảng bảo lưu quyền hủy niêm yết bất kỳ token nào khỏi giao diện theo quyết định riêng mà không cần thông báo trước. Việc hủy niêm yết khỏi giao diện không ảnh hưởng đến hợp đồng thông minh của token hoặc chức năng trên chuỗi, những thứ này sẽ tiếp tục hoạt động độc lập. Người dùng giữ quyền sở hữu và kiểm soát hoàn toàn đối với token của họ, và có thể tương tác với các token đã hủy niêm yết trực tiếp thông qua blockchain."
+    "delistingRightsDescription": "Nền tảng bảo lưu quyền hủy niêm yết bất kỳ token nào khỏi giao diện theo quyết định riêng mà không cần thông báo trước. Việc hủy niêm yết khỏi giao diện không ảnh hưởng đến hợp đồng thông minh của token hoặc chức năng trên chuỗi, những thứ này sẽ tiếp tục hoạt động độc lập. Người dùng giữ quyền sở hữu và kiểm soát hoàn toàn đối với token của họ, và có thể tương tác với các token đã hủy niêm yết trực tiếp thông qua blockchain.",
+    "tokenLocking": "Khóa Token McFun Miễn Phí",
+    "tokenLockingDescription": "McFun cung cấp dịch vụ khóa token an toàn, không cần tin cậy và hoàn toàn miễn phí sử dụng. Khóa bất kỳ token McFun nào trong bất kỳ thời gian nào để thể hiện cam kết, xây dựng niềm tin với cộng đồng của bạn hoặc tạo lịch trình vesting.",
+    "lockAnyToken": "Khóa Token McFun",
+    "lockAnyTokenDescription": "Khóa bất kỳ token nào được khởi chạy trên McFun. Đặt thời gian khóa của riêng bạn từ ngày đến năm và thể hiện cam kết dài hạn với cộng đồng của bạn.",
+    "completlyFree": "Hoàn Toàn Miễn Phí - Không Phí",
+    "completlyFreeDescription": "Không giống như các dịch vụ khóa khác tính phí nền tảng, trình khóa token của McFun hoàn toàn miễn phí. Bạn chỉ trả phí gas mạng - không có chi phí ẩn hoặc phí dịch vụ.",
+    "proveTrust": "Chứng Minh Niềm Tin và Cam Kết",
+    "proveTrustDescription": "Khóa token thể hiện cam kết dài hạn với một dự án. Tất cả các khóa đều có thể nhìn thấy công khai và có thể xác minh trên chuỗi, cung cấp tính minh bạch và xây dựng niềm tin trong cộng đồng của bạn.",
+    "tokenBurning": "Đốt Token",
+    "tokenBurningDescription": "McFun cung cấp dịch vụ đốt token miễn phí, minh bạch. Loại bỏ vĩnh viễn token khỏi lưu thông để giảm nguồn cung và có khả năng tăng sự khan hiếm. Tất cả các lần đốt được ghi lại trên chuỗi và có thể xác minh công khai.",
+    "reduceSupply": "Giảm Nguồn Cung Lưu Thông",
+    "reduceSupplyDescription": "Đốt token loại bỏ chúng vĩnh viễn khỏi lưu thông, giảm tổng nguồn cung có sẵn. Đây là một quá trình không thể đảo ngược gửi token đến một địa chỉ không thể khôi phục.",
+    "increaseScarcity": "Tăng Sự Khan Hiếm của Token",
+    "increaseScarcityDescription": "Bằng cách giảm nguồn cung, đốt token có thể tăng sự khan hiếm. Nhiều dự án sử dụng đốt như một cơ chế giảm phát để có khả năng ảnh hưởng đến kinh tế token theo thời gian.",
+    "permanentRemoval": "Loại Bỏ Vĩnh Viễn và Có Thể Xác Minh",
+    "permanentRemovalDescription": "Tất cả các lần đốt token đều vĩnh viễn và có thể xác minh trên blockchain. Một khi đã đốt, token không thể khôi phục hoặc tái sử dụng. Lịch sử đốt có thể nhìn thấy công khai để có tính minh bạch hoàn toàn.",
+    "readyToWithdraw": "Sẵn Sàng Rút"
   },
   "wallet": {
     "connectWallet": "Kết Nối Ví Của Bạn",

@@ -345,7 +345,8 @@
     "browseTokens": "Sfoglia Token",
     "yourHoldings": "I Tuoi Token",
     "balance": "Saldo",
-    "perToken": "per token"
+    "perToken": "per token",
+    "readyToWithdraw": "Pronto per il Prelievo"
   },
   "aboutPage": {
     "platformStats": "Statistiche della Piattaforma",
@@ -377,7 +378,24 @@
     "platformAvailabilityDescription": "La piattaforma è fornita \"così com'è\" senza garanzie di alcun tipo.",
     "acknowledgement": "Utilizzando questa piattaforma, riconosci di aver letto, compreso e accettato questi termini. Accetti la piena responsabilità per le tue decisioni di trading e i loro risultati.",
     "delistingRights": "Diritti di Rimozione Token:",
-    "delistingRightsDescription": "La piattaforma si riserva il diritto di rimuovere qualsiasi token dall'interfaccia a sua esclusiva discrezione senza preavviso. La rimozione dall'interfaccia non influisce sul contratto intelligente del token o sulla sua funzionalità on-chain, che continueranno a funzionare in modo indipendente. Gli utenti mantengono la piena proprietà e il controllo dei loro token e possono interagire con i token rimossi direttamente attraverso la blockchain."
+    "delistingRightsDescription": "La piattaforma si riserva il diritto di rimuovere qualsiasi token dall'interfaccia a sua esclusiva discrezione senza preavviso. La rimozione dall'interfaccia non influisce sul contratto intelligente del token o sulla sua funzionalità on-chain, che continueranno a funzionare in modo indipendente. Gli utenti mantengono la piena proprietà e il controllo dei loro token e possono interagire con i token rimossi direttamente attraverso la blockchain.",
+    "tokenLocking": "Blocco Gratuito di Token McFun",
+    "tokenLockingDescription": "McFun fornisce un servizio di blocco token sicuro, senza fiducia e completamente gratuito. Blocca qualsiasi token McFun per qualsiasi durata per dimostrare impegno, costruire fiducia con la tua comunità o creare programmi di vesting.",
+    "lockAnyToken": "Blocca Token McFun",
+    "lockAnyTokenDescription": "Blocca qualsiasi token lanciato su McFun. Imposta la tua durata di blocco da giorni ad anni e dimostra impegno a lungo termine alla tua comunità.",
+    "completlyFree": "Completamente Gratuito - Nessuna Commissione",
+    "completlyFreeDescription": "A differenza di altri servizi di blocco che addebitano commissioni di piattaforma, il locker di token di McFun è completamente gratuito. Paghi solo le commissioni gas di rete - nessun costo nascosto o spese di servizio.",
+    "proveTrust": "Dimostra Fiducia e Impegno",
+    "proveTrustDescription": "Bloccare token dimostra impegno a lungo termine in un progetto. Tutti i blocchi sono pubblicamente visibili e verificabili on-chain, fornendo trasparenza e costruendo fiducia nella tua comunità.",
+    "tokenBurning": "Bruciatura Token",
+    "tokenBurningDescription": "McFun fornisce un servizio di bruciatura token gratuito e trasparente. Rimuovi permanentemente i token dalla circolazione per ridurre l'offerta e potenzialmente aumentare la scarsità. Tutte le bruciature sono registrate on-chain e pubblicamente verificabili.",
+    "reduceSupply": "Riduci l'Offerta Circolante",
+    "reduceSupplyDescription": "Bruciare token li rimuove permanentemente dalla circolazione, riducendo l'offerta totale disponibile. Questo è un processo irreversibile che invia token a un indirizzo irrecuperabile.",
+    "increaseScarcity": "Aumenta la Scarsità del Token",
+    "increaseScarcityDescription": "Riducendo l'offerta, la bruciatura di token può aumentare la scarsità. Molti progetti utilizzano le bruciature come meccanismo deflazionistico per potenzialmente impattare l'economia del token nel tempo.",
+    "permanentRemoval": "Rimozione Permanente e Verificabile",
+    "permanentRemovalDescription": "Tutte le bruciature di token sono permanenti e verificabili sulla blockchain. Una volta bruciati, i token non possono essere recuperati o riutilizzati. La cronologia delle bruciature è pubblicamente visibile per completa trasparenza.",
+    "readyToWithdraw": "Pronto per il Prelievo"
   },
   "wallet": {
     "connectWallet": "Connetti il Tuo Portafoglio",
