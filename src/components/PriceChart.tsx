@@ -134,39 +134,9 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
         borderColor: isDark ? '#2a2a2a' : '#e5e7eb',
         timeVisible: true,
         secondsVisible: false,
-        rightOffset: 0,
-        barSpacing: 6,
-        minBarSpacing: 0.5,
-        fixLeftEdge: false,
-        fixRightEdge: false,
-        lockVisibleTimeRangeOnResize: false,
-        rightBarStaysOnScroll: false,
-        shiftVisibleRangeOnNewBar: false,
       },
       crosshair: {
         mode: 1,
-      },
-      handleScroll: {
-        mouseWheel: true,
-        pressedMouseMove: true,
-        horzTouchDrag: true,
-        vertTouchDrag: true,
-      },
-      handleScale: {
-        mouseWheel: true,
-        pinch: true,
-        axisPressedMouseMove: {
-          time: true,
-          price: true,
-        },
-        axisDoubleClickReset: {
-          time: true,
-          price: true,
-        },
-      },
-      kineticScroll: {
-        touch: false,
-        mouse: false,
       },
     });
 
