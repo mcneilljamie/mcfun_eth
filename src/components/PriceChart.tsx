@@ -149,7 +149,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
       topColor: (priceChange !== null && priceChange >= 0) ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)',
       bottomColor: (priceChange !== null && priceChange >= 0) ? 'rgba(16, 185, 129, 0.0)' : 'rgba(239, 68, 68, 0.0)',
       lineWidth: 2,
-      lineType: 2,
+      lineType: 0,
       priceFormat: {
         type: 'custom',
         minMove: minMove,
