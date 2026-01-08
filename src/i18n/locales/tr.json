@@ -219,7 +219,7 @@
       "description": "McFun üzerinden başlatılan her token, platformumuzda kalıcı görünürlük elde eder ve projenize potansiyel yatırımcılar ve trader'lar için kalıcı bir görünürlük sağlar.",
       "ranking": {
         "title": "Otomatik Listeleme ve Sıralama",
-        "description": "Tüm token'lar esnek sıralama seçenekleriyle birlikte Popüler Token'lar sayfasında otomatik olarak listelenir. Kullanıcılar token'ları piyasa değeri, likidite veya yaşa (en yeni veya en eski) göre sıralayabilir, bu da farklı keşif stratejilerine izin verir ve büyüklük veya başlatma tarihinden bağımsız olarak tüm projelere görünürlük sağlar."
+        "description": "Tüm token'lar esnek sıralama seçenekleriyle birlikte Popüler Token'lar sayfasında otomatik olarak listelenir. Kullanıcılar token'ları piyasa değeri, likidite veya yaşa göre sıralayabilir."
       }
     },
     "why": {
