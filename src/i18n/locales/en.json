@@ -388,6 +388,8 @@
     "noRecourseDescription": "Blockchain transactions are irreversible. Once a transaction is confirmed, it cannot be undone. Double-check all transaction details before confirming.",
     "platformAvailability": "Platform Availability:",
     "platformAvailabilityDescription": "The platform is provided \"as is\" without warranties of any kind. We do not guarantee uninterrupted access or error-free operation.",
+    "delistingRights": "Token Delisting Rights:",
+    "delistingRightsDescription": "The platform reserves the right to delist any token from the front end at its sole discretion without prior notice. Delisting from the front end does not affect the token's smart contract or on-chain functionality, which will continue to operate independently. Users retain full ownership and control of their tokens, and can interact with delisted tokens directly through the blockchain.",
     "acknowledgement": "By using this platform, you acknowledge that you have read, understood, and agreed to these terms. You accept full responsibility for your trading decisions and their outcomes."
   },
   "wallet": {

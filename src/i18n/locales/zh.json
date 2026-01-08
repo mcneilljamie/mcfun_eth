@@ -371,7 +371,9 @@
     "noRecourseDescription": "区块链交易是不可逆转的。一旦交易被确认，就无法撤消。在确认之前仔细检查所有交易详细信息。",
     "platformAvailability": "平台可用性：",
     "platformAvailabilityDescription": "平台按\"原样\"提供，不提供任何形式的保证。我们不保证不间断访问或无错误操作。",
-    "acknowledgement": "使用本平台即表示您承认您已阅读、理解并同意这些条款。您对您的交易决策及其结果承担全部责任。"
+    "acknowledgement": "使用本平台即表示您承认您已阅读、理解并同意这些条款。您对您的交易决策及其结果承担全部责任。",
+    "delistingRights": "代币下架权利：",
+    "delistingRightsDescription": "平台保留在无需事先通知的情况下自行决定从前端下架任何代币的权利。从前端下架不会影响代币的智能合约或链上功能，这些功能将继续独立运行。用户保留对其代币的完全所有权和控制权，并可以通过区块链直接与下架的代币交互。"
   },
   "wallet": {
     "connectWallet": "连接您的钱包",

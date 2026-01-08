@@ -371,7 +371,9 @@
     "noRecourseDescription": "Transaksi blockchain tidak dapat dibalik. Setelah dikonfirmasi, tidak dapat dibatalkan.",
     "platformAvailability": "Ketersediaan Platform:",
     "platformAvailabilityDescription": "Platform disediakan apa adanya tanpa jaminan apa pun.",
-    "acknowledgement": "Dengan menggunakan platform ini, Anda mengakui telah membaca, memahami, dan menyetujui persyaratan ini. Anda menerima tanggung jawab penuh atas keputusan perdagangan dan hasilnya."
+    "acknowledgement": "Dengan menggunakan platform ini, Anda mengakui telah membaca, memahami, dan menyetujui persyaratan ini. Anda menerima tanggung jawab penuh atas keputusan perdagangan dan hasilnya.",
+    "delistingRights": "Hak Penghapusan Token:",
+    "delistingRightsDescription": "Platform berhak untuk menghapus token apa pun dari antarmuka sesuai kebijaksanaannya sendiri tanpa pemberitahuan sebelumnya. Penghapusan dari antarmuka tidak mempengaruhi kontrak pintar token atau fungsi on-chain, yang akan terus beroperasi secara independen. Pengguna mempertahankan kepemilikan penuh dan kontrol atas token mereka, dan dapat berinteraksi dengan token yang dihapus langsung melalui blockchain."
   },
   "wallet": {
     "connectWallet": "Hubungkan Dompet Anda",

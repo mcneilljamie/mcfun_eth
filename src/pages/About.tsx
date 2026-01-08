@@ -498,6 +498,9 @@ export function About() {
               <li>
                 <strong>{t('aboutPage.platformAvailability')}</strong> {t('aboutPage.platformAvailabilityDescription')}
               </li>
+              <li>
+                <strong>{t('aboutPage.delistingRights')}</strong> {t('aboutPage.delistingRightsDescription')}
+              </li>
             </ul>
             <p className="font-semibold pt-2">
               {t('aboutPage.acknowledgement')}

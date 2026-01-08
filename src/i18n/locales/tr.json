@@ -371,7 +371,9 @@
     "noRecourseDescription": "Blokzincir işlemleri geri alınamaz. Bir işlem onaylandıktan sonra geri alınamaz. Onaylamadan önce tüm işlem ayrıntılarını iki kez kontrol edin.",
     "platformAvailability": "Platform Kullanılabilirliği:",
     "platformAvailabilityDescription": "Platform herhangi bir garanti olmaksızın \"olduğu gibi\" sağlanır. Kesintisiz erişim veya hatasız çalışma garantisi vermiyoruz.",
-    "acknowledgement": "Bu platformu kullanarak, bu şartları okuduğunuzu, anladığınızı ve kabul ettiğinizi onaylıyorsunuz. Ticaret kararlarınız ve sonuçları için tam sorumluluk kabul ediyorsunuz."
+    "acknowledgement": "Bu platformu kullanarak, bu şartları okuduğunuzu, anladığınızı ve kabul ettiğinizi onaylıyorsunuz. Ticaret kararlarınız ve sonuçları için tam sorumluluk kabul ediyorsunuz.",
+    "delistingRights": "Token Listeden Çıkarma Hakları:",
+    "delistingRightsDescription": "Platform, önceden haber vermeksizin kendi takdirine bağlı olarak herhangi bir tokeni ön uçtan listeden çıkarma hakkını saklı tutar. Ön uçtan listeden çıkarma, tokenin akıllı sözleşmesini veya zincir üzerindeki işlevselliğini etkilemez ve bunlar bağımsız olarak çalışmaya devam edecektir. Kullanıcılar tokenlarının tam sahipliğini ve kontrolünü korurlar ve blokzincir üzerinden doğrudan listeden çıkarılmış tokenlarla etkileşimde bulunabilirler."
   },
   "wallet": {
     "connectWallet": "Cüzdanınızı Bağlayın",

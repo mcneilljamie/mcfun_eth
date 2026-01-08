@@ -371,7 +371,9 @@
     "noRecourseDescription": "Les transactions blockchain sont irréversibles. Une fois qu'une transaction est confirmée, elle ne peut pas être annulée. Vérifiez tous les détails de la transaction avant de confirmer.",
     "platformAvailability": "Disponibilité de la Plateforme :",
     "platformAvailabilityDescription": "La plateforme est fournie \"telle quelle\" sans garanties d'aucune sorte. Nous ne garantissons pas un accès ininterrompu ou un fonctionnement sans erreur.",
-    "acknowledgement": "En utilisant cette plateforme, vous reconnaissez avoir lu, compris et accepté ces conditions. Vous acceptez l'entière responsabilité de vos décisions de trading et de leurs résultats."
+    "acknowledgement": "En utilisant cette plateforme, vous reconnaissez avoir lu, compris et accepté ces conditions. Vous acceptez l'entière responsabilité de vos décisions de trading et de leurs résultats.",
+    "delistingRights": "Droits de retrait de tokens:",
+    "delistingRightsDescription": "La plateforme se réserve le droit de retirer tout token de l'interface utilisateur à sa seule discrétion sans préavis. Le retrait de l'interface n'affecte pas le contrat intelligent du token ni sa fonctionnalité en chaîne, qui continueront à fonctionner de manière indépendante. Les utilisateurs conservent la pleine propriété et le contrôle de leurs tokens, et peuvent interagir avec les tokens retirés directement via la blockchain."
   },
   "wallet": {
     "connectWallet": "Connecter Votre Portefeuille",

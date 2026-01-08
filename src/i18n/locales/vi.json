@@ -371,7 +371,9 @@
     "noRecourseDescription": "Giao dịch blockchain không thể đảo ngược. Sau khi giao dịch được xác nhận, nó không thể hoàn tác. Kiểm tra kỹ tất cả chi tiết giao dịch trước khi xác nhận.",
     "platformAvailability": "Tính khả dụng của Nền tảng:",
     "platformAvailabilityDescription": "Nền tảng được cung cấp \"như là\" không có bảo đảm dưới bất kỳ hình thức nào. Chúng tôi không đảm bảo truy cập không bị gián đoạn hoặc hoạt động không có lỗi.",
-    "acknowledgement": "Bằng cách sử dụng nền tảng này, bạn xác nhận rằng bạn đã đọc, hiểu và đồng ý với các điều khoản này. Bạn chấp nhận toàn bộ trách nhiệm về quyết định giao dịch và kết quả của chúng."
+    "acknowledgement": "Bằng cách sử dụng nền tảng này, bạn xác nhận rằng bạn đã đọc, hiểu và đồng ý với các điều khoản này. Bạn chấp nhận toàn bộ trách nhiệm về quyết định giao dịch và kết quả của chúng.",
+    "delistingRights": "Quyền Hủy Niêm Yết Token:",
+    "delistingRightsDescription": "Nền tảng bảo lưu quyền hủy niêm yết bất kỳ token nào khỏi giao diện theo quyết định riêng mà không cần thông báo trước. Việc hủy niêm yết khỏi giao diện không ảnh hưởng đến hợp đồng thông minh của token hoặc chức năng trên chuỗi, những thứ này sẽ tiếp tục hoạt động độc lập. Người dùng giữ quyền sở hữu và kiểm soát hoàn toàn đối với token của họ, và có thể tương tác với các token đã hủy niêm yết trực tiếp thông qua blockchain."
   },
   "wallet": {
     "connectWallet": "Kết Nối Ví Của Bạn",

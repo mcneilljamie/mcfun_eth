@@ -371,7 +371,9 @@
     "noRecourseDescription": "Transações blockchain são irreversíveis. Uma vez que uma transação é confirmada, ela não pode ser desfeita. Verifique todos os detalhes da transação antes de confirmar.",
     "platformAvailability": "Disponibilidade da Plataforma:",
     "platformAvailabilityDescription": "A plataforma é fornecida \"como está\" sem garantias de qualquer tipo. Não garantimos acesso ininterrupto ou operação sem erros.",
-    "acknowledgement": "Ao usar esta plataforma, você reconhece que leu, compreendeu e concordou com estes termos. Você aceita total responsabilidade pelas suas decisões de negociação e seus resultados."
+    "acknowledgement": "Ao usar esta plataforma, você reconhece que leu, compreendeu e concordou com estes termos. Você aceita total responsabilidade pelas suas decisões de negociação e seus resultados.",
+    "delistingRights": "Direitos de remoção de tokens:",
+    "delistingRightsDescription": "A plataforma reserva-se o direito de remover qualquer token da interface a seu exclusivo critério sem aviso prévio. A remoção da interface não afeta o contrato inteligente do token ou sua funcionalidade na blockchain, que continuarão a operar de forma independente. Os usuários mantêm a propriedade total e o controle de seus tokens, e podem interagir com tokens removidos diretamente através da blockchain."
   },
   "wallet": {
     "connectWallet": "Conectar Sua Carteira",
