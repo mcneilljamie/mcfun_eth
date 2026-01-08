@@ -220,6 +220,10 @@
       "ranking": {
         "title": "Otomatik Listeleme ve Sıralama",
         "description": "Tüm token'lar esnek sıralama seçenekleriyle birlikte Popüler Token'lar sayfasında otomatik olarak listelenir. Kullanıcılar token'ları piyasa değeri, likidite veya yaşa göre sıralayabilir."
+      },
+      "permanent": {
+        "title": "Kalıcı Listeleme",
+        "description": "Token'ınız McFun'da başlatıldığında, platformumuzda sonsuza kadar listelenmiş kalır. Projeniz her zaman yatırımcılar ve trader'lar tarafından keşfedilebilir olacaktır."
       }
     },
     "why": {

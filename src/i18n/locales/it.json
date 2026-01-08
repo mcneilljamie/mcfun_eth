@@ -220,6 +220,10 @@
       "ranking": {
         "title": "Listing e Classificazione Automatici",
         "description": "Tutti i token vengono automaticamente elencati nella pagina Token Popolari con opzioni di classificazione flessibili. Gli utenti possono ordinare i token per capitalizzazione di mercato, liquidità o età."
+      },
+      "permanent": {
+        "title": "Listing Permanente",
+        "description": "Una volta lanciato il tuo token su McFun, rimane elencato sulla nostra piattaforma per sempre. Il tuo progetto sarà sempre scopribile da trader e investitori."
       }
     },
     "why": {

@@ -219,6 +219,10 @@
       "ranking": {
         "title": "Automatic Listing & Ranking",
         "description": "All tokens are automatically listed on the Popular Tokens page with flexible ranking options. Users can sort tokens by market cap, liquidity, or age."
+      },
+      "permanent": {
+        "title": "Permanent Listing",
+        "description": "Once your token is launched on McFun, it remains listed on our platform forever. Your project will always be discoverable by traders and investors."
       }
     },
     "why": {

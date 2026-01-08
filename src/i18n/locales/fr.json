@@ -220,6 +220,10 @@
       "ranking": {
         "title": "Listing et Classement Automatiques",
         "description": "Tous les tokens sont automatiquement listés sur la page des Tokens Populaires avec des options de classement flexibles. Les utilisateurs peuvent trier les tokens par capitalisation boursière, liquidité ou âge."
+      },
+      "permanent": {
+        "title": "Listing Permanent",
+        "description": "Une fois votre token lancé sur McFun, il reste listé sur notre plateforme pour toujours. Votre projet sera toujours découvrable par les traders et les investisseurs."
       }
     },
     "why": {
