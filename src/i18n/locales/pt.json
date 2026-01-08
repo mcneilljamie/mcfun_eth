@@ -211,7 +211,7 @@
       },
       "step4": {
         "title": "4. Início das Negociações",
-        "description": "Seu token é imediatamente negociável em nossa plataforma. Cada troca incorre em uma taxa de 0,4% que vai para a plataforma para manter e melhorar o serviço. Os tokens restantes (não alocados à liquidez) são enviados diretamente para sua carteira."
+        "description": "Seu token é imediatamente negociável em nossa plataforma. Os tokens restantes (não alocados para liquidez) são enviados diretamente para sua carteira."
       }
     },
     "visibility": {

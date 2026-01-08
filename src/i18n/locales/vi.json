@@ -211,7 +211,7 @@
       },
       "step4": {
         "title": "4. Bắt Đầu Giao Dịch",
-        "description": "Token của bạn có thể giao dịch ngay lập tức trên nền tảng của chúng tôi. Mỗi lần hoán đổi phát sinh phí 0.4% được chuyển cho nền tảng để duy trì và cải thiện dịch vụ. Các token còn lại (không được phân bổ cho thanh khoản) được gửi trực tiếp đến ví của bạn."
+        "description": "Token của bạn có thể giao dịch ngay lập tức trên nền tảng của chúng tôi. Các token còn lại (không được phân bổ cho thanh khoản) được gửi trực tiếp đến ví của bạn."
       }
     },
     "visibility": {

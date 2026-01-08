@@ -211,7 +211,7 @@
       },
       "step4": {
         "title": "4. Début des Échanges",
-        "description": "Votre token est immédiatement échangeable sur notre plateforme. Chaque swap entraîne des frais de 0,4% qui vont à la plateforme pour maintenir et améliorer le service. Les tokens restants (non alloués à la liquidité) sont envoyés directement à votre portefeuille."
+        "description": "Votre token est immédiatement négociable sur notre plateforme. Les tokens restants (non alloués à la liquidité) sont envoyés directement à votre portefeuille."
       }
     },
     "visibility": {

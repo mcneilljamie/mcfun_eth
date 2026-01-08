@@ -211,7 +211,7 @@
       },
       "step4": {
         "title": "4. Comienza el Comercio",
-        "description": "Tu token es inmediatamente comerciable en nuestra plataforma. Cada intercambio incurre en una tarifa del 0.4% que va a la plataforma para mantener y mejorar el servicio. Los tokens restantes (no asignados a liquidez) se envían directamente a tu billetera."
+        "description": "Tu token es inmediatamente negociable en nuestra plataforma. Los tokens restantes (no asignados a liquidez) se envían directamente a tu billetera."
       }
     },
     "visibility": {

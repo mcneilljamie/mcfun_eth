@@ -211,7 +211,7 @@
       },
       "step4": {
         "title": "4. İşlemler Başlıyor",
-        "description": "Tokenınız platformumuzda anında işlem görmeye başlar. Her takas, hizmeti sürdürmek ve geliştirmek için platforma giden %0.4 ücret içerir. Kalan tokenlar (likiditeye tahsis edilmeyenler) doğrudan cüzdanınıza gönderilir."
+        "description": "Token'ınız platformumuzda anında işlem görebilir. Kalan token'lar (likiditeye ayrılmamış olanlar) doğrudan cüzdanınıza gönderilir."
       }
     },
     "visibility": {

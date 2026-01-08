@@ -210,7 +210,7 @@
       },
       "step4": {
         "title": "4. Trading Begins",
-        "description": "Your token is immediately tradable on our platform. Every swap incurs a 0.4% fee that goes to the platform to maintain and improve the service. The remaining tokens (not allocated to liquidity) are sent directly to your wallet."
+        "description": "Your token is immediately tradable on our platform. The remaining tokens (not allocated to liquidity) are sent directly to your wallet."
       }
     },
     "visibility": {
