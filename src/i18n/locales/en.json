@@ -686,6 +686,7 @@
       "insufficientBalance": "Insufficient token balance",
       "burnFailed": "Failed to burn tokens",
       "userRejected": "Transaction was rejected by user"
-    }
+    },
+    "ofSupply": "of supply"
   }
 }

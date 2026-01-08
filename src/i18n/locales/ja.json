@@ -592,7 +592,8 @@
       "insufficientBalance": "トークン残高が不足しています",
       "burnFailed": "トークンのバーンに失敗しました",
       "userRejected": "ユーザーによってトランザクションが拒否されました"
-    }
+    },
+    "ofSupply": "供給量の"
   },
   "withdrawSuccess": {
     "title": "出金成功！",

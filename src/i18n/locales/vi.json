@@ -573,7 +573,8 @@
       "insufficientBalance": "Số dư token không đủ",
       "burnFailed": "Đốt token không thành công",
       "userRejected": "Giao dịch bị người dùng từ chối"
-    }
+    },
+    "ofSupply": "của nguồn cung"
   },
   "withdrawSuccess": {
     "title": "Rút Thành Công!",

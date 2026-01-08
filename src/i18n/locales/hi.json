@@ -592,7 +592,8 @@
       "insufficientBalance": "अपर्याप्त टोकन शेष",
       "burnFailed": "टोकन जलाने में विफल",
       "userRejected": "लेनदेन उपयोगकर्ता द्वारा अस्वीकार किया गया"
-    }
+    },
+    "ofSupply": "आपूर्ति का"
   },
   "withdrawSuccess": {
     "title": "निकासी सफल!",

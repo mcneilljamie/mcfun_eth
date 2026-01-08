@@ -592,7 +592,8 @@
       "insufficientBalance": "Saldo token tidak mencukupi",
       "burnFailed": "Gagal membakar token",
       "userRejected": "Transaksi ditolak oleh pengguna"
-    }
+    },
+    "ofSupply": "dari pasokan"
   },
   "withdrawSuccess": {
     "title": "Penarikan Berhasil!",

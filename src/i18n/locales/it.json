@@ -592,7 +592,8 @@
       "insufficientBalance": "Saldo token insufficiente",
       "burnFailed": "Bruciatura dei token non riuscita",
       "userRejected": "Transazione rifiutata dall'utente"
-    }
+    },
+    "ofSupply": "della fornitura"
   },
   "withdrawSuccess": {
     "title": "Ritiro Riuscito!",

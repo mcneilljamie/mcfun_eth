@@ -592,7 +592,8 @@
       "insufficientBalance": "رصيد الرمز غير كافٍ",
       "burnFailed": "فشل حرق الرموز",
       "userRejected": "تم رفض المعاملة من قبل المستخدم"
-    }
+    },
+    "ofSupply": "من العرض"
   },
   "withdrawSuccess": {
     "title": "سحب ناجح!",

@@ -573,7 +573,8 @@
       "insufficientBalance": "代币余额不足",
       "burnFailed": "销毁代币失败",
       "userRejected": "用户拒绝了交易"
-    }
+    },
+    "ofSupply": "供应量的"
   },
   "withdrawSuccess": {
     "title": "提取成功！",

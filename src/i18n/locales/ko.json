@@ -573,7 +573,8 @@
       "insufficientBalance": "토큰 잔액 부족",
       "burnFailed": "토큰 소각 실패",
       "userRejected": "사용자에 의해 거래가 거부되었습니다"
-    }
+    },
+    "ofSupply": "공급량 중"
   },
   "withdrawSuccess": {
     "title": "출금 성공!",

@@ -573,7 +573,8 @@
       "insufficientBalance": "Yetersiz token bakiyesi",
       "burnFailed": "Tokenları yakma başarısız",
       "userRejected": "İşlem kullanıcı tarafından reddedildi"
-    }
+    },
+    "ofSupply": "arz oranı"
   },
   "withdrawSuccess": {
     "title": "Çekim Başarılı!",
