@@ -109,7 +109,7 @@ export function About() {
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
               ) : (
                 <div className="text-2xl sm:text-3xl font-bold text-green-700">
-                  {formatCurrency(totalLiquidity)}
+                  {formatCurrency(totalLiquidity, 'ETH', 2)}
                 </div>
               )}
               <p className="text-xs text-gray-600 mt-1">{t('aboutPage.totalEthInPools')}</p>
