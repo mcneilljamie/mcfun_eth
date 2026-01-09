@@ -3,6 +3,7 @@ import { Shield, Lock, Coins, TrendingUp, Users, Zap, DollarSign, Check, Eye, Ba
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { formatCurrency, formatUSD } from '../lib/utils';
+import { getEthPriceUSD } from '../lib/ethPrice';
 
 interface PlatformStats {
   totalMarketCapUsd: number;
@@ -12,7 +13,7 @@ interface PlatformStats {
 
 export function About() {
   const { t } = useTranslation();
-  const [totalLiquidity, setTotalLiquidity] = useState<string>('0');
+  const [totalLiquidityUSD, setTotalLiquidityUSD] = useState<number>(0);
   const [platformStats, setPlatformStats] = useState<PlatformStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -24,7 +25,7 @@ export function About() {
 
   const loadData = async () => {
     try {
-      // Load total liquidity
+      // Load total liquidity and convert to USD
       const { data: tokensData, error: tokensError } = await supabase
         .from('tokens')
         .select('current_eth_reserve, initial_liquidity_eth');
@@ -32,11 +33,13 @@ export function About() {
       if (tokensError) {
         console.error('Database error loading liquidity:', tokensError);
       } else if (tokensData) {
-        const total = tokensData.reduce((sum, token) => {
+        const totalEth = tokensData.reduce((sum, token) => {
           const reserve = parseFloat(token.current_eth_reserve || token.initial_liquidity_eth || '0');
           return sum + reserve;
         }, 0);
-        setTotalLiquidity(total.toString());
+
+        const ethPrice = await getEthPriceUSD();
+        setTotalLiquidityUSD(totalEth * ethPrice);
       }
 
       // Load platform stats
@@ -109,7 +112,7 @@ export function About() {
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
               ) : (
                 <div className="text-2xl sm:text-3xl font-bold text-green-700">
-                  {formatCurrency(totalLiquidity, 'ETH', 2)}
+                  {formatUSD(totalLiquidityUSD)}
                 </div>
               )}
               <p className="text-xs text-gray-600 mt-1">{t('aboutPage.totalEthInPools')}</p>
