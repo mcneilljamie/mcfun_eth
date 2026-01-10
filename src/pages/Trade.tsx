@@ -192,7 +192,7 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
       return 'Transaction nonce error. Please reset your wallet or try again.';
     }
 
-    return 'Transaction failed. Please try again or contact support if the issue persists.';
+    return 'Transaction failed. Try increasing slippage tolerance or contact support if the issue persists.';
   };
 
   const handleSwap = async () => {
