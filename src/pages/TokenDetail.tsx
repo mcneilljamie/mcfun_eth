@@ -30,7 +30,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
   const [snapshotCount, setSnapshotCount] = useState<number>(0);
   const { currentPrice: chartPrice } = useChartData(tokenAddress || '', 'ALL');
   const [activeLockCount, setActiveLockCount] = useState<number>(0);
-  const { reserves: liveReserves } = useLiveReserves(provider, token?.amm_address || null, 30000);
+  const { reserves: liveReserves } = useLiveReserves(provider, token?.amm_address || null, 30000, chainId || 11155111);
 
   const ensureProtocol = (url: string): string => {
     if (!url) return url;

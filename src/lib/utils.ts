@@ -1,3 +1,21 @@
+import { JsonRpcProvider } from 'ethers';
+
+let readOnlyProviderCache: Map<number, JsonRpcProvider> = new Map();
+
+export function getReadOnlyProvider(chainId: number = 11155111): JsonRpcProvider {
+  if (readOnlyProviderCache.has(chainId)) {
+    return readOnlyProviderCache.get(chainId)!;
+  }
+
+  const rpcUrl = chainId === 1
+    ? import.meta.env.VITE_MAINNET_RPC_URL || 'https://eth.llamarpc.com'
+    : import.meta.env.VITE_SEPOLIA_RPC_URL || 'https://ethereum-sepolia-rpc.publicnode.com';
+
+  const provider = new JsonRpcProvider(rpcUrl);
+  readOnlyProviderCache.set(chainId, provider);
+  return provider;
+}
+
 export function formatAddress(address: string): string {
   if (!address) return '';
   return `${address.slice(0, 6)}...${address.slice(-4)}`;
