@@ -45,50 +45,11 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
   const displayPrice = livePrice !== undefined ? livePrice : calculateLivePriceFromReserves();
   const displayValue = chartMode === 'marketCap' ? displayPrice * TOKEN_TOTAL_SUPPLY : displayPrice;
 
-  // Calculate price change using live price to reflect real-time changes
+  // Use precalculated price change from database (already accounts for compression)
   const priceChange = useMemo(() => {
-    // Don't show price change if token hasn't been traded yet
     if (!hasTraded) return null;
-
-    if (data.length === 0) return snapshotPriceChange;
-
-    const now = Date.now() / 1000;
-    const twentyFourHoursAgo = now - (24 * 60 * 60);
-    const dataInTimeOrder = [...data].sort((a, b) => a.time - b.time);
-
-    // Find the baseline price for comparison
-    let baselinePrice: number | null = null;
-
-    // Check if token is newer than 24 hours (use oldest/launch price)
-    const oldestPoint = dataInTimeOrder[0];
-    const newestPoint = dataInTimeOrder[dataInTimeOrder.length - 1];
-    const tokenAge = now - oldestPoint.time;
-    const isTokenNew = tokenAge < (24 * 60 * 60);
-
-    if (isTokenNew) {
-      // For new tokens, compare to launch price (oldest point)
-      baselinePrice = oldestPoint.value;
-    } else {
-      // For older tokens, try to find price from 24h ago
-      // Find the closest point to 24h ago
-      const price24hAgo = dataInTimeOrder.find(point => point.time >= twentyFourHoursAgo);
-
-      if (price24hAgo) {
-        // Found a point at or after 24h ago
-        baselinePrice = price24hAgo.value;
-      } else {
-        // No data from 24h ago (snapshots are stale)
-        // Use the most recent snapshot available instead of oldest
-        baselinePrice = newestPoint.value;
-      }
-    }
-
-    if (baselinePrice && baselinePrice > 0 && displayPrice > 0) {
-      return ((displayPrice - baselinePrice) / baselinePrice) * 100;
-    }
-
     return snapshotPriceChange;
-  }, [data, displayPrice, snapshotPriceChange, hasTraded]);
+  }, [snapshotPriceChange, hasTraded]);
 
   // Save chart mode preference to localStorage
   useEffect(() => {
