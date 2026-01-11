@@ -63,7 +63,7 @@ export function Lock({ onShowToast }: LockPageProps) {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const ITEMS_PER_PAGE = 20;
+  const ITEMS_PER_PAGE = 1000; // Show all locks on one page
 
 
   const [tokenAddress, setTokenAddress] = useState('');
