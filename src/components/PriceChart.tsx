@@ -8,16 +8,13 @@ interface PriceChartProps {
   tokenAddress: string;
   tokenSymbol: string;
   theme?: 'light' | 'dark';
-  livePrice?: number;
-  liveReserves?: { reserveETH: string; reserveToken: string } | null;
-  ethPriceUSD?: number;
 }
 
 type ChartMode = 'price' | 'marketCap';
 
 const TOKEN_TOTAL_SUPPLY = 1000000;
 
-export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePrice, liveReserves, ethPriceUSD = 3000 }: PriceChartProps) {
+export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceChartProps) {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<'Area'> | null>(null);
@@ -30,19 +27,9 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
     'ALL'
   );
 
-  const calculateLivePriceFromReserves = (): number => {
-    if (!liveReserves) return currentPrice;
-
-    const ethReserve = parseFloat(liveReserves.reserveETH);
-    const tokenReserve = parseFloat(liveReserves.reserveToken);
-
-    if (tokenReserve === 0) return currentPrice;
-
-    const priceInEth = ethReserve / tokenReserve;
-    return priceInEth * ethPriceUSD;
-  };
-
-  const displayPrice = livePrice !== undefined ? livePrice : calculateLivePriceFromReserves();
+  // Always prefer database price (currentPrice) which updates in real-time via subscriptions
+  // Blockchain reserves can be stale and cause chart display issues
+  const displayPrice = currentPrice;
   const displayValue = chartMode === 'marketCap' ? displayPrice * TOKEN_TOTAL_SUPPLY : displayPrice;
 
   // Use precalculated price change from database (already accounts for compression)
@@ -187,29 +174,13 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', livePric
       value: chartMode === 'marketCap' ? point.value * TOKEN_TOTAL_SUPPLY : point.value,
     }));
 
-    // Append live data point if we have live reserves
-    if (liveReserves && sortedData.length > 0) {
-      const livePrice = calculateLivePriceFromReserves();
-      const currentTime = Math.floor(Date.now() / 1000);
-      const lastDataPoint = sortedData[sortedData.length - 1];
-
-      // Only add if the live price is different from the last data point
-      // and the time is after the last snapshot
-      if (currentTime > lastDataPoint.time && Math.abs(livePrice - lastDataPoint.value) > 0.00001) {
-        chartData.push({
-          time: currentTime as Time,
-          value: chartMode === 'marketCap' ? livePrice * TOKEN_TOTAL_SUPPLY : livePrice,
-        });
-      }
-    }
-
     seriesRef.current.setData(chartData);
 
     // Fit content to show all data
     if (chartRef.current) {
       chartRef.current.timeScale().fitContent();
     }
-  }, [data, chartMode, liveReserves, ethPriceUSD]);
+  }, [data, chartMode]);
 
   // Auto-refresh every 60 seconds as fallback (realtime subscription handles instant updates)
   useEffect(() => {

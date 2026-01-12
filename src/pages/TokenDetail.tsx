@@ -457,8 +457,6 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
           tokenAddress={token.token_address}
           tokenSymbol={token.symbol}
           theme="light"
-          liveReserves={liveReserves}
-          ethPriceUSD={ethPriceUSD}
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
