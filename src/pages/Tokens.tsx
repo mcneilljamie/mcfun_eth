@@ -72,11 +72,13 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     let lastPriceUpdate = Date.now();
     const priceSubscription = supabase
       .channel('price-snapshots-channel')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'price_snapshots' }, () => {
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'price_snapshots' }, (payload) => {
         const now = Date.now();
         if (now - lastPriceUpdate >= 2000) {
           lastPriceUpdate = now;
-          loadTokenData();
+          // Force update by setting isUpdating to false first
+          setIsUpdating(false);
+          setTimeout(() => loadTokenData(), 100);
         }
       })
       .subscribe();
@@ -204,52 +206,49 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
       const visibleTokens = filteredTokens.slice(startIndex, endIndex);
 
       // Fetch latest prices from database for all visible tokens
-      const tokenAddresses = visibleTokens.map(t => t.token_address);
-      const { data: latestPrices } = await supabase
-        .from('price_snapshots')
-        .select('token_address, price_eth, eth_price_usd, eth_reserve, token_reserve')
-        .in('token_address', tokenAddresses)
-        .order('created_at', { ascending: false });
-
-      // Create a map of token_address to latest price
+      // We need to get the most recent snapshot for each token individually
       const priceMap = new Map<string, { price_usd: number; eth_reserve: string; token_reserve: string }>();
-      if (latestPrices) {
-        for (const priceData of latestPrices) {
-          if (!priceMap.has(priceData.token_address)) {
-            const priceEth = parseFloat(priceData.price_eth || '0');
-            const ethPriceUsd = parseFloat(priceData.eth_price_usd || '0');
+
+      await Promise.all(
+        visibleTokens.map(async (token) => {
+          const { data: latestSnapshot } = await supabase
+            .from('price_snapshots')
+            .select('price_eth, eth_price_usd, eth_reserve, token_reserve')
+            .eq('token_address', token.token_address)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+          if (latestSnapshot) {
+            const priceEth = parseFloat(latestSnapshot.price_eth || '0');
+            const ethPriceUsd = parseFloat(latestSnapshot.eth_price_usd || '0');
             const priceUsd = priceEth * ethPriceUsd;
 
-            priceMap.set(priceData.token_address, {
+            priceMap.set(token.token_address, {
               price_usd: priceUsd,
-              eth_reserve: priceData.eth_reserve?.toString() || '0',
-              token_reserve: priceData.token_reserve?.toString() || '0'
+              eth_reserve: latestSnapshot.eth_reserve?.toString() || '0',
+              token_reserve: latestSnapshot.token_reserve?.toString() || '0'
             });
           }
-        }
-      }
+        })
+      );
 
       const newTokenData: Record<string, TokenEnrichedData> = { ...tokenDataMap };
-      let hasChanges = false;
 
       for (const token of visibleTokens) {
         const dbPrice = priceMap.get(token.token_address);
 
-        const calculateCurrentPrice = (): number => {
-          // Priority 1: Use database price from price_snapshots (real-time via subscriptions)
-          if (dbPrice && dbPrice.price_usd > 0) {
-            return dbPrice.price_usd;
-          }
-
-          // Priority 2: Calculate from database reserves
-          const ethReserve = parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
-          const tokenReserve = parseFloat(token.current_token_reserve?.toString() || '1000000');
-          if (tokenReserve === 0 || isNaN(ethReserve) || isNaN(tokenReserve)) return 0;
-          const priceInEth = ethReserve / tokenReserve;
-          return priceInEth * ethPriceUSD;
-        };
-
-        const currentPriceUSD = calculateCurrentPrice();
+        // Always use the latest snapshot price (same source as TokenDetail page)
+        const currentPriceUSD = dbPrice && dbPrice.price_usd > 0
+          ? dbPrice.price_usd
+          : (() => {
+              // Fallback only if no snapshot exists
+              const ethReserve = parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
+              const tokenReserve = parseFloat(token.current_token_reserve?.toString() || '1000000');
+              if (tokenReserve === 0 || isNaN(ethReserve) || isNaN(tokenReserve)) return 0;
+              const priceInEth = ethReserve / tokenReserve;
+              return priceInEth * ethPriceUSD;
+            })();
         const TOKEN_TOTAL_SUPPLY = 1000000;
         const marketCap = currentPriceUSD * TOKEN_TOTAL_SUPPLY;
 
@@ -283,30 +282,16 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
           }
         }
 
-        const existingData = newTokenData[token.token_address];
-        const newData: TokenEnrichedData = {
+        newTokenData[token.token_address] = {
           currentPriceUSD,
           marketCap,
           priceChange,
           isNew,
           liquidityETH
         };
-
-        // Only update if data has meaningfully changed (> 0.1% difference)
-        if (!existingData ||
-            Math.abs(existingData.currentPriceUSD - newData.currentPriceUSD) / Math.max(existingData.currentPriceUSD, 0.00001) > 0.001 ||
-            Math.abs(existingData.marketCap - newData.marketCap) / Math.max(existingData.marketCap, 0.00001) > 0.001 ||
-            existingData.liquidityETH !== newData.liquidityETH ||
-            existingData.priceChange !== newData.priceChange) {
-          newTokenData[token.token_address] = newData;
-          hasChanges = true;
-        }
       }
 
-      // Only trigger re-render if there are actual changes
-      if (hasChanges) {
-        setTokenDataMap(newTokenData);
-      }
+      setTokenDataMap(newTokenData);
     } catch (err) {
       console.error('Failed to load token data:', err);
     } finally {
