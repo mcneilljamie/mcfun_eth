@@ -68,9 +68,23 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
       })
       .subscribe();
 
+    // Subscribe to price snapshot updates for real-time price changes
+    let lastPriceUpdate = Date.now();
+    const priceSubscription = supabase
+      .channel('price-snapshots-channel')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'price_snapshots' }, () => {
+        const now = Date.now();
+        if (now - lastPriceUpdate >= 2000) {
+          lastPriceUpdate = now;
+          loadTokenData();
+        }
+      })
+      .subscribe();
+
     return () => {
       clearInterval(ethPriceInterval);
       tokensSubscription.unsubscribe();
+      priceSubscription.unsubscribe();
     };
   }, []);
 
@@ -185,30 +199,49 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     setIsUpdating(true);
 
     try {
-      const { getMultipleReserves } = await import('../lib/multicall');
-
       const startIndex = (currentPage - 1) * TOKENS_PER_PAGE;
       const endIndex = startIndex + TOKENS_PER_PAGE;
       const visibleTokens = filteredTokens.slice(startIndex, endIndex);
 
-      const ammAddresses = visibleTokens.map(t => t.amm_address);
-      const reservesMap = await getMultipleReserves(activeProvider, ammAddresses);
+      // Fetch latest prices from database for all visible tokens
+      const tokenAddresses = visibleTokens.map(t => t.token_address);
+      const { data: latestPrices } = await supabase
+        .from('price_snapshots')
+        .select('token_address, price_eth, eth_price_usd, eth_reserve, token_reserve')
+        .in('token_address', tokenAddresses)
+        .order('created_at', { ascending: false });
+
+      // Create a map of token_address to latest price
+      const priceMap = new Map<string, { price_usd: number; eth_reserve: string; token_reserve: string }>();
+      if (latestPrices) {
+        for (const priceData of latestPrices) {
+          if (!priceMap.has(priceData.token_address)) {
+            const priceEth = parseFloat(priceData.price_eth || '0');
+            const ethPriceUsd = parseFloat(priceData.eth_price_usd || '0');
+            const priceUsd = priceEth * ethPriceUsd;
+
+            priceMap.set(priceData.token_address, {
+              price_usd: priceUsd,
+              eth_reserve: priceData.eth_reserve?.toString() || '0',
+              token_reserve: priceData.token_reserve?.toString() || '0'
+            });
+          }
+        }
+      }
 
       const newTokenData: Record<string, TokenEnrichedData> = { ...tokenDataMap };
       let hasChanges = false;
 
       for (const token of visibleTokens) {
-        const reserves = reservesMap.get(token.amm_address);
+        const dbPrice = priceMap.get(token.token_address);
 
         const calculateCurrentPrice = (): number => {
-          if (reserves && reserves.reserveETH && reserves.reserveToken) {
-            const ethReserve = parseFloat(reserves.reserveETH);
-            const tokenReserve = parseFloat(reserves.reserveToken);
-            if (tokenReserve === 0 || isNaN(ethReserve) || isNaN(tokenReserve)) return 0;
-            const priceInEth = ethReserve / tokenReserve;
-            return priceInEth * ethPriceUSD;
+          // Priority 1: Use database price from price_snapshots (real-time via subscriptions)
+          if (dbPrice && dbPrice.price_usd > 0) {
+            return dbPrice.price_usd;
           }
 
+          // Priority 2: Calculate from database reserves
           const ethReserve = parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
           const tokenReserve = parseFloat(token.current_token_reserve?.toString() || '1000000');
           if (tokenReserve === 0 || isNaN(ethReserve) || isNaN(tokenReserve)) return 0;
@@ -220,7 +253,8 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
         const TOKEN_TOTAL_SUPPLY = 1000000;
         const marketCap = currentPriceUSD * TOKEN_TOTAL_SUPPLY;
 
-        const liquidityETH = reserves?.reserveETH || token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString();
+        // Use database reserves for liquidity
+        const liquidityETH = dbPrice?.eth_reserve || token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString();
 
         const now = Date.now();
         const createdAt = new Date(token.created_at);
