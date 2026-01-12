@@ -201,7 +201,10 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
   const calculateTokenPriceUSD = (): number => {
     if (!token) return 0;
 
-    // Priority 1: Use live reserves from blockchain (most accurate, real-time)
+    // Priority 1: Use chart price from database (real-time via subscriptions)
+    if (chartPrice > 0) return chartPrice;
+
+    // Priority 2: Use live reserves from blockchain as fallback
     if (liveReserves) {
       const ethReserve = parseFloat(liveReserves.reserveETH);
       const tokenReserve = parseFloat(liveReserves.reserveToken);
@@ -211,9 +214,6 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
       const priceInEth = ethReserve / tokenReserve;
       return priceInEth * ethPriceUSD;
     }
-
-    // Priority 2: Use chart price from database
-    if (chartPrice > 0) return chartPrice;
 
     // Priority 3: Fallback to stored reserves
     const ethReserve = parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
@@ -428,10 +428,10 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="text-sm text-gray-600 mb-1">{t('tokenDetail.liquidity')}</div>
               <div className="text-xl sm:text-2xl font-bold text-gray-900">
-                {formatUSD(ethToUSD(liveReserves?.reserveETH || token.current_eth_reserve || token.initial_liquidity_eth, ethPriceUSD), true)}
+                {formatUSD(ethToUSD(token.current_eth_reserve || liveReserves?.reserveETH || token.initial_liquidity_eth, ethPriceUSD), true)}
               </div>
               <div className="text-sm text-gray-500 mt-1">
-                {formatCurrency(liveReserves?.reserveETH || token.current_eth_reserve || token.initial_liquidity_eth)}
+                {formatCurrency(token.current_eth_reserve || liveReserves?.reserveETH || token.initial_liquidity_eth)}
               </div>
             </div>
 
@@ -528,13 +528,13 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
                 <span className="text-gray-600">{t('tokenDetail.ethReserve')}</span>
                 <span className="font-semibold text-gray-900">
-                  {formatCurrency(liveReserves?.reserveETH || token.current_eth_reserve || token.initial_liquidity_eth)}
+                  {formatCurrency(token.current_eth_reserve || liveReserves?.reserveETH || token.initial_liquidity_eth)}
                 </span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
                 <span className="text-gray-600">{token.symbol} {t('tokenDetail.reserve')}</span>
                 <span className="font-semibold text-gray-900">
-                  {parseFloat(liveReserves?.reserveToken || token.current_token_reserve?.toString() || '0').toLocaleString()} {token.symbol}
+                  {parseFloat(token.current_token_reserve?.toString() || liveReserves?.reserveToken || '0').toLocaleString()} {token.symbol}
                 </span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
