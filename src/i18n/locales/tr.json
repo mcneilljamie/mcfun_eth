@@ -316,6 +316,10 @@
       "fairPricing": {
         "title": "Adil ve Şeffaf Fiyatlandırma",
         "description": "Fiyatlar, havuzdaki token oranına göre algoritmik olarak belirlenir. Herkes mevcut likiditeye göre aynı fiyatı alır."
+      },
+      "permanentLiquidity": {
+        "title": "İşlem Her Zaman Mümkün",
+        "description": "Likidite kalıcı olarak yakıldığı ve havuzda kilitlendiği için her zaman token alıp satabilirsiniz. Yaratıcı veya erken yatırımcıların likiditeyi kaldırma riski yoktur."
       }
     }
   },

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Shield, Lock, Coins, TrendingUp, Users, Zap, DollarSign, Check, Eye, BarChart3, Wallet, Flame, ArrowLeftRight } from 'lucide-react';
+import { Shield, Lock, Coins, TrendingUp, Users, Zap, DollarSign, Check, Eye, BarChart3, Wallet, Flame, ArrowLeftRight, Droplets } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { formatCurrency, formatUSD } from '../lib/utils';
@@ -378,6 +378,16 @@ export function About() {
                 <p className="text-sm sm:text-base font-semibold text-gray-900 mb-1">{t('about.trading.fairPricing.title')}</p>
                 <p className="text-xs sm:text-sm text-gray-700">
                   {t('about.trading.fairPricing.description')}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-2.5 sm:gap-3">
+              <Droplets className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 mt-1 text-emerald-600" />
+              <div>
+                <p className="text-sm sm:text-base font-semibold text-gray-900 mb-1">{t('about.trading.permanentLiquidity.title')}</p>
+                <p className="text-xs sm:text-sm text-gray-700">
+                  {t('about.trading.permanentLiquidity.description')}
                 </p>
               </div>
             </div>

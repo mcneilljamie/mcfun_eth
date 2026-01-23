@@ -316,6 +316,10 @@
       "fairPricing": {
         "title": "Preços Justos e Transparentes",
         "description": "Os preços são determinados algoritmicamente pela proporção de tokens no pool. Todos obtêm o mesmo preço com base na liquidez atual."
+      },
+      "permanentLiquidity": {
+        "title": "Negociação Sempre Disponível",
+        "description": "Como a liquidez está permanentemente queimada e bloqueada no pool, você sempre pode comprar ou vender tokens. Não há risco de a liquidez ser removida pelo criador ou investidores iniciais."
       }
     }
   },

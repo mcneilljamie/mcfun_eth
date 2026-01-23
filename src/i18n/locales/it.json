@@ -316,6 +316,10 @@
       "fairPricing": {
         "title": "Prezzi Equi e Trasparenti",
         "description": "I prezzi sono determinati algoritmicamente dal rapporto di token nel pool. Tutti ottengono lo stesso prezzo basato sulla liquidità attuale."
+      },
+      "permanentLiquidity": {
+        "title": "Trading Sempre Disponibile",
+        "description": "Poiché la liquidità è permanentemente bruciata e bloccata nel pool, puoi sempre comprare o vendere token. Non c'è rischio che il creatore o i primi investitori rimuovano la liquidità."
       }
     }
   },

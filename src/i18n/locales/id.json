@@ -316,6 +316,10 @@
       "fairPricing": {
         "title": "Harga Adil & Transparan",
         "description": "Harga ditentukan secara algoritmik oleh rasio token di pool. Semua orang mendapat harga yang sama berdasarkan likuiditas saat ini."
+      },
+      "permanentLiquidity": {
+        "title": "Trading Selalu Tersedia",
+        "description": "Karena likuiditas dibakar secara permanen dan dikunci di pool, Anda selalu dapat membeli atau menjual token. Tidak ada risiko likuiditas dihapus oleh kreator atau investor awal."
       }
     }
   },
