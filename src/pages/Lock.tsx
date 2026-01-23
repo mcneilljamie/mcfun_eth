@@ -1170,6 +1170,11 @@ export function Lock({ onShowToast }: LockPageProps) {
             <div className="space-y-3">
               {topLockedTokens.map((aggLock, index) => {
                 const totalValueUsd = aggLock.total_value_usd || 0;
+                const TOKEN_TOTAL_SUPPLY = 1000000;
+
+                // Calculate percentage of supply locked
+                const totalAmountLocked = formatLargeTokenAmount(aggLock.total_amount_locked, aggLock.token_decimals || 18);
+                const percentLocked = (parseFloat(totalAmountLocked.replace(/,/g, '')) / TOKEN_TOTAL_SUPPLY) * 100;
 
                 return (
                   <div
@@ -1201,7 +1206,7 @@ export function Lock({ onShowToast }: LockPageProps) {
                           <div className="text-sm">
                             <span className="text-gray-600">{t('lock.totalLocked')}:</span>
                             <span className="ml-2 font-semibold text-gray-900">
-                              {formatLargeTokenAmount(aggLock.total_amount_locked, aggLock.token_decimals || 18)} {aggLock.token_symbol}
+                              {totalAmountLocked} {aggLock.token_symbol}
                             </span>
                           </div>
                         </div>
@@ -1210,6 +1215,17 @@ export function Lock({ onShowToast }: LockPageProps) {
                         <div className="text-sm text-gray-500 mb-1">{t('lock.totalValue')}</div>
                         <div className="text-2xl font-bold text-gray-900">
                           {formatCurrency(totalValueUsd)}
+                        </div>
+                        <div className="text-sm text-gray-600 mt-1">
+                          {percentLocked > 0 ? (
+                            <span className="font-semibold">
+                              {percentLocked < 0.01
+                                ? percentLocked.toFixed(4)
+                                : percentLocked.toFixed(2)}% {t('burn.ofSupply')}
+                            </span>
+                          ) : (
+                            <span className="text-gray-400">-</span>
+                          )}
                         </div>
                       </div>
                     </div>
