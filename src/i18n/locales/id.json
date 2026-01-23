@@ -302,7 +302,22 @@
         "description": "Semua smart contract adalah open source di GitHub dan dapat dilihat dan diverifikasi di Etherscan. Audit kodenya sendiri sebelum menggunakan platform."
       }
     },
-    "founder": "McFun didirikan dan dikelola oleh Jamie McNeill."
+    "founder": "McFun didirikan dan dikelola oleh Jamie McNeill.",
+    "trading": {
+      "title": "Cara Kerja Perdagangan",
+      "builtInAMM": {
+        "title": "Pembuat Pasar Otomatis Bawaan",
+        "description": "Setiap token memiliki AMM produk konstan sendiri (x * y = k). Perdagangan langsung melawan pool likuiditas tanpa buku pesanan atau perantara."
+      },
+      "instantTrades": {
+        "title": "Eksekusi Instan",
+        "description": "Perdagangan dieksekusi langsung di rantai. Cukup hubungkan dompet Anda, masukkan jumlah, dan tukar. Tidak perlu menunggu pesanan terisi."
+      },
+      "fairPricing": {
+        "title": "Harga Adil & Transparan",
+        "description": "Harga ditentukan secara algoritmik oleh rasio token di pool. Semua orang mendapat harga yang sama berdasarkan likuiditas saat ini."
+      }
+    }
   },
   "common": {
     "tokens": "token",

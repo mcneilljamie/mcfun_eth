@@ -302,7 +302,22 @@
         "description": "Tutti i contratti intelligenti sono open source su GitHub e possono essere visualizzati e verificati su Etherscan. Controlla il codice tu stesso prima di usare la piattaforma."
       }
     },
-    "founder": "McFun è stato fondato ed è mantenuto da Jamie McNeill."
+    "founder": "McFun è stato fondato ed è mantenuto da Jamie McNeill.",
+    "trading": {
+      "title": "Come Funziona il Trading",
+      "builtInAMM": {
+        "title": "Market Maker Automatizzato Integrato",
+        "description": "Ogni token ha il proprio AMM a prodotto costante (x * y = k). Negozia direttamente contro il pool di liquidità senza order book o intermediari."
+      },
+      "instantTrades": {
+        "title": "Esecuzione Istantanea",
+        "description": "Le negoziazioni vengono eseguite istantaneamente on-chain. Basta connettere il wallet, inserire l'importo e scambiare. Nessuna attesa per il riempimento degli ordini."
+      },
+      "fairPricing": {
+        "title": "Prezzi Equi e Trasparenti",
+        "description": "I prezzi sono determinati algoritmicamente dal rapporto di token nel pool. Tutti ottengono lo stesso prezzo basato sulla liquidità attuale."
+      }
+    }
   },
   "common": {
     "tokens": "token",

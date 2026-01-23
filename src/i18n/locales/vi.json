@@ -302,7 +302,22 @@
         "description": "Tất cả smart contract đều mã nguồn mở trên GitHub và có thể xem và xác minh trên Etherscan. Tự kiểm tra mã trước khi sử dụng nền tảng."
       }
     },
-    "founder": "McFun được thành lập và duy trì bởi Jamie McNeill."
+    "founder": "McFun được thành lập và duy trì bởi Jamie McNeill.",
+    "trading": {
+      "title": "Cách Giao Dịch Hoạt Động",
+      "builtInAMM": {
+        "title": "Nhà Tạo Lập Thị Trường Tự Động Tích Hợp",
+        "description": "Mỗi token có AMM tích số không đổi riêng (x * y = k). Giao dịch trực tiếp với pool thanh khoản mà không cần sổ lệnh hoặc trung gian."
+      },
+      "instantTrades": {
+        "title": "Thực Hiện Tức Thì",
+        "description": "Giao dịch được thực hiện ngay lập tức trên chuỗi. Chỉ cần kết nối ví, nhập số lượng và hoán đổi. Không cần chờ lệnh được khớp."
+      },
+      "fairPricing": {
+        "title": "Định Giá Công Bằng và Minh Bạch",
+        "description": "Giá được xác định bằng thuật toán dựa trên tỷ lệ token trong pool. Mọi người đều nhận được cùng một mức giá dựa trên thanh khoản hiện tại."
+      }
+    }
   },
   "common": {
     "tokens": "token",

@@ -302,7 +302,22 @@
         "description": "所有智能合约都在GitHub上开源，并可以在Etherscan上查看和验证。使用平台前请自行审核代码。"
       }
     },
-    "founder": "McFun由杰米·麦克尼尔创立并维护。"
+    "founder": "McFun由杰米·麦克尼尔创立并维护。",
+    "trading": {
+      "title": "交易如何运作",
+      "builtInAMM": {
+        "title": "内置自动做市商",
+        "description": "每个代币都有自己的恒定乘积AMM（x * y = k）。直接对流动性池进行交易，无需订单簿或中介。"
+      },
+      "instantTrades": {
+        "title": "即时执行",
+        "description": "交易在链上立即执行。只需连接钱包，输入金额并交换。无需等待订单完成。"
+      },
+      "fairPricing": {
+        "title": "公平透明的定价",
+        "description": "价格由池中代币的比率通过算法确定。每个人都基于当前流动性获得相同的价格。"
+      }
+    }
   },
   "common": {
     "tokens": "代币",

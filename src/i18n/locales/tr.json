@@ -302,7 +302,22 @@
         "description": "Tüm akıllı sözleşmeler GitHub'da açık kaynaktır ve Etherscan'de görüntülenebilir ve doğrulanabilir. Platformu kullanmadan önce kodu kendiniz denetleyin."
       }
     },
-    "founder": "McFun, Jamie McNeill tarafından kurulmuştur ve sürdürülmektedir."
+    "founder": "McFun, Jamie McNeill tarafından kurulmuştur ve sürdürülmektedir.",
+    "trading": {
+      "title": "İşlem Nasıl Çalışır",
+      "builtInAMM": {
+        "title": "Dahili Otomatik Piyasa Yapıcı",
+        "description": "Her token'ın kendi sabit çarpım AMM'si (x * y = k) vardır. Emir defterleri veya aracılar olmadan doğrudan likidite havuzuna karşı işlem yapın."
+      },
+      "instantTrades": {
+        "title": "Anında Yürütme",
+        "description": "İşlemler zincir üzerinde anında gerçekleşir. Cüzdanınızı bağlayın, miktarı girin ve takas yapın. Emirlerin dolmasını beklemek yok."
+      },
+      "fairPricing": {
+        "title": "Adil ve Şeffaf Fiyatlandırma",
+        "description": "Fiyatlar, havuzdaki token oranına göre algoritmik olarak belirlenir. Herkes mevcut likiditeye göre aynı fiyatı alır."
+      }
+    }
   },
   "common": {
     "tokens": "token",

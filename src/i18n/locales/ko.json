@@ -302,7 +302,22 @@
         "description": "모든 스마트 계약은 GitHub에서 오픈 소스로 제공되며 Etherscan에서 보고 검증할 수 있습니다. 플랫폼을 사용하기 전에 직접 코드를 감사하세요."
       }
     },
-    "founder": "McFun은 Jamie McNeill이 설립하고 유지 관리합니다."
+    "founder": "McFun은 Jamie McNeill이 설립하고 유지 관리합니다.",
+    "trading": {
+      "title": "거래 작동 방식",
+      "builtInAMM": {
+        "title": "내장 자동 마켓 메이커",
+        "description": "각 토큰은 자체 상수곱 AMM(x * y = k)을 가지고 있습니다. 주문서나 중개자 없이 유동성 풀에 대해 직접 거래하세요."
+      },
+      "instantTrades": {
+        "title": "즉시 실행",
+        "description": "거래는 체인 상에서 즉시 실행됩니다. 지갑을 연결하고 금액을 입력한 다음 스왑하기만 하면 됩니다. 주문이 체결되기를 기다릴 필요가 없습니다."
+      },
+      "fairPricing": {
+        "title": "공정하고 투명한 가격 책정",
+        "description": "가격은 풀의 토큰 비율에 따라 알고리즘적으로 결정됩니다. 모두가 현재 유동성을 기반으로 동일한 가격을 받습니다."
+      }
+    }
   },
   "common": {
     "tokens": "토큰",

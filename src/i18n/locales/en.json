@@ -300,6 +300,21 @@
         "title": "Open Source & Verifiable",
         "description": "All smart contracts are open-sourced on GitHub and can be viewed and verified on Etherscan. Audit the code yourself before using the platform."
       }
+    },
+    "trading": {
+      "title": "How Trading Works",
+      "builtInAMM": {
+        "title": "Built-In Automated Market Maker",
+        "description": "Each token has its own constant product AMM (x * y = k). Trade directly against the liquidity pool without order books or intermediaries."
+      },
+      "instantTrades": {
+        "title": "Instant Execution",
+        "description": "Trades execute immediately on-chain. Simply connect your wallet, enter the amount, and swap. No waiting for orders to fill."
+      },
+      "fairPricing": {
+        "title": "Fair & Transparent Pricing",
+        "description": "Prices are determined algorithmically by the ratio of tokens in the pool. Everyone gets the same price based on current liquidity."
+      }
     }
   },
   "common": {
