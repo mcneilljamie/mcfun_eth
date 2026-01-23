@@ -49,3 +49,4 @@ export const TOTAL_SUPPLY = 1_000_000;
 export const FEE_PERCENT = 0.4;
 export const MAX_NAME_LENGTH = 20;
 export const MAX_SYMBOL_LENGTH = 7;
+export const MAX_LOCK_DAYS = 10000;

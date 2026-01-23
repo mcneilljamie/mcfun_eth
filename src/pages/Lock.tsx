@@ -7,7 +7,7 @@ import { Loader2, Lock as LockIcon, Clock, User, Coins, AlertCircle, ExternalLin
 import { useTranslation } from 'react-i18next';
 import { LockCelebration } from '../components/LockCelebration';
 import { ToastMessage } from '../App';
-import { getExplorerUrl, getLockerAddress, getFactoryAddress } from '../contracts/addresses';
+import { getExplorerUrl, getLockerAddress, getFactoryAddress, MAX_LOCK_DAYS } from '../contracts/addresses';
 import { ERC20_ABI, TOKEN_LOCKER_ABI, MCFUN_FACTORY_ABI } from '../contracts/abis';
 import { getEthPriceUSD } from '../lib/ethPrice';
 import { formatUSD, formatNumber as formatNumberWithCommas } from '../lib/utils';
@@ -446,6 +446,14 @@ export function Lock({ onShowToast }: LockPageProps) {
     if (amountNum <= 0 || durationNum <= 0 || !Number.isInteger(parseFloat(duration))) {
       onShowToast({
         message: t('lock.errors.invalidInput'),
+        type: 'error',
+      });
+      return;
+    }
+
+    if (durationNum > MAX_LOCK_DAYS) {
+      onShowToast({
+        message: t('lock.errors.exceedsMaxDuration', { max: MAX_LOCK_DAYS.toLocaleString() }),
         type: 'error',
       });
       return;
@@ -1072,11 +1080,12 @@ export function Lock({ onShowToast }: LockPageProps) {
                     onChange={(e) => setDuration(e.target.value)}
                     placeholder="30"
                     min="1"
+                    max={MAX_LOCK_DAYS}
                     step="1"
                     disabled={!tokenInfo}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
                   />
-                  <p className="text-sm text-gray-500 mt-1">{t('lock.durationHelp')}</p>
+                  <p className="text-sm text-gray-500 mt-1">{t('lock.durationHelp')} (Max: {MAX_LOCK_DAYS.toLocaleString()} days)</p>
                 </div>
 
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">

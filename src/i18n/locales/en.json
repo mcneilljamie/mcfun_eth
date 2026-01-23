@@ -548,6 +548,7 @@
       "invalidInput": "Please enter valid amount and duration",
       "insufficientBalance": "Insufficient token balance",
       "belowMinimumLock": "Lock amount must be at least {{minimum}} tokens",
+      "exceedsMaxDuration": "Lock duration cannot exceed {{max}} days",
       "approvalFailed": "Token approval failed",
       "lockFailed": "Failed to lock tokens",
       "unlockFailed": "Failed to withdraw tokens",
