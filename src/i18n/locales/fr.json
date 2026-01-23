@@ -281,13 +281,9 @@
         "title": "Contrats Immuables",
         "description": "Une fois déployés, les contrats de tokens et AMM ne peuvent pas être modifiés, mis à niveau ou mis en pause. Ce que vous voyez est ce que vous obtenez."
       },
-      "transparent": {
-        "title": "Destinataire des Frais Transparent",
-        "description": "L'adresse du destinataire des frais de la plateforme est codée en dur dans le contrat et publiquement visible. Pas de changements de frais cachés ni de portes dérobées."
-      },
       "opensource": {
         "title": "Open Source et Vérifiable",
-        "description": "Tous les contrats intelligents peuvent être consultés et vérifiés sur Etherscan. Auditez le code vous-même avant d'utiliser la plateforme."
+        "description": "Tous les contrats intelligents sont en open source sur GitHub et peuvent être consultés et vérifiés sur Etherscan. Auditez le code vous-même avant d'utiliser la plateforme."
       }
     },
     "founder": "McFun a été fondé et est maintenu par Jamie McNeill."

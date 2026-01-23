@@ -281,13 +281,9 @@
         "title": "Contratos Inmutables",
         "description": "Una vez desplegados, los contratos de tokens y AMM no pueden ser modificados, actualizados o pausados. Lo que ves es lo que obtienes."
       },
-      "transparent": {
-        "title": "Receptor de Tarifas Transparente",
-        "description": "La dirección del receptor de tarifas de la plataforma está codificada en el contrato y es públicamente visible. Sin cambios de tarifas ocultos ni puertas traseras."
-      },
       "opensource": {
         "title": "Código Abierto y Verificable",
-        "description": "Todos los contratos inteligentes pueden ser vistos y verificados en Etherscan. Audita el código tú mismo antes de usar la plataforma."
+        "description": "Todos los contratos inteligentes están en código abierto en GitHub y pueden ser vistos y verificados en Etherscan. Audita el código tú mismo antes de usar la plataforma."
       }
     },
     "founder": "McFun fue fundado y es mantenido por Jamie McNeill."

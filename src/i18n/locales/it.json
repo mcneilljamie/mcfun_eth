@@ -281,13 +281,9 @@
         "title": "Contratti Immutabili",
         "description": "Una volta distribuiti, i contratti token e AMM non possono essere modificati, aggiornati o messi in pausa. Quello che vedi è quello che ottieni."
       },
-      "transparent": {
-        "title": "Destinatario delle Commissioni Trasparente",
-        "description": "L'indirizzo del destinatario delle commissioni della piattaforma è hardcoded nel contratto e pubblicamente visibile. Nessun cambio di commissioni nascosto o backdoor."
-      },
       "opensource": {
         "title": "Open Source e Verificabile",
-        "description": "Tutti i contratti intelligenti possono essere visualizzati e verificati su Etherscan. Controlla il codice tu stesso prima di usare la piattaforma."
+        "description": "Tutti i contratti intelligenti sono open source su GitHub e possono essere visualizzati e verificati su Etherscan. Controlla il codice tu stesso prima di usare la piattaforma."
       }
     },
     "founder": "McFun è stato fondato ed è mantenuto da Jamie McNeill."

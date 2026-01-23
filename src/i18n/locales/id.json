@@ -281,13 +281,9 @@
         "title": "Kontrak Tidak Dapat Diubah",
         "description": "Setelah di-deploy, kontrak token dan AMM tidak dapat dimodifikasi, ditingkatkan, atau dihentikan. Apa yang Anda lihat adalah apa yang Anda dapatkan."
       },
-      "transparent": {
-        "title": "Penerima Biaya Transparan",
-        "description": "Alamat penerima biaya platform di-hardcode dalam kontrak dan terlihat secara publik. Tanpa switch biaya tersembunyi atau backdoor."
-      },
       "opensource": {
         "title": "Open Source & Dapat Diverifikasi",
-        "description": "Semua smart contract dapat dilihat dan diverifikasi di Etherscan. Audit kodenya sendiri sebelum menggunakan platform."
+        "description": "Semua smart contract adalah open source di GitHub dan dapat dilihat dan diverifikasi di Etherscan. Audit kodenya sendiri sebelum menggunakan platform."
       }
     },
     "founder": "McFun didirikan dan dikelola oleh Jamie McNeill."

@@ -280,13 +280,9 @@
         "title": "Immutable Contracts",
         "description": "Once deployed, token and AMM contracts cannot be modified, upgraded, or paused. What you see is what you get."
       },
-      "transparent": {
-        "title": "Transparent Fee Recipient",
-        "description": "The platform fee recipient address is hardcoded in the contract and publicly visible. No hidden fee switches or backdoors."
-      },
       "opensource": {
         "title": "Open Source & Verifiable",
-        "description": "All smart contracts can be viewed and verified on Etherscan. Audit the code yourself before using the platform."
+        "description": "All smart contracts are open-sourced on GitHub and can be viewed and verified on Etherscan. Audit the code yourself before using the platform."
       }
     }
   },

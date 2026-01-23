@@ -281,13 +281,9 @@
         "title": "Değiştirilemez Sözleşmeler",
         "description": "Dağıtıldıktan sonra token ve AMM sözleşmeleri değiştirilemez, yükseltilemez veya durdurulamaz. Gördüğünüz budur."
       },
-      "transparent": {
-        "title": "Şeffaf Ücret Alıcısı",
-        "description": "Platform ücret alıcısı adresi sözleşmeye sabit kodlanmıştır ve herkese açıktır. Gizli ücret anahtarı veya arka kapı yoktur."
-      },
       "opensource": {
         "title": "Açık Kaynak ve Doğrulanabilir",
-        "description": "Tüm akıllı sözleşmeler Etherscan'de görüntülenebilir ve doğrulanabilir. Platformu kullanmadan önce kodu kendiniz denetleyin."
+        "description": "Tüm akıllı sözleşmeler GitHub'da açık kaynaktır ve Etherscan'de görüntülenebilir ve doğrulanabilir. Platformu kullanmadan önce kodu kendiniz denetleyin."
       }
     },
     "founder": "McFun, Jamie McNeill tarafından kurulmuştur ve sürdürülmektedir."

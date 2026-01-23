@@ -281,13 +281,9 @@
         "title": "Hợp Đồng Bất Biến",
         "description": "Sau khi triển khai, hợp đồng token và AMM không thể sửa đổi, nâng cấp hoặc tạm dừng. Những gì bạn thấy là những gì bạn nhận được."
       },
-      "transparent": {
-        "title": "Người Nhận Phí Minh Bạch",
-        "description": "Địa chỉ người nhận phí nền tảng được mã hóa cứng trong hợp đồng và có thể nhìn thấy công khai. Không có công tắc phí ẩn hoặc backdoor."
-      },
       "opensource": {
         "title": "Mã Nguồn Mở & Có Thể Xác Minh",
-        "description": "Tất cả smart contract có thể xem và xác minh trên Etherscan. Tự kiểm tra mã trước khi sử dụng nền tảng."
+        "description": "Tất cả smart contract đều mã nguồn mở trên GitHub và có thể xem và xác minh trên Etherscan. Tự kiểm tra mã trước khi sử dụng nền tảng."
       }
     },
     "founder": "McFun được thành lập và duy trì bởi Jamie McNeill."

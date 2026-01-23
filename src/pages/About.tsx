@@ -280,16 +280,6 @@ export function About() {
             <div className="flex gap-2.5 sm:gap-3">
               <Shield className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 mt-1" />
               <div>
-                <p className="text-sm sm:text-base font-semibold mb-1">{t('about.security.transparent.title')}</p>
-                <p className="text-xs sm:text-sm text-gray-300">
-                  {t('about.security.transparent.description')}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex gap-2.5 sm:gap-3">
-              <Shield className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 mt-1" />
-              <div>
                 <p className="text-sm sm:text-base font-semibold mb-1">{t('about.security.opensource.title')}</p>
                 <p className="text-xs sm:text-sm text-gray-300">
                   {t('about.security.opensource.description')}

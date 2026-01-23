@@ -281,13 +281,9 @@
         "title": "不可变合约",
         "description": "一旦部署，代币和AMM合约无法修改、升级或暂停。所见即所得。"
       },
-      "transparent": {
-        "title": "透明费用接收者",
-        "description": "平台费用接收地址硬编码在合约中并公开可见。无隐藏费用开关或后门。"
-      },
       "opensource": {
         "title": "开源且可验证",
-        "description": "所有智能合约都可以在Etherscan上查看和验证。使用平台前请自行审核代码。"
+        "description": "所有智能合约都在GitHub上开源，并可以在Etherscan上查看和验证。使用平台前请自行审核代码。"
       }
     },
     "founder": "McFun由杰米·麦克尼尔创立并维护。"
