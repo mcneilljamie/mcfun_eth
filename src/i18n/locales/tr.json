@@ -419,7 +419,7 @@
     "proveTrust": "Güven ve Taahhüdü Kanıtlayın",
     "proveTrustDescription": "Token kilitleme, bir projeye uzun vadeli taahhüdü gösterir. Tüm kilitlemeler halka açık olarak görülebilir ve zincirde doğrulanabilir, şeffaflık sağlar ve topluluğunuzda güven oluşturur.",
     "deferGratification": "Tatmini Ertele",
-    "deferGratificationDescription": "Piyasa oynaklığı sırasında dürtüsel kararlardan kendinizi koruyun. Tokenlerinizi kilitleyerek, mani veya panik sırasında duygusal satışları önlersiniz ve yatırımınıza erken çıkma cazibesi olmadan büyümesi için zaman verirsiniz.",
+    "deferGratificationDescription": "Piyasa oynaklığı sırasında dürtüsel kararlardan kendinizi koruyun. Tokenlerinizi kilitleyerek, mani veya panik sırasında duygusal satışları önlersiniz ve pozisyonunuza erken çıkma cazibesi olmadan olgunlaşması için zaman verirsiniz.",
     "tokenBurning": "Token Yakma",
     "tokenBurningDescription": "McFun ücretsiz, şeffaf bir token yakma hizmeti sunar. Arzı azaltmak ve potansiyel olarak kıtlığı artırmak için tokenları kalıcı olarak dolaşımdan çıkarın. Tüm yakmalar zincirde kaydedilir ve halka açık olarak doğrulanabilir.",
     "reduceSupply": "Dolaşımdaki Arzı Azaltın",
