@@ -250,6 +250,55 @@ export function About() {
           </div>
         </div>
 
+        <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl shadow-lg p-5 sm:p-8 text-white mb-6 sm:mb-8">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 flex items-center gap-2 sm:gap-3">
+            <Lock className="w-6 h-6 sm:w-8 sm:h-8" />
+            {t('about.security.title')}
+          </h2>
+
+          <div className="space-y-3 sm:space-y-4">
+            <div className="flex gap-2.5 sm:gap-3">
+              <Shield className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 mt-1" />
+              <div>
+                <p className="text-sm sm:text-base font-semibold mb-1">{t('about.security.burned.title')}</p>
+                <p className="text-xs sm:text-sm text-gray-300">
+                  {t('about.security.burned.description')}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-2.5 sm:gap-3">
+              <Shield className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 mt-1" />
+              <div>
+                <p className="text-sm sm:text-base font-semibold mb-1">{t('about.security.immutable.title')}</p>
+                <p className="text-xs sm:text-sm text-gray-300">
+                  {t('about.security.immutable.description')}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-2.5 sm:gap-3">
+              <Shield className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 mt-1" />
+              <div>
+                <p className="text-sm sm:text-base font-semibold mb-1">{t('about.security.transparent.title')}</p>
+                <p className="text-xs sm:text-sm text-gray-300">
+                  {t('about.security.transparent.description')}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-2.5 sm:gap-3">
+              <Shield className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 mt-1" />
+              <div>
+                <p className="text-sm sm:text-base font-semibold mb-1">{t('about.security.opensource.title')}</p>
+                <p className="text-xs sm:text-sm text-gray-300">
+                  {t('about.security.opensource.description')}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8 border-2 border-blue-200">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
             <Eye className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
@@ -427,55 +476,6 @@ export function About() {
                     {t('about.fees.trading.description')}
                   </p>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl shadow-lg p-5 sm:p-8 text-white mb-6 sm:mb-8">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 flex items-center gap-2 sm:gap-3">
-            <Lock className="w-6 h-6 sm:w-8 sm:h-8" />
-            {t('about.security.title')}
-          </h2>
-
-          <div className="space-y-3 sm:space-y-4">
-            <div className="flex gap-2.5 sm:gap-3">
-              <Shield className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 mt-1" />
-              <div>
-                <p className="text-sm sm:text-base font-semibold mb-1">{t('about.security.burned.title')}</p>
-                <p className="text-xs sm:text-sm text-gray-300">
-                  {t('about.security.burned.description')}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex gap-2.5 sm:gap-3">
-              <Shield className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 mt-1" />
-              <div>
-                <p className="text-sm sm:text-base font-semibold mb-1">{t('about.security.immutable.title')}</p>
-                <p className="text-xs sm:text-sm text-gray-300">
-                  {t('about.security.immutable.description')}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex gap-2.5 sm:gap-3">
-              <Shield className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 mt-1" />
-              <div>
-                <p className="text-sm sm:text-base font-semibold mb-1">{t('about.security.transparent.title')}</p>
-                <p className="text-xs sm:text-sm text-gray-300">
-                  {t('about.security.transparent.description')}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex gap-2.5 sm:gap-3">
-              <Shield className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 mt-1" />
-              <div>
-                <p className="text-sm sm:text-base font-semibold mb-1">{t('about.security.opensource.title')}</p>
-                <p className="text-xs sm:text-sm text-gray-300">
-                  {t('about.security.opensource.description')}
-                </p>
               </div>
             </div>
           </div>
