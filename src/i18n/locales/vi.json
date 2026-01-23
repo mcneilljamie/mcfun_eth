@@ -319,7 +319,7 @@
       },
       "permanentLiquidity": {
         "title": "Giao Dịch Luôn Khả Dụng",
-        "description": "Vì thanh khoản được đốt vĩnh viễn và khóa trong pool, bạn luôn có thể mua hoặc bán token. Không có rủi ro thanh khoản bị loại bỏ bởi người tạo hoặc nhà đầu tư ban đầu."
+        "description": "Vì thanh khoản được đốt vĩnh viễn và khóa trong pool, bạn luôn có thể mua hoặc bán token. Không có rủi ro thanh khoản bị loại bỏ bởi người tạo."
       }
     }
   },

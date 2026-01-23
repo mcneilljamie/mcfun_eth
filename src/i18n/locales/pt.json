@@ -319,7 +319,7 @@
       },
       "permanentLiquidity": {
         "title": "Negociação Sempre Disponível",
-        "description": "Como a liquidez está permanentemente queimada e bloqueada no pool, você sempre pode comprar ou vender tokens. Não há risco de a liquidez ser removida pelo criador ou investidores iniciais."
+        "description": "Como a liquidez está permanentemente queimada e bloqueada no pool, você sempre pode comprar ou vender tokens. Não há risco de a liquidez ser removida pelo criador."
       }
     }
   },

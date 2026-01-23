@@ -319,7 +319,7 @@
       },
       "permanentLiquidity": {
         "title": "İşlem Her Zaman Mümkün",
-        "description": "Likidite kalıcı olarak yakıldığı ve havuzda kilitlendiği için her zaman token alıp satabilirsiniz. Yaratıcı veya erken yatırımcıların likiditeyi kaldırma riski yoktur."
+        "description": "Likidite kalıcı olarak yakıldığı ve havuzda kilitlendiği için her zaman token alıp satabilirsiniz. Yaratıcının likiditeyi kaldırma riski yoktur."
       }
     }
   },

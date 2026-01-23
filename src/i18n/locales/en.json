@@ -317,7 +317,7 @@
       },
       "permanentLiquidity": {
         "title": "Trading Always Available",
-        "description": "Because liquidity is permanently burned and locked in the pool, you can always buy or sell tokens. There's no risk of liquidity being removed by the creator or early investors."
+        "description": "Because liquidity is permanently burned and locked in the pool, you can always buy or sell tokens. There's no risk of liquidity being removed by the creator."
       }
     }
   },

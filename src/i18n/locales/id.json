@@ -319,7 +319,7 @@
       },
       "permanentLiquidity": {
         "title": "Trading Selalu Tersedia",
-        "description": "Karena likuiditas dibakar secara permanen dan dikunci di pool, Anda selalu dapat membeli atau menjual token. Tidak ada risiko likuiditas dihapus oleh kreator atau investor awal."
+        "description": "Karena likuiditas dibakar secara permanen dan dikunci di pool, Anda selalu dapat membeli atau menjual token. Tidak ada risiko likuiditas dihapus oleh kreator."
       }
     }
   },

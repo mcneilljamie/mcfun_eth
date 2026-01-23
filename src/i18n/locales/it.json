@@ -319,7 +319,7 @@
       },
       "permanentLiquidity": {
         "title": "Trading Sempre Disponibile",
-        "description": "Poiché la liquidità è permanentemente bruciata e bloccata nel pool, puoi sempre comprare o vendere token. Non c'è rischio che il creatore o i primi investitori rimuovano la liquidità."
+        "description": "Poiché la liquidità è permanentemente bruciata e bloccata nel pool, puoi sempre comprare o vendere token. Non c'è rischio che il creatore rimuova la liquidità."
       }
     }
   },

@@ -319,7 +319,7 @@
       },
       "permanentLiquidity": {
         "title": "Trading Toujours Disponible",
-        "description": "Parce que la liquidité est définitivement brûlée et verrouillée dans le pool, vous pouvez toujours acheter ou vendre des tokens. Il n'y a aucun risque que le créateur ou les premiers investisseurs retirent la liquidité."
+        "description": "Parce que la liquidité est définitivement brûlée et verrouillée dans le pool, vous pouvez toujours acheter ou vendre des tokens. Il n'y a aucun risque que le créateur retire la liquidité."
       }
     }
   },
