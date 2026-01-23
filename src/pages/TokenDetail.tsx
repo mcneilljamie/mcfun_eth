@@ -449,7 +449,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
             </div>
 
             <div className="bg-gray-50 rounded-lg p-4">
-              <div className="text-sm text-gray-600 mb-1">Liquidity on McFun</div>
+              <div className="text-sm text-gray-600 mb-1">ETH liquidity on McFun</div>
               <div className="text-xl sm:text-2xl font-bold text-gray-900">
                 {formatUSD(ethToUSD(token.current_eth_reserve || liveReserves?.reserveETH || token.initial_liquidity_eth, ethPriceUSD), true)}
               </div>
