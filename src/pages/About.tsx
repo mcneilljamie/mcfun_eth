@@ -488,6 +488,17 @@ export function About() {
                 </div>
               </div>
             </div>
+            <div className="bg-white/80 backdrop-blur rounded-lg p-4 border border-amber-200">
+              <div className="flex items-start gap-3">
+                <TrendingUp className="w-5 h-5 text-amber-600 flex-shrink-0 mt-1" />
+                <div>
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('aboutPage.deferGratification')}</h3>
+                  <p className="text-xs sm:text-sm text-gray-700">
+                    {t('aboutPage.deferGratificationDescription')}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

@@ -418,6 +418,8 @@
     "completlyFreeDescription": "Platform ücreti alan diğer kilitleme hizmetlerinin aksine, McFun'un token kilitleyicisi tamamen ücretsizdir. Yalnızca ağ gaz ücretlerini ödersiniz - gizli maliyet veya hizmet ücreti yoktur.",
     "proveTrust": "Güven ve Taahhüdü Kanıtlayın",
     "proveTrustDescription": "Token kilitleme, bir projeye uzun vadeli taahhüdü gösterir. Tüm kilitlemeler halka açık olarak görülebilir ve zincirde doğrulanabilir, şeffaflık sağlar ve topluluğunuzda güven oluşturur.",
+    "deferGratification": "Tatmini Ertele",
+    "deferGratificationDescription": "Satış baskısına direnmek ve sabır göstermek için tokenlerinizi kilitleyin. Varlıklarınıza erişimi gönüllü olarak kısıtlayarak, yatırımınızın uzun vadeli değerine olan inancınızı gösterirsiniz.",
     "tokenBurning": "Token Yakma",
     "tokenBurningDescription": "McFun ücretsiz, şeffaf bir token yakma hizmeti sunar. Arzı azaltmak ve potansiyel olarak kıtlığı artırmak için tokenları kalıcı olarak dolaşımdan çıkarın. Tüm yakmalar zincirde kaydedilir ve halka açık olarak doğrulanabilir.",
     "reduceSupply": "Dolaşımdaki Arzı Azaltın",

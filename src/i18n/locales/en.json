@@ -397,6 +397,8 @@
     "completlyFreeDescription": "Unlike other locking services that charge platform fees, McFun's token locker is completely free. You only pay network gas fees - no hidden costs or service charges.",
     "proveTrust": "Prove Trust & Commitment",
     "proveTrustDescription": "Locking tokens demonstrates long-term commitment to a project. All locks are publicly visible and verifiable on-chain, providing transparency and building confidence in your community.",
+    "deferGratification": "Defer Gratification",
+    "deferGratificationDescription": "Lock your tokens to resist selling pressure and demonstrate patience. By voluntarily restricting access to your holdings, you show conviction in the long-term value of your investment.",
     "tokenBurning": "Token Burning",
     "tokenBurningDescription": "McFun provides a free, transparent token burning service. Permanently remove tokens from circulation to reduce supply and potentially increase scarcity. All burns are recorded on-chain and publicly verifiable.",
     "reduceSupply": "Reduce Circulating Supply",

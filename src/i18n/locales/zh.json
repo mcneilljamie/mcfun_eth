@@ -418,6 +418,8 @@
     "completlyFreeDescription": "与收取平台费用的其他锁定服务不同，McFun 的代币锁定器完全免费。您只需支付网络燃气费 - 没有隐藏成本或服务费。",
     "proveTrust": "证明信任与承诺",
     "proveTrustDescription": "锁定代币展示了对项目的长期承诺。所有锁定都在链上公开可见和可验证，提供透明度并在您的社区中建立信心。",
+    "deferGratification": "延迟满足",
+    "deferGratificationDescription": "锁定你的代币以抵抗抛售压力并展示耐心。通过自愿限制对持有资产的访问，你展示了对投资长期价值的信念。",
     "tokenBurning": "代币销毁",
     "tokenBurningDescription": "McFun 提供免费、透明的代币销毁服务。永久性地从流通中移除代币以减少供应并可能增加稀缺性。所有销毁都在链上记录并公开可验证。",
     "reduceSupply": "减少流通供应",

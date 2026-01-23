@@ -418,6 +418,8 @@
     "completlyFreeDescription": "Không giống như các dịch vụ khóa khác tính phí nền tảng, trình khóa token của McFun hoàn toàn miễn phí. Bạn chỉ trả phí gas mạng - không có chi phí ẩn hoặc phí dịch vụ.",
     "proveTrust": "Chứng Minh Niềm Tin và Cam Kết",
     "proveTrustDescription": "Khóa token thể hiện cam kết dài hạn với một dự án. Tất cả các khóa đều có thể nhìn thấy công khai và có thể xác minh trên chuỗi, cung cấp tính minh bạch và xây dựng niềm tin trong cộng đồng của bạn.",
+    "deferGratification": "Trì Hoãn Sự Thỏa Mãn",
+    "deferGratificationDescription": "Khóa token của bạn để chống lại áp lực bán và thể hiện sự kiên nhẫn. Bằng cách tự nguyện hạn chế quyền truy cập vào tài sản của mình, bạn cho thấy niềm tin vào giá trị dài hạn của khoản đầu tư của mình.",
     "tokenBurning": "Đốt Token",
     "tokenBurningDescription": "McFun cung cấp dịch vụ đốt token miễn phí, minh bạch. Loại bỏ vĩnh viễn token khỏi lưu thông để giảm nguồn cung và có khả năng tăng sự khan hiếm. Tất cả các lần đốt được ghi lại trên chuỗi và có thể xác minh công khai.",
     "reduceSupply": "Giảm Nguồn Cung Lưu Thông",
