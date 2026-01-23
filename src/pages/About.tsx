@@ -346,49 +346,57 @@ export function About() {
         </div>
 
         <div className="bg-gradient-to-br from-emerald-50 to-green-100 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8 border-2 border-emerald-200">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4 flex items-center gap-2 sm:gap-3">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
             <ArrowLeftRight className="w-6 h-6 sm:w-8 sm:h-8 text-emerald-600" />
             {t('about.trading.title')}
           </h2>
 
-          <div className="space-y-3 sm:space-y-4">
-            <div className="flex gap-2.5 sm:gap-3">
-              <Coins className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 mt-1 text-emerald-600" />
-              <div>
-                <p className="text-sm sm:text-base font-semibold text-gray-900 mb-1">{t('about.trading.builtInAMM.title')}</p>
-                <p className="text-xs sm:text-sm text-gray-700">
-                  {t('about.trading.builtInAMM.description')}
-                </p>
+          <div className="space-y-4">
+            <div className="bg-white/80 backdrop-blur rounded-lg p-4 border border-emerald-200">
+              <div className="flex items-start gap-3">
+                <Coins className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-1" />
+                <div>
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('about.trading.builtInAMM.title')}</h3>
+                  <p className="text-xs sm:text-sm text-gray-700">
+                    {t('about.trading.builtInAMM.description')}
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div className="flex gap-2.5 sm:gap-3">
-              <Zap className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 mt-1 text-emerald-600" />
-              <div>
-                <p className="text-sm sm:text-base font-semibold text-gray-900 mb-1">{t('about.trading.instantTrades.title')}</p>
-                <p className="text-xs sm:text-sm text-gray-700">
-                  {t('about.trading.instantTrades.description')}
-                </p>
+            <div className="bg-white/80 backdrop-blur rounded-lg p-4 border border-emerald-200">
+              <div className="flex items-start gap-3">
+                <Zap className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-1" />
+                <div>
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('about.trading.instantTrades.title')}</h3>
+                  <p className="text-xs sm:text-sm text-gray-700">
+                    {t('about.trading.instantTrades.description')}
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div className="flex gap-2.5 sm:gap-3">
-              <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 mt-1 text-emerald-600" />
-              <div>
-                <p className="text-sm sm:text-base font-semibold text-gray-900 mb-1">{t('about.trading.fairPricing.title')}</p>
-                <p className="text-xs sm:text-sm text-gray-700">
-                  {t('about.trading.fairPricing.description')}
-                </p>
+            <div className="bg-white/80 backdrop-blur rounded-lg p-4 border border-emerald-200">
+              <div className="flex items-start gap-3">
+                <DollarSign className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-1" />
+                <div>
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('about.trading.fairPricing.title')}</h3>
+                  <p className="text-xs sm:text-sm text-gray-700">
+                    {t('about.trading.fairPricing.description')}
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div className="flex gap-2.5 sm:gap-3">
-              <Droplets className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 mt-1 text-emerald-600" />
-              <div>
-                <p className="text-sm sm:text-base font-semibold text-gray-900 mb-1">{t('about.trading.permanentLiquidity.title')}</p>
-                <p className="text-xs sm:text-sm text-gray-700">
-                  {t('about.trading.permanentLiquidity.description')}
-                </p>
+            <div className="bg-white/80 backdrop-blur rounded-lg p-4 border border-emerald-200">
+              <div className="flex items-start gap-3">
+                <Droplets className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-1" />
+                <div>
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('about.trading.permanentLiquidity.title')}</h3>
+                  <p className="text-xs sm:text-sm text-gray-700">
+                    {t('about.trading.permanentLiquidity.description')}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
