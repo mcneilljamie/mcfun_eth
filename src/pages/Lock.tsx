@@ -1172,9 +1172,15 @@ export function Lock({ onShowToast }: LockPageProps) {
                 const totalValueUsd = aggLock.total_value_usd || 0;
                 const TOKEN_TOTAL_SUPPLY = 1000000;
 
-                // Calculate percentage of supply locked
-                const totalAmountLocked = formatLargeTokenAmount(aggLock.total_amount_locked, aggLock.token_decimals || 18);
-                const percentLocked = (parseFloat(totalAmountLocked.replace(/,/g, '')) / TOKEN_TOTAL_SUPPLY) * 100;
+                // Calculate percentage of supply locked from raw amount
+                const decimals = aggLock.token_decimals || 18;
+                const amountBigInt = BigInt(aggLock.total_amount_locked || '0');
+                const divisor = BigInt(10 ** decimals);
+                const actualTokenAmount = Number(amountBigInt) / Number(divisor);
+                const percentLocked = (actualTokenAmount / TOKEN_TOTAL_SUPPLY) * 100;
+
+                // Format the display amount
+                const totalAmountLocked = formatLargeTokenAmount(aggLock.total_amount_locked, decimals);
 
                 return (
                   <div
