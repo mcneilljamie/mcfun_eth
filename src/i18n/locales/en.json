@@ -231,9 +231,25 @@
         "title": "Truly Unruggable",
         "description": "Initial liquidity is permanently burned. No one can remove it, making rug pulls impossible."
       },
-      "fair": {
-        "title": "No Presales or Insider Advantages",
-        "description": "Everyone trades at the same price from the AMM. Fair launch for all participants."
+      "permanentListings": {
+        "title": "Permanent Listings & Visibility",
+        "description": "Every token launched gets permanent visibility on our platform. Your project is always discoverable by traders."
+      },
+      "portfolioTracking": {
+        "title": "Easy to Track Portfolio Value",
+        "description": "Built-in portfolio tracking shows all your holdings and their current value in one convenient dashboard."
+      },
+      "freeTokenLocking": {
+        "title": "Free Token Locking",
+        "description": "Lock your tokens for any duration completely free. Build trust with your community at no cost."
+      },
+      "easyBurning": {
+        "title": "Easy Token Burning",
+        "description": "Reduce token supply with our simple burning mechanism. Permanently destroy tokens to increase scarcity."
+      },
+      "extremeLowFees": {
+        "title": "Extremely Low Fees",
+        "description": "Only 0.4% trading fee. No launch fees, no lock fees. Keep more of your value."
       },
       "simple": {
         "title": "Simple & Straightforward",

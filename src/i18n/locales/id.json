@@ -232,9 +232,25 @@
         "title": "Benar-Benar Anti-Rug",
         "description": "Likuiditas awal dibakar secara permanen. Tidak ada yang bisa menghapusnya, membuat rug pull menjadi tidak mungkin."
       },
-      "fair": {
-        "title": "Tanpa Presale atau Keuntungan Orang Dalam",
-        "description": "Semua orang trading dengan harga yang sama dari AMM. Peluncuran adil untuk semua peserta."
+      "permanentListings": {
+        "title": "Listing dan Visibilitas Permanen",
+        "description": "Setiap token yang diluncurkan mendapat visibilitas permanen di platform kami. Proyek Anda selalu dapat ditemukan oleh trader."
+      },
+      "portfolioTracking": {
+        "title": "Mudah Melacak Nilai Portfolio",
+        "description": "Pelacakan portfolio bawaan menampilkan semua kepemilikan Anda dan nilainya saat ini dalam dashboard yang nyaman."
+      },
+      "freeTokenLocking": {
+        "title": "Penguncian Token Gratis",
+        "description": "Kunci token Anda untuk durasi apa pun sepenuhnya gratis. Bangun kepercayaan dengan komunitas Anda tanpa biaya."
+      },
+      "easyBurning": {
+        "title": "Pembakaran Token Mudah",
+        "description": "Kurangi pasokan token dengan mekanisme pembakaran sederhana kami. Hancurkan token secara permanen untuk meningkatkan kelangkaan."
+      },
+      "extremeLowFees": {
+        "title": "Biaya Sangat Rendah",
+        "description": "Hanya 0.4% biaya trading. Tanpa biaya peluncuran, tanpa biaya penguncian. Pertahankan lebih banyak nilai Anda."
       },
       "simple": {
         "title": "Sederhana & Langsung",

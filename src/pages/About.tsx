@@ -185,9 +185,65 @@ export function About() {
                 </div>
               </div>
               <div>
-                <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('about.why.fair.title')}</h3>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('about.why.permanentListings.title')}</h3>
                 <p className="text-xs sm:text-sm text-gray-600">
-                  {t('about.why.fair.description')}
+                  {t('about.why.permanentListings.description')}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-3 sm:gap-4">
+              <div className="flex-shrink-0">
+                <div className="bg-green-100 p-1.5 sm:p-2 rounded-lg">
+                  <Check className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('about.why.portfolioTracking.title')}</h3>
+                <p className="text-xs sm:text-sm text-gray-600">
+                  {t('about.why.portfolioTracking.description')}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-3 sm:gap-4">
+              <div className="flex-shrink-0">
+                <div className="bg-green-100 p-1.5 sm:p-2 rounded-lg">
+                  <Check className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('about.why.freeTokenLocking.title')}</h3>
+                <p className="text-xs sm:text-sm text-gray-600">
+                  {t('about.why.freeTokenLocking.description')}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-3 sm:gap-4">
+              <div className="flex-shrink-0">
+                <div className="bg-green-100 p-1.5 sm:p-2 rounded-lg">
+                  <Check className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('about.why.easyBurning.title')}</h3>
+                <p className="text-xs sm:text-sm text-gray-600">
+                  {t('about.why.easyBurning.description')}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-3 sm:gap-4">
+              <div className="flex-shrink-0">
+                <div className="bg-green-100 p-1.5 sm:p-2 rounded-lg">
+                  <Check className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('about.why.extremeLowFees.title')}</h3>
+                <p className="text-xs sm:text-sm text-gray-600">
+                  {t('about.why.extremeLowFees.description')}
                 </p>
               </div>
             </div>

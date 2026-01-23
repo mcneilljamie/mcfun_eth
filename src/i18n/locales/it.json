@@ -232,9 +232,25 @@
         "title": "Veramente Inattaccabile",
         "description": "La liquidità iniziale viene bruciata permanentemente. Nessuno può rimuoverla, rendendo impossibili le truffe."
       },
-      "fair": {
-        "title": "Nessuna Prevendita o Vantaggi Interni",
-        "description": "Tutti scambiano allo stesso prezzo dall'AMM. Lancio equo per tutti i partecipanti."
+      "permanentListings": {
+        "title": "Listing e Visibilità Permanenti",
+        "description": "Ogni token lanciato ottiene visibilità permanente sulla nostra piattaforma. Il tuo progetto è sempre scopribile dai trader."
+      },
+      "portfolioTracking": {
+        "title": "Facile Monitoraggio del Valore del Portfolio",
+        "description": "Il monitoraggio del portfolio integrato mostra tutte le tue partecipazioni e il loro valore attuale in un dashboard conveniente."
+      },
+      "freeTokenLocking": {
+        "title": "Blocco Token Gratuito",
+        "description": "Blocca i tuoi token per qualsiasi durata completamente gratis. Costruisci fiducia con la tua comunità senza costi."
+      },
+      "easyBurning": {
+        "title": "Bruciatura Token Facile",
+        "description": "Riduci l'offerta di token con il nostro semplice meccanismo di bruciatura. Distruggi i token permanentemente per aumentare la scarsità."
+      },
+      "extremeLowFees": {
+        "title": "Commissioni Estremamente Basse",
+        "description": "Solo 0,4% di commissione di trading. Nessuna commissione di lancio, nessuna commissione di blocco. Mantieni più del tuo valore."
       },
       "simple": {
         "title": "Semplice e Diretto",

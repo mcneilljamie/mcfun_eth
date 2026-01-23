@@ -232,9 +232,25 @@
         "title": "真正牢不可破",
         "description": "初始流动性被永久销毁。没有人可以移除它，使跑路成为不可能。"
       },
-      "fair": {
-        "title": "无预售或内部优势",
-        "description": "每个人都以AMM的相同价格交易。对所有参与者公平发行。"
+      "permanentListings": {
+        "title": "永久上市和可见性",
+        "description": "每个启动的代币都能在我们平台上获得永久可见性。您的项目始终可被交易者发现。"
+      },
+      "portfolioTracking": {
+        "title": "轻松追踪投资组合价值",
+        "description": "内置的投资组合追踪功能在一个便捷的仪表板中显示您的所有持仓及其当前价值。"
+      },
+      "freeTokenLocking": {
+        "title": "免费代币锁定",
+        "description": "完全免费锁定您的代币任意时长。以零成本与您的社区建立信任。"
+      },
+      "easyBurning": {
+        "title": "轻松销毁代币",
+        "description": "使用我们简单的销毁机制减少代币供应。永久销毁代币以增加稀缺性。"
+      },
+      "extremeLowFees": {
+        "title": "极低费用",
+        "description": "仅0.4%交易费。无启动费用，无锁定费用。保留更多价值。"
       },
       "simple": {
         "title": "简单直接",

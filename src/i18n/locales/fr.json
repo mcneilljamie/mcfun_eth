@@ -232,9 +232,25 @@
         "title": "Vraiment Inviolable",
         "description": "La liquidité initiale est brûlée de manière permanente. Personne ne peut la retirer, rendant les arnaques impossibles."
       },
-      "fair": {
-        "title": "Pas de Prévente ni d'Avantages Internes",
-        "description": "Tout le monde échange au même prix depuis l'AMM. Lancement équitable pour tous les participants."
+      "permanentListings": {
+        "title": "Listings et Visibilité Permanents",
+        "description": "Chaque token lancé bénéficie d'une visibilité permanente sur notre plateforme. Votre projet est toujours découvrable par les traders."
+      },
+      "portfolioTracking": {
+        "title": "Suivi Facile de la Valeur du Portfolio",
+        "description": "Le suivi de portefeuille intégré montre toutes vos participations et leur valeur actuelle dans un tableau de bord pratique."
+      },
+      "freeTokenLocking": {
+        "title": "Verrouillage de Tokens Gratuit",
+        "description": "Verrouillez vos tokens pour n'importe quelle durée complètement gratuitement. Créez la confiance avec votre communauté sans frais."
+      },
+      "easyBurning": {
+        "title": "Brûlage de Tokens Facile",
+        "description": "Réduisez l'offre de tokens avec notre mécanisme de brûlage simple. Détruisez les tokens définitivement pour augmenter la rareté."
+      },
+      "extremeLowFees": {
+        "title": "Frais Extrêmement Bas",
+        "description": "Seulement 0,4% de frais de trading. Pas de frais de lancement, pas de frais de verrouillage. Conservez plus de votre valeur."
       },
       "simple": {
         "title": "Simple et Direct",

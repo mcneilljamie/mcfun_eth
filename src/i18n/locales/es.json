@@ -232,9 +232,25 @@
         "title": "Verdaderamente Inquebrantable",
         "description": "La liquidez inicial se quema permanentemente. Nadie puede removerla, haciendo imposibles las estafas."
       },
-      "fair": {
-        "title": "Sin Preventas ni Ventajas Internas",
-        "description": "Todos comercian al mismo precio desde el AMM. Lanzamiento justo para todos los participantes."
+      "permanentListings": {
+        "title": "Listados y Visibilidad Permanentes",
+        "description": "Cada token lanzado obtiene visibilidad permanente en nuestra plataforma. Tu proyecto siempre es descubrible por traders."
+      },
+      "portfolioTracking": {
+        "title": "Fácil Seguimiento del Portfolio",
+        "description": "El seguimiento de portfolio integrado muestra todas tus tenencias y su valor actual en un panel conveniente."
+      },
+      "freeTokenLocking": {
+        "title": "Bloqueo de Tokens Gratuito",
+        "description": "Bloquea tus tokens por cualquier duración completamente gratis. Construye confianza con tu comunidad sin costo."
+      },
+      "easyBurning": {
+        "title": "Quema de Tokens Fácil",
+        "description": "Reduce el suministro de tokens con nuestro mecanismo de quema simple. Destruye tokens permanentemente para aumentar la escasez."
+      },
+      "extremeLowFees": {
+        "title": "Tarifas Extremadamente Bajas",
+        "description": "Solo 0.4% de tarifa de trading. Sin tarifas de lanzamiento, sin tarifas de bloqueo. Conserva más de tu valor."
       },
       "simple": {
         "title": "Simple y Directo",

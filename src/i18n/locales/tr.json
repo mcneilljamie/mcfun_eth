@@ -232,9 +232,25 @@
         "title": "Gerçekten Rugproof",
         "description": "İlk likidite kalıcı olarak yakılır. Kimse onu kaldıramaz, rug pull'ları imkansız hale getirir."
       },
-      "fair": {
-        "title": "Ön Satış veya İçeriden Avantaj Yok",
-        "description": "Herkes AMM'den aynı fiyattan işlem yapar. Tüm katılımcılar için adil başlatma."
+      "permanentListings": {
+        "title": "Kalıcı Listeler ve Görünürlük",
+        "description": "Başlatılan her token platformumuzda kalıcı görünürlük kazanır. Projeniz her zaman trader'lar tarafından keşfedilebilir."
+      },
+      "portfolioTracking": {
+        "title": "Portföy Değerini Takip Etmek Kolay",
+        "description": "Dahili portföy takibi, tüm varlıklarınızı ve mevcut değerlerini kullanışlı bir panoda gösterir."
+      },
+      "freeTokenLocking": {
+        "title": "Ücretsiz Token Kilitleme",
+        "description": "Token'larınızı herhangi bir süre için tamamen ücretsiz kilitleyin. Hiç maliyet olmadan topluluğunuzla güven oluşturun."
+      },
+      "easyBurning": {
+        "title": "Kolay Token Yakma",
+        "description": "Basit yakma mekanizmamızla token arzını azaltın. Kıtlığı artırmak için token'ları kalıcı olarak yok edin."
+      },
+      "extremeLowFees": {
+        "title": "Son Derece Düşük Ücretler",
+        "description": "Sadece %0.4 işlem ücreti. Başlatma ücreti yok, kilitleme ücreti yok. Değerinizin daha fazlasını koruyun."
       },
       "simple": {
         "title": "Basit ve Anlaşılır",

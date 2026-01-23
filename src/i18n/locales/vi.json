@@ -232,9 +232,25 @@
         "title": "Thực Sự Chống Rug",
         "description": "Thanh khoản ban đầu được đốt vĩnh viễn. Không ai có thể xóa nó, làm cho rug pull trở nên không thể."
       },
-      "fair": {
-        "title": "Không Presale Hoặc Lợi Thế Nội Bộ",
-        "description": "Mọi người giao dịch với cùng một mức giá từ AMM. Ra mắt công bằng cho tất cả người tham gia."
+      "permanentListings": {
+        "title": "Niêm Yết và Hiển Thị Vĩnh Viễn",
+        "description": "Mỗi token được khởi chạy nhận được hiển thị vĩnh viễn trên nền tảng của chúng tôi. Dự án của bạn luôn có thể được trader khám phá."
+      },
+      "portfolioTracking": {
+        "title": "Dễ Dàng Theo Dõi Giá Trị Portfolio",
+        "description": "Theo dõi portfolio tích hợp hiển thị tất cả các khoản nắm giữ và giá trị hiện tại của chúng trong bảng điều khiển tiện lợi."
+      },
+      "freeTokenLocking": {
+        "title": "Khóa Token Miễn Phí",
+        "description": "Khóa token của bạn trong bất kỳ thời gian nào hoàn toàn miễn phí. Xây dựng niềm tin với cộng đồng của bạn mà không tốn chi phí."
+      },
+      "easyBurning": {
+        "title": "Đốt Token Dễ Dàng",
+        "description": "Giảm nguồn cung token bằng cơ chế đốt đơn giản của chúng tôi. Tiêu hủy token vĩnh viễn để tăng sự khan hiếm."
+      },
+      "extremeLowFees": {
+        "title": "Phí Cực Thấp",
+        "description": "Chỉ 0.4% phí giao dịch. Không phí khởi chạy, không phí khóa. Giữ lại nhiều giá trị hơn."
       },
       "simple": {
         "title": "Đơn Giản & Trực Quan",
