@@ -251,7 +251,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
 
     if (returnDisplayMode === 'percentage') {
       const percentage = (multiple - 1) * 100;
-      return `${percentage >= 0 ? '+' : ''}${percentage.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
+      return `${percentage >= 0 ? '+' : ''}${percentage.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}%`;
     } else {
       return `${multiple.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}x`;
     }
