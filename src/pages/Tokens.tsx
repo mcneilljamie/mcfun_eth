@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Trophy, Search, TrendingUp, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Trophy, Search, TrendingUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { JsonRpcProvider } from 'ethers';
 import { supabase, Token } from '../lib/supabase';
@@ -32,7 +32,6 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
   const [tokenDataMap, setTokenDataMap] = useState<Record<string, TokenEnrichedData>>({});
-  const [currentPage, setCurrentPage] = useState(1);
   const [isUpdating, setIsUpdating] = useState(false);
   const [sortBy, setSortBy] = useState<'marketCap' | 'liquidity' | 'age-newest' | 'age-oldest'>(() => {
     const saved = localStorage.getItem('mcfun_tokens_sort_preference');
@@ -41,7 +40,6 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     }
     return 'marketCap';
   });
-  const TOKENS_PER_PAGE = 10;
 
   const readOnlyProvider = useMemo(() => {
     const rpcUrl = DEFAULT_CHAIN_ID === 11155111
@@ -117,7 +115,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
         activeProvider.off('block', blockListener);
       };
     }
-  }, [filteredTokens, currentPage, provider, readOnlyProvider, ethPriceUSD]);
+  }, [filteredTokens, provider, readOnlyProvider, ethPriceUSD]);
 
   const loadEthPrice = async () => {
     const price = await getEthPriceUSD();
@@ -163,11 +161,6 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     setFilteredTokens(sorted);
   }, [searchQuery, tokens, tokenDataMap, sortBy]);
 
-  // Reset to page 1 only when search query changes or token count changes
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery, tokens.length]);
-
   const loadTokens = async () => {
     setIsLoading(true);
 
@@ -201,9 +194,8 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     setIsUpdating(true);
 
     try {
-      const startIndex = (currentPage - 1) * TOKENS_PER_PAGE;
-      const endIndex = startIndex + TOKENS_PER_PAGE;
-      const visibleTokens = filteredTokens.slice(startIndex, endIndex);
+      // Load data for all filtered tokens
+      const visibleTokens = filteredTokens;
 
       // Fetch latest prices from database for all visible tokens
       // We need to get the most recent snapshot for each token individually
@@ -401,9 +393,8 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredTokens.slice((currentPage - 1) * TOKENS_PER_PAGE, currentPage * TOKENS_PER_PAGE).map((token, index) => {
+                    {filteredTokens.map((token, index) => {
                       const tokenData = tokenDataMap[token.token_address];
-                      const actualIndex = (currentPage - 1) * TOKENS_PER_PAGE + index;
                       return (
                       <tr
                         key={token.id}
@@ -412,18 +403,18 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                       >
                         <td className="py-4 px-4">
                           <div className="flex items-center space-x-2">
-                            {actualIndex < 3 && (
+                            {index < 3 && (
                               <Trophy
                                 className={`w-4 h-4 ${
-                                  actualIndex === 0
+                                  index === 0
                                     ? 'text-yellow-500'
-                                    : actualIndex === 1
+                                    : index === 1
                                     ? 'text-gray-400'
                                     : 'text-amber-700'
                                 }`}
                               />
                             )}
-                            <span className="font-medium text-gray-900">{actualIndex + 1}</span>
+                            <span className="font-medium text-gray-900">{index + 1}</span>
                           </div>
                         </td>
                         <td className="py-4 px-4">
@@ -493,9 +484,8 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
 
               {/* Mobile Card View */}
               <div className="lg:hidden space-y-4">
-                {filteredTokens.slice((currentPage - 1) * TOKENS_PER_PAGE, currentPage * TOKENS_PER_PAGE).map((token, index) => {
+                {filteredTokens.map((token, index) => {
                   const tokenData = tokenDataMap[token.token_address];
-                  const actualIndex = (currentPage - 1) * TOKENS_PER_PAGE + index;
                   return (
                   <div
                     key={token.id}
@@ -504,18 +494,18 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                   >
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center space-x-2">
-                        {actualIndex < 3 && (
+                        {index < 3 && (
                           <Trophy
                             className={`w-4 h-4 ${
-                              actualIndex === 0
+                              index === 0
                                 ? 'text-yellow-500'
-                                : actualIndex === 1
+                                : index === 1
                                 ? 'text-gray-400'
                                 : 'text-amber-700'
                             }`}
                           />
                         )}
-                        <span className="font-medium text-gray-500 text-sm">#{actualIndex + 1}</span>
+                        <span className="font-medium text-gray-500 text-sm">#{index + 1}</span>
                       </div>
                       <button
                         onClick={(e) => {
@@ -590,69 +580,8 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
 
           {!isLoading && filteredTokens.length > 0 && (
             <div className="mt-6">
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="text-sm text-gray-500">
-                  {filteredTokens.length <= TOKENS_PER_PAGE
-                    ? `Showing all ${filteredTokens.length} tokens`
-                    : `Showing ${Math.min((currentPage - 1) * TOKENS_PER_PAGE + 1, filteredTokens.length)} to ${Math.min(currentPage * TOKENS_PER_PAGE, filteredTokens.length)} of ${filteredTokens.length} tokens`
-                  }
-                </div>
-
-                {filteredTokens.length > TOKENS_PER_PAGE && (
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                      disabled={currentPage === 1}
-                      className="px-3 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center space-x-1"
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                      <span className="hidden sm:inline">Previous</span>
-                    </button>
-
-                    <div className="flex items-center space-x-1">
-                      {Array.from({ length: Math.ceil(filteredTokens.length / TOKENS_PER_PAGE) }, (_, i) => i + 1)
-                        .filter(page => {
-                          if (page < 1) return false; // Never show page 0
-                          const totalPages = Math.ceil(filteredTokens.length / TOKENS_PER_PAGE);
-                          if (totalPages <= 7) return true;
-                          if (page === 1 || page === totalPages) return true;
-                          if (page >= currentPage - 1 && page <= currentPage + 1) return true;
-                          if (page === 2 && currentPage <= 3) return true;
-                          if (page === totalPages - 1 && currentPage >= totalPages - 2) return true;
-                          return false;
-                        })
-                        .map((page, index, array) => {
-                          const prevPage = index > 0 ? array[index - 1] : 1;
-                          const showEllipsis = prevPage && page - prevPage > 1;
-
-                          return (
-                            <div key={page} className="flex items-center">
-                              {showEllipsis && <span className="px-2 text-gray-400">...</span>}
-                              <button
-                                onClick={() => setCurrentPage(page)}
-                                className={`min-w-[2.5rem] px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                                  currentPage === page
-                                    ? 'bg-gray-900 text-white'
-                                    : 'text-gray-700 hover:bg-gray-100'
-                                }`}
-                              >
-                                {page}
-                              </button>
-                            </div>
-                          );
-                        })}
-                    </div>
-
-                    <button
-                      onClick={() => setCurrentPage(prev => Math.min(Math.ceil(filteredTokens.length / TOKENS_PER_PAGE), prev + 1))}
-                      disabled={currentPage >= Math.ceil(filteredTokens.length / TOKENS_PER_PAGE)}
-                      className="px-3 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center space-x-1"
-                    >
-                      <span className="hidden sm:inline">Next</span>
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </div>
-                )}
+              <div className="text-sm text-gray-500 text-center">
+                Showing all {filteredTokens.length} tokens
               </div>
             </div>
           )}
