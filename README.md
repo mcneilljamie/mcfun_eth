@@ -1,6 +1,6 @@
 # McFun
 
-A decentralized token launch platform on Ethereum that enables anyone to create and trade ERC-20 tokens with instant liquidity.
+A decentralised token launch platform on Ethereum that enables anyone to create and trade ERC-20 tokens with instant liquidity.
 
 ## Features
 

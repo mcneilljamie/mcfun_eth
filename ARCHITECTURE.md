@@ -2,7 +2,7 @@
 
 ## System Overview
 
-McFun is a decentralized token launch platform built on Ethereum with the following components:
+McFun is a decentralised token launch platform built on Ethereum with the following components:
 
 1. **Smart Contracts** - On-chain logic for token creation, AMM, and trading
 2. **Frontend Application** - React-based user interface
@@ -187,7 +187,7 @@ Page-level state managed with React hooks:
 1. **No Upgrade Mechanism** - Contracts are immutable after deployment
 2. **Reentrancy Protection** - Uses checks-effects-interactions pattern
 3. **Integer Overflow** - Solidity 0.8+ has built-in overflow protection
-4. **Access Control** - No admin functions, fully decentralized
+4. **Access Control** - No admin functions, fully decentralised
 5. **Liquidity Locking** - LP tokens burned, liquidity cannot be removed
 
 ### Frontend Security
