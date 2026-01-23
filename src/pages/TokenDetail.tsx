@@ -31,6 +31,10 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
   const { currentPrice: chartPrice } = useChartData(tokenAddress || '', 'ALL');
   const [activeLockCount, setActiveLockCount] = useState<number>(0);
   const { reserves: liveReserves } = useLiveReserves(provider, token?.amm_address || null, 30000, chainId || 11155111);
+  const [returnDisplayMode, setReturnDisplayMode] = useState<'multiple' | 'percentage'>(() => {
+    const saved = localStorage.getItem('mcfun_return_display_mode');
+    return (saved === 'percentage' || saved === 'multiple') ? saved : 'multiple';
+  });
 
   const ensureProtocol = (url: string): string => {
     if (!url) return url;
@@ -242,6 +246,25 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
     return currentPriceUSD / launchPriceUSD;
   };
 
+  const formatReturnSinceLaunch = (): string => {
+    const multiple = calculateReturnSinceLaunch();
+
+    if (returnDisplayMode === 'percentage') {
+      const percentage = (multiple - 1) * 100;
+      return `${percentage >= 0 ? '+' : ''}${percentage.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
+    } else {
+      return `${multiple.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}x`;
+    }
+  };
+
+  useEffect(() => {
+    localStorage.setItem('mcfun_return_display_mode', returnDisplayMode);
+  }, [returnDisplayMode]);
+
+  const toggleReturnDisplayMode = () => {
+    setReturnDisplayMode(prev => prev === 'multiple' ? 'percentage' : 'multiple');
+  };
+
 
   if (isLoading) {
     return (
@@ -426,7 +449,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
             </div>
 
             <div className="bg-gray-50 rounded-lg p-4">
-              <div className="text-sm text-gray-600 mb-1">{t('tokenDetail.liquidity')}</div>
+              <div className="text-sm text-gray-600 mb-1">Liquidity on McFun</div>
               <div className="text-xl sm:text-2xl font-bold text-gray-900">
                 {formatUSD(ethToUSD(token.current_eth_reserve || liveReserves?.reserveETH || token.initial_liquidity_eth, ethPriceUSD), true)}
               </div>
@@ -436,9 +459,18 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
             </div>
 
             <div className="bg-gray-50 rounded-lg p-4">
-              <div className="text-sm text-gray-600 mb-1">{t('tokens.table.returnMultiple')}</div>
+              <div className="flex items-center justify-between mb-1">
+                <div className="text-sm text-gray-600">{t('tokens.table.returnMultiple')}</div>
+                <button
+                  onClick={toggleReturnDisplayMode}
+                  className="text-xs px-2 py-1 bg-white hover:bg-gray-100 text-gray-700 rounded border border-gray-300 transition-colors"
+                  title="Toggle display format"
+                >
+                  {returnDisplayMode === 'multiple' ? '%' : 'x'}
+                </button>
+              </div>
               <div className="text-xl sm:text-2xl font-bold text-gray-900">
-                {calculateReturnSinceLaunch().toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}x
+                {formatReturnSinceLaunch()}
               </div>
             </div>
           </div>
