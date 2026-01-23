@@ -1,9 +1,9 @@
 {
   "nav": {
     "brand": "McFun",
-    "launch": "Lançar Token",
+    "launch": "Lançar",
     "trade": "Negociar",
-    "tokens": "Tokens Populares",
+    "tokens": "Populares",
     "portfolio": "Portfólio",
     "lock": "Bloquear",
     "myLocks": "Meus Bloqueios",

@@ -1,9 +1,9 @@
 {
   "nav": {
     "brand": "McFun",
-    "launch": "发行代币",
+    "launch": "发行",
     "trade": "交易",
-    "tokens": "热门代币",
+    "tokens": "热门",
     "portfolio": "投资组合",
     "lock": "锁定",
     "myLocks": "我的锁定",

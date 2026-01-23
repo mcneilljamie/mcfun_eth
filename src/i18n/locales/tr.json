@@ -1,9 +1,9 @@
 {
   "nav": {
     "brand": "McFun",
-    "launch": "Token Başlat",
+    "launch": "Başlat",
     "trade": "İşlem Yap",
-    "tokens": "Popüler Tokenlar",
+    "tokens": "Popüler",
     "portfolio": "Portföy",
     "lock": "Kilitle",
     "myLocks": "Kilitlemelerim",

@@ -1,9 +1,9 @@
 {
   "nav": {
     "brand": "McFun",
-    "launch": "토큰 출시",
+    "launch": "출시",
     "trade": "거래",
-    "tokens": "인기 토큰",
+    "tokens": "인기",
     "portfolio": "포트폴리오",
     "lock": "잠금",
     "myLocks": "내 잠금",

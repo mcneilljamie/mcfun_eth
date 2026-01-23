@@ -1,9 +1,9 @@
 {
   "nav": {
     "brand": "McFun",
-    "launch": "Lancer Token",
+    "launch": "Lancer",
     "trade": "Échanger",
-    "tokens": "Tokens Populaires",
+    "tokens": "Populaires",
     "portfolio": "Portefeuille",
     "lock": "Verrouiller",
     "myLocks": "Mes Verrouillages",
