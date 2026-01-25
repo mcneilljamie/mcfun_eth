@@ -389,6 +389,8 @@
     "trackHoldingsDescription": "Portföy sayfası, tüm McFun token varlıklarınızın değerini tek bir yerde kolayca izlemenizi sağlar. Cüzdanınızı bağlayarak ETH bakiyenizin ve sahip olduğunuz tüm tokenlerin gerçek zamanlı değerlerini görebilirsiniz.",
     "realtimeTracking": "Gerçek Zamanlı Portföy Takibi",
     "realtimeTrackingDescription": "Toplam portföy değerinizi, bireysel token bakiyelerini, güncel fiyatları ve her pozisyonun USD değerini görüntüleyin. Her şey otomatik olarak güncellenir, böylece varlıklarınızın değerini her zaman bilirsiniz.",
+    "trackLockedTokens": "Kilitli ve Kilitsiz Tokenları Takip Edin",
+    "trackLockedTokensDescription": "Kilitli tokenlarınızın değerini ve ne zaman kilitleri açılabileceğini görün. Portföyünüz dolaşımdaki varlıklarınızı ve kilitli pozisyonlarınızı otomatik olarak takip ederek size varlıklarınızın tam bir resmini sunar.",
     "riskDisclaimer": "Risk Uyarısı ve Kullanım Koşulları",
     "disclaimerImportant": "ÖNEMLİ: Kripto para ve token ticareti önemli risk taşır. Bu platformu kullanarak aşağıdakileri kabul ediyorsunuz:",
     "riskOfLoss": "Yüksek Kayıp Riski:",

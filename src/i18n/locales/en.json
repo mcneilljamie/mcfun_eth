@@ -389,6 +389,8 @@
     "trackHoldingsDescription": "The Portfolio page makes it effortless to monitor the value of all your McFun token holdings in one place. Simply connect your wallet to see real-time values of your ETH balance and all tokens you own that are traded on McFun.",
     "realtimeTracking": "Real-Time Portfolio Tracking",
     "realtimeTrackingDescription": "View your total portfolio value, individual token balances, current prices, and the USD value of each position. Everything updates automatically so you always know exactly what your holdings are worth.",
+    "trackLockedTokens": "Track Locked & Unlocked Tokens",
+    "trackLockedTokensDescription": "See the value of your locked tokens and when they become available to unlock. Your portfolio automatically tracks both your circulating holdings and locked positions, giving you a complete picture of your assets.",
     "tokenLocking": "Free McFun Token Locking",
     "tokenLockingDescription": "McFun provides a secure, trustless token locking service that's completely free to use. Lock any McFun token for any duration to demonstrate commitment, build trust with your community, or create vesting schedules.",
     "lockAnyToken": "Lock McFun Tokens",

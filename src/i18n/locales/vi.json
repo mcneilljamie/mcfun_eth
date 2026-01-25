@@ -389,6 +389,8 @@
     "trackHoldingsDescription": "Trang Danh mục giúp bạn dễ dàng giám sát giá trị tất cả token McFun của mình ở một nơi. Chỉ cần kết nối ví để xem giá trị thời gian thực của số dư ETH và tất cả các token bạn sở hữu.",
     "realtimeTracking": "Theo dõi Danh mục Thời gian Thực",
     "realtimeTrackingDescription": "Xem tổng giá trị danh mục, số dư token riêng lẻ, giá hiện tại và giá trị USD của mỗi vị thế. Mọi thứ cập nhật tự động để bạn luôn biết giá trị tài sản của mình.",
+    "trackLockedTokens": "Theo dõi Token Đã Khóa và Mở Khóa",
+    "trackLockedTokensDescription": "Xem giá trị token đã khóa và thời điểm chúng có thể mở khóa. Danh mục của bạn tự động theo dõi cả tài sản đang lưu hành và vị thế đã khóa, mang đến cho bạn bức tranh toàn diện về tài sản của mình.",
     "riskDisclaimer": "Tuyên bố Miễn trừ Rủi ro",
     "disclaimerImportant": "QUAN TRỌNG: Giao dịch tiền điện tử và token mang rủi ro đáng kể. Bằng cách sử dụng nền tảng này, bạn thừa nhận và đồng ý với các điều sau:",
     "riskOfLoss": "Rủi ro Mất mát Cao:",

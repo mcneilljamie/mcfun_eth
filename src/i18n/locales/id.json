@@ -389,6 +389,8 @@
     "trackHoldingsDescription": "Halaman Portofolio memudahkan pemantauan nilai semua token McFun Anda di satu tempat. Cukup hubungkan dompet untuk melihat nilai real-time saldo ETH dan semua token yang Anda miliki.",
     "realtimeTracking": "Pelacakan Portofolio Real-Time",
     "realtimeTrackingDescription": "Lihat total nilai portofolio, saldo token individual, harga saat ini, dan nilai USD setiap posisi. Semuanya diperbarui otomatis sehingga Anda selalu tahu nilai kepemilikan Anda.",
+    "trackLockedTokens": "Lacak Token Terkunci dan Tidak Terkunci",
+    "trackLockedTokensDescription": "Lihat nilai token terkunci Anda dan kapan mereka tersedia untuk dibuka. Portofolio Anda secara otomatis melacak kepemilikan yang beredar dan posisi terkunci, memberi Anda gambaran lengkap tentang aset Anda.",
     "riskDisclaimer": "Penafian Risiko",
     "disclaimerImportant": "PENTING: Perdagangan kripto dan token memiliki risiko besar. Dengan menggunakan platform ini, Anda mengakui dan menyetujui hal berikut:",
     "riskOfLoss": "Risiko Kerugian Tinggi:",

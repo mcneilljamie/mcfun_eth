@@ -444,14 +444,27 @@ export function About() {
           <p className="text-sm sm:text-base text-gray-700 leading-relaxed mb-4">
             {t('aboutPage.trackHoldingsDescription')}
           </p>
-          <div className="bg-white/80 backdrop-blur rounded-lg p-4 border border-purple-200">
-            <div className="flex items-start gap-3">
-              <BarChart3 className="w-5 h-5 text-purple-600 flex-shrink-0 mt-1" />
-              <div>
-                <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('aboutPage.realtimeTracking')}</h3>
-                <p className="text-xs sm:text-sm text-gray-700">
-                  {t('aboutPage.realtimeTrackingDescription')}
-                </p>
+          <div className="space-y-4">
+            <div className="bg-white/80 backdrop-blur rounded-lg p-4 border border-purple-200">
+              <div className="flex items-start gap-3">
+                <BarChart3 className="w-5 h-5 text-purple-600 flex-shrink-0 mt-1" />
+                <div>
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('aboutPage.realtimeTracking')}</h3>
+                  <p className="text-xs sm:text-sm text-gray-700">
+                    {t('aboutPage.realtimeTrackingDescription')}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-white/80 backdrop-blur rounded-lg p-4 border border-purple-200">
+              <div className="flex items-start gap-3">
+                <Lock className="w-5 h-5 text-purple-600 flex-shrink-0 mt-1" />
+                <div>
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('aboutPage.trackLockedTokens')}</h3>
+                  <p className="text-xs sm:text-sm text-gray-700">
+                    {t('aboutPage.trackLockedTokensDescription')}
+                  </p>
+                </div>
               </div>
             </div>
           </div>

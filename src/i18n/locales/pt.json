@@ -389,6 +389,8 @@
     "trackHoldingsDescription": "A página de Portfólio facilita o monitoramento do valor de todas as suas posições de tokens McFun em um só lugar. Conecte sua carteira para ver valores em tempo real do seu saldo ETH e todos os tokens que possui negociados no McFun.",
     "realtimeTracking": "Rastreamento em Tempo Real",
     "realtimeTrackingDescription": "Visualize o valor total do seu portfólio, saldos individuais de tokens, preços atuais e o valor em USD de cada posição. Tudo é atualizado automaticamente para que você sempre saiba o valor das suas posições.",
+    "trackLockedTokens": "Rastreie Tokens Bloqueados e Desbloqueados",
+    "trackLockedTokensDescription": "Veja o valor dos seus tokens bloqueados e quando eles estarão disponíveis para desbloqueio. Seu portfólio rastreia automaticamente suas posições em circulação e bloqueadas, dando uma visão completa dos seus ativos.",
     "riskDisclaimer": "Aviso de Risco e Termos de Uso",
     "disclaimerImportant": "IMPORTANTE: Negociar criptomoedas e tokens envolve risco substancial. Ao usar esta plataforma, você reconhece e aceita o seguinte:",
     "riskOfLoss": "Alto Risco de Perda:",

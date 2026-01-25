@@ -389,6 +389,8 @@
     "trackHoldingsDescription": "投资组合页面可以轻松地在一个地方监控您所有McFun代币持仓的价值。只需连接您的钱包即可查看您的ETH余额和在McFun上交易的所有代币的实时价值。",
     "realtimeTracking": "实时投资组合跟踪",
     "realtimeTrackingDescription": "查看您的总投资组合价值、单个代币余额、当前价格以及每个头寸的美元价值。一切都会自动更新，因此您始终知道您的持仓价值。",
+    "trackLockedTokens": "跟踪锁定和解锁代币",
+    "trackLockedTokensDescription": "查看您锁定代币的价值以及何时可以解锁。您的投资组合会自动跟踪流通持仓和锁定头寸，让您全面了解您的资产。",
     "riskDisclaimer": "风险免责声明和使用条款",
     "disclaimerImportant": "重要提示：交易加密货币和代币存在重大风险。使用本平台即表示您承认并接受以下内容：",
     "riskOfLoss": "高损失风险：",
