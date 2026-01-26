@@ -151,6 +151,20 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
         const aTime = new Date(a.created_at).getTime();
         const bTime = new Date(b.created_at).getTime();
         return bTime - aTime;
+      } else if (sortBy === 'age-oldest') {
+        const aTime = new Date(a.created_at).getTime();
+        const bTime = new Date(b.created_at).getTime();
+        return aTime - bTime;
+      } else if (sortBy === 'price-increase') {
+        // Sort by highest percentage increase (gainers)
+        const aChange = aData?.priceChange ?? -Infinity;
+        const bChange = bData?.priceChange ?? -Infinity;
+        return bChange - aChange;
+      } else if (sortBy === 'price-decrease') {
+        // Sort by lowest percentage (biggest losers)
+        const aChange = aData?.priceChange ?? Infinity;
+        const bChange = bData?.priceChange ?? Infinity;
+        return aChange - bChange;
       } else {
         const aTime = new Date(a.created_at).getTime();
         const bTime = new Date(b.created_at).getTime();
