@@ -359,6 +359,26 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                 >
                   {t('tokens.ageOldest')}
                 </button>
+                <button
+                  onClick={() => setSortBy('price-increase')}
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all whitespace-nowrap ${
+                    sortBy === 'price-increase'
+                      ? 'bg-gray-900 text-white shadow-sm'
+                      : 'text-gray-700 hover:text-gray-900'
+                  }`}
+                >
+                  {t('tokens.priceIncrease')}
+                </button>
+                <button
+                  onClick={() => setSortBy('price-decrease')}
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all whitespace-nowrap ${
+                    sortBy === 'price-decrease'
+                      ? 'bg-gray-900 text-white shadow-sm'
+                      : 'text-gray-700 hover:text-gray-900'
+                  }`}
+                >
+                  {t('tokens.priceDecrease')}
+                </button>
               </div>
             </div>
           </div>
