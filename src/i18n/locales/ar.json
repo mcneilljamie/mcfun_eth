@@ -171,6 +171,8 @@
     "liquidity": "السيولة",
     "ageNewest": "الأحدث",
     "ageOldest": "الأقدم",
+    "priceIncrease": "أكبر المكاسب",
+    "priceDecrease": "أكبر الخسائر",
     "table": {
       "rank": "#",
       "token": "رمز",

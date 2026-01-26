@@ -171,6 +171,8 @@
     "liquidity": "流動性",
     "ageNewest": "新しい順",
     "ageOldest": "古い順",
+    "priceIncrease": "最大の上昇",
+    "priceDecrease": "最大の下落",
     "table": {
       "rank": "#",
       "token": "トークン",

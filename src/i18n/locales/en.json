@@ -170,6 +170,8 @@
     "liquidity": "Liquidity",
     "ageNewest": "Newest",
     "ageOldest": "Oldest",
+    "priceIncrease": "Biggest Gainers",
+    "priceDecrease": "Biggest Losers",
     "table": {
       "rank": "#",
       "token": "Token",

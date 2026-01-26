@@ -171,6 +171,8 @@
     "liquidity": "Ликвидность",
     "ageNewest": "Новейшие",
     "ageOldest": "Старейшие",
+    "priceIncrease": "Наибольший Рост",
+    "priceDecrease": "Наибольшее Падение",
     "table": {
       "rank": "#",
       "token": "Токен",
