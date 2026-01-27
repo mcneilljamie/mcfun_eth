@@ -157,13 +157,15 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
         return aTime - bTime;
       } else if (sortBy === 'price-increase') {
         // Sort by highest percentage increase (gainers)
-        const aChange = aData?.priceChange ?? -Infinity;
-        const bChange = bData?.priceChange ?? -Infinity;
+        // Tokens with no change (null) are treated as 0% and placed in the middle
+        const aChange = aData?.priceChange ?? 0;
+        const bChange = bData?.priceChange ?? 0;
         return bChange - aChange;
       } else if (sortBy === 'price-decrease') {
         // Sort by lowest percentage (biggest losers)
-        const aChange = aData?.priceChange ?? Infinity;
-        const bChange = bData?.priceChange ?? Infinity;
+        // Tokens with no change (null) are treated as 0% and placed in the middle
+        const aChange = aData?.priceChange ?? 0;
+        const bChange = bData?.priceChange ?? 0;
         return aChange - bChange;
       } else {
         const aTime = new Date(a.created_at).getTime();
