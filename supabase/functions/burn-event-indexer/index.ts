@@ -6,6 +6,7 @@ const corsHeaders = {
   "Content-Type": "application/json",
 };
 
+const CHAIN_ID = Number(Deno.env.get("MCFUN_CHAIN_ID") || "1");
 const BURN_ADDRESS = "0x000000000000000000000000000000000000dEaD";
 const TOKEN_SUPPLY = 1_000_000n * (10n ** 18n);
 
@@ -57,11 +58,13 @@ Deno.serve(async (req: Request) => {
     const { data: tokensWithBurns, error: burnsError } = await supabase
       .from("token_burn_totals")
       .select("token_address")
+      .eq("chain_id", CHAIN_ID)
       .order("last_burn_timestamp", { ascending: false });
 
     const { data: allTokens, error: tokensError } = await supabase
       .from("tokens")
-      .select("token_address, symbol, name");
+      .select("token_address, symbol, name")
+      .eq("chain_id", CHAIN_ID);
 
     if (tokensError || !allTokens || allTokens.length === 0) {
       console.error("Failed to load tokens:", tokensError);
@@ -114,6 +117,7 @@ Deno.serve(async (req: Request) => {
           const { data: existingBurn } = await supabase
             .from("token_burn_totals")
             .select("total_amount_burned, burn_count, last_burn_timestamp")
+            .eq("chain_id", CHAIN_ID)
             .eq("token_address", token.token_address.toLowerCase())
             .maybeSingle();
 
@@ -136,6 +140,7 @@ Deno.serve(async (req: Request) => {
             const { data: tokenData } = await supabase
               .from("tokens")
               .select("current_eth_reserve, current_token_reserve")
+              .eq("chain_id", CHAIN_ID)
               .eq("token_address", token.token_address.toLowerCase())
               .maybeSingle();
 
@@ -167,6 +172,7 @@ Deno.serve(async (req: Request) => {
           const { error: upsertError } = await supabase
             .from("token_burn_totals")
             .upsert({
+              chain_id: CHAIN_ID,
               token_address: token.token_address.toLowerCase(),
               total_amount_burned: burnedAmount,
               total_value_usd: totalValueUsd.toString(),
