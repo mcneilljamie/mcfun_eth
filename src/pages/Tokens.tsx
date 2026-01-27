@@ -184,6 +184,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
       const { data, error } = await supabase
         .from('tokens')
         .select('*')
+        .eq('chain_id', DEFAULT_CHAIN_ID)
         .order('created_at', { ascending: false });
 
       if (error) {
