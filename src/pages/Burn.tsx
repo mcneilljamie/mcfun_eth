@@ -356,7 +356,7 @@ export function Burn({ onShowToast }: BurnPageProps) {
     }
   };
 
-  const explorerUrl = getExplorerUrl(chainId || 11155111);
+  const explorerUrl = getExplorerUrl(chainId || DEFAULT_CHAIN_ID);
 
   return (
     <div className="min-h-screen bg-gray-50">

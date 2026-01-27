@@ -1,6 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.4";
 import { ethers } from "npm:ethers@6.16.0";
+import { getRPCProviders } from "../_shared/config.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -8,7 +9,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-const RPC_URL = Deno.env.get("RPC_URL") || "https://ethereum-sepolia-rpc.publicnode.com";
+const RPC_URL = getRPCProviders()[0];
 
 const ERC20_ABI = [
   "function name() view returns (string)",

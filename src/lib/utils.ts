@@ -2,7 +2,7 @@ import { JsonRpcProvider } from 'ethers';
 
 let readOnlyProviderCache: Map<number, JsonRpcProvider> = new Map();
 
-export function getReadOnlyProvider(chainId: number = 11155111): JsonRpcProvider {
+export function getReadOnlyProvider(chainId: number = 1): JsonRpcProvider {
   if (readOnlyProviderCache.has(chainId)) {
     return readOnlyProviderCache.get(chainId)!;
   }

@@ -42,9 +42,9 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   });
 
   const readOnlyProvider = useMemo(() => {
-    const rpcUrl = DEFAULT_CHAIN_ID === 11155111
-      ? import.meta.env.VITE_SEPOLIA_RPC_URL || 'https://ethereum-sepolia-rpc.publicnode.com'
-      : import.meta.env.VITE_MAINNET_RPC_URL || 'https://eth.llamarpc.com';
+    const rpcUrl = DEFAULT_CHAIN_ID === 1
+      ? import.meta.env.VITE_MAINNET_RPC_URL || 'https://eth.llamarpc.com'
+      : import.meta.env.VITE_SEPOLIA_RPC_URL || 'https://ethereum-sepolia-rpc.publicnode.com';
     return new JsonRpcProvider(rpcUrl);
   }, []);
 

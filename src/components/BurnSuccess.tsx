@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { X, Copy, CheckCircle, ExternalLink, Flame } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '../lib/web3';
-import { getExplorerUrl } from '../contracts/addresses';
+import { getExplorerUrl, DEFAULT_CHAIN_ID } from '../contracts/addresses';
 import { ToastMessage } from '../App';
 
 interface BurnSuccessProps {
@@ -70,7 +70,7 @@ export function BurnSuccess({
     }
   };
 
-  const explorerUrl = getExplorerUrl(chainId || 11155111);
+  const explorerUrl = getExplorerUrl(chainId || DEFAULT_CHAIN_ID);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">

@@ -2,6 +2,7 @@ import { X, ExternalLink, Copy, Check } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatNumber } from '../lib/utils';
+import { getExplorerUrl, DEFAULT_CHAIN_ID } from '../contracts/addresses';
 
 interface WithdrawSuccessProps {
   isOpen: boolean;
@@ -18,15 +19,6 @@ export function WithdrawSuccess({ isOpen, onClose, txHash, chainId, tokenSymbol,
 
   if (!isOpen) return null;
 
-  const getExplorerUrl = (chainId: number, txHash: string) => {
-    if (chainId === 1) {
-      return `https://etherscan.io/tx/${txHash}`;
-    } else if (chainId === 11155111) {
-      return `https://sepolia.etherscan.io/tx/${txHash}`;
-    }
-    return `https://etherscan.io/tx/${txHash}`;
-  };
-
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(txHash);
@@ -37,7 +29,7 @@ export function WithdrawSuccess({ isOpen, onClose, txHash, chainId, tokenSymbol,
     }
   };
 
-  const explorerUrl = getExplorerUrl(chainId, txHash);
+  const explorerUrl = `${getExplorerUrl(chainId || DEFAULT_CHAIN_ID)}/tx/${txHash}`;
   const formattedAmount = formatNumber(amount, 4);
 
   return (

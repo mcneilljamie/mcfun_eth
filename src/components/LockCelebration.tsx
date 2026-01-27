@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { X, Copy, CheckCircle, ExternalLink, Lock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '../lib/web3';
-import { getExplorerUrl } from '../contracts/addresses';
+import { getExplorerUrl, DEFAULT_CHAIN_ID } from '../contracts/addresses';
 import { ToastMessage } from '../App';
 
 interface LockCelebrationProps {
@@ -84,7 +84,7 @@ export function LockCelebration({
     }
   };
 
-  const explorerUrl = getExplorerUrl(chainId || 11155111);
+  const explorerUrl = getExplorerUrl(chainId || DEFAULT_CHAIN_ID);
   const shareableLink = `${window.location.origin}/lock/${tokenAddress}`;
 
   return (

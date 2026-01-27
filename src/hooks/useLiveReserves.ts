@@ -6,7 +6,7 @@ export function useLiveReserves(
   provider: any,
   ammAddress: string | null,
   refreshInterval: number = 10000,
-  chainId: number = 11155111
+  chainId: number = 1
 ) {
   const [reserves, setReserves] = useState<{ reserveETH: string; reserveToken: string } | null>(null);
   const [loading, setLoading] = useState(true);

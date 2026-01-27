@@ -3,6 +3,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.57.4";
 import { ethers } from "npm:ethers@6.16.0";
 import { withLock } from "../_shared/lockManager.ts";
 import { verifyCronSecret, createUnauthorizedResponse } from "../_shared/auth.ts";
+import { getRPCProviders } from "../_shared/config.ts";
 
 const corsHeaders = {
   "Content-Type": "application/json",
@@ -59,7 +60,7 @@ async function processSyncReserves(): Promise<Response> {
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const rpcUrl = Deno.env.get("ETHEREUM_RPC_URL") || "https://ethereum-sepolia-rpc.publicnode.com";
+    const rpcUrl = getRPCProviders()[0];
 
     const supabase = createClient(supabaseUrl, supabaseKey);
     const provider = new ethers.JsonRpcProvider(rpcUrl);

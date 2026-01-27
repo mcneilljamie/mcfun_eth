@@ -15,7 +15,7 @@ export interface TokenData {
   isNew: boolean;
 }
 
-export function useTokenData(provider: any, token: Token | null, refreshInterval: number = 30000, chainId: number = 11155111) {
+export function useTokenData(provider: any, token: Token | null, refreshInterval: number = 30000, chainId: number = 1) {
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
   const [tokenData, setTokenData] = useState<TokenData | null>(null);
 

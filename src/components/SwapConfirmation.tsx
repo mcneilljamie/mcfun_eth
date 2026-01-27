@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { X, Copy, CheckCircle, ExternalLink, CheckCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '../lib/web3';
-import { getExplorerUrl } from '../contracts/addresses';
+import { getExplorerUrl, DEFAULT_CHAIN_ID } from '../contracts/addresses';
 import { formatNumber } from '../lib/utils';
 import { ToastMessage } from '../App';
 
@@ -68,7 +68,7 @@ export function SwapConfirmation({
     }
   };
 
-  const explorerUrl = getExplorerUrl(chainId || 11155111);
+  const explorerUrl = getExplorerUrl(chainId || DEFAULT_CHAIN_ID);
   const txExplorerUrl = `${explorerUrl}/tx/${txHash}`;
   const tokenExplorerUrl = `${explorerUrl}/token/${tokenAddress}`;
   const poolExplorerUrl = `${explorerUrl}/address/${ammAddress}`;

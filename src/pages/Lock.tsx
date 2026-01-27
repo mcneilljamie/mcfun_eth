@@ -711,7 +711,7 @@ export function Lock({ onShowToast }: LockPageProps) {
     }
   };
 
-  const explorerUrl = getExplorerUrl(chainId || 11155111);
+  const explorerUrl = getExplorerUrl(chainId || DEFAULT_CHAIN_ID);
 
   const handleShareLock = () => {
     const shareUrl = `${window.location.origin}/lock/${urlTokenAddress}`;

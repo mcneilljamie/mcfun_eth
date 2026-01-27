@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { X, Copy, CheckCircle, ExternalLink, Sparkles } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '../lib/web3';
-import { getExplorerUrl } from '../contracts/addresses';
+import { getExplorerUrl, DEFAULT_CHAIN_ID } from '../contracts/addresses';
 import { ToastMessage } from '../App';
 import { getOrdinalSuffix } from '../lib/utils';
 
@@ -66,7 +66,7 @@ export function LaunchCelebration({
     }
   };
 
-  const explorerUrl = getExplorerUrl(chainId || 11155111);
+  const explorerUrl = getExplorerUrl(chainId || DEFAULT_CHAIN_ID);
   const etherscanTokenUrl = `${explorerUrl}/token/${tokenAddress}`;
   const etherscanPoolUrl = `${explorerUrl}/address/${ammAddress}`;
 
