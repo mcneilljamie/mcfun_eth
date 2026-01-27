@@ -34,7 +34,7 @@ contract McFunAMM {
 
     address public immutable factory;
     address public token;
-    address public constant feeRecipient = 0x227D5F29bAb4Cec30f511169886b86fAeF61C6bc;
+    address public constant feeRecipient = 0x993AEe79ee816B636D80f06186325b19a0eE3D45;
     address public constant DEAD_ADDRESS = 0x000000000000000000000000000000000000dEaD;
     uint256 public constant FEE_PERCENT = 4;
     uint256 public constant FEE_DENOMINATOR = 1000;

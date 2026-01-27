@@ -8,7 +8,11 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-const LOCKER_ADDRESS = "0x1277b6E3f4407AD44A9b33641b51848c0098368f";
+// Environment variables - REQUIRED for mainnet
+const LOCKER_ADDRESS = Deno.env.get("MCFUN_LOCKER_ADDRESS");
+if (!LOCKER_ADDRESS) {
+  throw new Error("MCFUN_LOCKER_ADDRESS environment variable is required. Configure in Supabase dashboard.");
+}
 
 const LOCKER_ABI = [
   "function getLock(uint256 lockId) view returns (address owner, address tokenAddress, uint256 amount, uint256 unlockTime, bool withdrawn)",
@@ -27,7 +31,10 @@ Deno.serve(async (req: Request) => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const rpcUrl = Deno.env.get("ETHEREUM_RPC_URL") || "https://ethereum-sepolia-rpc.publicnode.com";
+    const rpcUrl = Deno.env.get("MCFUN_RPC_URL") || Deno.env.get("ETHEREUM_RPC_URL");
+    if (!rpcUrl) {
+      throw new Error("MCFUN_RPC_URL or ETHEREUM_RPC_URL environment variable is required. Configure in Supabase dashboard.");
+    }
     const provider = new ethers.JsonRpcProvider(rpcUrl);
     const lockerContract = new ethers.Contract(LOCKER_ADDRESS, LOCKER_ABI, provider);
 

@@ -8,19 +8,24 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-const LOCKER_ADDRESS = "0x1277b6E3f4407AD44A9b33641b51848c0098368f";
+// Environment variables - REQUIRED for mainnet
+const LOCKER_ADDRESS = Deno.env.get("MCFUN_LOCKER_ADDRESS");
+if (!LOCKER_ADDRESS) {
+  throw new Error("MCFUN_LOCKER_ADDRESS environment variable is required. Configure in Supabase dashboard.");
+}
 
 const LOCKER_ABI = [
   "function lockCount() view returns (uint256)",
   "function locks(uint256) view returns (address owner, address tokenAddress, uint256 amount, uint256 unlockTime, bool withdrawn)",
 ];
 
-const RPC_PROVIDERS = [
-  Deno.env.get("ETHEREUM_RPC_URL") || Deno.env.get("RPC_URL") || "https://ethereum-sepolia-rpc.publicnode.com",
-  "https://rpc.sepolia.org",
-  "https://ethereum-sepolia.blockpi.network/v1/rpc/public",
-  "https://rpc2.sepolia.org",
-];
+// Build RPC provider list from env vars
+const primaryRPC = Deno.env.get("MCFUN_RPC_URL") || Deno.env.get("ETHEREUM_RPC_URL");
+if (!primaryRPC) {
+  throw new Error("MCFUN_RPC_URL or ETHEREUM_RPC_URL environment variable is required. Configure in Supabase dashboard.");
+}
+const fallbackRPCs = Deno.env.get("MCFUN_RPC_URL_FALLBACKS")?.split(",").filter(url => url.trim()) || [];
+const RPC_PROVIDERS = [primaryRPC, ...fallbackRPCs];
 
 let currentProviderIndex = 0;
 

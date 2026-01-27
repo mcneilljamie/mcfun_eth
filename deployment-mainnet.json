@@ -1,0 +1,11 @@
+{
+  "network": "mainnet",
+  "chainId": 1,
+  "factoryAddress": "0x6E8717dd111Bea3f5B12785798F3d1380c01D72B",
+  "lockerAddress": "0xaDEcE045ccC27b3364628499F2DDF4eAaD034D38",
+  "feeRecipient": "0x993AEe79ee816B636D80f06186325b19a0eE3D45",
+  "deployer": "0x25Dc901f99b0431397b8Bf3f24c2c097e85F44AB",
+  "timestamp": "2026-01-27T19:00:29.166Z",
+  "factoryTxHash": "0x5b80b33e3a1bfe12370dfbe8da9b26be1500ef2f17fe5b4f1f92d9266414703b",
+  "lockerTxHash": "0x123ad24161684d99d973aaaa5ddf0dbcc6ad28d2867326ec25c72c9af9264d75"
+}

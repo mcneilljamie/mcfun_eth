@@ -3,10 +3,23 @@ import { createClient } from "npm:@supabase/supabase-js@2.57.4";
 import { ethers } from "npm:ethers@6.16.0";
 
 const corsHeaders = {"Content-Type": "application/json"};
-const FACTORY_ADDRESS = "0xDE377c1C3280C2De18479Acbe40a06a79E0B3831";
+
+// Environment variables - REQUIRED for mainnet
+const FACTORY_ADDRESS = Deno.env.get("MCFUN_FACTORY_ADDRESS");
+if (!FACTORY_ADDRESS) {
+  throw new Error("MCFUN_FACTORY_ADDRESS environment variable is required. Configure in Supabase dashboard.");
+}
+
 const FACTORY_ABI = ["event TokenLaunched(address indexed tokenAddress, address indexed ammAddress, string name, string symbol, address indexed creator, uint256 liquidityPercent, uint256 initialLiquidityETH)"];
 const AMM_ABI = ["event Swap(address indexed user, uint256 ethIn, uint256 tokenIn, uint256 ethOut, uint256 tokenOut)","function reserveToken() external view returns (uint256)","function reserveETH() external view returns (uint256)"];
-const RPC_PROVIDERS = [Deno.env.get("ETHEREUM_RPC_URL") || "https://ethereum-sepolia-rpc.publicnode.com","https://rpc.sepolia.org"];
+
+// Build RPC provider list from env vars
+const primaryRPC = Deno.env.get("MCFUN_RPC_URL") || Deno.env.get("ETHEREUM_RPC_URL");
+if (!primaryRPC) {
+  throw new Error("MCFUN_RPC_URL or ETHEREUM_RPC_URL environment variable is required. Configure in Supabase dashboard.");
+}
+const fallbackRPCs = Deno.env.get("MCFUN_RPC_URL_FALLBACKS")?.split(",").filter(url => url.trim()) || [];
+const RPC_PROVIDERS = [primaryRPC, ...fallbackRPCs];
 const MIN_BLOCK_RANGE = 100;
 const MAX_BLOCK_RANGE = 5000;
 const MAX_EXECUTION_TIME_MS = 55000;

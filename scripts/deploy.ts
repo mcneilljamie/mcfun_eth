@@ -22,9 +22,9 @@ async function main() {
   console.log("\n✅ McFunFactory deployed to:", factoryAddress);
   console.log("Transaction hash:", factory.deploymentTransaction()?.hash);
 
-  const feeRecipient = await factory.feeRecipient();
+  const feeRecipient = "0x993AEe79ee816B636D80f06186325b19a0eE3D45";
   console.log("\nFactory Configuration:");
-  console.log("- Fee Recipient:", feeRecipient);
+  console.log("- Fee Recipient:", feeRecipient, "(hardcoded in McFunAMM)");
   console.log("- Trading Fee: 0.4%");
   console.log("- Min Liquidity: 0.1 ETH");
   console.log("- Total Supply per Token: 1,000,000");

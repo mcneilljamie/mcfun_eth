@@ -9,11 +9,13 @@ const corsHeaders = {
 const BURN_ADDRESS = "0x000000000000000000000000000000000000dEaD";
 const TOKEN_SUPPLY = 1_000_000n * (10n ** 18n);
 
-const RPC_PROVIDERS = [
-  Deno.env.get("ETHEREUM_RPC_URL") || "https://ethereum-sepolia-rpc.publicnode.com",
-  "https://rpc.sepolia.org",
-  "https://ethereum-sepolia.blockpi.network/v1/rpc/public",
-];
+// Build RPC provider list from env vars
+const primaryRPC = Deno.env.get("MCFUN_RPC_URL") || Deno.env.get("ETHEREUM_RPC_URL");
+if (!primaryRPC) {
+  throw new Error("MCFUN_RPC_URL or ETHEREUM_RPC_URL environment variable is required. Configure in Supabase dashboard.");
+}
+const fallbackRPCs = Deno.env.get("MCFUN_RPC_URL_FALLBACKS")?.split(",").filter(url => url.trim()) || [];
+const RPC_PROVIDERS = [primaryRPC, ...fallbackRPCs];
 
 const MAX_EXECUTION_TIME_MS = 23000;
 const PARALLEL_TOKEN_LIMIT = 10;

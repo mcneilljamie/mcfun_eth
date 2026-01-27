@@ -1,5 +1,5 @@
-export const SUPPORTED_CHAIN_IDS = [11155111] as const;
-export const DEFAULT_CHAIN_ID = 11155111;
+export const SUPPORTED_CHAIN_IDS = [1, 11155111] as const;
+export const DEFAULT_CHAIN_ID = 1;
 
 export const NETWORK_CONFIG: Record<number, {
   name: string;
@@ -9,8 +9,8 @@ export const NETWORK_CONFIG: Record<number, {
 }> = {
   1: {
     name: 'Ethereum Mainnet',
-    factoryAddress: '0x0000000000000000000000000000000000000000',
-    lockerAddress: '0x0000000000000000000000000000000000000000',
+    factoryAddress: '0x6E8717dd111Bea3f5B12785798F3d1380c01D72B',
+    lockerAddress: '0xaDEcE045ccC27b3364628499F2DDF4eAaD034D38',
     explorerUrl: 'https://etherscan.io',
   },
   11155111: {
@@ -41,7 +41,7 @@ export function getExplorerUrl(chainId: number): string {
   return NETWORK_CONFIG[chainId]?.explorerUrl || 'https://etherscan.io';
 }
 
-export const FEE_RECIPIENT = "0x227D5F29bAb4Cec30f511169886b86fAeF61C6bc";
+export const FEE_RECIPIENT = "0x993AEe79ee816B636D80f06186325b19a0eE3D45";
 export const MIN_LIQUIDITY_ETH = "0.1";
 export const MIN_LIQUIDITY_PERCENT = 50;
 export const RECOMMENDED_LIQUIDITY_PERCENT = 75;
