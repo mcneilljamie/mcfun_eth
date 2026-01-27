@@ -1,4 +1,4 @@
-export const SUPPORTED_CHAIN_IDS = [1, 11155111] as const;
+export const SUPPORTED_CHAIN_IDS = [1] as const;
 export const DEFAULT_CHAIN_ID = 1;
 
 export const NETWORK_CONFIG: Record<number, {
@@ -12,12 +12,6 @@ export const NETWORK_CONFIG: Record<number, {
     factoryAddress: '0x6E8717dd111Bea3f5B12785798F3d1380c01D72B',
     lockerAddress: '0xaDEcE045ccC27b3364628499F2DDF4eAaD034D38',
     explorerUrl: 'https://etherscan.io',
-  },
-  11155111: {
-    name: 'Sepolia Testnet',
-    factoryAddress: '0xDE377c1C3280C2De18479Acbe40a06a79E0B3831',
-    lockerAddress: '0x1277b6E3f4407AD44A9b33641b51848c0098368f',
-    explorerUrl: 'https://sepolia.etherscan.io',
   },
 };
 
@@ -33,8 +27,18 @@ export function isChainSupported(chainId: number): boolean {
   return SUPPORTED_CHAIN_IDS.includes(chainId as any);
 }
 
+// Fallback network names for common unsupported networks (for display purposes only)
+const FALLBACK_NETWORK_NAMES: Record<number, string> = {
+  11155111: 'Sepolia Testnet',
+  5: 'Goerli Testnet',
+  137: 'Polygon',
+  56: 'BSC',
+  42161: 'Arbitrum',
+  10: 'Optimism',
+};
+
 export function getNetworkName(chainId: number): string {
-  return NETWORK_CONFIG[chainId]?.name || 'Unknown Network';
+  return NETWORK_CONFIG[chainId]?.name || FALLBACK_NETWORK_NAMES[chainId] || 'Unknown Network';
 }
 
 export function getExplorerUrl(chainId: number): string {
