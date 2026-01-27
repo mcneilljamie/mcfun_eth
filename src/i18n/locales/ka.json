@@ -171,8 +171,8 @@
     "liquidity": "ლიკვიდურობა",
     "ageNewest": "უახლესი",
     "ageOldest": "უძველესი",
-    "priceIncrease": "უდიდესი მოგება",
-    "priceDecrease": "უდიდესი ზარალი",
+    "priceIncrease": "გამარჯვებულები",
+    "priceDecrease": "დამარცხებულები",
     "table": {
       "rank": "#",
       "token": "ტოკენი",

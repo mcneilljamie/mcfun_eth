@@ -171,8 +171,8 @@
     "liquidity": "Likidite",
     "ageNewest": "En Yeni",
     "ageOldest": "En Eski",
-    "priceIncrease": "En Büyük Kazananlar",
-    "priceDecrease": "En Büyük Kaybedenler",
+    "priceIncrease": "Kazananlar",
+    "priceDecrease": "Kaybedenler",
     "table": {
       "rank": "#",
       "token": "Token",

@@ -171,8 +171,8 @@
     "liquidity": "Liquidité",
     "ageNewest": "Plus Récent",
     "ageOldest": "Plus Ancien",
-    "priceIncrease": "Plus Grands Gains",
-    "priceDecrease": "Plus Grandes Pertes",
+    "priceIncrease": "Gagnants",
+    "priceDecrease": "Perdants",
     "table": {
       "rank": "#",
       "token": "Token",

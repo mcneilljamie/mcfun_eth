@@ -171,8 +171,8 @@
     "liquidity": "流动性",
     "ageNewest": "最新",
     "ageOldest": "最旧",
-    "priceIncrease": "最大涨幅",
-    "priceDecrease": "最大跌幅",
+    "priceIncrease": "赢家",
+    "priceDecrease": "输家",
     "table": {
       "rank": "#",
       "token": "代币",

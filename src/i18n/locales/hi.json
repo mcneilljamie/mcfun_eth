@@ -171,8 +171,8 @@
     "liquidity": "लिक्विडिटी",
     "ageNewest": "नवीनतम",
     "ageOldest": "सबसे पुराना",
-    "priceIncrease": "सबसे बड़ा लाभ",
-    "priceDecrease": "सबसे बड़ा नुकसान",
+    "priceIncrease": "विजेता",
+    "priceDecrease": "हारने वाले",
     "table": {
       "rank": "#",
       "token": "टोकन",

@@ -171,8 +171,8 @@
     "liquidity": "نقدینگی",
     "ageNewest": "جدیدترین",
     "ageOldest": "قدیمی‌ترین",
-    "priceIncrease": "بیشترین رشد",
-    "priceDecrease": "بیشترین کاهش",
+    "priceIncrease": "برندگان",
+    "priceDecrease": "بازندگان",
     "table": {
       "rank": "#",
       "token": "توکن",

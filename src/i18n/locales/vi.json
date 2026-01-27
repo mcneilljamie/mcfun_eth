@@ -171,8 +171,8 @@
     "liquidity": "Thanh Khoản",
     "ageNewest": "Mới Nhất",
     "ageOldest": "Cũ Nhất",
-    "priceIncrease": "Tăng Nhiều Nhất",
-    "priceDecrease": "Giảm Nhiều Nhất",
+    "priceIncrease": "Người Thắng",
+    "priceDecrease": "Người Thua",
     "table": {
       "rank": "#",
       "token": "Token",

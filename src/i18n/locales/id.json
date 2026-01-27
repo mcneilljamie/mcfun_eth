@@ -171,8 +171,8 @@
     "liquidity": "Likuiditas",
     "ageNewest": "Terbaru",
     "ageOldest": "Terlama",
-    "priceIncrease": "Peningkatan Terbesar",
-    "priceDecrease": "Penurunan Terbesar",
+    "priceIncrease": "Pemenang",
+    "priceDecrease": "Pecundang",
     "table": {
       "rank": "#",
       "token": "Token",

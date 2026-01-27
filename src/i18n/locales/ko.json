@@ -171,8 +171,8 @@
     "liquidity": "유동성",
     "ageNewest": "최신순",
     "ageOldest": "오래된순",
-    "priceIncrease": "최대 상승",
-    "priceDecrease": "최대 하락",
+    "priceIncrease": "승자",
+    "priceDecrease": "패자",
     "table": {
       "rank": "#",
       "token": "토큰",
