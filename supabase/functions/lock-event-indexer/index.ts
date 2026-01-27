@@ -2,16 +2,16 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.4";
 import { ethers } from "npm:ethers@6.16.0";
 import { withLock } from "./_shared/lockManager.ts";
+import { getLockerAddress, getRPCProviders, getLockerDeploymentBlock } from "../_shared/config.ts";
 
 const corsHeaders = {
   "Content-Type": "application/json",
 };
 
-// Environment variables - REQUIRED for mainnet
-const LOCKER_ADDRESS = Deno.env.get("MCFUN_LOCKER_ADDRESS");
-if (!LOCKER_ADDRESS) {
-  throw new Error("MCFUN_LOCKER_ADDRESS environment variable is required. Configure in Supabase dashboard.");
-}
+// Get configuration from shared config (with mainnet defaults)
+const LOCKER_ADDRESS = getLockerAddress();
+const RPC_PROVIDERS = getRPCProviders();
+const LOCKER_DEPLOYMENT_BLOCK = getLockerDeploymentBlock();
 
 const LOCKER_ABI = [
   "event TokensLocked(uint256 indexed lockId, address indexed owner, address indexed tokenAddress, uint256 amount, uint256 unlockTime)",
@@ -23,14 +23,6 @@ const ERC20_ABI = [
   "function symbol() view returns (string)",
   "function decimals() view returns (uint8)",
 ];
-
-// Build RPC provider list from env vars
-const primaryRPC = Deno.env.get("MCFUN_RPC_URL") || Deno.env.get("ETHEREUM_RPC_URL");
-if (!primaryRPC) {
-  throw new Error("MCFUN_RPC_URL or ETHEREUM_RPC_URL environment variable is required. Configure in Supabase dashboard.");
-}
-const fallbackRPCs = Deno.env.get("MCFUN_RPC_URL_FALLBACKS")?.split(",").filter(url => url.trim()) || [];
-const RPC_PROVIDERS = [primaryRPC, ...fallbackRPCs];
 
 let currentProviderIndex = 0;
 
@@ -256,11 +248,6 @@ async function processLockIndexing(req: Request): Promise<Response> {
 
     let fromBlock: number;
     let toBlock: number;
-
-    const LOCKER_DEPLOYMENT_BLOCK = Number(Deno.env.get("MCFUN_LOCKER_DEPLOYMENT_BLOCK") || "0");
-    if (LOCKER_DEPLOYMENT_BLOCK === 0) {
-      throw new Error("MCFUN_LOCKER_DEPLOYMENT_BLOCK environment variable is required. Configure in Supabase dashboard.");
-    }
 
     const lastIndexedBlock = indexerState?.last_indexed_block || LOCKER_DEPLOYMENT_BLOCK;
     const blocksBehind = currentBlock - lastIndexedBlock;

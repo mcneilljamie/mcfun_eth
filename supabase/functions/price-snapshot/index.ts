@@ -1,17 +1,13 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.4";
 import { ethers } from "npm:ethers@6.16.0";
+import { getChainId, getRPCProviders } from "../_shared/config.ts";
 
 const corsHeaders = {"Content-Type": "application/json"};
-const CHAIN_ID = Number(Deno.env.get("MCFUN_CHAIN_ID") || "1");
+const CHAIN_ID = getChainId();
 const AMM_ABI = ["function reserveToken() external view returns (uint256)","function reserveETH() external view returns (uint256)","function getPrice() external view returns (uint256)"];
 
-const primaryRPC = Deno.env.get("MCFUN_RPC_URL") || Deno.env.get("ETHEREUM_RPC_URL");
-if (!primaryRPC) {
-  throw new Error("MCFUN_RPC_URL or ETHEREUM_RPC_URL environment variable is required");
-}
-const fallbackRPCs = Deno.env.get("MCFUN_RPC_URL_FALLBACKS")?.split(",").filter(url => url.trim()) || [];
-const RPC_PROVIDERS = [primaryRPC, ...fallbackRPCs];
+const RPC_PROVIDERS = getRPCProviders();
 let currentProviderIndex = 0;
 
 async function createProviderWithFailover(): Promise<ethers.JsonRpcProvider> {

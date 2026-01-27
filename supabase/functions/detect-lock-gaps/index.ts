@@ -1,6 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.4";
 import { ethers } from "npm:ethers@6.16.0";
+import { getLockerAddress, getRPCProviders } from "../_shared/config.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -8,24 +9,14 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-// Environment variables - REQUIRED for mainnet
-const LOCKER_ADDRESS = Deno.env.get("MCFUN_LOCKER_ADDRESS");
-if (!LOCKER_ADDRESS) {
-  throw new Error("MCFUN_LOCKER_ADDRESS environment variable is required. Configure in Supabase dashboard.");
-}
+// Get configuration from shared config (with mainnet defaults)
+const LOCKER_ADDRESS = getLockerAddress();
+const RPC_PROVIDERS = getRPCProviders();
 
 const LOCKER_ABI = [
   "function lockCount() view returns (uint256)",
   "function locks(uint256) view returns (address owner, address tokenAddress, uint256 amount, uint256 unlockTime, bool withdrawn)",
 ];
-
-// Build RPC provider list from env vars
-const primaryRPC = Deno.env.get("MCFUN_RPC_URL") || Deno.env.get("ETHEREUM_RPC_URL");
-if (!primaryRPC) {
-  throw new Error("MCFUN_RPC_URL or ETHEREUM_RPC_URL environment variable is required. Configure in Supabase dashboard.");
-}
-const fallbackRPCs = Deno.env.get("MCFUN_RPC_URL_FALLBACKS")?.split(",").filter(url => url.trim()) || [];
-const RPC_PROVIDERS = [primaryRPC, ...fallbackRPCs];
 
 let currentProviderIndex = 0;
 

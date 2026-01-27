@@ -1,22 +1,18 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.4";
 import { ethers } from "npm:ethers@6.16.0";
+import { getChainId, getRPCProviders } from "../_shared/config.ts";
 
 const corsHeaders = {
   "Content-Type": "application/json",
 };
 
-const CHAIN_ID = Number(Deno.env.get("MCFUN_CHAIN_ID") || "1");
+const CHAIN_ID = getChainId();
 const BURN_ADDRESS = "0x000000000000000000000000000000000000dEaD";
 const TOKEN_SUPPLY = 1_000_000n * (10n ** 18n);
 
-// Build RPC provider list from env vars
-const primaryRPC = Deno.env.get("MCFUN_RPC_URL") || Deno.env.get("ETHEREUM_RPC_URL");
-if (!primaryRPC) {
-  throw new Error("MCFUN_RPC_URL or ETHEREUM_RPC_URL environment variable is required. Configure in Supabase dashboard.");
-}
-const fallbackRPCs = Deno.env.get("MCFUN_RPC_URL_FALLBACKS")?.split(",").filter(url => url.trim()) || [];
-const RPC_PROVIDERS = [primaryRPC, ...fallbackRPCs];
+// Get RPC providers from shared config (with mainnet defaults)
+const RPC_PROVIDERS = getRPCProviders();
 
 const MAX_EXECUTION_TIME_MS = 23000;
 const PARALLEL_TOKEN_LIMIT = 10;
