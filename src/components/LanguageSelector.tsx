@@ -8,9 +8,6 @@ export function LanguageSelector() {
   const [isMobile, setIsMobile] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Mobile language subset
-  const mobileLanguages = ['en', 'es', 'pt', 'ru', 'fa', 'zh'];
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -40,11 +37,6 @@ export function LanguageSelector() {
   const currentLanguage = languages[i18n.language as keyof typeof languages] || languages.en;
   const isRTL = i18n.language === 'ar' || i18n.language === 'fa';
 
-  // Filter languages based on screen size
-  const displayLanguages = isMobile
-    ? Object.entries(languages).filter(([code]) => mobileLanguages.includes(code))
-    : Object.entries(languages);
-
   return (
     <div className="relative" ref={dropdownRef}>
       <button
@@ -56,22 +48,45 @@ export function LanguageSelector() {
       </button>
 
       {isOpen && (
-        <div className={`absolute top-full mt-2 ${isRTL ? 'left-0' : 'right-0'} bg-white rounded-lg shadow-lg border border-gray-200 p-2 w-[min(300px,calc(100vw-32px))] sm:w-[420px] max-w-[calc(100vw-16px)] z-50`}>
-          <div className="grid grid-cols-3 sm:grid-cols-4 gap-1">
-            {displayLanguages.map(([code, { nativeName, flag }]) => (
-              <button
-                key={code}
-                onClick={() => handleLanguageChange(code)}
-                className={`px-2 sm:px-3 py-2.5 rounded-md hover:bg-gray-100 transition-colors flex flex-col items-center justify-center gap-1 ${
-                  i18n.language === code ? 'bg-gray-100 ring-2 ring-gray-300' : ''
-                }`}
-              >
-                <span className="text-2xl">{flag}</span>
-                <span className="text-xs text-gray-900 text-center leading-tight">{nativeName}</span>
-              </button>
-            ))}
-          </div>
-        </div>
+        <>
+          {/* Mobile: Scrollable list */}
+          {isMobile ? (
+            <div className={`absolute top-full mt-2 ${isRTL ? 'left-0' : 'right-0'} bg-white rounded-lg shadow-lg border border-gray-200 w-[240px] max-h-[60vh] overflow-y-auto z-50`}>
+              <div className="py-1">
+                {Object.entries(languages).map(([code, { nativeName, flag }]) => (
+                  <button
+                    key={code}
+                    onClick={() => handleLanguageChange(code)}
+                    className={`w-full px-4 py-3 hover:bg-gray-100 transition-colors flex items-center gap-3 ${
+                      i18n.language === code ? 'bg-gray-100' : ''
+                    }`}
+                  >
+                    <span className="text-2xl">{flag}</span>
+                    <span className="text-sm text-gray-900 font-medium">{nativeName}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            /* Desktop: Grid layout */
+            <div className={`absolute top-full mt-2 ${isRTL ? 'left-0' : 'right-0'} bg-white rounded-lg shadow-lg border border-gray-200 p-2 w-[420px] z-50`}>
+              <div className="grid grid-cols-4 gap-1">
+                {Object.entries(languages).map(([code, { nativeName, flag }]) => (
+                  <button
+                    key={code}
+                    onClick={() => handleLanguageChange(code)}
+                    className={`px-3 py-2.5 rounded-md hover:bg-gray-100 transition-colors flex flex-col items-center justify-center gap-1 ${
+                      i18n.language === code ? 'bg-gray-100 ring-2 ring-gray-300' : ''
+                    }`}
+                  >
+                    <span className="text-2xl">{flag}</span>
+                    <span className="text-xs text-gray-900 text-center leading-tight">{nativeName}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
