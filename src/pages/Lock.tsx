@@ -7,7 +7,7 @@ import { Loader2, Lock as LockIcon, Clock, User, Coins, AlertCircle, ExternalLin
 import { useTranslation } from 'react-i18next';
 import { LockCelebration } from '../components/LockCelebration';
 import { ToastMessage } from '../App';
-import { getExplorerUrl, getLockerAddress, getFactoryAddress, MAX_LOCK_DAYS } from '../contracts/addresses';
+import { getExplorerUrl, getLockerAddress, getFactoryAddress, MAX_LOCK_DAYS, DEFAULT_CHAIN_ID } from '../contracts/addresses';
 import { ERC20_ABI, TOKEN_LOCKER_ABI, MCFUN_FACTORY_ABI } from '../contracts/abis';
 import { getEthPriceUSD } from '../lib/ethPrice';
 import { formatUSD, formatNumber as formatNumberWithCommas } from '../lib/utils';

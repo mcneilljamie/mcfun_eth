@@ -6,7 +6,7 @@ import { supabase, Token } from '../lib/supabase';
 import { formatCurrency, formatAddress, formatTimeAgo, formatUSD, ethToUSD } from '../lib/utils';
 import { getEthPriceUSD } from '../lib/ethPrice';
 import { useWeb3 } from '../lib/web3';
-import { getExplorerUrl } from '../contracts/addresses';
+import { getExplorerUrl, DEFAULT_CHAIN_ID } from '../contracts/addresses';
 import { PriceChart } from '../components/PriceChart';
 import { useChartData } from '../hooks/useChartData';
 import { useLiveReserves } from '../hooks/useLiveReserves';
