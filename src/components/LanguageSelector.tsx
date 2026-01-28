@@ -56,7 +56,7 @@ export function LanguageSelector() {
       </button>
 
       {isOpen && (
-        <div className={`absolute top-full mt-2 ${isRTL ? 'left-0' : 'right-0'} bg-white rounded-lg shadow-lg border border-gray-200 p-2 w-[min(300px,calc(100vw-2rem))] sm:w-[420px] z-50`}>
+        <div className={`absolute top-full mt-2 ${isRTL ? 'left-0' : 'right-0'} bg-white rounded-lg shadow-lg border border-gray-200 p-2 w-[min(300px,calc(100vw-32px))] sm:w-[420px] max-w-[calc(100vw-16px)] z-50`}>
           <div className="grid grid-cols-3 sm:grid-cols-4 gap-1">
             {displayLanguages.map(([code, { nativeName, flag }]) => (
               <button
