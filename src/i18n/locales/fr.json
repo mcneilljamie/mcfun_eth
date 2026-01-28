@@ -510,7 +510,7 @@
     "yourBalance": "Votre Solde",
     "amountToLock": "Montant à Verrouiller",
     "lockDuration": "Durée du Verrouillage (Jours)",
-    "durationHelp": "Entrez le nombre de jours pour verrouiller vos tokens",
+    "durationHelp": "Entrez le nombre de jours pour verrouiller vos tokens (Max : {{max}} jours)",
     "minimumAmount": "Montant Minimum",
     "warning": "Attention : Une fois verrouillés, les tokens ne peuvent pas être retirés avant la fin de la période de verrouillage. Cette action est irréversible.",
     "approve": "Approuver le Token",

@@ -510,7 +510,7 @@
     "yourBalance": "Il Tuo Saldo",
     "amountToLock": "Quantità da Bloccare",
     "lockDuration": "Durata Blocco (Giorni)",
-    "durationHelp": "Inserisci il numero di giorni per bloccare i tuoi token",
+    "durationHelp": "Inserisci il numero di giorni per bloccare i tuoi token (Max: {{max}} giorni)",
     "minimumAmount": "Quantità Minima",
     "warning": "Attenzione: Una volta bloccati, i token non possono essere ritirati fino alla scadenza del periodo di blocco. Questa azione è irreversibile.",
     "approve": "Approva Token",

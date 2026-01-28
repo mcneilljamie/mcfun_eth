@@ -510,7 +510,7 @@
     "yourBalance": "Saldo Anda",
     "amountToLock": "Jumlah untuk Dikunci",
     "lockDuration": "Durasi Kunci (Hari)",
-    "durationHelp": "Masukkan jumlah hari untuk mengunci token Anda",
+    "durationHelp": "Masukkan jumlah hari untuk mengunci token Anda (Maks: {{max}} hari)",
     "minimumAmount": "Jumlah Minimum",
     "warning": "Peringatan: Setelah dikunci, token tidak dapat ditarik hingga periode kunci berakhir. Tindakan ini tidak dapat dibatalkan.",
     "approve": "Setujui Token",

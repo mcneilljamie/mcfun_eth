@@ -1085,7 +1085,7 @@ export function Lock({ onShowToast }: LockPageProps) {
                     disabled={!tokenInfo}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
                   />
-                  <p className="text-sm text-gray-500 mt-1">{t('lock.durationHelp')} (Max: {MAX_LOCK_DAYS.toLocaleString()} days)</p>
+                  <p className="text-sm text-gray-500 mt-1">{t('lock.durationHelp', { max: MAX_LOCK_DAYS.toLocaleString() })}</p>
                 </div>
 
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">

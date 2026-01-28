@@ -510,7 +510,7 @@
     "yourBalance": "残高",
     "amountToLock": "ロック数量",
     "lockDuration": "ロック期間（日数）",
-    "durationHelp": "トークンをロックする日数を入力してください",
+    "durationHelp": "トークンをロックする日数を入力してください（最大：{{max}}日）",
     "minimumAmount": "最小数量",
     "warning": "警告: ロックされると、ロック期間が終了するまでトークンを引き出すことはできません。この操作は元に戻せません。",
     "approve": "トークンを承認",
