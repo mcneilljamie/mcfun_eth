@@ -358,20 +358,6 @@ export function Burn({ onShowToast }: BurnPageProps) {
 
   const explorerUrl = getExplorerUrl(chainId || DEFAULT_CHAIN_ID);
 
-  if (!account) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center">
-          <Flame className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('burn.connectWallet')}</h2>
-          <p className="text-gray-600">
-            {t('burn.connectWalletDescription')}
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
