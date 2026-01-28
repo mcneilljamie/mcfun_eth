@@ -220,10 +220,16 @@ export function WalletModal({ isOpen, onClose, onConnect, isConnecting }: Wallet
           </div>
 
           <div className="mt-auto pt-6 space-y-3">
-            <button className="w-full bg-blue-600 text-white font-semibold py-3 px-4 rounded-xl hover:bg-blue-700 transition-colors">
+            <button
+              onClick={() => window.open('https://walletradar.org', '_blank')}
+              className="w-full bg-blue-600 text-white font-semibold py-3 px-4 rounded-xl hover:bg-blue-700 transition-colors"
+            >
               Get a Wallet
             </button>
-            <button className="w-full flex items-center justify-center gap-2 text-blue-600 font-semibold py-3 px-4 hover:text-blue-700 transition-colors">
+            <button
+              onClick={() => window.open('https://walletradar.org', '_blank')}
+              className="w-full flex items-center justify-center gap-2 text-blue-600 font-semibold py-3 px-4 hover:text-blue-700 transition-colors"
+            >
               Learn More
               <ExternalLink className="w-4 h-4" />
             </button>
