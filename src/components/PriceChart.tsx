@@ -252,10 +252,10 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
         </div>
 
         {/* Toggle */}
-        <div className={`flex rounded-lg overflow-hidden border ${isDark ? 'border-gray-700' : 'border-gray-300'}`}>
+        <div className={`flex rounded-lg overflow-hidden border ${isDark ? 'border-gray-700' : 'border-gray-300'} w-full sm:w-auto`}>
           <button
             onClick={() => setChartMode('price')}
-            className={`px-4 py-2 text-sm font-medium transition-colors ${
+            className={`flex-1 sm:flex-none px-6 sm:px-4 py-3 sm:py-2 text-base sm:text-sm font-medium transition-colors ${
               chartMode === 'price'
                 ? isDark
                   ? 'bg-gray-700 text-white'
@@ -269,7 +269,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
           </button>
           <button
             onClick={() => setChartMode('marketCap')}
-            className={`px-4 py-2 text-sm font-medium transition-colors ${
+            className={`flex-1 sm:flex-none px-6 sm:px-4 py-3 sm:py-2 text-base sm:text-sm font-medium transition-colors ${
               chartMode === 'marketCap'
                 ? isDark
                   ? 'bg-gray-700 text-white'
