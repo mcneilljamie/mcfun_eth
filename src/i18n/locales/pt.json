@@ -385,7 +385,7 @@
     "platformStats": "Estatísticas da Plataforma",
     "totalMarketCap": "Capitalização Total",
     "combinedFDV": "FDV combinado de todos os tokens",
-    "totalLiquidity": "Liquidez Total",
+    "totalLiquidity": "Liquidez Total de ETH",
     "totalEthInPools": "ETH total em pools de liquidez",
     "trackHoldings": "Rastreie Suas Posições",
     "trackHoldingsDescription": "A página de Portfólio facilita o monitoramento do valor de todas as suas posições de tokens McFun em um só lugar. Conecte sua carteira para ver valores em tempo real do seu saldo ETH e todos os tokens que possui negociados no McFun.",

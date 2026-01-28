@@ -385,7 +385,7 @@
     "platformStats": "Platform İstatistikleri",
     "totalMarketCap": "Toplam Piyasa Değeri",
     "combinedFDV": "Tüm tokenlerin toplam FDV'si",
-    "totalLiquidity": "Toplam Likidite",
+    "totalLiquidity": "Toplam ETH Likiditesi",
     "totalEthInPools": "Likidite havuzlarındaki toplam ETH",
     "trackHoldings": "Varlıklarınızı Takip Edin",
     "trackHoldingsDescription": "Portföy sayfası, tüm McFun token varlıklarınızın değerini tek bir yerde kolayca izlemenizi sağlar. Cüzdanınızı bağlayarak ETH bakiyenizin ve sahip olduğunuz tüm tokenlerin gerçek zamanlı değerlerini görebilirsiniz.",
