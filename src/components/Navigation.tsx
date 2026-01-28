@@ -141,9 +141,7 @@ export function Navigation({ currentPage, onNavigate, setToast }: NavigationProp
           </div>
 
           <div className="flex items-center gap-2 md:gap-3">
-            <div className="hidden sm:block">
-              <LanguageSelector />
-            </div>
+            <LanguageSelector />
             {account ? (
               <AccountDropdown
                 account={account}
@@ -253,9 +251,6 @@ export function Navigation({ currentPage, onNavigate, setToast }: NavigationProp
               >
                 {t('nav.about')}
               </button>
-              <div className="sm:hidden px-4 py-2">
-                <LanguageSelector />
-              </div>
             </div>
           </div>
         )}
