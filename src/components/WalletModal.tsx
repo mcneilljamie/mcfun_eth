@@ -86,9 +86,9 @@ export function WalletModal({ isOpen, onClose, onConnect, isConnecting }: Wallet
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-3xl max-w-4xl w-full shadow-2xl transform transition-all flex overflow-hidden" style={{ height: '580px' }}>
+      <div className="bg-white rounded-3xl max-w-4xl w-full shadow-2xl transform transition-all flex overflow-hidden sm:h-[580px] max-h-[85vh]">
         {/* Left Panel - Wallet List */}
-        <div className="w-2/5 border-r border-gray-200 flex flex-col">
+        <div className="w-full sm:w-2/5 sm:border-r border-gray-200 flex flex-col">
           <div className="p-6 border-b border-gray-200">
             <h2 className="text-xl font-bold text-gray-900">{t('wallet.connectWallet')}</h2>
             <button
@@ -177,8 +177,8 @@ export function WalletModal({ isOpen, onClose, onConnect, isConnecting }: Wallet
           </div>
         </div>
 
-        {/* Right Panel - Educational Content */}
-        <div className="flex-1 bg-gray-50 p-8 flex flex-col">
+        {/* Right Panel - Educational Content - Hidden on mobile */}
+        <div className="hidden sm:flex flex-1 bg-gray-50 p-8 flex-col">
           <h2 className="text-2xl font-bold text-gray-900 mb-8">
             What is a Wallet?
           </h2>
