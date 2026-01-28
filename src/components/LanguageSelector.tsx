@@ -5,7 +5,11 @@ import { languages } from '../i18n/config';
 export function LanguageSelector() {
   const { i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Mobile language subset
+  const mobileLanguages = ['en', 'es', 'pt', 'ru', 'fa', 'zh'];
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -18,6 +22,16 @@ export function LanguageSelector() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640); // 640px is Tailwind's 'sm' breakpoint
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const handleLanguageChange = (lng: string) => {
     i18n.changeLanguage(lng);
     setIsOpen(false);
@@ -25,6 +39,11 @@ export function LanguageSelector() {
 
   const currentLanguage = languages[i18n.language as keyof typeof languages] || languages.en;
   const isRTL = i18n.language === 'ar' || i18n.language === 'fa';
+
+  // Filter languages based on screen size
+  const displayLanguages = isMobile
+    ? Object.entries(languages).filter(([code]) => mobileLanguages.includes(code))
+    : Object.entries(languages);
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -37,9 +56,9 @@ export function LanguageSelector() {
       </button>
 
       {isOpen && (
-        <div className={`absolute top-full mt-2 ${isRTL ? 'left-0' : 'right-0'} bg-white rounded-lg shadow-lg border border-gray-200 p-2 w-[min(420px,calc(100vw-2rem))] sm:w-[420px] z-50`}>
+        <div className={`absolute top-full mt-2 ${isRTL ? 'left-0' : 'right-0'} bg-white rounded-lg shadow-lg border border-gray-200 p-2 w-[min(300px,calc(100vw-2rem))] sm:w-[420px] z-50`}>
           <div className="grid grid-cols-3 sm:grid-cols-4 gap-1">
-            {Object.entries(languages).map(([code, { nativeName, flag }]) => (
+            {displayLanguages.map(([code, { nativeName, flag }]) => (
               <button
                 key={code}
                 onClick={() => handleLanguageChange(code)}
