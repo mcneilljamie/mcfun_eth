@@ -6,7 +6,7 @@ import { ethers } from 'ethers';
 import { Loader2, Flame, AlertTriangle, User, TrendingUp, Trophy, ArrowLeft, Share2, ExternalLink } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { ToastMessage } from '../App';
-import { getExplorerUrl, getFactoryAddress } from '../contracts/addresses';
+import { getExplorerUrl, getFactoryAddress, DEFAULT_CHAIN_ID } from '../contracts/addresses';
 import { ERC20_ABI, MCFUN_FACTORY_ABI } from '../contracts/abis';
 import { getEthPriceUSD } from '../lib/ethPrice';
 import { formatUSD, formatNumber as formatNumberWithCommas } from '../lib/utils';
