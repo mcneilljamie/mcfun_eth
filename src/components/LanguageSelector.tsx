@@ -51,7 +51,7 @@ export function LanguageSelector() {
         <>
           {/* Mobile: Scrollable list */}
           {isMobile ? (
-            <div className={`absolute top-full mt-2 ${isRTL ? 'left-0' : 'right-0'} bg-white rounded-lg shadow-lg border border-gray-200 w-[240px] max-h-[60vh] overflow-y-auto z-50`}>
+            <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-white rounded-lg shadow-lg border border-gray-200 w-[240px] max-h-[60vh] overflow-y-auto z-50">
               <div className="py-1">
                 {Object.entries(languages).map(([code, { nativeName, flag }]) => (
                   <button
