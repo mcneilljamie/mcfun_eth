@@ -1,18 +1,40 @@
 # Social Media Sharing - McFun Thumbnail
 
-## Current Status: ✅ CONFIGURED
+## Current Status: ✅ FIXED - PNG VERSION DEPLOYED
 
-Your site is now properly configured to show McFun branding (MF logo) when shared on social media platforms instead of Bolt's thumbnail.
+Your site now uses a **PNG image** (instead of SVG) which is properly supported by all social media platforms including Telegram.
 
 ### What's Set Up:
 
-1. **Meta Tags** - All Open Graph and Twitter Card tags point to `/og-image.svg`
-2. **OG Image** - Custom 1200x630 image with MF logo, McFun branding
-3. **Build** - Image included in production build
+1. **Meta Tags** - All Open Graph and Twitter Card tags with absolute URLs
+2. **OG Image** - High-quality PNG (611KB, 2400x1260 retina) with MF logo
+3. **Format** - PNG instead of SVG (works with all platforms including Telegram)
+4. **URLs** - Absolute URLs (https://mcfun.io/og-image.png) for better compatibility
 
-## IMPORTANT: Clear Social Media Cache
+## 🔴 TELEGRAM USERS - READ THIS FIRST
 
-Social media platforms cache thumbnails for **24-48 hours** or longer. If you're still seeing Bolt's thumbnail, you need to **clear the cache** on each platform:
+Telegram caches link previews **aggressively**. To see the new McFun thumbnail:
+
+### Method 1: Force New Cache (Recommended)
+Share the link with a version parameter:
+```
+https://mcfun.io?v=2026
+```
+Telegram treats this as a new URL and fetches fresh metadata.
+
+### Method 2: Use Telegram's WebPageBot
+1. Message: [@WebPageBot](https://t.me/webpagebot)
+2. Send: `https://mcfun.io`
+3. The bot will refresh the cached preview
+
+### Method 3: Wait
+Telegram's cache expires after 24-48 hours (sometimes longer).
+
+---
+
+## Clear Cache On Other Platforms
+
+If you're still seeing the old thumbnail on other platforms:
 
 ### Facebook / LinkedIn
 1. Go to: https://developers.facebook.com/tools/debug/
@@ -65,8 +87,18 @@ If you need the new thumbnail to appear immediately:
 ## Verification
 
 The meta tags are correctly configured:
-- Open Graph image: `/og-image.svg` (1200x630)
+- Open Graph image: `https://mcfun.io/og-image.png` (PNG, 1200x630, retina quality)
+- Absolute URLs (not relative) for maximum compatibility
 - Twitter Card: `summary_large_image`
+- Image type explicitly set: `image/png`
 - No references to bolt.new remain in the codebase
 
-Once caches are cleared, all shares will show McFun branding.
+Once caches are cleared, all shares will show McFun branding with the MF logo.
+
+## Technical Details
+
+- Image format: PNG (not SVG) for universal support
+- Resolution: 2400x1260 (2x retina) for crisp display
+- File size: 611KB
+- Generated using Puppeteer from HTML template
+- To regenerate: `node generate-og-image.cjs`
