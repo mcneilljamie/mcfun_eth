@@ -502,6 +502,7 @@
     "subtitle": "Lock McFun tokens for as long as you want - completely free",
     "lockTokens": "Lock Your Tokens",
     "connectWallet": "Connect your wallet to lock tokens",
+    "connectWalletDescription": "Please connect your wallet to lock tokens and participate in the locking program",
     "tokenAddress": "McFun Token Address",
     "popularTokensDropdown": "Popular McFun Tokens",
     "marketCap": "Market Cap",
