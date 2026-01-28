@@ -200,7 +200,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
   }, [dbLocks, tokenPrices]);
 
   const handleWithdraw = async (lock: TokenLock) => {
-    if (!signer || !chainId) {
+    if (!signer || !chainId || !account) {
       onShowToast({
         message: t('myLocks.errors.connectWallet'),
         type: 'error'
@@ -264,10 +264,11 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
       // Reload database locks after a short delay to allow indexer to catch up
       setTimeout(() => {
         const reloadLocks = async () => {
+          if (!account) return;
           const { data } = await supabase
             .from('token_locks')
             .select('*')
-            .eq('user_address', account!.toLowerCase())
+            .eq('user_address', account.toLowerCase())
             .order('lock_id', { ascending: false });
           if (data) setDbLocks(data);
         };

@@ -78,6 +78,8 @@
   },
   "launch": {
     "title": "Launch Your Token",
+    "connectWallet": "Connect your wallet to launch a token",
+    "connectWalletDescription": "Please connect your wallet to create and launch your own token on McFun",
     "success": {
       "title": "Token Launched Successfully!",
       "token": "Token:",
@@ -676,6 +678,7 @@
     "subtitle": "Permanently destroy McFun tokens to reduce supply - this action cannot be undone",
     "burnTokens": "Burn Your Tokens",
     "connectWallet": "Connect your wallet to burn tokens",
+    "connectWalletDescription": "Please connect your wallet to burn tokens and reduce circulating supply",
     "tokenAddress": "McFun Token Address",
     "popularTokensDropdown": "Popular McFun Tokens",
     "token": "Token",

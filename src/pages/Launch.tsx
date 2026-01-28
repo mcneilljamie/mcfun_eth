@@ -220,6 +220,20 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
     }
   };
 
+  if (!account) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="text-center">
+          <Rocket className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('launch.connectWallet')}</h2>
+          <p className="text-gray-600">
+            {t('launch.connectWalletDescription')}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       {success && (
