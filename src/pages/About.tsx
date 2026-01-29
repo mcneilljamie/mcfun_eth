@@ -338,7 +338,16 @@ export function About() {
               <div>
                 <p className="text-sm sm:text-base font-semibold mb-1">{t('about.security.opensource.title')}</p>
                 <p className="text-xs sm:text-sm text-gray-300">
-                  {t('about.security.opensource.description')}
+                  All smart contracts are open-sourced on{' '}
+                  <a
+                    href="https://github.com/mcneilljamie/mcfun_eth"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-300 hover:text-blue-200 underline font-medium"
+                  >
+                    GitHub
+                  </a>
+                  {' '}and can be viewed and verified on Etherscan. Audit the code yourself before using the platform.
                 </p>
               </div>
             </div>
