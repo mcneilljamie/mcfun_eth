@@ -222,7 +222,7 @@
       "description": "Every token launched through McFun receives permanent visibility on our platform, giving your project lasting exposure to potential traders and investors.",
       "ranking": {
         "title": "Automatic Listing & Ranking",
-        "description": "All tokens are automatically listed on the Popular Tokens page with flexible ranking options. Users can sort tokens by market cap, liquidity, or age."
+        "description": "All tokens are automatically listed on the Popular Tokens page with flexible ranking options. Users can sort tokens by market cap, liquidity, age, or biggest winners and losers over the last 24 hours."
       },
       "permanent": {
         "title": "Permanent Listing",
@@ -245,7 +245,7 @@
       },
       "freeTokenLocking": {
         "title": "Free Token Locking",
-        "description": "Lock your tokens for any duration completely free. Build trust with your community at no cost."
+        "description": "Lock your tokens for up to 10,000 days completely free. Build trust with your community at no cost."
       },
       "easyBurning": {
         "title": "Easy Token Burning",
@@ -396,9 +396,9 @@
     "trackLockedTokens": "Track Locked & Unlocked Tokens",
     "trackLockedTokensDescription": "See the value of your locked tokens and when they become available to unlock. Your portfolio automatically tracks both your circulating holdings and locked positions, giving you a complete picture of your assets.",
     "tokenLocking": "Free McFun Token Locking",
-    "tokenLockingDescription": "McFun provides a secure, trustless token locking service that's completely free to use. Lock any McFun token for any duration to demonstrate commitment, build trust with your community, or create vesting schedules.",
+    "tokenLockingDescription": "McFun provides a secure, trustless token locking service that's completely free to use. Lock any McFun token for up to 10,000 days to demonstrate commitment, build trust with your community, or create vesting schedules.",
     "lockAnyToken": "Lock McFun Tokens",
-    "lockAnyTokenDescription": "Lock any token launched on McFun. Set your own lock duration from days to years and demonstrate long-term commitment to your community.",
+    "lockAnyTokenDescription": "Lock any token launched on McFun. Set your own lock duration up to 10,000 days maximum and demonstrate long-term commitment to your community.",
     "completlyFree": "Completely Free - No Fees",
     "completlyFreeDescription": "Unlike other locking services that charge platform fees, McFun's token locker is completely free. You only pay network gas fees - no hidden costs or service charges.",
     "proveTrust": "Prove Trust & Commitment",
