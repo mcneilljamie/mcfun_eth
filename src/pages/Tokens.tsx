@@ -333,65 +333,65 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
               </div>
             </div>
 
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-sm font-medium text-gray-700">{t('tokens.rankBy')}:</span>
-              <div className="inline-flex rounded-lg border border-gray-300 bg-white p-1 flex-wrap">
+            <div>
+              <span className="text-sm font-medium text-gray-700 block mb-2">{t('tokens.rankBy')}:</span>
+              <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:gap-1 sm:border sm:border-gray-300 sm:rounded-lg sm:bg-white sm:p-1">
                 <button
                   onClick={() => setSortBy('marketCap')}
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all whitespace-nowrap ${
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${
                     sortBy === 'marketCap'
                       ? 'bg-gray-900 text-white shadow-sm'
-                      : 'text-gray-700 hover:text-gray-900'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 sm:bg-transparent'
                   }`}
                 >
                   {t('tokens.marketCap')}
                 </button>
                 <button
                   onClick={() => setSortBy('liquidity')}
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all whitespace-nowrap ${
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${
                     sortBy === 'liquidity'
                       ? 'bg-gray-900 text-white shadow-sm'
-                      : 'text-gray-700 hover:text-gray-900'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 sm:bg-transparent'
                   }`}
                 >
                   {t('tokens.liquidity')}
                 </button>
                 <button
                   onClick={() => setSortBy('age-newest')}
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all whitespace-nowrap ${
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${
                     sortBy === 'age-newest'
                       ? 'bg-gray-900 text-white shadow-sm'
-                      : 'text-gray-700 hover:text-gray-900'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 sm:bg-transparent'
                   }`}
                 >
                   {t('tokens.ageNewest')}
                 </button>
                 <button
                   onClick={() => setSortBy('age-oldest')}
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all whitespace-nowrap ${
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${
                     sortBy === 'age-oldest'
                       ? 'bg-gray-900 text-white shadow-sm'
-                      : 'text-gray-700 hover:text-gray-900'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 sm:bg-transparent'
                   }`}
                 >
                   {t('tokens.ageOldest')}
                 </button>
                 <button
                   onClick={() => setSortBy('price-increase')}
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all whitespace-nowrap ${
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${
                     sortBy === 'price-increase'
                       ? 'bg-gray-900 text-white shadow-sm'
-                      : 'text-gray-700 hover:text-gray-900'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 sm:bg-transparent'
                   }`}
                 >
                   {t('tokens.priceIncrease')}
                 </button>
                 <button
                   onClick={() => setSortBy('price-decrease')}
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all whitespace-nowrap ${
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${
                     sortBy === 'price-decrease'
                       ? 'bg-gray-900 text-white shadow-sm'
-                      : 'text-gray-700 hover:text-gray-900'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 sm:bg-transparent'
                   }`}
                 >
                   {t('tokens.priceDecrease')}
