@@ -335,69 +335,67 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
 
             <div className="flex flex-col gap-2">
               <span className="text-sm font-medium text-gray-700">{t('tokens.rankBy')}:</span>
-              <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-                <div className="inline-flex gap-2 border border-gray-300 rounded-lg bg-white p-1 min-w-min">
-                  <button
-                    onClick={() => setSortBy('marketCap')}
-                    className={`px-2.5 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
-                      sortBy === 'marketCap'
-                        ? 'bg-gray-900 text-white shadow-sm'
-                        : 'text-gray-700 hover:bg-gray-100'
-                    }`}
-                  >
-                    {t('tokens.marketCap')}
-                  </button>
-                  <button
-                    onClick={() => setSortBy('liquidity')}
-                    className={`px-2.5 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
-                      sortBy === 'liquidity'
-                        ? 'bg-gray-900 text-white shadow-sm'
-                        : 'text-gray-700 hover:bg-gray-100'
-                    }`}
-                  >
-                    {t('tokens.liquidity')}
-                  </button>
-                  <button
-                    onClick={() => setSortBy('age-newest')}
-                    className={`px-2.5 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
-                      sortBy === 'age-newest'
-                        ? 'bg-gray-900 text-white shadow-sm'
-                        : 'text-gray-700 hover:bg-gray-100'
-                    }`}
-                  >
-                    {t('tokens.ageNewest')}
-                  </button>
-                  <button
-                    onClick={() => setSortBy('age-oldest')}
-                    className={`px-2.5 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
-                      sortBy === 'age-oldest'
-                        ? 'bg-gray-900 text-white shadow-sm'
-                        : 'text-gray-700 hover:bg-gray-100'
-                    }`}
-                  >
-                    {t('tokens.ageOldest')}
-                  </button>
-                  <button
-                    onClick={() => setSortBy('price-increase')}
-                    className={`px-2.5 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
-                      sortBy === 'price-increase'
-                        ? 'bg-gray-900 text-white shadow-sm'
-                        : 'text-gray-700 hover:bg-gray-100'
-                    }`}
-                  >
-                    {t('tokens.priceIncrease')}
-                  </button>
-                  <button
-                    onClick={() => setSortBy('price-decrease')}
-                    className={`px-2.5 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
-                      sortBy === 'price-decrease'
-                        ? 'bg-gray-900 text-white shadow-sm'
-                        : 'text-gray-700 hover:bg-gray-100'
-                    }`}
-                  >
-                    {t('tokens.priceDecrease')}
-                  </button>
-                </div>
+              <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:gap-2">
+                <button
+                  onClick={() => setSortBy('marketCap')}
+                  className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+                    sortBy === 'marketCap'
+                      ? 'bg-gray-900 text-white shadow-sm'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {t('tokens.marketCap')}
+                </button>
+                <button
+                  onClick={() => setSortBy('liquidity')}
+                  className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+                    sortBy === 'liquidity'
+                      ? 'bg-gray-900 text-white shadow-sm'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {t('tokens.liquidity')}
+                </button>
+                <button
+                  onClick={() => setSortBy('age-newest')}
+                  className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+                    sortBy === 'age-newest'
+                      ? 'bg-gray-900 text-white shadow-sm'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {t('tokens.ageNewest')}
+                </button>
+                <button
+                  onClick={() => setSortBy('age-oldest')}
+                  className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+                    sortBy === 'age-oldest'
+                      ? 'bg-gray-900 text-white shadow-sm'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {t('tokens.ageOldest')}
+                </button>
+                <button
+                  onClick={() => setSortBy('price-increase')}
+                  className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+                    sortBy === 'price-increase'
+                      ? 'bg-gray-900 text-white shadow-sm'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {t('tokens.priceIncrease')}
+                </button>
+                <button
+                  onClick={() => setSortBy('price-decrease')}
+                  className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+                    sortBy === 'price-decrease'
+                      ? 'bg-gray-900 text-white shadow-sm'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {t('tokens.priceDecrease')}
+                </button>
               </div>
             </div>
           </div>
