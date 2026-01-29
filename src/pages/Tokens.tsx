@@ -33,10 +33,10 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
   const [tokenDataMap, setTokenDataMap] = useState<Record<string, TokenEnrichedData>>({});
   const [isUpdating, setIsUpdating] = useState(false);
-  const [sortBy, setSortBy] = useState<'marketCap' | 'liquidity' | 'age-newest' | 'age-oldest'>(() => {
+  const [sortBy, setSortBy] = useState<'marketCap' | 'liquidity' | 'age-newest' | 'age-oldest' | 'price-increase' | 'price-decrease'>(() => {
     const saved = localStorage.getItem('mcfun_tokens_sort_preference');
-    if (saved && ['marketCap', 'liquidity', 'age-newest', 'age-oldest'].includes(saved)) {
-      return saved as 'marketCap' | 'liquidity' | 'age-newest' | 'age-oldest';
+    if (saved && ['marketCap', 'liquidity', 'age-newest', 'age-oldest', 'price-increase', 'price-decrease'].includes(saved)) {
+      return saved as 'marketCap' | 'liquidity' | 'age-newest' | 'age-oldest' | 'price-increase' | 'price-decrease';
     }
     return 'marketCap';
   });
