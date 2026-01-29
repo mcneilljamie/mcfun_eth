@@ -343,7 +343,7 @@ export function About() {
                     href="https://github.com/mcneilljamie/mcfun_eth"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-300 hover:text-blue-200 underline font-medium"
+                    className="underline hover:text-white font-medium"
                   >
                     GitHub
                   </a>
