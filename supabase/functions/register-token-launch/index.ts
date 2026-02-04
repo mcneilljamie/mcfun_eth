@@ -203,10 +203,13 @@ Deno.serve(async (req: Request) => {
     const initialTokenReserve = 1000000 * eventLiquidityPercent / 100;
     const launchPriceEth = parseFloat(eventInitialLiquidityETH) / initialTokenReserve;
 
+    // Get ETH price at the time of token launch
+    const launchTimestamp = new Date(block.timestamp * 1000).toISOString();
     const { data: ethPriceData } = await supabase
       .from("eth_price_history")
       .select("price_usd")
-      .order("created_at", { ascending: false })
+      .lte("timestamp", launchTimestamp)
+      .order("timestamp", { ascending: false })
       .limit(1)
       .maybeSingle();
 

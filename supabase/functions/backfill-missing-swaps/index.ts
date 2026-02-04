@@ -172,11 +172,12 @@ Deno.serve(async (req: Request) => {
       swap_timestamp: mostRecentSwap.created_at
     });
 
-    // Create price snapshots for the most recent swap
+    // Create price snapshots for the most recent swap using historical ETH price
     const { data: ethPriceData } = await supabase
       .from("eth_price_history")
       .select("price_usd")
-      .order("created_at", { ascending: false })
+      .lte("timestamp", mostRecentSwap.created_at)
+      .order("timestamp", { ascending: false })
       .limit(1)
       .maybeSingle();
 
