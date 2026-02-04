@@ -8,9 +8,23 @@ const corsHeaders = {
 
 async function fetchCurrentEthPrice(): Promise<number> {
   try {
+    console.log("Fetching ETH price from CoinGecko...");
     const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
+
+    if (!response.ok) {
+      throw new Error(`CoinGecko API returned ${response.status}: ${response.statusText}`);
+    }
+
     const data = await response.json();
-    return data.ethereum?.usd || 3000;
+    console.log("CoinGecko response:", JSON.stringify(data));
+
+    const ethPrice = data.ethereum?.usd;
+    if (!ethPrice || ethPrice <= 0) {
+      throw new Error(`Invalid ETH price received: ${ethPrice}`);
+    }
+
+    console.log(`Successfully fetched ETH price: $${ethPrice}`);
+    return ethPrice;
   } catch (error) {
     console.error('Failed to fetch ETH price from CoinGecko:', error);
     throw error;
