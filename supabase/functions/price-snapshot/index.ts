@@ -57,7 +57,7 @@ Deno.serve(async (req: Request) => {
     if (activeTokenAddresses.size === 0) {
       return new Response(JSON.stringify({message: "No active tokens", snapshotsCreated: 0}), { headers: corsHeaders });
     }
-    const { data: tokens } = await supabase.from("tokens").select(`token_address, amm_address, symbol`).eq("chain_id", CHAIN_ID).in("token_address", Array.from(activeTokenAddresses));
+    const { data: tokens } = await supabase.from("tokens").select(`token_address, amm_address, symbol, launch_eth_price_usd`).eq("chain_id", CHAIN_ID).in("token_address", Array.from(activeTokenAddresses));
     if (!tokens || tokens.length === 0) {
       return new Response(JSON.stringify({message: "No tokens found", snapshotsCreated: 0}), { headers: corsHeaders });
     }
@@ -70,13 +70,16 @@ Deno.serve(async (req: Request) => {
         const tokenReserveFormatted = ethers.formatEther(reserveToken);
         const priceFormatted = ethers.formatEther(price);
         if (ethReserveFormatted !== "0.0" && tokenReserveFormatted !== "0.0") {
+          // Use token's launch ETH price for consistent USD pricing
+          const tokenEthPriceUSD = token.launch_eth_price_usd ? parseFloat(token.launch_eth_price_usd) : ethPriceUSD;
+
           snapshots.push({
             chain_id: CHAIN_ID,
             token_address: token.token_address,
             price_eth: priceFormatted,
             eth_reserve: ethReserveFormatted,
             token_reserve: tokenReserveFormatted,
-            eth_price_usd: ethPriceUSD,
+            eth_price_usd: tokenEthPriceUSD,
             is_interpolated: false,
             block_number: currentBlockNumber,
             created_at: new Date().toISOString(),
