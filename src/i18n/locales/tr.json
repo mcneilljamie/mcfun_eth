@@ -389,6 +389,8 @@
     "combinedFDV": "Tüm tokenlerin toplam FDV'si",
     "totalLiquidity": "Toplam ETH Likiditesi",
     "totalEthInPools": "Likidite havuzlarındaki toplam ETH",
+    "projectsListed": "Listelenen Projeler",
+    "totalProjects": "Başlatılan toplam token sayısı",
     "trackHoldings": "Varlıklarınızı Takip Edin",
     "trackHoldingsDescription": "Portföy sayfası, tüm McFun token varlıklarınızın değerini tek bir yerde kolayca izlemenizi sağlar. Cüzdanınızı bağlayarak ETH bakiyenizin ve sahip olduğunuz tüm tokenlerin gerçek zamanlı değerlerini görebilirsiniz.",
     "realtimeTracking": "Gerçek Zamanlı Portföy Takibi",

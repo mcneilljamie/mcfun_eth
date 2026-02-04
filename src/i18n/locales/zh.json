@@ -389,6 +389,8 @@
     "combinedFDV": "所有代币的综合FDV",
     "totalLiquidity": "总ETH流动性",
     "totalEthInPools": "流动性池中的总ETH",
+    "projectsListed": "已列出的项目",
+    "totalProjects": "已启动的代币总数",
     "trackHoldings": "跟踪您的持仓",
     "trackHoldingsDescription": "投资组合页面可以轻松地在一个地方监控您所有McFun代币持仓的价值。只需连接您的钱包即可查看您的ETH余额和在McFun上交易的所有代币的实时价值。",
     "realtimeTracking": "实时投资组合跟踪",

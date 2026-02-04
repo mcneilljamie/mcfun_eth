@@ -389,6 +389,8 @@
     "combinedFDV": "모든 토큰의 총 FDV",
     "totalLiquidity": "총 ETH 유동성",
     "totalEthInPools": "유동성 풀의 총 ETH",
+    "projectsListed": "등록된 프로젝트",
+    "totalProjects": "출시된 토큰의 총 수",
     "trackHoldings": "보유량 추적",
     "trackHoldingsDescription": "포트폴리오 페이지를 사용하면 모든 McFun 토큰 보유량의 가치를 한 곳에서 쉽게 모니터링할 수 있습니다. 지갑을 연결하기만 하면 ETH 잔액과 McFun에서 거래되는 모든 토큰의 실시간 가치를 확인할 수 있습니다.",
     "realtimeTracking": "실시간 포트폴리오 추적",

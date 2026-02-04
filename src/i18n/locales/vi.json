@@ -389,6 +389,8 @@
     "combinedFDV": "FDV kết hợp của tất cả token",
     "totalLiquidity": "Tổng Thanh khoản ETH",
     "totalEthInPools": "Tổng ETH trong các pool thanh khoản",
+    "projectsListed": "Dự Án Được Liệt Kê",
+    "totalProjects": "Tổng số token đã ra mắt",
     "trackHoldings": "Theo dõi Tài sản",
     "trackHoldingsDescription": "Trang Danh mục giúp bạn dễ dàng giám sát giá trị tất cả token McFun của mình ở một nơi. Chỉ cần kết nối ví để xem giá trị thời gian thực của số dư ETH và tất cả các token bạn sở hữu.",
     "realtimeTracking": "Theo dõi Danh mục Thời gian Thực",

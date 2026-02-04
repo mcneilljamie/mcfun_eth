@@ -389,6 +389,8 @@
     "combinedFDV": "إجمالي FDV لجميع الرموز",
     "totalLiquidity": "إجمالي سيولة ETH",
     "totalEthInPools": "إجمالي ETH في مجمعات السيولة",
+    "projectsListed": "المشاريع المدرجة",
+    "totalProjects": "إجمالي عدد الرموز المطلقة",
     "trackHoldings": "تتبع ممتلكاتك",
     "trackHoldingsDescription": "تجعل صفحة المحفظة من السهل مراقبة قيمة جميع رموز McFun الخاصة بك في مكان واحد. ما عليك سوى توصيل محفظتك لرؤية القيم في الوقت الفعلي لرصيد ETH وجميع الرموز التي تمتلكها.",
     "realtimeTracking": "تتبع المحفظة في الوقت الفعلي",

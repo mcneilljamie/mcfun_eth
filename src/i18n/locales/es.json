@@ -389,6 +389,8 @@
     "combinedFDV": "FDV combinado de todos los tokens",
     "totalLiquidity": "Liquidez Total de ETH",
     "totalEthInPools": "ETH total en pools de liquidez",
+    "projectsListed": "Proyectos Listados",
+    "totalProjects": "Número total de tokens lanzados",
     "trackHoldings": "Rastrea Tus Tenencias",
     "trackHoldingsDescription": "La página de Portafolio facilita el monitoreo del valor de todas tus tenencias de tokens de McFun en un solo lugar. Simplemente conecta tu billetera para ver los valores en tiempo real de tu balance de ETH y todos los tokens que posees que se comercian en McFun.",
     "realtimeTracking": "Rastreo de Portafolio en Tiempo Real",

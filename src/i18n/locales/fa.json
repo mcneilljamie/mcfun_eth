@@ -391,6 +391,8 @@
     "combinedFDV": "FDV ترکیبی همه توکن‌ها",
     "totalLiquidity": "کل نقدینگی ETH",
     "totalEthInPools": "کل ETH در استخرهای نقدینگی",
+    "projectsListed": "پروژه‌های فهرست شده",
+    "totalProjects": "تعداد کل توکن‌های راه‌اندازی شده",
     "trackHoldings": "دارایی‌های خود را پیگیری کنید",
     "trackHoldingsDescription": "صفحه پورتفولیو نظارت بر ارزش همه دارایی‌های توکن McFun شما را در یک مکان آسان می‌کند.",
     "realtimeTracking": "پیگیری پورتفولیو در زمان واقعی",

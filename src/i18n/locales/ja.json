@@ -389,6 +389,8 @@
     "combinedFDV": "全トークンの合計FDV",
     "totalLiquidity": "総ETH流動性",
     "totalEthInPools": "流動性プール内の総ETH",
+    "projectsListed": "リストされたプロジェクト",
+    "totalProjects": "ローンチされたトークンの総数",
     "trackHoldings": "保有を追跡",
     "trackHoldingsDescription": "ポートフォリオページでは、McFunトークン保有の価値を一か所で簡単に監視できます。ウォレットを接続するだけで、ETH残高とMcFunで取引されているすべてのトークンのリアルタイム価値が表示されます。",
     "realtimeTracking": "リアルタイムポートフォリオ追跡",

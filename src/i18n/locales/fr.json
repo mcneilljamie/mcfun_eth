@@ -389,6 +389,8 @@
     "combinedFDV": "FDV combinée de tous les tokens",
     "totalLiquidity": "Liquidité Totale ETH",
     "totalEthInPools": "ETH total dans les pools de liquidité",
+    "projectsListed": "Projets Répertoriés",
+    "totalProjects": "Nombre total de tokens lancés",
     "trackHoldings": "Suivez Vos Avoirs",
     "trackHoldingsDescription": "La page Portefeuille facilite le suivi de la valeur de tous vos tokens McFun en un seul endroit. Connectez simplement votre portefeuille pour voir les valeurs en temps réel de votre solde ETH et de tous les tokens que vous possédez échangés sur McFun.",
     "realtimeTracking": "Suivi de Portefeuille en Temps Réel",

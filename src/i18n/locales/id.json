@@ -389,6 +389,8 @@
     "combinedFDV": "FDV gabungan semua token",
     "totalLiquidity": "Total Likuiditas ETH",
     "totalEthInPools": "Total ETH di pool likuiditas",
+    "projectsListed": "Proyek Terdaftar",
+    "totalProjects": "Jumlah total token yang diluncurkan",
     "trackHoldings": "Lacak Kepemilikan Anda",
     "trackHoldingsDescription": "Halaman Portofolio memudahkan pemantauan nilai semua token McFun Anda di satu tempat. Cukup hubungkan dompet untuk melihat nilai real-time saldo ETH dan semua token yang Anda miliki.",
     "realtimeTracking": "Pelacakan Portofolio Real-Time",
