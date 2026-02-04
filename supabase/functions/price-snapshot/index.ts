@@ -70,17 +70,30 @@ Deno.serve(async (req: Request) => {
         const tokenReserveFormatted = ethers.formatEther(reserveToken);
         const priceFormatted = ethers.formatEther(price);
         if (ethReserveFormatted !== "0.0" && tokenReserveFormatted !== "0.0") {
-          snapshots.push({
-            chain_id: CHAIN_ID,
-            token_address: token.token_address,
-            price_eth: priceFormatted,
-            eth_reserve: ethReserveFormatted,
-            token_reserve: tokenReserveFormatted,
-            eth_price_usd: ethPriceUSD,
-            is_interpolated: false,
-            block_number: currentBlockNumber,
-            created_at: new Date().toISOString(),
-          });
+          const { data: lastSnapshot } = await supabase
+            .from("price_snapshots")
+            .select("price_eth")
+            .eq("token_address", token.token_address)
+            .order("created_at", { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+          const shouldCreateSnapshot = !lastSnapshot ||
+            Math.abs((parseFloat(priceFormatted) - parseFloat(lastSnapshot.price_eth)) / parseFloat(lastSnapshot.price_eth)) > 0.001;
+
+          if (shouldCreateSnapshot) {
+            snapshots.push({
+              chain_id: CHAIN_ID,
+              token_address: token.token_address,
+              price_eth: priceFormatted,
+              eth_reserve: ethReserveFormatted,
+              token_reserve: tokenReserveFormatted,
+              eth_price_usd: ethPriceUSD,
+              is_interpolated: false,
+              block_number: currentBlockNumber,
+              created_at: new Date().toISOString(),
+            });
+          }
           await supabase.from("tokens").update({
             current_eth_reserve: ethReserveFormatted,
             current_token_reserve: tokenReserveFormatted,
