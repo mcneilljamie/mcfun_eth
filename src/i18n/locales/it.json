@@ -78,6 +78,8 @@
   },
   "launch": {
     "title": "Lancia il Tuo Token",
+    "connectWallet": "Collega il tuo portafoglio per lanciare un token",
+    "connectWalletDescription": "Collega il tuo portafoglio per creare e lanciare il tuo token su McFun",
     "success": {
       "title": "Token Lanciato con Successo!",
       "token": "Token:",

@@ -78,6 +78,8 @@
   },
   "launch": {
     "title": "Lanza Tu Token",
+    "connectWallet": "Conecta tu billetera para lanzar un token",
+    "connectWalletDescription": "Por favor conecta tu billetera para crear y lanzar tu propio token en McFun",
     "success": {
       "title": "¡Token Lanzado Exitosamente!",
       "token": "Token:",

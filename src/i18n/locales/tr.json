@@ -78,6 +78,8 @@
   },
   "launch": {
     "title": "Tokenınızı Başlatın",
+    "connectWallet": "Token başlatmak için cüzdanınızı bağlayın",
+    "connectWalletDescription": "McFun'da kendi tokenınızı oluşturmak ve başlatmak için lütfen cüzdanınızı bağlayın",
     "success": {
       "title": "Token Başarıyla Başlatıldı!",
       "token": "Token:",

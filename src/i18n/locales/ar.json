@@ -78,6 +78,8 @@
   },
   "launch": {
     "title": "أطلق رمزك",
+    "connectWallet": "قم بتوصيل محفظتك لإطلاق رمز",
+    "connectWalletDescription": "يرجى توصيل محفظتك لإنشاء وإطلاق رمزك الخاص على McFun",
     "success": {
       "title": "تم إطلاق الرمز بنجاح!",
       "token": "الرمز:",

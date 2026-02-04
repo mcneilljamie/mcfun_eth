@@ -78,6 +78,8 @@
   },
   "launch": {
     "title": "Luncurkan Token Anda",
+    "connectWallet": "Hubungkan dompet Anda untuk meluncurkan token",
+    "connectWalletDescription": "Silakan hubungkan dompet Anda untuk membuat dan meluncurkan token Anda sendiri di McFun",
     "success": {
       "title": "Token Berhasil Diluncurkan!",
       "token": "Token:",

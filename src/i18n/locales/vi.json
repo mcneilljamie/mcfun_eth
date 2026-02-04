@@ -78,6 +78,8 @@
   },
   "launch": {
     "title": "Ra Mắt Token Của Bạn",
+    "connectWallet": "Kết nối ví của bạn để ra mắt token",
+    "connectWalletDescription": "Vui lòng kết nối ví của bạn để tạo và ra mắt token của riêng bạn trên McFun",
     "success": {
       "title": "Token Đã Ra Mắt Thành Công!",
       "token": "Token:",

@@ -78,6 +78,8 @@
   },
   "launch": {
     "title": "发行您的代币",
+    "connectWallet": "连接您的钱包以发行代币",
+    "connectWalletDescription": "请连接您的钱包以在 McFun 上创建和发行您自己的代币",
     "success": {
       "title": "代币发行成功！",
       "token": "代币：",

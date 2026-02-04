@@ -78,6 +78,8 @@
   },
   "launch": {
     "title": "トークンをローンチ",
+    "connectWallet": "トークンをローンチするにはウォレットを接続してください",
+    "connectWalletDescription": "McFunで独自のトークンを作成してローンチするには、ウォレットを接続してください",
     "success": {
       "title": "トークンのローンチに成功しました！",
       "token": "トークン:",

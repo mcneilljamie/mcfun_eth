@@ -78,6 +78,8 @@
   },
   "launch": {
     "title": "토큰 출시하기",
+    "connectWallet": "토큰을 출시하려면 지갑을 연결하세요",
+    "connectWalletDescription": "McFun에서 자신만의 토큰을 만들고 출시하려면 지갑을 연결하세요",
     "success": {
       "title": "토큰이 성공적으로 출시되었습니다!",
       "token": "토큰:",
