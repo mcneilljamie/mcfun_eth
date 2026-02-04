@@ -100,16 +100,6 @@ async function processBackfillSwapSnapshots(req: Request): Promise<Response> {
       );
     }
 
-    // Get ETH price data
-    const { data: ethPriceData } = await supabase
-      .from("eth_price_history")
-      .select("price_usd")
-      .order("timestamp", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    const ethPriceUSD = ethPriceData?.price_usd || 3000;
-
     // Initialize reserves with launch values
     const liquidityPercent = token.liquidity_percent || 80;
     const initialTokenSupply = 1000000 * liquidityPercent / 100;
@@ -146,6 +136,17 @@ async function processBackfillSwapSnapshots(req: Request): Promise<Response> {
         }
 
         const priceEth = currentEthReserve / currentTokenReserve;
+
+        // Get ETH price at the time of this swap
+        const { data: ethPriceData } = await supabase
+          .from("eth_price_history")
+          .select("price_usd")
+          .lte("timestamp", swap.created_at)
+          .order("timestamp", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        const ethPriceUSD = ethPriceData?.price_usd || 3000;
 
         snapshotsToInsert.push({
           token_address: tokenAddress,
