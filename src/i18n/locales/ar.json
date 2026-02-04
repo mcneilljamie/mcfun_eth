@@ -451,7 +451,15 @@
     "viewExplorer": "عرض على المستكشف",
     "disconnect": "قطع الاتصال",
     "notInstalled": "غير مثبت - انقر للتنزيل",
-    "install": "تثبيت"
+    "install": "تثبيت",
+    "whatIsWallet": "ما هي المحفظة؟",
+    "installed": "مثبت",
+    "popular": "شائع",
+    "digitalAssetsTitle": "منزل لأصولك الرقمية",
+    "digitalAssetsDescription": "تُستخدم المحافظ لإرسال واستقبال وتخزين وعرض الأصول الرقمية مثل إيثريوم و NFTs.",
+    "newWayToLoginTitle": "طريقة جديدة لتسجيل الدخول",
+    "newWayToLoginDescription": "بدلاً من إنشاء حسابات وكلمات مرور جديدة على كل موقع، ما عليك سوى توصيل محفظتك.",
+    "learnMore": "معرفة المزيد"
   },
   "network": {
     "warning": {

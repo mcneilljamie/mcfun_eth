@@ -104,7 +104,7 @@ export function WalletModal({ isOpen, onClose, onConnect, isConnecting }: Wallet
             {installedWallets.length > 0 && (
               <div className="p-4">
                 <h3 className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-3 px-2">
-                  Installed
+                  {t('wallet.installed')}
                 </h3>
                 <div className="space-y-1">
                   {installedWallets.map((wallet) => (
@@ -142,7 +142,7 @@ export function WalletModal({ isOpen, onClose, onConnect, isConnecting }: Wallet
             {/* Popular Section */}
             <div className="p-4">
               <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 px-2">
-                Popular
+                {t('wallet.popular')}
               </h3>
               <div className="space-y-1">
                 {popularWallets.map((wallet) => (
@@ -180,7 +180,7 @@ export function WalletModal({ isOpen, onClose, onConnect, isConnecting }: Wallet
         {/* Right Panel - Educational Content - Hidden on mobile */}
         <div className="hidden sm:flex flex-1 bg-gray-50 p-8 flex-col">
           <h2 className="text-2xl font-bold text-gray-900 mb-8">
-            What is a Wallet?
+            {t('wallet.whatIsWallet')}
           </h2>
 
           <div className="space-y-6 flex-1">
@@ -193,10 +193,10 @@ export function WalletModal({ isOpen, onClose, onConnect, isConnecting }: Wallet
               </div>
               <div>
                 <h3 className="font-bold text-gray-900 mb-2">
-                  A Home for your Digital Assets
+                  {t('wallet.digitalAssetsTitle')}
                 </h3>
                 <p className="text-sm text-gray-600 leading-relaxed">
-                  Wallets are used to send, receive, store, and display digital assets like Ethereum and NFTs.
+                  {t('wallet.digitalAssetsDescription')}
                 </p>
               </div>
             </div>
@@ -210,10 +210,10 @@ export function WalletModal({ isOpen, onClose, onConnect, isConnecting }: Wallet
               </div>
               <div>
                 <h3 className="font-bold text-gray-900 mb-2">
-                  A New Way to Log In
+                  {t('wallet.newWayToLoginTitle')}
                 </h3>
                 <p className="text-sm text-gray-600 leading-relaxed">
-                  Instead of creating new accounts and passwords on every website, just connect your wallet.
+                  {t('wallet.newWayToLoginDescription')}
                 </p>
               </div>
             </div>
@@ -224,7 +224,7 @@ export function WalletModal({ isOpen, onClose, onConnect, isConnecting }: Wallet
               onClick={() => window.open('https://walletradar.org', '_blank')}
               className="w-full flex items-center justify-center gap-2 text-blue-600 font-semibold py-3 px-4 hover:text-blue-700 transition-colors"
             >
-              Learn More
+              {t('wallet.learnMore')}
               <ExternalLink className="w-4 h-4" />
             </button>
           </div>

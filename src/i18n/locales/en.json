@@ -450,7 +450,15 @@
     "viewExplorer": "View on Explorer",
     "disconnect": "Disconnect",
     "notInstalled": "Not installed - Click to download",
-    "install": "Install"
+    "install": "Install",
+    "whatIsWallet": "What is a Wallet?",
+    "installed": "Installed",
+    "popular": "Popular",
+    "digitalAssetsTitle": "A Home for your Digital Assets",
+    "digitalAssetsDescription": "Wallets are used to send, receive, store, and display digital assets like Ethereum and NFTs.",
+    "newWayToLoginTitle": "A New Way to Log In",
+    "newWayToLoginDescription": "Instead of creating new accounts and passwords on every website, just connect your wallet.",
+    "learnMore": "Learn More"
   },
   "network": {
     "warning": {
