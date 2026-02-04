@@ -116,6 +116,47 @@ Deno.serve(async (req: Request) => {
                   current_eth_reserve: ethers.formatEther(reserveETH),
                   current_token_reserve: ethers.formatEther(reserveToken),
                 }).eq("token_address", token.token_address);
+
+                // Create price snapshots for each swap using historical ETH price
+                for (const swap of swaps) {
+                  try {
+                    // Get ETH price at the time of this swap
+                    const { data: ethPriceData } = await supabase
+                      .from("eth_price_history")
+                      .select("price_usd")
+                      .lte("timestamp", swap.created_at)
+                      .order("timestamp", { ascending: false })
+                      .limit(1)
+                      .maybeSingle();
+
+                    const ethPriceUsd = ethPriceData?.price_usd || 3000;
+
+                    // Calculate price after this swap
+                    const { data: tokenData } = await supabase
+                      .from("tokens")
+                      .select("current_eth_reserve, current_token_reserve")
+                      .eq("token_address", token.token_address)
+                      .maybeSingle();
+
+                    if (tokenData) {
+                      const priceEth = parseFloat(tokenData.current_eth_reserve) / parseFloat(tokenData.current_token_reserve);
+
+                      await supabase.from("price_snapshots").upsert({
+                        token_address: token.token_address,
+                        price_eth: priceEth.toString(),
+                        eth_reserve: tokenData.current_eth_reserve,
+                        token_reserve: tokenData.current_token_reserve,
+                        eth_price_usd: ethPriceUsd,
+                        is_interpolated: false,
+                        block_number: swap.block_number,
+                        created_at: swap.created_at,
+                      }, { onConflict: "token_address,block_number" });
+                    }
+                  } catch (err) {
+                    console.error(`Failed to create snapshot for swap ${swap.tx_hash}:`, err);
+                  }
+                }
+
                 return { swaps: swaps.length, token: token.token_address };
               }
               return { swaps: 0, token: token.token_address };
