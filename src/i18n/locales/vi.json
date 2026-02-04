@@ -451,7 +451,15 @@
     "viewExplorer": "Xem trên Explorer",
     "disconnect": "Ngắt kết nối",
     "notInstalled": "Chưa cài đặt - Nhấp để tải xuống",
-    "install": "Cài đặt"
+    "install": "Cài đặt",
+    "whatIsWallet": "Ví là gì?",
+    "installed": "Đã cài đặt",
+    "popular": "Phổ biến",
+    "digitalAssetsTitle": "Ngôi nhà cho Tài sản Kỹ thuật số của bạn",
+    "digitalAssetsDescription": "Ví được sử dụng để gửi, nhận, lưu trữ và hiển thị tài sản kỹ thuật số như Ethereum và NFT.",
+    "newWayToLoginTitle": "Cách Mới để Đăng nhập",
+    "newWayToLoginDescription": "Thay vì tạo tài khoản và mật khẩu mới trên mọi trang web, chỉ cần kết nối ví của bạn.",
+    "learnMore": "Tìm hiểu Thêm"
   },
   "network": {
     "warning": {

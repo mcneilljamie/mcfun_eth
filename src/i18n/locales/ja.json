@@ -451,7 +451,15 @@
     "viewExplorer": "エクスプローラーで表示",
     "disconnect": "切断",
     "notInstalled": "インストールされていません - クリックしてダウンロード",
-    "install": "インストール"
+    "install": "インストール",
+    "whatIsWallet": "ウォレットとは？",
+    "installed": "インストール済み",
+    "popular": "人気",
+    "digitalAssetsTitle": "デジタル資産のための家",
+    "digitalAssetsDescription": "ウォレットは、イーサリアムやNFTなどのデジタル資産を送信、受信、保管、表示するために使用されます。",
+    "newWayToLoginTitle": "新しいログイン方法",
+    "newWayToLoginDescription": "すべてのウェブサイトで新しいアカウントとパスワードを作成する代わりに、ウォレットを接続するだけです。",
+    "learnMore": "詳細を見る"
   },
   "network": {
     "warning": {

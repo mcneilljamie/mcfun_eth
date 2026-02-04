@@ -451,7 +451,15 @@
     "viewExplorer": "Ver en Explorer",
     "disconnect": "Desconectar",
     "notInstalled": "No instalado - Haz clic para descargar",
-    "install": "Instalar"
+    "install": "Instalar",
+    "whatIsWallet": "¿Qué es una Billetera?",
+    "installed": "Instalado",
+    "popular": "Popular",
+    "digitalAssetsTitle": "Un Hogar para tus Activos Digitales",
+    "digitalAssetsDescription": "Las billeteras se utilizan para enviar, recibir, almacenar y mostrar activos digitales como Ethereum y NFTs.",
+    "newWayToLoginTitle": "Una Nueva Forma de Iniciar Sesión",
+    "newWayToLoginDescription": "En lugar de crear nuevas cuentas y contraseñas en cada sitio web, simplemente conecta tu billetera.",
+    "learnMore": "Aprende Más"
   },
   "network": {
     "warning": {

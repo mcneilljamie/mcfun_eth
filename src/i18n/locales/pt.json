@@ -451,7 +451,15 @@
     "viewExplorer": "Ver no Explorer",
     "disconnect": "Desconectar",
     "notInstalled": "Não instalado - Clique para baixar",
-    "install": "Instalar"
+    "install": "Instalar",
+    "whatIsWallet": "O que é uma Carteira?",
+    "installed": "Instalado",
+    "popular": "Popular",
+    "digitalAssetsTitle": "Uma Casa para seus Ativos Digitais",
+    "digitalAssetsDescription": "Carteiras são usadas para enviar, receber, armazenar e exibir ativos digitais como Ethereum e NFTs.",
+    "newWayToLoginTitle": "Uma Nova Forma de Fazer Login",
+    "newWayToLoginDescription": "Em vez de criar novas contas e senhas em cada site, basta conectar sua carteira.",
+    "learnMore": "Saiba Mais"
   },
   "network": {
     "warning": {

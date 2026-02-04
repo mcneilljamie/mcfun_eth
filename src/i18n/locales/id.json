@@ -451,7 +451,15 @@
     "viewExplorer": "Lihat di Explorer",
     "disconnect": "Putuskan",
     "notInstalled": "Tidak terpasang - Klik untuk mengunduh",
-    "install": "Pasang"
+    "install": "Pasang",
+    "whatIsWallet": "Apa itu Dompet?",
+    "installed": "Terpasang",
+    "popular": "Populer",
+    "digitalAssetsTitle": "Rumah untuk Aset Digital Anda",
+    "digitalAssetsDescription": "Dompet digunakan untuk mengirim, menerima, menyimpan, dan menampilkan aset digital seperti Ethereum dan NFT.",
+    "newWayToLoginTitle": "Cara Baru untuk Masuk",
+    "newWayToLoginDescription": "Daripada membuat akun dan kata sandi baru di setiap situs web, cukup hubungkan dompet Anda.",
+    "learnMore": "Pelajari Lebih Lanjut"
   },
   "network": {
     "warning": {

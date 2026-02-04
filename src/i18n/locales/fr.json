@@ -451,7 +451,15 @@
     "viewExplorer": "Voir sur l'Explorateur",
     "disconnect": "Déconnecter",
     "notInstalled": "Non installé - Cliquez pour télécharger",
-    "install": "Installer"
+    "install": "Installer",
+    "whatIsWallet": "Qu'est-ce qu'un Portefeuille ?",
+    "installed": "Installé",
+    "popular": "Populaire",
+    "digitalAssetsTitle": "Une Maison pour vos Actifs Numériques",
+    "digitalAssetsDescription": "Les portefeuilles sont utilisés pour envoyer, recevoir, stocker et afficher des actifs numériques comme Ethereum et les NFTs.",
+    "newWayToLoginTitle": "Une Nouvelle Façon de se Connecter",
+    "newWayToLoginDescription": "Au lieu de créer de nouveaux comptes et mots de passe sur chaque site web, connectez simplement votre portefeuille.",
+    "learnMore": "En Savoir Plus"
   },
   "network": {
     "warning": {

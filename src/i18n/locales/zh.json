@@ -451,7 +451,15 @@
     "viewExplorer": "在浏览器中查看",
     "disconnect": "断开连接",
     "notInstalled": "未安装 - 点击下载",
-    "install": "安装"
+    "install": "安装",
+    "whatIsWallet": "什么是钱包？",
+    "installed": "已安装",
+    "popular": "热门",
+    "digitalAssetsTitle": "您的数字资产之家",
+    "digitalAssetsDescription": "钱包用于发送、接收、存储和显示以太坊和 NFT 等数字资产。",
+    "newWayToLoginTitle": "登录的新方式",
+    "newWayToLoginDescription": "无需在每个网站上创建新帐户和密码，只需连接您的钱包即可。",
+    "learnMore": "了解更多"
   },
   "network": {
     "warning": {

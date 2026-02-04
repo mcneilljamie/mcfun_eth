@@ -451,7 +451,15 @@
     "viewExplorer": "Visualizza su Explorer",
     "disconnect": "Disconnetti",
     "notInstalled": "Non installato - Clicca per scaricare",
-    "install": "Installa"
+    "install": "Installa",
+    "whatIsWallet": "Cos'è un Portafoglio?",
+    "installed": "Installato",
+    "popular": "Popolare",
+    "digitalAssetsTitle": "Una Casa per i tuoi Asset Digitali",
+    "digitalAssetsDescription": "I portafogli sono utilizzati per inviare, ricevere, conservare e visualizzare asset digitali come Ethereum e NFT.",
+    "newWayToLoginTitle": "Un Nuovo Modo di Accedere",
+    "newWayToLoginDescription": "Invece di creare nuovi account e password su ogni sito web, connetti semplicemente il tuo portafoglio.",
+    "learnMore": "Scopri di Più"
   },
   "network": {
     "warning": {

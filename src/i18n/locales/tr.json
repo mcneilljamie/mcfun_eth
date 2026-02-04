@@ -451,7 +451,15 @@
     "viewExplorer": "Explorer'da Görüntüle",
     "disconnect": "Bağlantıyı Kes",
     "notInstalled": "Yüklü değil - İndirmek için tıklayın",
-    "install": "Yükle"
+    "install": "Yükle",
+    "whatIsWallet": "Cüzdan Nedir?",
+    "installed": "Yüklü",
+    "popular": "Popüler",
+    "digitalAssetsTitle": "Dijital Varlıklarınız için Bir Ev",
+    "digitalAssetsDescription": "Cüzdanlar, Ethereum ve NFT'ler gibi dijital varlıkları göndermek, almak, saklamak ve görüntülemek için kullanılır.",
+    "newWayToLoginTitle": "Giriş Yapmanın Yeni Yolu",
+    "newWayToLoginDescription": "Her web sitesinde yeni hesaplar ve şifreler oluşturmak yerine, sadece cüzdanınızı bağlayın.",
+    "learnMore": "Daha Fazla Bilgi"
   },
   "network": {
     "warning": {

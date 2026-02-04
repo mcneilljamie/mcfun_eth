@@ -453,7 +453,15 @@
     "viewExplorer": "مشاهده در Explorer",
     "disconnect": "قطع اتصال",
     "notInstalled": "نصب نشده است - برای دانلود کلیک کنید",
-    "install": "نصب"
+    "install": "نصب",
+    "whatIsWallet": "کیف پول چیست؟",
+    "installed": "نصب شده",
+    "popular": "محبوب",
+    "digitalAssetsTitle": "خانه‌ای برای دارایی‌های دیجیتال شما",
+    "digitalAssetsDescription": "کیف پول‌ها برای ارسال، دریافت، ذخیره و نمایش دارایی‌های دیجیتال مانند اتریوم و NFT استفاده می‌شوند.",
+    "newWayToLoginTitle": "راه جدید برای ورود",
+    "newWayToLoginDescription": "به جای ایجاد حساب‌ها و رمزهای عبور جدید در هر وب‌سایت، فقط کیف پول خود را متصل کنید.",
+    "learnMore": "بیشتر بدانید"
   },
   "network": {
     "warning": {

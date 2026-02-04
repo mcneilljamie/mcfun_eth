@@ -451,7 +451,15 @@
     "viewExplorer": "Просмотреть в Explorer",
     "disconnect": "Отключить",
     "notInstalled": "Не установлен - Нажмите для загрузки",
-    "install": "Установить"
+    "install": "Установить",
+    "whatIsWallet": "Что такое Кошелек?",
+    "installed": "Установлен",
+    "popular": "Популярные",
+    "digitalAssetsTitle": "Дом для ваших Цифровых Активов",
+    "digitalAssetsDescription": "Кошельки используются для отправки, получения, хранения и отображения цифровых активов, таких как Ethereum и NFT.",
+    "newWayToLoginTitle": "Новый Способ Входа",
+    "newWayToLoginDescription": "Вместо создания новых учетных записей и паролей на каждом сайте, просто подключите свой кошелек.",
+    "learnMore": "Узнать Больше"
   },
   "network": {
     "warning": {
