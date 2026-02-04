@@ -34,10 +34,14 @@ async function getEthPriceAtTime(supabase: any, timestamp: Date): Promise<number
       .limit(1)
       .maybeSingle();
 
-    return nextData?.price_usd || 3000;
+    if (!nextData?.price_usd) {
+      throw new Error(`No ETH price found for timestamp ${timestamp.toISOString()}`);
+    }
+
+    return parseFloat(nextData.price_usd);
   }
 
-  return data.price_usd;
+  return parseFloat(data.price_usd);
 }
 
 function generateRealisticPriceWalk(

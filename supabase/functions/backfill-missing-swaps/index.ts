@@ -181,7 +181,12 @@ Deno.serve(async (req: Request) => {
       .limit(1)
       .maybeSingle();
 
-    const ethPriceUsd = ethPriceData?.price_usd || 3000;
+    if (!ethPriceData?.price_usd) {
+      console.warn(`No ETH price found for swap at ${mostRecentSwap.created_at}, skipping snapshot for ${token.symbol}`);
+      continue;
+    }
+
+    const ethPriceUsd = parseFloat(ethPriceData.price_usd);
     const finalReserveEth = parseFloat(ethers.formatEther(reserveETH));
     const finalReserveToken = parseFloat(ethers.formatEther(reserveToken));
     const finalPriceEth = finalReserveEth / finalReserveToken;

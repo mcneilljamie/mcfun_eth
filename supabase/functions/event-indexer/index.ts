@@ -129,7 +129,12 @@ Deno.serve(async (req: Request) => {
                       .limit(1)
                       .maybeSingle();
 
-                    const ethPriceUsd = ethPriceData?.price_usd || 3000;
+                    if (!ethPriceData?.price_usd) {
+                      console.error(`No ETH price found for swap at ${swap.created_at}, skipping snapshot for ${swap.tx_hash}`);
+                      continue;
+                    }
+
+                    const ethPriceUsd = parseFloat(ethPriceData.price_usd);
 
                     // Calculate price after this swap
                     const { data: tokenData } = await supabase

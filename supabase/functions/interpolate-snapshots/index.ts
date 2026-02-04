@@ -34,11 +34,15 @@ async function getEthPriceAtTime(supabase: any, timestamp: Date): Promise<number
       .order("timestamp", { ascending: true })
       .limit(1)
       .maybeSingle();
-    
-    return nextData?.price_usd || 3000; // Fallback to default
+
+    if (!nextData?.price_usd) {
+      throw new Error(`No ETH price found for timestamp ${timestamp.toISOString()}`);
+    }
+
+    return parseFloat(nextData.price_usd);
   }
 
-  return data.price_usd;
+  return parseFloat(data.price_usd);
 }
 
 Deno.serve(async (req: Request) => {

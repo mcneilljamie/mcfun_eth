@@ -213,7 +213,12 @@ Deno.serve(async (req: Request) => {
       .limit(1)
       .maybeSingle();
 
-    const ethPriceUsd = ethPriceData?.price_usd || 3000;
+    if (!ethPriceData?.price_usd) {
+      console.error(`No ETH price found for launch at ${launchTimestamp}, cannot register token`);
+      return new Response(JSON.stringify({error: "No ETH price available for token launch"}), { status: 500, headers: corsHeaders });
+    }
+
+    const ethPriceUsd = parseFloat(ethPriceData.price_usd);
 
     const { error: insertError } = await supabase
       .from("tokens")

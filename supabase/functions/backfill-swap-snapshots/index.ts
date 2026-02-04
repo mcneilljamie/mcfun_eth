@@ -146,7 +146,12 @@ async function processBackfillSwapSnapshots(req: Request): Promise<Response> {
           .limit(1)
           .maybeSingle();
 
-        const ethPriceUSD = ethPriceData?.price_usd || 3000;
+        if (!ethPriceData?.price_usd) {
+          console.warn(`No ETH price found for swap at ${swap.created_at}, skipping`);
+          continue;
+        }
+
+        const ethPriceUSD = parseFloat(ethPriceData.price_usd);
 
         snapshotsToInsert.push({
           token_address: tokenAddress,

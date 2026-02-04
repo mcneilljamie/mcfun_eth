@@ -153,8 +153,13 @@ Deno.serve(async (req: Request) => {
               .maybeSingle();
 
             tokenPriceEth = parseFloat(tokenData.current_eth_reserve) / parseFloat(tokenData.current_token_reserve);
-            ethPriceUsd = ethPrice?.price_usd || 3000;
 
+            if (!ethPrice?.price_usd) {
+              console.warn(`No ETH price available for burn calculation, skipping ${token.symbol}`);
+              continue;
+            }
+
+            ethPriceUsd = parseFloat(ethPrice.price_usd);
             priceCache.set(token.token_address.toLowerCase(), { tokenPriceEth, ethPriceUsd });
           }
 

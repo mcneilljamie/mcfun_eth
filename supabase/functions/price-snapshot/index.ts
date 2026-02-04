@@ -32,7 +32,6 @@ Deno.serve(async (req: Request) => {
     const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
 
     // Get current ETH price from eth_price_history table
-    let ethPriceUSD = 3300; // Default fallback
     const { data: ethPriceData, error: ethPriceError } = await supabase
       .from("eth_price_history")
       .select("price_usd")
@@ -42,12 +41,16 @@ Deno.serve(async (req: Request) => {
 
     if (ethPriceError) {
       console.error("Error fetching ETH price:", ethPriceError);
-    } else if (ethPriceData) {
-      ethPriceUSD = parseFloat(ethPriceData.price_usd);
-      console.log(`Using current ETH price: $${ethPriceUSD}`);
-    } else {
-      console.warn("No ETH price found in database, using fallback: $3300");
+      return new Response(JSON.stringify({error: "Failed to fetch ETH price"}), { status: 500, headers: corsHeaders });
     }
+
+    if (!ethPriceData?.price_usd) {
+      console.error("No ETH price found in database, cannot create snapshots");
+      return new Response(JSON.stringify({error: "No ETH price available"}), { status: 500, headers: corsHeaders });
+    }
+
+    const ethPriceUSD = parseFloat(ethPriceData.price_usd);
+    console.log(`Using current ETH price: $${ethPriceUSD}`);
 
     const provider = await createProviderWithFailover();
     const currentBlockNumber = await provider.getBlockNumber();
