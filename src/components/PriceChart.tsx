@@ -310,7 +310,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
       {/* Data info */}
       {data.length > 0 && (
         <div className={`flex items-center justify-end text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'} pt-2 border-t ${isDark ? 'border-gray-800' : 'border-gray-200'}`}>
-          <span>Updates in real-time</span>
+          <span>Charts update with each new trade</span>
         </div>
       )}
     </div>
