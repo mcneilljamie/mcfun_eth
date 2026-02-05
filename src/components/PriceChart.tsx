@@ -244,11 +244,6 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
               </div>
             )}
           </div>
-          {priceChange !== null && (
-            <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'} mt-1`}>
-              {isNew ? 'Since Launch' : '24h'}
-            </p>
-          )}
         </div>
 
         {/* Toggle */}
