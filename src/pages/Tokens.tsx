@@ -230,7 +230,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
 
           if (latestSnapshot) {
             const priceEth = parseFloat(latestSnapshot.price_eth || '0');
-            // Use CURRENT ETH price for USD conversion, not historical snapshot price
+            // Use CURRENT live ETH price (from CoinGecko) for USD conversion
             const priceUsd = priceEth * ethPriceUSD;
 
             priceMap.set(token.token_address, {
