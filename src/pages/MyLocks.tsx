@@ -46,7 +46,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
     tokenSymbol: string;
     amount: string;
   } | null>(null);
-  const [ethPriceUsd, setEthPriceUsd] = useState(3000);
+  const [ethPriceUsd, setEthPriceUsd] = useState(0);
   const [enrichedLocks, setEnrichedLocks] = useState<TokenLock[]>([]);
   const [tokenPrices, setTokenPrices] = useState<Map<string, { priceEth: number; priceUsd: number }>>(new Map());
 

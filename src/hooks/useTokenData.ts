@@ -16,7 +16,7 @@ export interface TokenData {
 }
 
 export function useTokenData(provider: any, token: Token | null, refreshInterval: number = 30000, chainId: number = 1) {
-  const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
+  const [ethPriceUSD, setEthPriceUSD] = useState<number>(0);
   const [tokenData, setTokenData] = useState<TokenData | null>(null);
 
   const { reserves: liveReserves } = useLiveReserves(

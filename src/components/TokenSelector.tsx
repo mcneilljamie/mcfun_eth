@@ -16,7 +16,7 @@ export function TokenSelector({ selectedToken, onSelectToken, disabled = false }
   const [filteredTokens, setFilteredTokens] = useState<Token[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
+  const [ethPriceUSD, setEthPriceUSD] = useState<number>(0);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);

@@ -76,7 +76,7 @@ export function Lock({ onShowToast }: LockPageProps) {
   const [tokenValidationError, setTokenValidationError] = useState<string | null>(null);
   const [showTokenDropdown, setShowTokenDropdown] = useState(false);
   const [popularTokens, setPopularTokens] = useState<Array<{ token_address: string; name: string; symbol: string; current_eth_reserve: number; current_token_reserve: number; total_volume_eth: number }>>([]);
-  const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
+  const [ethPriceUSD, setEthPriceUSD] = useState<number>(0);
   const [minLockAmount, setMinLockAmount] = useState<string>('1000');
 
   const [celebration, setCelebration] = useState<{

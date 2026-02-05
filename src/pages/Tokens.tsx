@@ -30,7 +30,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   const [filteredTokens, setFilteredTokens] = useState<Token[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
+  const [ethPriceUSD, setEthPriceUSD] = useState<number>(0);
   const [tokenDataMap, setTokenDataMap] = useState<Record<string, TokenEnrichedData>>({});
   const [isUpdating, setIsUpdating] = useState(false);
   const [sortBy, setSortBy] = useState<'marketCap' | 'liquidity' | 'age-newest' | 'age-oldest' | 'price-increase' | 'price-decrease'>(() => {

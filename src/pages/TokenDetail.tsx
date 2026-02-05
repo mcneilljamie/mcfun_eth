@@ -26,7 +26,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
-  const [ethPriceUSD, setEthPriceUSD] = useState<number>(3000);
+  const [ethPriceUSD, setEthPriceUSD] = useState<number>(0);
   const [snapshotCount, setSnapshotCount] = useState<number>(0);
   const { currentPrice: chartPrice } = useChartData(tokenAddress || '', 'ALL');
   const [activeLockCount, setActiveLockCount] = useState<number>(0);
