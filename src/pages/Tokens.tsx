@@ -222,7 +222,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
         visibleTokens.map(async (token) => {
           const { data: latestSnapshot } = await supabase
             .from('price_snapshots')
-            .select('price_eth, eth_price_usd, eth_reserve, token_reserve')
+            .select('price_eth, eth_reserve, token_reserve')
             .eq('token_address', token.token_address.toLowerCase())
             .order('created_at', { ascending: false })
             .limit(1)
@@ -230,8 +230,8 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
 
           if (latestSnapshot) {
             const priceEth = parseFloat(latestSnapshot.price_eth || '0');
-            const ethPriceUsd = parseFloat(latestSnapshot.eth_price_usd || '0');
-            const priceUsd = priceEth * ethPriceUsd;
+            // Use CURRENT ETH price for USD conversion, not historical snapshot price
+            const priceUsd = priceEth * ethPriceUSD;
 
             priceMap.set(token.token_address, {
               price_usd: priceUsd,
