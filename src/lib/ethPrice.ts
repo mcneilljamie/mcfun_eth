@@ -28,6 +28,13 @@ export async function getEthPriceUSD(): Promise<number> {
     return cachedEthPrice;
   }
 
+  const dbPrice = await getEthPriceFromDB();
+  if (dbPrice) {
+    cachedEthPrice = dbPrice;
+    lastFetch = now;
+    return cachedEthPrice;
+  }
+
   try {
     const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
     const data = await response.json();
@@ -42,13 +49,6 @@ export async function getEthPriceUSD(): Promise<number> {
   }
 
   if (cachedEthPrice) {
-    return cachedEthPrice;
-  }
-
-  const dbPrice = await getEthPriceFromDB();
-  if (dbPrice) {
-    cachedEthPrice = dbPrice;
-    lastFetch = now;
     return cachedEthPrice;
   }
 
