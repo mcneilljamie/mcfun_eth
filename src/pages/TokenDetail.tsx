@@ -205,27 +205,30 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
   const calculateTokenPriceUSD = (): number => {
     if (!token) return 0;
 
-    // Priority 1: Use chart price from database (real-time via subscriptions)
-    if (chartPrice > 0) return chartPrice;
+    // Get price in ETH from live reserves or stored reserves
+    let priceInEth = 0;
 
-    // Priority 2: Use live reserves from blockchain as fallback
+    // Priority 1: Use live reserves from blockchain
     if (liveReserves) {
       const ethReserve = parseFloat(liveReserves.reserveETH);
       const tokenReserve = parseFloat(liveReserves.reserveToken);
 
-      if (tokenReserve === 0) return 0;
-
-      const priceInEth = ethReserve / tokenReserve;
-      return priceInEth * ethPriceUSD;
+      if (tokenReserve > 0 && ethReserve > 0) {
+        priceInEth = ethReserve / tokenReserve;
+      }
     }
 
-    // Priority 3: Fallback to stored reserves
-    const ethReserve = parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
-    const tokenReserve = parseFloat(token.current_token_reserve?.toString() || '1000000');
+    // Priority 2: Use stored reserves from database
+    if (priceInEth === 0) {
+      const ethReserve = parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
+      const tokenReserve = parseFloat(token.current_token_reserve?.toString() || '1000000');
 
-    if (tokenReserve === 0) return 0;
+      if (tokenReserve > 0 && ethReserve > 0) {
+        priceInEth = ethReserve / tokenReserve;
+      }
+    }
 
-    const priceInEth = ethReserve / tokenReserve;
+    // Convert to USD using CURRENT live ETH price (not historical snapshot price)
     return priceInEth * ethPriceUSD;
   };
 
