@@ -25,46 +25,50 @@ export function About() {
 
   const loadData = async () => {
     try {
-      // Load total liquidity and convert to USD
+      const ethPrice = await getEthPriceUSD();
+
+      // Load all tokens (same as Tokens page)
       const { data: tokensData, error: tokensError } = await supabase
         .from('tokens')
-        .select('current_eth_reserve, initial_liquidity_eth');
+        .select('current_eth_reserve, initial_liquidity_eth, current_token_reserve, price_change_24h, total_volume_eth');
 
       if (tokensError) {
-        console.error('Database error loading liquidity:', tokensError);
+        console.error('Database error loading tokens:', tokensError);
       } else if (tokensData) {
+        // Calculate total liquidity
         const totalEth = tokensData.reduce((sum, token) => {
           const reserve = parseFloat(token.current_eth_reserve || token.initial_liquidity_eth || '0');
           return sum + reserve;
         }, 0);
-
-        const ethPrice = await getEthPriceUSD();
         setTotalLiquidityUSD(totalEth * ethPrice);
-      }
 
-      // Load platform stats
-      setTimeout(async () => {
-        try {
-          const { data: statsData, error: statsError } = await supabase
-            .from('platform_stats')
-            .select('total_market_cap_usd, total_volume_eth, token_count')
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .maybeSingle();
+        // Calculate total market cap (same calculation as Tokens page)
+        const TOKEN_TOTAL_SUPPLY = 1000000;
+        let totalMarketCapUsd = 0;
 
-          if (statsError) {
-            console.error('Database error loading platform stats:', statsError);
-          } else if (statsData) {
-            setPlatformStats({
-              totalMarketCapUsd: parseFloat(statsData.total_market_cap_usd || '0'),
-              totalVolumeEth: parseFloat(statsData.total_volume_eth || '0'),
-              tokenCount: statsData.token_count || 0,
-            });
+        for (const token of tokensData) {
+          const ethReserve = parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
+          const tokenReserve = parseFloat(token.current_token_reserve?.toString() || '1000000');
+
+          if (tokenReserve > 0 && ethReserve > 0 && !isNaN(ethReserve) && !isNaN(tokenReserve)) {
+            const priceInEth = ethReserve / tokenReserve;
+            const currentPriceUSD = priceInEth * ethPrice;
+            const marketCap = currentPriceUSD * TOKEN_TOTAL_SUPPLY;
+            totalMarketCapUsd += marketCap;
           }
-        } catch (err) {
-          console.error('Failed to load platform stats:', err);
         }
-      }, 1000);
+
+        // Calculate total volume
+        const totalVolumeEth = tokensData.reduce((sum, token) => {
+          return sum + parseFloat(token.total_volume_eth || '0');
+        }, 0);
+
+        setPlatformStats({
+          totalMarketCapUsd,
+          totalVolumeEth,
+          tokenCount: tokensData.length,
+        });
+      }
     } catch (err) {
       console.error('Failed to load data:', err);
     } finally {
