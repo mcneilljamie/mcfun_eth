@@ -476,6 +476,10 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
               </div>
             </div>
           </div>
+
+          <div className="flex items-center justify-center mt-4">
+            <span className="text-sm text-gray-500">Stats update in real time</span>
+          </div>
         </div>
 
         {snapshotCount < 2 && (
