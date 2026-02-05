@@ -467,19 +467,14 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                         </td>
                         <td className="py-4 px-4">
                           {tokenData ? (
-                            <div>
-                              <div className={`font-semibold ${
-                                tokenData.priceChange === null || tokenData.priceChange === 0
-                                  ? 'text-gray-500'
-                                  : tokenData.priceChange > 0
-                                  ? 'text-green-600'
-                                  : 'text-red-600'
-                              }`}>
-                                {tokenData.priceChange === null || tokenData.priceChange === 0 ? '–' : `${tokenData.priceChange >= 0 ? '+' : ''}${tokenData.priceChange.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`}
-                              </div>
-                              <div className="text-xs text-gray-500 mt-0.5">
-                                {tokenData.isNew ? t('tokens.table.sinceLaunch') : t('tokens.table.24h')}
-                              </div>
+                            <div className={`font-semibold ${
+                              tokenData.priceChange === null || tokenData.priceChange === 0
+                                ? 'text-gray-500'
+                                : tokenData.priceChange > 0
+                                ? 'text-green-600'
+                                : 'text-red-600'
+                            }`}>
+                              {tokenData.priceChange === null || tokenData.priceChange === 0 ? '–' : `${tokenData.priceChange >= 0 ? '+' : ''}${tokenData.priceChange.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`}
                             </div>
                           ) : (
                             <span className="text-gray-500">–</span>
@@ -569,20 +564,15 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                             {tokenData ? formatUSD(tokenData.currentPriceUSD, false) : '–'}
                           </div>
                           {tokenData && (
-                            <div className="flex items-center justify-end gap-1">
-                              <span className={`text-xs font-medium ${
-                                tokenData.priceChange === null || tokenData.priceChange === 0
-                                  ? 'text-gray-500'
-                                  : tokenData.priceChange > 0
-                                  ? 'text-green-600'
-                                  : 'text-red-600'
-                              }`}>
-                                {tokenData.priceChange === null || tokenData.priceChange === 0 ? '–' : `${tokenData.priceChange >= 0 ? '+' : ''}${tokenData.priceChange.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`}
-                              </span>
-                              <span className="text-xs text-gray-500">
-                                {tokenData.isNew ? t('tokens.table.launch') : t('tokens.table.24h')}
-                              </span>
-                            </div>
+                            <span className={`text-xs font-medium ${
+                              tokenData.priceChange === null || tokenData.priceChange === 0
+                                ? 'text-gray-500'
+                                : tokenData.priceChange > 0
+                                ? 'text-green-600'
+                                : 'text-red-600'
+                            }`}>
+                              {tokenData.priceChange === null || tokenData.priceChange === 0 ? '–' : `${tokenData.priceChange >= 0 ? '+' : ''}${tokenData.priceChange.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`}
+                            </span>
                           )}
                         </div>
                       </div>
