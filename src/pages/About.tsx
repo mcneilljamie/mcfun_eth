@@ -33,7 +33,7 @@ export function About() {
       const diff = Math.floor((now.getTime() - lastUpdated.getTime()) / 1000);
 
       if (diff < 60) {
-        setTimeAgo('just now');
+        setTimeAgo(`${diff} ${diff === 1 ? 'second' : 'seconds'} ago`);
       } else if (diff < 3600) {
         const minutes = Math.floor(diff / 60);
         setTimeAgo(`${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`);
@@ -44,7 +44,7 @@ export function About() {
     };
 
     updateTimeAgo();
-    const interval = setInterval(updateTimeAgo, 10000);
+    const interval = setInterval(updateTimeAgo, 1000);
     return () => clearInterval(interval);
   }, [lastUpdated]);
 
