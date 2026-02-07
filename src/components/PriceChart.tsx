@@ -244,6 +244,9 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
               </div>
             )}
           </div>
+          <p className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-500'} mt-1`}>
+            Updates with each new trade
+          </p>
         </div>
 
         {/* Toggle */}
