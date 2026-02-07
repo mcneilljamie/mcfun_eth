@@ -16,12 +16,37 @@ export function About() {
   const [totalLiquidityUSD, setTotalLiquidityUSD] = useState<number>(0);
   const [platformStats, setPlatformStats] = useState<PlatformStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [timeAgo, setTimeAgo] = useState<string>('');
 
   useEffect(() => {
     loadData();
     const interval = setInterval(loadData, 30000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (!lastUpdated) return;
+
+    const updateTimeAgo = () => {
+      const now = new Date();
+      const diff = Math.floor((now.getTime() - lastUpdated.getTime()) / 1000);
+
+      if (diff < 60) {
+        setTimeAgo('just now');
+      } else if (diff < 3600) {
+        const minutes = Math.floor(diff / 60);
+        setTimeAgo(`${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`);
+      } else {
+        const hours = Math.floor(diff / 3600);
+        setTimeAgo(`${hours} ${hours === 1 ? 'hour' : 'hours'} ago`);
+      }
+    };
+
+    updateTimeAgo();
+    const interval = setInterval(updateTimeAgo, 10000);
+    return () => clearInterval(interval);
+  }, [lastUpdated]);
 
   const loadData = async () => {
     try {
@@ -68,6 +93,8 @@ export function About() {
           totalVolumeEth,
           tokenCount: tokensData.length,
         });
+
+        setLastUpdated(new Date());
       }
     } catch (err) {
       console.error('Failed to load data:', err);
@@ -89,7 +116,12 @@ export function About() {
         </div>
 
         <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8 border-2 border-green-200">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 text-center mb-6">{t('aboutPage.platformStats')}</h2>
+          <div className="text-center mb-6">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">{t('aboutPage.platformStats')}</h2>
+            {timeAgo && (
+              <p className="text-xs text-gray-500 mt-1">Last updated {timeAgo}</p>
+            )}
+          </div>
 
           <div className="grid md:grid-cols-3 gap-4 sm:gap-6">
             <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
