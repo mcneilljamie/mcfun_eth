@@ -102,7 +102,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
         currentOrder.length === previousOrder.length &&
         currentOrder.some((addr, idx) => addr !== previousOrder[idx])) {
       setIsAnimating(true);
-      setTimeout(() => setIsAnimating(false), 600);
+      setTimeout(() => setIsAnimating(false), 850);
     }
 
     previousOrderRef.current = currentOrder;
