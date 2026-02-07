@@ -39,16 +39,6 @@ Deno.serve(async (req: Request) => {
     });
   }
 
-  const authResult = verifyCronSecret(req);
-  if (!authResult.authorized) {
-    console.warn("Unauthorized access attempt to track-eth-price");
-    return createUnauthorizedResponse(
-      authResult.error || "Unauthorized",
-      authResult.statusCode,
-      corsHeaders
-    );
-  }
-
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
