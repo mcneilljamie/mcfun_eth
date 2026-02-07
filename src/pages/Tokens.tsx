@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { Trophy, Search, TrendingUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { JsonRpcProvider } from 'ethers';
@@ -40,6 +40,8 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     }
     return 'marketCap';
   });
+  const [isAnimating, setIsAnimating] = useState(false);
+  const previousOrderRef = useRef<string[]>([]);
 
   const readOnlyProvider = useMemo(() => {
     const rpcUrl = DEFAULT_CHAIN_ID === 1
@@ -91,6 +93,20 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   useEffect(() => {
     localStorage.setItem('mcfun_tokens_sort_preference', sortBy);
   }, [sortBy]);
+
+  useEffect(() => {
+    const currentOrder = filteredTokens.map(t => t.token_address);
+    const previousOrder = previousOrderRef.current;
+
+    if (previousOrder.length > 0 &&
+        currentOrder.length === previousOrder.length &&
+        currentOrder.some((addr, idx) => addr !== previousOrder[idx])) {
+      setIsAnimating(true);
+      setTimeout(() => setIsAnimating(false), 600);
+    }
+
+    previousOrderRef.current = currentOrder;
+  }, [filteredTokens]);
 
   useEffect(() => {
     const activeProvider = provider || readOnlyProvider;
@@ -435,7 +451,9 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                       return (
                       <tr
                         key={token.id}
-                        className="border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer"
+                        className={`border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors ${
+                          isAnimating ? 'token-reordering' : ''
+                        }`}
                         onClick={() => onViewToken(token.token_address)}
                       >
                         <td className="py-4 px-4">
@@ -521,7 +539,9 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                   return (
                   <div
                     key={token.id}
-                    className="bg-gray-50 rounded-lg p-4 border border-gray-200 cursor-pointer hover:border-gray-300 transition-colors"
+                    className={`bg-gray-50 rounded-lg p-4 border border-gray-200 cursor-pointer hover:border-gray-300 transition-colors ${
+                      isAnimating ? 'token-reordering' : ''
+                    }`}
                     onClick={() => onViewToken(token.token_address)}
                   >
                     <div className="flex items-start justify-between mb-3">
