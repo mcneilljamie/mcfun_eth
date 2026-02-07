@@ -52,6 +52,18 @@ export function About() {
     try {
       const ethPrice = await getEthPriceUSD();
 
+      // Get the timestamp of the last ETH price update
+      const { data: ethPriceData } = await supabase
+        .from('eth_price_history')
+        .select('timestamp')
+        .order('timestamp', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (ethPriceData?.timestamp) {
+        setLastUpdated(new Date(ethPriceData.timestamp));
+      }
+
       // Load all tokens (same as Tokens page)
       const { data: tokensData, error: tokensError } = await supabase
         .from('tokens')
@@ -93,8 +105,6 @@ export function About() {
           totalVolumeEth,
           tokenCount: tokensData.length,
         });
-
-        setLastUpdated(new Date());
       }
     } catch (err) {
       console.error('Failed to load data:', err);
