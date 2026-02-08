@@ -29,7 +29,9 @@ export interface Token {
   launch_price_eth?: string;
   launch_eth_price_usd?: string;
   price_change_24h?: string;
+  last_swap_at?: string;
   created_at: string;
+  chain_id?: number;
 }
 
 export interface Swap {
