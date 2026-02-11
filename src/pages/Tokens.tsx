@@ -302,7 +302,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
             if (launchPriceUSD > 0 && currentPriceUSD > 0) {
               priceChange = ((currentPriceUSD - launchPriceUSD) / launchPriceUSD) * 100;
             }
-          } else if (token.price_change_24h && Math.abs(parseFloat(token.price_change_24h)) > 0.01) {
+          } else if (token.price_change_24h) {
             priceChange = parseFloat(token.price_change_24h);
           }
         }
