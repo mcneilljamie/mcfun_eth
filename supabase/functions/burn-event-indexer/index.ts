@@ -156,7 +156,7 @@ Deno.serve(async (req: Request) => {
 
             if (!ethPrice?.price_usd) {
               console.warn(`No ETH price available for burn calculation, skipping ${token.symbol}`);
-              continue;
+              return { success: false, hasBurn: false };
             }
 
             ethPriceUsd = parseFloat(ethPrice.price_usd);
