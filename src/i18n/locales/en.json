@@ -388,7 +388,7 @@
     "totalMarketCap": "Total Market Cap",
     "combinedFDV": "Combined FDV of all tokens",
     "totalLiquidity": "Total ETH Liquidity",
-    "totalEthInPools": "Total value of ETH in liquidity pools",
+    "totalEthInPools": "Both sides of all pools",
     "projectsListed": "Projects Listed",
     "totalProjects": "Total number of tokens launched",
     "trackHoldings": "Track Your Holdings",

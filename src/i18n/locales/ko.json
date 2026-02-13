@@ -388,7 +388,7 @@
     "totalMarketCap": "총 시가총액",
     "combinedFDV": "모든 토큰의 총 FDV",
     "totalLiquidity": "총 ETH 유동성",
-    "totalEthInPools": "유동성 풀의 총 ETH",
+    "totalEthInPools": "모든 풀의 양측",
     "projectsListed": "등록된 프로젝트",
     "totalProjects": "출시된 토큰의 총 수",
     "trackHoldings": "보유량 추적",

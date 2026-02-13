@@ -388,7 +388,7 @@
     "totalMarketCap": "总市值",
     "combinedFDV": "所有代币的综合FDV",
     "totalLiquidity": "总ETH流动性",
-    "totalEthInPools": "流动性池中的总ETH",
+    "totalEthInPools": "所有池的两侧",
     "projectsListed": "已列出的项目",
     "totalProjects": "已启动的代币总数",
     "trackHoldings": "跟踪您的持仓",

@@ -72,12 +72,12 @@ export function About() {
       if (tokensError) {
         console.error('Database error loading tokens:', tokensError);
       } else if (tokensData) {
-        // Calculate total liquidity
+        // Calculate total liquidity (both sides of the pool)
         const totalEth = tokensData.reduce((sum, token) => {
           const reserve = parseFloat(token.current_eth_reserve || token.initial_liquidity_eth || '0');
           return sum + reserve;
         }, 0);
-        setTotalLiquidityUSD(totalEth * ethPrice);
+        setTotalLiquidityUSD(totalEth * ethPrice * 2);
 
         // Calculate total market cap (same calculation as Tokens page)
         const TOKEN_TOTAL_SUPPLY = 1000000;

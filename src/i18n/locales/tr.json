@@ -388,7 +388,7 @@
     "totalMarketCap": "Toplam Piyasa Değeri",
     "combinedFDV": "Tüm tokenlerin toplam FDV'si",
     "totalLiquidity": "Toplam ETH Likiditesi",
-    "totalEthInPools": "Likidite havuzlarındaki toplam ETH",
+    "totalEthInPools": "Tüm havuzların her iki tarafı",
     "projectsListed": "Listelenen Projeler",
     "totalProjects": "Başlatılan toplam token sayısı",
     "trackHoldings": "Varlıklarınızı Takip Edin",

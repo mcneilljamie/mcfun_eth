@@ -388,7 +388,7 @@
     "totalMarketCap": "कुल मार्केट कैप",
     "combinedFDV": "सभी टोकन का संयुक्त FDV",
     "totalLiquidity": "कुल ETH लिक्विडिटी",
-    "totalEthInPools": "लिक्विडिटी पूल में कुल ETH",
+    "totalEthInPools": "सभी पूल के दोनों पक्ष",
     "projectsListed": "सूचीबद्ध परियोजनाएं",
     "totalProjects": "लॉन्च किए गए टोकन की कुल संख्या",
     "trackHoldings": "अपनी होल्डिंग्स ट्रैक करें",

@@ -388,7 +388,7 @@
     "totalMarketCap": "მთლიანი საბაზრო კაპიტალიზაცია",
     "combinedFDV": "ყველა ტოკენის გაერთიანებული FDV",
     "totalLiquidity": "ETH-ის მთლიანი ლიკვიდურობა",
-    "totalEthInPools": "მთლიანი ETH ლიკვიდურობის პულებში",
+    "totalEthInPools": "ყველა პულის ორივე მხარე",
     "projectsListed": "ჩამოთვლილი პროექტები",
     "totalProjects": "გაშვებული ტოკენების საერთო რაოდენობა",
     "trackHoldings": "აკვირდით თქვენს ჰოლდინგებს",

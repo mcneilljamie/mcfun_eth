@@ -388,7 +388,7 @@
     "totalMarketCap": "総時価総額",
     "combinedFDV": "全トークンの合計FDV",
     "totalLiquidity": "総ETH流動性",
-    "totalEthInPools": "流動性プール内の総ETH",
+    "totalEthInPools": "すべてのプールの両側",
     "projectsListed": "リストされたプロジェクト",
     "totalProjects": "ローンチされたトークンの総数",
     "trackHoldings": "保有を追跡",
