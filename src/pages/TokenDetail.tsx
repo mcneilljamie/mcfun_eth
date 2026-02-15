@@ -456,7 +456,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                 {formatUSD(ethToUSD(token.current_eth_reserve || liveReserves?.reserveETH || token.initial_liquidity_eth, ethPriceUSD) * 2, true)}
               </div>
               <div className="text-sm text-gray-500 mt-1">
-                {formatCurrency((token.current_eth_reserve || liveReserves?.reserveETH || token.initial_liquidity_eth) * 2)}
+                {formatCurrency(token.current_eth_reserve || liveReserves?.reserveETH || token.initial_liquidity_eth)} / {parseFloat(token.current_token_reserve?.toString() || liveReserves?.reserveToken || '0').toLocaleString()} {token.symbol}
               </div>
             </div>
 
