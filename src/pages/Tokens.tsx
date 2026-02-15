@@ -20,7 +20,7 @@ interface TokenEnrichedData {
   marketCap: number;
   priceChange: number | null;
   isNew: boolean;
-  liquidityETH: string;
+  liquidityUSD: number;
 }
 
 export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
@@ -160,8 +160,8 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
         const bMarketCap = bData?.marketCap || 0;
         return bMarketCap - aMarketCap;
       } else if (sortBy === 'liquidity') {
-        const aLiquidity = parseFloat(aData?.liquidityETH || '0');
-        const bLiquidity = parseFloat(bData?.liquidityETH || '0');
+        const aLiquidity = aData?.liquidityUSD || 0;
+        const bLiquidity = bData?.liquidityUSD || 0;
         return bLiquidity - aLiquidity;
       } else if (sortBy === 'age-newest') {
         const aTime = new Date(a.created_at).getTime();
@@ -277,8 +277,9 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
         const TOKEN_TOTAL_SUPPLY = 1000000;
         const marketCap = currentPriceUSD * TOKEN_TOTAL_SUPPLY;
 
-        // Use database reserves for liquidity
-        const liquidityETH = dbPrice?.eth_reserve || token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString();
+        // Use database reserves for liquidity - calculate USD value for both sides of the pool
+        const ethReserveValue = parseFloat(dbPrice?.eth_reserve || token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
+        const liquidityUSD = ethReserveValue * ethPriceUSD * 2;
 
         const now = Date.now();
         const createdAt = new Date(token.created_at);
@@ -312,7 +313,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
           marketCap,
           priceChange,
           isNew,
-          liquidityETH
+          liquidityUSD
         };
       }
 
@@ -505,7 +506,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                         </td>
                         <td className="py-4 px-4">
                           <div className="font-semibold text-gray-900">
-                            {tokenData ? formatCurrency(tokenData.liquidityETH) : '–'}
+                            {tokenData ? formatUSD(tokenData.liquidityUSD, true) : '–'}
                           </div>
                         </td>
                         <td className="py-4 px-4">
@@ -607,7 +608,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">{t('tokens.table.liquidity')}:</span>
                         <span className="font-semibold text-gray-900">
-                          {tokenData ? formatCurrency(tokenData.liquidityETH) : '–'}
+                          {tokenData ? formatUSD(tokenData.liquidityUSD, true) : '–'}
                         </span>
                       </div>
 
