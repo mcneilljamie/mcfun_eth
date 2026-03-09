@@ -54,8 +54,9 @@ Deno.serve(async (req: Request) => {
 
     const provider = await createProviderWithFailover();
     const currentBlockNumber = await provider.getBlockNumber();
-    const fortyEightHoursAgo = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
-    const { data: recentSwaps } = await supabase.from("swaps").select("token_address").eq("chain_id", CHAIN_ID).gte("created_at", fortyEightHoursAgo);
+    // Only snapshot tokens with trades in the last 5 minutes (actively trading)
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    const { data: recentSwaps } = await supabase.from("swaps").select("token_address").eq("chain_id", CHAIN_ID).gte("created_at", fiveMinutesAgo);
     const activeTokenAddresses = new Set(recentSwaps?.map(s => s.token_address) || []);
     if (activeTokenAddresses.size === 0) {
       return new Response(JSON.stringify({message: "No active tokens", snapshotsCreated: 0}), { headers: corsHeaders });
