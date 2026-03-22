@@ -215,17 +215,9 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
         setError(`Insufficient ETH balance. You have ${formatNumber(ethBalance, 6)} ETH but are trying to spend ${amountIn} ETH.`);
         return;
       }
-      if (ethBalanceNum - amountInNum < 0.002) {
-        setError(`You need to keep at least 0.002 ETH for gas fees. Your swap amount plus gas would exceed your balance.`);
-        return;
-      }
     } else {
       if (amountInNum > tokenBalanceNum) {
         setError(`Insufficient ${selectedTokenData.symbol} balance. You have ${formatNumber(tokenBalance, 4)} but are trying to sell ${amountIn}.`);
-        return;
-      }
-      if (ethBalanceNum < 0.002) {
-        setError('Insufficient ETH for gas fees. You need at least 0.002 ETH to pay for the transaction.');
         return;
       }
     }
