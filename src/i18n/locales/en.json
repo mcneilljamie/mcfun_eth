@@ -50,7 +50,7 @@
       },
       "step2": {
         "title": "Add Liquidity",
-        "description": "Deposit at least 0.1 ETH to initialize your token's liquidity pool"
+        "description": "Deposit ETH to initialize your token's liquidity pool"
       },
       "step3": {
         "title": "Start Trading",
