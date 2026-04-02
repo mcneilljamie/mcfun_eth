@@ -287,8 +287,8 @@
       },
       "trading": {
         "title": "Frais d'Échange",
-        "amount": "0,4%",
-        "description": "Chaque échange de tokens sur notre plateforme entraîne des frais de 0,4%. Ces frais vont à la plateforme pour soutenir l'infrastructure, le développement et les améliorations continues."
+        "amount": "0,4% - 0,8%",
+        "description": "Chaque échange de tokens entraîne des frais modestes : 0,4% sur Ethereum, 0,8% sur Base. Ces frais soutiennent l'infrastructure de la plateforme, le développement et les améliorations continues."
       }
     },
     "security": {

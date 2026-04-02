@@ -287,8 +287,8 @@
       },
       "trading": {
         "title": "Taxas de Negociação",
-        "amount": "0,4%",
-        "description": "Cada troca de tokens em nossa plataforma incorre em uma taxa de 0,4%. Esta taxa vai para a plataforma para apoiar infraestrutura, desenvolvimento e melhorias contínuas."
+        "amount": "0,4% - 0,8%",
+        "description": "Cada troca de tokens incorre em uma pequena taxa: 0,4% no Ethereum, 0,8% no Base. Esta taxa apoia a infraestrutura da plataforma, desenvolvimento e melhorias contínuas."
       }
     },
     "security": {

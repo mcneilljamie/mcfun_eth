@@ -287,8 +287,8 @@
       },
       "trading": {
         "title": "Commissioni di Scambio",
-        "amount": "0,4%",
-        "description": "Ogni scambio di token sulla nostra piattaforma comporta una commissione dello 0,4%. Questa commissione va alla piattaforma per supportare l'infrastruttura, lo sviluppo e i miglioramenti continui."
+        "amount": "0,4% - 0,8%",
+        "description": "Ogni scambio di token comporta una piccola commissione: 0,4% su Ethereum, 0,8% su Base. Questa commissione supporta l'infrastruttura della piattaforma, lo sviluppo e i miglioramenti continui."
       }
     },
     "security": {

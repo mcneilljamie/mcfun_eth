@@ -287,8 +287,8 @@
       },
       "trading": {
         "title": "Phí Giao Dịch",
-        "amount": "0.4%",
-        "description": "Mỗi lần hoán đổi token trên nền tảng của chúng tôi phát sinh phí 0.4%. Phí này được chuyển cho nền tảng để hỗ trợ cơ sở hạ tầng, phát triển và cải tiến liên tục."
+        "amount": "0.4% - 0.8%",
+        "description": "Mỗi lần hoán đổi token phát sinh một khoản phí nhỏ: 0.4% trên Ethereum, 0.8% trên Base. Phí này hỗ trợ cơ sở hạ tầng nền tảng, phát triển và cải tiến liên tục."
       }
     },
     "security": {

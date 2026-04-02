@@ -287,8 +287,8 @@
       },
       "trading": {
         "title": "Tarifas de Comercio",
-        "amount": "0.4%",
-        "description": "Cada intercambio de tokens en nuestra plataforma incurre en una tarifa del 0.4%. Esta tarifa va a la plataforma para soportar infraestructura, desarrollo y mejoras continuas."
+        "amount": "0.4% - 0.8%",
+        "description": "Cada intercambio de tokens incurre en una pequeña tarifa: 0.4% en Ethereum, 0.8% en Base. Esta tarifa apoya la infraestructura de la plataforma, el desarrollo y las mejoras continuas."
       }
     },
     "security": {

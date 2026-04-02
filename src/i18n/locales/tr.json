@@ -287,8 +287,8 @@
       },
       "trading": {
         "title": "İşlem Ücretleri",
-        "amount": "%0.4",
-        "description": "Platformumuzda her token takası %0.4 ücrete tabidir. Bu ücret, altyapıyı, geliştirmeyi ve devam eden iyileştirmeleri desteklemek için platforma gider."
+        "amount": "%0.4 - %0.8",
+        "description": "Her token takası küçük bir ücrete tabidir: Ethereum'da %0.4, Base'de %0.8. Bu ücret, platform altyapısını, geliştirmeyi ve devam eden iyileştirmeleri destekler."
       }
     },
     "security": {

@@ -287,8 +287,8 @@
       },
       "trading": {
         "title": "Biaya Trading",
-        "amount": "0.4%",
-        "description": "Setiap swap token di platform kami dikenakan biaya 0.4%. Biaya ini masuk ke platform untuk mendukung infrastruktur, pengembangan, dan peningkatan berkelanjutan."
+        "amount": "0.4% - 0.8%",
+        "description": "Setiap swap token dikenakan biaya kecil: 0.4% di Ethereum, 0.8% di Base. Biaya ini mendukung infrastruktur platform, pengembangan, dan peningkatan berkelanjutan."
       }
     },
     "security": {
