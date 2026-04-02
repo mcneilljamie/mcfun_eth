@@ -36,7 +36,7 @@ export function TokenSelector({ selectedToken, onSelectToken, disabled = false }
       loadEthPrice();
       setTimeout(() => searchInputRef.current?.focus(), 100);
     }
-  }, [isOpen, activeChainId]);
+  }, [isOpen]);
 
   useEffect(() => {
     let result = tokens;
@@ -89,9 +89,8 @@ export function TokenSelector({ selectedToken, onSelectToken, disabled = false }
       const { data, error} = await supabase
         .from('tokens')
         .select('*')
-        .eq('chain_id', activeChainId)
         .order('created_at', { ascending: false })
-        .limit(50);
+        .limit(100);
 
       if (error) throw error;
 
@@ -221,7 +220,12 @@ export function TokenSelector({ selectedToken, onSelectToken, disabled = false }
                           <span className="text-sm font-semibold text-gray-900">{token.symbol}</span>
                           <span className="text-xs text-gray-500 truncate">{token.name}</span>
                         </div>
-                        <span className="text-xs text-gray-400 font-mono truncate">{token.token_address.slice(0, 10)}...{token.token_address.slice(-8)}</span>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-xs text-gray-400 font-mono truncate">{token.token_address.slice(0, 10)}...{token.token_address.slice(-8)}</span>
+                          <span className="text-xs px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded">
+                            {token.chain_id === 1 ? 'ETH' : token.chain_id === 8453 ? 'Base' : 'Unknown'}
+                          </span>
+                        </div>
                       </div>
                     </div>
                     <div className="flex flex-col items-end flex-shrink-0 ml-2">

@@ -19,7 +19,7 @@ interface TradeProps {
 export function Trade({ selectedToken, onShowToast }: TradeProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { account, signer, provider, connect } = useWeb3();
+  const { account, signer, provider, connect, chainId, switchNetwork } = useWeb3();
 
   const [selectedTokenData, setSelectedTokenData] = useState<Token | null>(selectedToken || null);
 
@@ -45,9 +45,34 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
 
   useEffect(() => {
     if (selectedToken) {
-      setSelectedTokenData(selectedToken);
+      handleTokenSelection(selectedToken);
     }
   }, [selectedToken]);
+
+  const handleTokenSelection = async (token: Token) => {
+    if (!account) {
+      setSelectedTokenData(token);
+      return;
+    }
+
+    if (chainId && token.chain_id !== chainId) {
+      try {
+        await switchNetwork(token.chain_id);
+        onShowToast({
+          message: `Switched to ${token.chain_id === 1 ? 'Ethereum' : 'Base'}`,
+          type: 'success'
+        });
+      } catch (error) {
+        onShowToast({
+          message: `Failed to switch network. Please switch to ${token.chain_id === 1 ? 'Ethereum' : 'Base'} manually.`,
+          type: 'error'
+        });
+        console.error('Failed to switch network:', error);
+        return;
+      }
+    }
+    setSelectedTokenData(token);
+  };
 
   useEffect(() => {
     if (selectedTokenData && provider) {
@@ -318,7 +343,7 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
               </label>
               <TokenSelector
                 selectedToken={selectedTokenData}
-                onSelectToken={setSelectedTokenData}
+                onSelectToken={handleTokenSelection}
                 disabled={isSwapping}
               />
             </div>
