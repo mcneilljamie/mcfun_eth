@@ -84,6 +84,10 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
     if (account && chainId !== targetChainId) {
       try {
         await switchNetwork(targetChainId);
+        onShowToast({
+          type: 'success',
+          message: `Switched to ${getNetworkShortName(targetChainId)}`
+        });
       } catch (err) {
         console.error('Failed to switch network:', err);
         onShowToast({
@@ -109,8 +113,16 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
     }
 
     if (!isWalletOnCorrectChain) {
-      setError(`Please switch your wallet to ${getNetworkShortName(selectedChainId)} network to launch on this blockchain.`);
-      return;
+      try {
+        await switchNetwork(selectedChainId);
+        onShowToast({
+          type: 'success',
+          message: `Switched to ${getNetworkShortName(selectedChainId)}`
+        });
+      } catch (err) {
+        setError(`Please switch your wallet to ${getNetworkShortName(selectedChainId)} network to launch on this blockchain.`);
+        return;
+      }
     }
 
     setError('');
@@ -348,23 +360,6 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                   </button>
                 ))}
               </div>
-              {account && !isWalletOnCorrectChain && (
-                <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                  <div className="flex items-start space-x-2">
-                    <Info className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                    <div className="text-sm text-blue-800">
-                      <p className="font-medium mb-1">Network Switch Required</p>
-                      <p>Your wallet is on {getNetworkShortName(chainId || DEFAULT_CHAIN_ID)}, but you selected {getNetworkShortName(selectedChainId)}.</p>
-                      <button
-                        onClick={() => handleChainSelect(selectedChainId)}
-                        className="mt-2 text-blue-600 hover:text-blue-700 font-medium underline"
-                      >
-                        Switch to {getNetworkShortName(selectedChainId)}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
 
             <div>
