@@ -9,7 +9,6 @@ import { useWeb3 } from '../lib/web3';
 import { ToastMessage } from '../App';
 import { DEFAULT_CHAIN_ID } from '../contracts/addresses';
 import { ChainFilter } from '../components/ChainFilter';
-import { ChainBadge } from '../components/ChainBadge';
 
 interface TokensProps {
   onSelectToken: (token: Token) => void;
@@ -463,6 +462,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.priceChange')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.marketCap')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.liquidity')}</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700">Blockchain</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.created')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.action')}</th>
                     </tr>
@@ -496,10 +496,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                         </td>
                         <td className="py-4 px-4">
                           <div className="min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <div className="font-semibold text-gray-900 break-words">{token.name}</div>
-                              <ChainBadge chainId={token.chain_id} size="sm" />
-                            </div>
+                            <div className="font-semibold text-gray-900 break-words mb-1">{token.name}</div>
                             <div className="text-sm text-gray-500 whitespace-nowrap">{token.symbol}</div>
                           </div>
                         </td>
@@ -531,6 +528,11 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                         <td className="py-4 px-4">
                           <div className="font-semibold text-gray-900">
                             {tokenData ? formatUSD(tokenData.liquidityUSD, true) : '–'}
+                          </div>
+                        </td>
+                        <td className="py-4 px-4">
+                          <div className="text-sm text-gray-900">
+                            {token.chain_id === 1 ? 'Ethereum' : token.chain_id === 8453 ? 'Base' : 'Unknown'}
                           </div>
                         </td>
                         <td className="py-4 px-4">
@@ -597,10 +599,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                     </div>
 
                     <div className="mb-3">
-                      <div className="flex items-center gap-2 mb-1">
-                        <div className="font-bold text-gray-900 text-lg break-words">{token.name}</div>
-                        <ChainBadge chainId={token.chain_id} size="sm" />
-                      </div>
+                      <div className="font-bold text-gray-900 text-lg break-words mb-1">{token.name}</div>
                       <div className="text-sm text-gray-500 whitespace-nowrap">{token.symbol}</div>
                     </div>
 
@@ -636,6 +635,13 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                         <span className="text-sm text-gray-600">{t('tokens.table.liquidity')}:</span>
                         <span className="font-semibold text-gray-900">
                           {tokenData ? formatUSD(tokenData.liquidityUSD, true) : '–'}
+                        </span>
+                      </div>
+
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Blockchain:</span>
+                        <span className="text-sm text-gray-900">
+                          {token.chain_id === 1 ? 'Ethereum' : token.chain_id === 8453 ? 'Base' : 'Unknown'}
                         </span>
                       </div>
 

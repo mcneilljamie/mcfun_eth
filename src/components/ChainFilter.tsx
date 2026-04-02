@@ -10,13 +10,13 @@ export function ChainFilter({ selectedChain, onChainChange }: ChainFilterProps) 
   const { t } = useTranslation();
 
   return (
-    <div className="flex items-center gap-2 bg-slate-800/50 rounded-lg p-1">
+    <div className="flex items-center gap-2">
       <button
         onClick={() => onChainChange('all')}
-        className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+        className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
           selectedChain === 'all'
-            ? 'bg-blue-600 text-white'
-            : 'text-slate-300 hover:text-white hover:bg-slate-700/50'
+            ? 'bg-gray-900 text-white shadow-sm'
+            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
         }`}
       >
         All Chains
@@ -25,10 +25,10 @@ export function ChainFilter({ selectedChain, onChainChange }: ChainFilterProps) 
         <button
           key={chainId}
           onClick={() => onChainChange(chainId)}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+          className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
             selectedChain === chainId
-              ? 'bg-blue-600 text-white'
-              : 'text-slate-300 hover:text-white hover:bg-slate-700/50'
+              ? 'bg-gray-900 text-white shadow-sm'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
           {getNetworkShortName(chainId)}
