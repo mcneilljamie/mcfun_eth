@@ -3,7 +3,7 @@ import { Rocket, AlertCircle, Loader, Wallet, Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '../lib/web3';
 import { createToken, getETHBalance } from '../lib/contracts';
-import { getMinLiquidityETH, MIN_LIQUIDITY_PERCENT, RECOMMENDED_LIQUIDITY_PERCENT, TOTAL_SUPPLY, MAX_NAME_LENGTH, MAX_SYMBOL_LENGTH, DEFAULT_CHAIN_ID } from '../contracts/addresses';
+import { getMinLiquidityETH, MIN_LIQUIDITY_PERCENT, RECOMMENDED_LIQUIDITY_PERCENT, TOTAL_SUPPLY, MAX_NAME_LENGTH, MAX_SYMBOL_LENGTH, DEFAULT_CHAIN_ID, SUPPORTED_CHAIN_IDS, getNetworkShortName, isChainSupported } from '../contracts/addresses';
 import { formatNumber } from '../lib/utils';
 import { LaunchCelebration } from '../components/LaunchCelebration';
 import { ToastMessage } from '../App';
@@ -15,7 +15,12 @@ interface LaunchProps {
 
 export function Launch({ onNavigate, onShowToast }: LaunchProps) {
   const { t } = useTranslation();
-  const { account, signer, connect, provider, chainId } = useWeb3();
+  const { account, signer, connect, provider, chainId, switchNetwork } = useWeb3();
+
+  const [selectedChainId, setSelectedChainId] = useState<number>(() => {
+    const saved = localStorage.getItem('mcfun_launch_chain');
+    return saved ? parseInt(saved) : DEFAULT_CHAIN_ID;
+  });
 
   const [name, setName] = useState('');
   const [symbol, setSymbol] = useState('');
@@ -25,8 +30,7 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
   const [xUrl, setXUrl] = useState('');
   const [liquidityPercent, setLiquidityPercent] = useState(RECOMMENDED_LIQUIDITY_PERCENT);
 
-  const currentChainId = chainId || DEFAULT_CHAIN_ID;
-  const minLiquidityETH = getMinLiquidityETH(currentChainId);
+  const minLiquidityETH = getMinLiquidityETH(selectedChainId);
   const [ethAmount, setEthAmount] = useState(minLiquidityETH);
 
   const [ethBalance, setEthBalance] = useState<string>('0');
@@ -70,6 +74,28 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
     setEthAmount(minLiquidityETH);
   }, [minLiquidityETH]);
 
+  useEffect(() => {
+    localStorage.setItem('mcfun_launch_chain', selectedChainId.toString());
+  }, [selectedChainId]);
+
+  const handleChainSelect = async (targetChainId: number) => {
+    setSelectedChainId(targetChainId);
+
+    if (account && chainId !== targetChainId) {
+      try {
+        await switchNetwork(targetChainId);
+      } catch (err) {
+        console.error('Failed to switch network:', err);
+        onShowToast({
+          type: 'error',
+          message: `Failed to switch to ${getNetworkShortName(targetChainId)}. Please switch manually in your wallet.`
+        });
+      }
+    }
+  };
+
+  const isWalletOnCorrectChain = !account || chainId === selectedChainId;
+
   const totalEthNeeded = parseFloat(ethAmount);
   const hasInsufficientBalance = !!(account && parseFloat(ethBalance) < totalEthNeeded);
   const balanceShortfall = hasInsufficientBalance
@@ -79,6 +105,11 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
   const handleLaunch = async () => {
     if (!signer || !account) {
       connect();
+      return;
+    }
+
+    if (!isWalletOnCorrectChain) {
+      setError(`Please switch your wallet to ${getNetworkShortName(selectedChainId)} network to launch on this blockchain.`);
       return;
     }
 
@@ -277,6 +308,65 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
           )}
 
           <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Select Blockchain
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                {SUPPORTED_CHAIN_IDS.map((chainId) => (
+                  <button
+                    key={chainId}
+                    type="button"
+                    onClick={() => handleChainSelect(chainId)}
+                    disabled={isLaunching}
+                    className={`relative p-4 rounded-lg border-2 transition-all ${
+                      selectedChainId === chainId
+                        ? 'border-gray-900 bg-gray-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    } ${isLaunching ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                  >
+                    <div className="flex flex-col items-start">
+                      <div className="flex items-center justify-between w-full mb-2">
+                        <span className="font-semibold text-gray-900">
+                          {getNetworkShortName(chainId)}
+                        </span>
+                        {selectedChainId === chainId && (
+                          <div className="w-5 h-5 bg-gray-900 rounded-full flex items-center justify-center">
+                            <div className="w-2 h-2 bg-white rounded-full"></div>
+                          </div>
+                        )}
+                      </div>
+                      <span className="text-sm text-gray-600">
+                        Min: {getMinLiquidityETH(chainId)} ETH
+                      </span>
+                    </div>
+                    {account && chainId !== selectedChainId && chainId === selectedChainId && (
+                      <div className="mt-2 text-xs text-blue-600">
+                        Click to switch network
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+              {account && !isWalletOnCorrectChain && (
+                <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="flex items-start space-x-2">
+                    <Info className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <div className="text-sm text-blue-800">
+                      <p className="font-medium mb-1">Network Switch Required</p>
+                      <p>Your wallet is on {getNetworkShortName(chainId || DEFAULT_CHAIN_ID)}, but you selected {getNetworkShortName(selectedChainId)}.</p>
+                      <button
+                        onClick={() => handleChainSelect(selectedChainId)}
+                        className="mt-2 text-blue-600 hover:text-blue-700 font-medium underline"
+                      >
+                        Switch to {getNetworkShortName(selectedChainId)}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 {t('launch.form.tokenName')}
