@@ -71,7 +71,7 @@
         },
         "lowCost": {
           "title": "저렴한 비용",
-          "description": "Easiest place to launch on Ethereum"
+          "description": "Easiest place to launch on Ethereum and Base"
         }
       }
     }
@@ -140,7 +140,7 @@
     "priceImpact": "가격 영향:",
     "slippageTolerance": "슬리피지 허용치:",
     "slippageLabel": "슬리피지 허용치: {{percent}}%",
-    "tradingFee": "거래 수수료 (0.4%):",
+    "tradingFee": "거래 수수료:",
     "minReceived": "최소 수령액:",
     "swapButton": "토큰 스왑",
     "swapping": "스왑 중...",

@@ -71,7 +71,7 @@
         },
         "lowCost": {
           "title": "कम लागत",
-          "description": "Easiest place to launch on Ethereum"
+          "description": "Easiest place to launch on Ethereum and Base"
         }
       }
     }
@@ -140,7 +140,7 @@
     "priceImpact": "मूल्य प्रभाव:",
     "slippageTolerance": "स्लिपेज सहनशीलता:",
     "slippageLabel": "स्लिपेज सहनशीलता: {{percent}}%",
-    "tradingFee": "ट्रेडिंग शुल्क (0.4%):",
+    "tradingFee": "ट्रेडिंग शुल्क:",
     "minReceived": "न्यूनतम प्राप्त:",
     "swapButton": "टोकन स्वैप करें",
     "swapping": "स्वैप हो रहा है...",

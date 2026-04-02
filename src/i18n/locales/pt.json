@@ -71,7 +71,7 @@
         },
         "lowCost": {
           "title": "Baixo Custo",
-          "description": "Easiest place to launch on Ethereum"
+          "description": "Easiest place to launch on Ethereum and Base"
         }
       }
     }
@@ -140,7 +140,7 @@
     "priceImpact": "Impacto no Preço:",
     "slippageTolerance": "Tolerância ao Deslizamento:",
     "slippageLabel": "Tolerância ao Deslizamento: {{percent}}%",
-    "tradingFee": "Taxa de Negociação (0,4%):",
+    "tradingFee": "Taxa de Negociação:",
     "minReceived": "Mínimo Recebido:",
     "swapButton": "Trocar Tokens",
     "swapping": "Trocando...",

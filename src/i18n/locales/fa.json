@@ -71,7 +71,7 @@
         },
         "lowCost": {
           "title": "هزینه پایین",
-          "description": "Easiest place to launch on Ethereum"
+          "description": "Easiest place to launch on Ethereum and Base"
         }
       }
     }
@@ -140,7 +140,7 @@
     "priceImpact": "تأثیر قیمت:",
     "slippageTolerance": "تحمل لغزش:",
     "slippageLabel": "تحمل لغزش: {{percent}}٪",
-    "tradingFee": "کارمزد معامله (0.4٪):",
+    "tradingFee": "کارمزد معامله:",
     "minReceived": "حداقل دریافتی:",
     "swapButton": "تبادل توکن‌ها",
     "swapping": "در حال تبادل...",

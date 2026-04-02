@@ -71,7 +71,7 @@
         },
         "lowCost": {
           "title": "Chi Phí Thấp",
-          "description": "Easiest place to launch on Ethereum"
+          "description": "Easiest place to launch on Ethereum and Base"
         }
       }
     }
@@ -140,7 +140,7 @@
     "priceImpact": "Tác Động Giá:",
     "slippageTolerance": "Dung Sai Trượt Giá:",
     "slippageLabel": "Dung Sai Trượt Giá: {{percent}}%",
-    "tradingFee": "Phí Giao Dịch (0.4%):",
+    "tradingFee": "Phí Giao Dịch:",
     "minReceived": "Tối Thiểu Nhận Được:",
     "swapButton": "Hoán Đổi Token",
     "swapping": "Đang hoán đổi...",

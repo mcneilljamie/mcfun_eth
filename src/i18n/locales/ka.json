@@ -71,7 +71,7 @@
         },
         "lowCost": {
           "title": "დაბალი ღირებულება",
-          "description": "Easiest place to launch on Ethereum"
+          "description": "Easiest place to launch on Ethereum and Base"
         }
       }
     }
@@ -140,7 +140,7 @@
     "priceImpact": "ფასის გავლენა:",
     "slippageTolerance": "სრიალის ტოლერანტობა:",
     "slippageLabel": "სრიალის ტოლერანტობა: {{percent}}%",
-    "tradingFee": "ვაჭრობის საკომისიო (0.4%):",
+    "tradingFee": "ვაჭრობის საკომისიო:",
     "minReceived": "მინიმუმ მიღებული:",
     "swapButton": "ტოკენების გაცვლა",
     "swapping": "გაცვლა...",

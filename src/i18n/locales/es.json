@@ -20,7 +20,7 @@
     "hero": {
       "title": "Lanza Tu Token",
       "subtitle": "Simple. Seguro. Justo.",
-      "description": "La forma más fácil y económica de lanzar tokens en Ethereum con liquidez integrada y seguridad inquebrantable.",
+      "description": "La forma más fácil y económica de lanzar tokens en Ethereum y Base con liquidez integrada y seguridad inquebrantable.",
       "launchNow": "Lanzar Token Ahora",
       "explore": "Explorar Tokens"
     },
@@ -59,7 +59,7 @@
     },
     "why": {
       "title": "¿Por Qué Elegir McFun?",
-      "description": "Hemos construido la plataforma más simple, segura y rentable para lanzar tokens en Ethereum. Sin parámetros complejos, sin tarifas ocultas, sin estafas. Solo lanzamientos de tokens puros y justos.",
+      "description": "Hemos construido la plataforma más simple, segura y rentable para lanzar tokens en Ethereum y Base. Sin parámetros complejos, sin tarifas ocultas, sin estafas. Solo lanzamientos de tokens puros y justos.",
       "benefits": {
         "simple": {
           "title": "Simple",
@@ -71,7 +71,7 @@
         },
         "lowCost": {
           "title": "Bajo Costo",
-          "description": "Easiest place to launch on Ethereum"
+          "description": "El lugar más fácil para lanzar en Ethereum y Base"
         }
       }
     }
@@ -140,7 +140,7 @@
     "priceImpact": "Impacto de Precio:",
     "slippageTolerance": "Tolerancia de Deslizamiento:",
     "slippageLabel": "Tolerancia de Deslizamiento: {{percent}}%",
-    "tradingFee": "Tarifa de Comercio (0.4%):",
+    "tradingFee": "Tarifa de Comercio:",
     "minReceived": "Mínimo Recibido:",
     "swapButton": "Intercambiar Tokens",
     "swapping": "Intercambiando...",

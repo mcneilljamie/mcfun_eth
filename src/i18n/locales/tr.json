@@ -71,7 +71,7 @@
         },
         "lowCost": {
           "title": "Düşük Maliyet",
-          "description": "Easiest place to launch on Ethereum"
+          "description": "Easiest place to launch on Ethereum and Base"
         }
       }
     }
@@ -140,7 +140,7 @@
     "priceImpact": "Fiyat Etkisi:",
     "slippageTolerance": "Kayma Toleransı:",
     "slippageLabel": "Kayma Toleransı: {{percent}}%",
-    "tradingFee": "İşlem Ücreti (%0.4):",
+    "tradingFee": "İşlem Ücreti:",
     "minReceived": "Minimum Alınacak:",
     "swapButton": "Token Takası Yap",
     "swapping": "Takas Yapılıyor...",

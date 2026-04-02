@@ -71,7 +71,7 @@
         },
         "lowCost": {
           "title": "Biaya Rendah",
-          "description": "Easiest place to launch on Ethereum"
+          "description": "Easiest place to launch on Ethereum and Base"
         }
       }
     }
@@ -140,7 +140,7 @@
     "priceImpact": "Dampak Harga:",
     "slippageTolerance": "Toleransi Slippage:",
     "slippageLabel": "Toleransi Slippage: {{percent}}%",
-    "tradingFee": "Biaya Trading (0.4%):",
+    "tradingFee": "Biaya Trading:",
     "minReceived": "Minimum Diterima:",
     "swapButton": "Tukar Token",
     "swapping": "Menukar...",

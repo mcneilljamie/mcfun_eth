@@ -20,7 +20,7 @@
     "hero": {
       "title": "Launch Your Token",
       "subtitle": "Simple. Safe. Fair.",
-      "description": "The easiest and fastest way to launch tokens on Ethereum with built-in liquidity and unruggable security.",
+      "description": "The easiest and fastest way to launch tokens on Ethereum and Base with built-in liquidity and unruggable security.",
       "launchNow": "Launch Token Now",
       "explore": "Explore Tokens"
     },
@@ -59,7 +59,7 @@
     },
     "why": {
       "title": "Why Choose McFun?",
-      "description": "We've built the simplest, safest, and most cost-effective platform for launching tokens on Ethereum. No complex parameters, no hidden fees, no rug pulls. Just pure, fair token launches.",
+      "description": "We've built the simplest, safest, and most cost-effective platform for launching tokens on Ethereum and Base. No complex parameters, no hidden fees, no rug pulls. Just pure, fair token launches.",
       "benefits": {
         "simple": {
           "title": "Simple",
@@ -71,7 +71,7 @@
         },
         "lowCost": {
           "title": "Low Cost",
-          "description": "Easiest place to launch on Ethereum"
+          "description": "Easiest place to launch on Ethereum and Base"
         }
       }
     }
@@ -140,7 +140,7 @@
     "priceImpact": "Price Impact:",
     "slippageTolerance": "Slippage Tolerance:",
     "slippageLabel": "Slippage Tolerance: {{percent}}%",
-    "tradingFee": "Trading Fee (0.4%):",
+    "tradingFee": "Trading Fee:",
     "minReceived": "Minimum Received:",
     "swapButton": "Swap Tokens",
     "swapping": "Swapping...",
@@ -197,7 +197,7 @@
   },
   "about": {
     "title": "About McFun",
-    "subtitle": "The simplest and safest way to launch tokens on Ethereum with built-in liquidity and unruggable security.",
+    "subtitle": "The simplest and safest way to launch tokens on Ethereum and Base with built-in liquidity and unruggable security.",
     "howWorks": {
       "title": "How McFun Works",
       "step1": {
@@ -206,7 +206,7 @@
       },
       "step2": {
         "title": "2. Automatic Liquidity Pool",
-        "description": "Immediately after token creation, an Automated Market Maker (AMM) liquidity pool is created. You deposit ETH (minimum 0.1 ETH) alongside your allocated tokens to form the initial liquidity. Trading is enabled instantly using the constant product formula (x * y = k), similar to Uniswap V2."
+        "description": "Immediately after token creation, an Automated Market Maker (AMM) liquidity pool is created. You deposit ETH (minimum 0.1 ETH on Ethereum, 0.01 ETH on Base) alongside your allocated tokens to form the initial liquidity. Trading is enabled instantly using the constant product formula (x * y = k), similar to Uniswap V2."
       },
       "step3": {
         "title": "3. Liquidity Burning",
@@ -253,7 +253,7 @@
       },
       "extremeLowFees": {
         "title": "Extremely Low Fees",
-        "description": "Only 0.4% trading fee. No launch fees, no lock fees. Keep more of your value."
+        "description": "Low trading fees: 0.4% on Ethereum, 0.8% on Base. No launch fees, no lock fees. Keep more of your value."
       },
       "simple": {
         "title": "Simple & Straightforward",
@@ -261,7 +261,7 @@
       },
       "lowBarrier": {
         "title": "Low Barrier to Entry",
-        "description": "Only 0.1 ETH minimum liquidity required. No platform fees to launch."
+        "description": "Low minimum liquidity: 0.1 ETH on Ethereum, 0.01 ETH on Base. No platform fees to launch."
       },
       "instant": {
         "title": "Instant Liquidity",
@@ -282,12 +282,12 @@
       "locking": {
         "title": "Token Locking Fees",
         "amount": "$0",
-        "description": "Lock McFun tokens for any duration completely free. You only pay Ethereum network gas fees."
+        "description": "Lock McFun tokens for any duration completely free. You only pay network gas fees."
       },
       "trading": {
         "title": "Trading Fees",
-        "amount": "0.4%",
-        "description": "Every token swap on our platform incurs a 0.4% fee. This fee goes to the platform to support infrastructure, development, and ongoing improvements."
+        "amount": "0.4% - 0.8%",
+        "description": "Every token swap incurs a small fee: 0.4% on Ethereum, 0.8% on Base. This fee supports platform infrastructure, development, and ongoing improvements."
       }
     },
     "security": {

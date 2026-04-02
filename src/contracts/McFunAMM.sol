@@ -36,7 +36,7 @@ contract McFunAMM {
     address public token;
     address public constant feeRecipient = 0x993AEe79ee816B636D80f06186325b19a0eE3D45;
     address public constant DEAD_ADDRESS = 0x000000000000000000000000000000000000dEaD;
-    uint256 public constant FEE_PERCENT = 4;
+    uint256 public immutable FEE_PERCENT;
     uint256 public constant FEE_DENOMINATOR = 1000;
     uint256 public constant MINIMUM_LIQUIDITY = 1000;
 
@@ -60,10 +60,11 @@ contract McFunAMM {
     event LiquidityRemoved(address indexed provider, uint256 ethAmount, uint256 tokenAmount, uint256 liquidityBurned);
     event Swap(address indexed user, uint256 ethIn, uint256 tokenIn, uint256 ethOut, uint256 tokenOut);
 
-    constructor(address _token) {
+    constructor(address _token, uint256 _feePercent) {
         if (_token == address(0)) revert ZeroAddress();
         factory = msg.sender;
         token = _token;
+        FEE_PERCENT = _feePercent;
     }
 
     // Prevent direct ETH transfers that bypass reserve accounting

@@ -71,7 +71,7 @@
         },
         "lowCost": {
           "title": "低成本",
-          "description": "Easiest place to launch on Ethereum"
+          "description": "Easiest place to launch on Ethereum and Base"
         }
       }
     }
@@ -140,7 +140,7 @@
     "priceImpact": "价格影响：",
     "slippageTolerance": "滑点容忍度：",
     "slippageLabel": "滑点容忍度：{{percent}}%",
-    "tradingFee": "交易费用（0.4%）：",
+    "tradingFee": "交易费用：",
     "minReceived": "最少接收：",
     "swapButton": "交换代币",
     "swapping": "交换中...",

@@ -75,9 +75,12 @@ contract McFunFactory {
         }
         if (tokenAddress == address(0)) revert TokenCreationFailed();
 
+        // Determine fee based on chain: 0.4% for Ethereum (chain 1), 0.8% for Base (chain 8453)
+        uint256 feePercent = block.chainid == 1 ? 4 : 8;
+
         bytes memory ammBytecode = abi.encodePacked(
             type(McFunAMM).creationCode,
-            abi.encode(tokenAddress)
+            abi.encode(tokenAddress, feePercent)
         );
 
         assembly {

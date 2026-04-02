@@ -96,7 +96,19 @@ export const MIN_LIQUIDITY_ETH = "0.1"; // Default for Ethereum, use getMinLiqui
 export const MIN_LIQUIDITY_PERCENT = 50;
 export const RECOMMENDED_LIQUIDITY_PERCENT = 75;
 export const TOTAL_SUPPLY = 1_000_000;
-export const FEE_PERCENT = 0.4;
 export const MAX_NAME_LENGTH = 20;
 export const MAX_SYMBOL_LENGTH = 7;
 export const MAX_LOCK_DAYS = 10000;
+
+// Chain-specific fee percentages
+export function getFeePercent(chainId: number): number {
+  if (chainId === 8453) {
+    return 0.8; // Base: 0.8%
+  }
+  return 0.4; // Ethereum and default: 0.4%
+}
+
+export function getFeePercentFormatted(chainId: number): string {
+  const fee = getFeePercent(chainId);
+  return `${fee}%`;
+}
