@@ -50,7 +50,7 @@
       },
       "step2": {
         "title": "Likidite Ekle",
-        "description": "Tokenınızın likidite havuzunu başlatmak için en az 0.1 ETH yatırın."
+        "description": "Tokenınızın likidite havuzunu başlatmak için ETH yatırın."
       },
       "step3": {
         "title": "İşleme Başla",

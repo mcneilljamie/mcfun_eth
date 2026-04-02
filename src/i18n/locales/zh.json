@@ -50,7 +50,7 @@
       },
       "step2": {
         "title": "添加流动性",
-        "description": "至少存入0.1 ETH以初始化代币流动性池。"
+        "description": "存入ETH以初始化代币流动性池。"
       },
       "step3": {
         "title": "开始交易",

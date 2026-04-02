@@ -50,7 +50,7 @@
       },
       "step2": {
         "title": "Tambah Likuiditas",
-        "description": "Deposit minimal 0.1 ETH untuk menginisialisasi pool likuiditas token Anda."
+        "description": "Deposit ETH untuk menginisialisasi pool likuiditas token Anda."
       },
       "step3": {
         "title": "Mulai Trading",

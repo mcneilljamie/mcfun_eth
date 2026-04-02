@@ -50,7 +50,7 @@
       },
       "step2": {
         "title": "Thêm Thanh Khoản",
-        "description": "Gửi ít nhất 0.1 ETH để khởi tạo pool thanh khoản token của bạn."
+        "description": "Gửi ETH để khởi tạo pool thanh khoản token của bạn."
       },
       "step3": {
         "title": "Bắt Đầu Giao Dịch",

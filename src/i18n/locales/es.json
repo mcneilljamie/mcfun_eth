@@ -50,7 +50,7 @@
       },
       "step2": {
         "title": "Agregar Liquidez",
-        "description": "Deposita al menos 0.1 ETH para inicializar el pool de liquidez."
+        "description": "Deposita ETH para inicializar el pool de liquidez de tu token."
       },
       "step3": {
         "title": "Comenzar a Comerciar",

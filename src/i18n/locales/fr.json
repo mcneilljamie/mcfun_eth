@@ -50,7 +50,7 @@
       },
       "step2": {
         "title": "Ajouter Liquidité",
-        "description": "Déposez au moins 0,1 ETH pour initialiser le pool de liquidité."
+        "description": "Déposez de l'ETH pour initialiser le pool de liquidité de votre token."
       },
       "step3": {
         "title": "Commencer à Échanger",
