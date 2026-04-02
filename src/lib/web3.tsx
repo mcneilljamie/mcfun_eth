@@ -115,8 +115,53 @@ export function Web3Provider({ children }: { children: ReactNode }) {
       });
     } catch (err: any) {
       if (err.code === 4902) {
-        console.error('Network not added to wallet');
+        await addNetwork(targetChainId);
+      } else {
+        throw err;
       }
+    }
+  };
+
+  const addNetwork = async (targetChainId: number) => {
+    if (!window.ethereum) return;
+
+    const networkParams: Record<number, any> = {
+      8453: {
+        chainId: '0x2105',
+        chainName: 'Base Mainnet',
+        nativeCurrency: {
+          name: 'Ether',
+          symbol: 'ETH',
+          decimals: 18,
+        },
+        rpcUrls: ['https://mainnet.base.org'],
+        blockExplorerUrls: ['https://basescan.org'],
+      },
+      84532: {
+        chainId: '0x14a34',
+        chainName: 'Base Sepolia',
+        nativeCurrency: {
+          name: 'Ether',
+          symbol: 'ETH',
+          decimals: 18,
+        },
+        rpcUrls: ['https://sepolia.base.org'],
+        blockExplorerUrls: ['https://sepolia.basescan.org'],
+      },
+    };
+
+    const params = networkParams[targetChainId];
+    if (!params) {
+      throw new Error('Network configuration not found');
+    }
+
+    try {
+      await window.ethereum.request({
+        method: 'wallet_addEthereumChain',
+        params: [params],
+      });
+    } catch (err) {
+      console.error('Failed to add network:', err);
       throw err;
     }
   };

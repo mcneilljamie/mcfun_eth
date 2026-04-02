@@ -3,7 +3,7 @@ import { Rocket, AlertCircle, Loader, Wallet, Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '../lib/web3';
 import { createToken, getETHBalance } from '../lib/contracts';
-import { MIN_LIQUIDITY_ETH, MIN_LIQUIDITY_PERCENT, RECOMMENDED_LIQUIDITY_PERCENT, TOTAL_SUPPLY, MAX_NAME_LENGTH, MAX_SYMBOL_LENGTH } from '../contracts/addresses';
+import { getMinLiquidityETH, MIN_LIQUIDITY_PERCENT, RECOMMENDED_LIQUIDITY_PERCENT, TOTAL_SUPPLY, MAX_NAME_LENGTH, MAX_SYMBOL_LENGTH, DEFAULT_CHAIN_ID } from '../contracts/addresses';
 import { formatNumber } from '../lib/utils';
 import { LaunchCelebration } from '../components/LaunchCelebration';
 import { ToastMessage } from '../App';
@@ -15,7 +15,7 @@ interface LaunchProps {
 
 export function Launch({ onNavigate, onShowToast }: LaunchProps) {
   const { t } = useTranslation();
-  const { account, signer, connect, provider } = useWeb3();
+  const { account, signer, connect, provider, chainId } = useWeb3();
 
   const [name, setName] = useState('');
   const [symbol, setSymbol] = useState('');
@@ -24,7 +24,10 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
   const [discordUrl, setDiscordUrl] = useState('');
   const [xUrl, setXUrl] = useState('');
   const [liquidityPercent, setLiquidityPercent] = useState(RECOMMENDED_LIQUIDITY_PERCENT);
-  const [ethAmount, setEthAmount] = useState(MIN_LIQUIDITY_ETH);
+
+  const currentChainId = chainId || DEFAULT_CHAIN_ID;
+  const minLiquidityETH = getMinLiquidityETH(currentChainId);
+  const [ethAmount, setEthAmount] = useState(minLiquidityETH);
 
   const [ethBalance, setEthBalance] = useState<string>('0');
   const [isLoadingBalance, setIsLoadingBalance] = useState(false);
@@ -63,6 +66,10 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
     fetchBalance();
   }, [account, provider]);
 
+  useEffect(() => {
+    setEthAmount(minLiquidityETH);
+  }, [minLiquidityETH]);
+
   const totalEthNeeded = parseFloat(ethAmount);
   const hasInsufficientBalance = !!(account && parseFloat(ethBalance) < totalEthNeeded);
   const balanceShortfall = hasInsufficientBalance
@@ -93,8 +100,8 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
       return;
     }
 
-    if (parseFloat(ethAmount) < parseFloat(MIN_LIQUIDITY_ETH)) {
-      setError(t('launch.errors.minLiquidity', { min: MIN_LIQUIDITY_ETH }));
+    if (parseFloat(ethAmount) < parseFloat(minLiquidityETH)) {
+      setError(t('launch.errors.minLiquidity', { min: minLiquidityETH }));
       return;
     }
 
@@ -156,7 +163,7 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
       setDiscordUrl('');
       setXUrl('');
       setLiquidityPercent(RECOMMENDED_LIQUIDITY_PERCENT);
-      setEthAmount(MIN_LIQUIDITY_ETH);
+      setEthAmount(minLiquidityETH);
 
       // Register token through secure validation endpoint (non-blocking)
       (async () => {
@@ -409,15 +416,15 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                 )}
               </div>
               <p className="text-sm text-gray-500 mb-3">
-                {t('launch.form.liquidityWarning', { min: MIN_LIQUIDITY_ETH })}
+                {t('launch.form.liquidityWarning', { min: minLiquidityETH })}
               </p>
               <input
                 type="number"
                 step="0.01"
-                min={MIN_LIQUIDITY_ETH}
+                min={minLiquidityETH}
                 value={ethAmount}
                 onChange={(e) => setEthAmount(e.target.value)}
-                placeholder={MIN_LIQUIDITY_ETH}
+                placeholder={minLiquidityETH}
                 className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent ${
                   hasInsufficientBalance
                     ? 'border-blue-300 bg-blue-50'

@@ -3,6 +3,8 @@ import { Search, ChevronDown, X, Trophy } from 'lucide-react';
 import { supabase, Token } from '../lib/supabase';
 import { formatUSD } from '../lib/utils';
 import { getEthPriceUSD } from '../lib/ethPrice';
+import { useWeb3 } from '../lib/web3';
+import { DEFAULT_CHAIN_ID } from '../contracts/addresses';
 
 interface TokenSelectorProps {
   selectedToken: Token | null;
@@ -11,6 +13,9 @@ interface TokenSelectorProps {
 }
 
 export function TokenSelector({ selectedToken, onSelectToken, disabled = false }: TokenSelectorProps) {
+  const { chainId } = useWeb3();
+  const activeChainId = chainId || DEFAULT_CHAIN_ID;
+
   const [isOpen, setIsOpen] = useState(false);
   const [tokens, setTokens] = useState<Token[]>([]);
   const [filteredTokens, setFilteredTokens] = useState<Token[]>([]);
@@ -31,7 +36,7 @@ export function TokenSelector({ selectedToken, onSelectToken, disabled = false }
       loadEthPrice();
       setTimeout(() => searchInputRef.current?.focus(), 100);
     }
-  }, [isOpen]);
+  }, [isOpen, activeChainId]);
 
   useEffect(() => {
     let result = tokens;
@@ -81,9 +86,10 @@ export function TokenSelector({ selectedToken, onSelectToken, disabled = false }
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase
+      const { data, error} = await supabase
         .from('tokens')
         .select('*')
+        .eq('chain_id', activeChainId)
         .order('created_at', { ascending: false })
         .limit(50);
 

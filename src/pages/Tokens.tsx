@@ -8,6 +8,8 @@ import { getEthPriceUSD } from '../lib/ethPrice';
 import { useWeb3 } from '../lib/web3';
 import { ToastMessage } from '../App';
 import { DEFAULT_CHAIN_ID } from '../contracts/addresses';
+import { ChainFilter } from '../components/ChainFilter';
+import { ChainBadge } from '../components/ChainBadge';
 
 interface TokensProps {
   onSelectToken: (token: Token) => void;
@@ -29,6 +31,10 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   const [tokens, setTokens] = useState<Token[]>([]);
   const [filteredTokens, setFilteredTokens] = useState<Token[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedChain, setSelectedChain] = useState<number | 'all'>(() => {
+    const saved = localStorage.getItem('mcfun_chain_filter');
+    return saved ? (saved === 'all' ? 'all' : parseInt(saved)) : 'all';
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(0);
   const [tokenDataMap, setTokenDataMap] = useState<Record<string, TokenEnrichedData>>({});
@@ -95,6 +101,10 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   }, [sortBy]);
 
   useEffect(() => {
+    localStorage.setItem('mcfun_chain_filter', selectedChain.toString());
+  }, [selectedChain]);
+
+  useEffect(() => {
     const currentOrder = filteredTokens.map(t => t.token_address);
     const previousOrder = previousOrderRef.current;
 
@@ -141,9 +151,13 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   useEffect(() => {
     let result = tokens;
 
+    if (selectedChain !== 'all') {
+      result = result.filter((token) => token.chain_id === selectedChain);
+    }
+
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      result = tokens.filter(
+      result = result.filter(
         (token) =>
           token.name.toLowerCase().includes(query) ||
           token.symbol.toLowerCase().includes(query) ||
@@ -191,7 +205,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     });
 
     setFilteredTokens(sorted);
-  }, [searchQuery, tokens, tokenDataMap, sortBy]);
+  }, [searchQuery, tokens, tokenDataMap, sortBy, selectedChain]);
 
   const loadTokens = async () => {
     setIsLoading(true);
@@ -350,9 +364,15 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
               </div>
             </div>
 
-            <div className="flex flex-col gap-2">
-              <span className="text-sm font-medium text-gray-700">{t('tokens.rankBy')}:</span>
-              <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:gap-2">
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-gray-700">Filter by Blockchain:</span>
+                <ChainFilter selectedChain={selectedChain} onChainChange={setSelectedChain} />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-gray-700">{t('tokens.rankBy')}:</span>
+                <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:gap-2">
                 <button
                   onClick={() => setSortBy('marketCap')}
                   className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
@@ -416,6 +436,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
               </div>
             </div>
           </div>
+          </div>
 
           {isLoading ? (
             <div className="text-center py-12">
@@ -475,7 +496,10 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                         </td>
                         <td className="py-4 px-4">
                           <div className="min-w-0">
-                            <div className="font-semibold text-gray-900 break-words">{token.name}</div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <div className="font-semibold text-gray-900 break-words">{token.name}</div>
+                              <ChainBadge chainId={token.chain_id} size="sm" />
+                            </div>
                             <div className="text-sm text-gray-500 whitespace-nowrap">{token.symbol}</div>
                           </div>
                         </td>
@@ -573,7 +597,10 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                     </div>
 
                     <div className="mb-3">
-                      <div className="font-bold text-gray-900 text-lg break-words">{token.name}</div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className="font-bold text-gray-900 text-lg break-words">{token.name}</div>
+                        <ChainBadge chainId={token.chain_id} size="sm" />
+                      </div>
                       <div className="text-sm text-gray-500 whitespace-nowrap">{token.symbol}</div>
                     </div>
 
