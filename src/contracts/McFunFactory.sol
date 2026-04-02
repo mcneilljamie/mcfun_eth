@@ -16,7 +16,6 @@ contract McFunFactory {
     error AMMCreationFailed();
 
     address public constant DEAD_ADDRESS = 0x000000000000000000000000000000000000dEaD;
-    uint256 public constant MIN_LIQUIDITY_ETH = 0.1 ether;
     uint256 public constant MIN_LIQUIDITY_PERCENT = 50;
     uint256 public constant TOTAL_SUPPLY = 1_000_000 * 10**18;
     uint256 public constant MAX_NAME_LENGTH = 20;
@@ -60,7 +59,8 @@ contract McFunFactory {
         string memory symbol,
         uint256 liquidityPercent
     ) external payable nonReentrant returns (address tokenAddress, address ammAddress) {
-        if (msg.value < MIN_LIQUIDITY_ETH) revert InvalidETHAmount();
+        uint256 minLiquidity = block.chainid == 1 ? 0.1 ether : 0.01 ether;
+        if (msg.value < minLiquidity) revert InvalidETHAmount();
         if (liquidityPercent < MIN_LIQUIDITY_PERCENT || liquidityPercent > 100) revert InvalidLiquidityPercent();
         if (bytes(name).length == 0 || bytes(symbol).length == 0) revert InvalidNameOrSymbol();
         if (bytes(name).length > MAX_NAME_LENGTH || bytes(symbol).length > MAX_SYMBOL_LENGTH) revert InvalidNameOrSymbol();
