@@ -20,7 +20,7 @@
     "hero": {
       "title": "Lance Seu Token",
       "subtitle": "Simples. Seguro. Justo.",
-      "description": "A maneira mais fácil e barata de lançar tokens no Ethereum com liquidez integrada e segurança inabalável.",
+      "description": "A maneira mais fácil e barata de lançar tokens no Ethereum e Base com liquidez integrada e segurança inabalável.",
       "launchNow": "Lançar Token Agora",
       "explore": "Explorar Tokens"
     },
@@ -59,7 +59,7 @@
     },
     "why": {
       "title": "Por Que Escolher McFun?",
-      "description": "Construímos a plataforma mais simples, segura e econômica para lançar tokens no Ethereum. Sem parâmetros complexos, sem taxas ocultas, sem golpes. Apenas lançamentos de tokens puros e justos.",
+      "description": "Construímos a plataforma mais simples, segura e econômica para lançar tokens no Ethereum e Base. Sem parâmetros complexos, sem taxas ocultas, sem golpes. Apenas lançamentos de tokens puros e justos.",
       "benefits": {
         "simple": {
           "title": "Simples",
@@ -198,7 +198,7 @@
   },
   "about": {
     "title": "Sobre McFun",
-    "subtitle": "A maneira mais simples e segura de lançar tokens no Ethereum com liquidez integrada e segurança inabalável.",
+    "subtitle": "A maneira mais simples e segura de lançar tokens no Ethereum e Base com liquidez integrada e segurança inabalável.",
     "howWorks": {
       "title": "Como Funciona o McFun",
       "step1": {
