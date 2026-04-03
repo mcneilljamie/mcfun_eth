@@ -235,19 +235,23 @@ export default function Portfolio() {
             const tokenAddr = locks[0].token_address.toLowerCase();
             const chainId = locks[0].chain_id;
             try {
-              // Use price data already calculated by the database function
+              // Use price and value data already calculated by the database function
               const priceUsd = locks[0].current_price_usd || 0;
 
               console.log(`Token: ${locks[0].token_symbol} (Chain ${chainId}), Price USD: $${priceUsd}`);
 
               // Aggregate all locks for this token
               let totalAmountLocked = 0;
+              let totalValueUsd = 0;
               let earliestUnlock = locks[0].unlock_timestamp;
               let hasUnlockable = false;
 
               for (const lock of locks) {
-                const amountLocked = parseFloat(lock.amount_locked) / Math.pow(10, lock.token_decimals);
-                totalAmountLocked += amountLocked;
+                // Use the formatted amount already calculated by the database
+                totalAmountLocked += parseFloat(lock.amount_locked_formatted || 0);
+
+                // Use the value already calculated by the database
+                totalValueUsd += parseFloat(lock.value_usd || 0);
 
                 // Find earliest unlock
                 if (new Date(lock.unlock_timestamp) < new Date(earliestUnlock)) {
@@ -262,8 +266,6 @@ export default function Portfolio() {
                 }
               }
 
-              const valueUsd = totalAmountLocked * priceUsd;
-
               aggregatedTokens.push({
                 id: `${tokenAddr}_${chainId}`,
                 lock_id: locks[0].lock_id,
@@ -276,11 +278,11 @@ export default function Portfolio() {
                 unlock_timestamp: earliestUnlock,
                 is_unlockable: hasUnlockable,
                 current_price_usd: priceUsd,
-                value_usd: valueUsd,
+                value_usd: totalValueUsd,
                 chain_id: chainId,
               });
 
-              lockedValue += valueUsd;
+              lockedValue += totalValueUsd;
             } catch (err) {
               console.error(`Failed to load lock info for ${tokenAddr}:`, err);
             }
