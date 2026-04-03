@@ -366,14 +366,10 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
             </div>
 
             <div className="flex flex-col gap-3">
-              <div className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-gray-700">Filter by Blockchain:</span>
-                <ChainFilter selectedChain={selectedChain} onChainChange={setSelectedChain} />
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-gray-700">{t('tokens.rankBy')}:</span>
-                <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:gap-2">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                <div className="flex flex-col gap-2">
+                  <span className="text-sm font-medium text-gray-700">{t('tokens.rankBy')}:</span>
+                  <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:gap-2">
                 <button
                   onClick={() => setSortBy('marketCap')}
                   className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
@@ -434,9 +430,15 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                 >
                   {t('tokens.priceDecrease')}
                 </button>
+                </div>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <span className="text-sm font-medium text-gray-700">Filter by Blockchain:</span>
+                  <ChainFilter selectedChain={selectedChain} onChainChange={setSelectedChain} />
+                </div>
               </div>
             </div>
-          </div>
           </div>
 
           {isLoading ? (
