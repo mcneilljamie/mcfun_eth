@@ -1,0 +1,10 @@
+{
+  "network": "base",
+  "chainId": 8453,
+  "factoryAddress": "0x5543D0e48e6812B0A0F671d2F7E81103E8Fe39B2",
+  "lockerAddress": "0x49Fd91582C442ae01f3d1Db28272b7B053D38b79",
+  "feeRecipient": "0x993AEe79ee816B636D80f06186325b19a0eE3D45",
+  "deployer": "0x48250CcfFC44b72C615151084e9018A746b826B4",
+  "timestamp": "2026-04-03T14:45:22.133Z",
+  "lockerTxHash": "0x14eb6c49e5aae92ecacd3e0a459ad74c8c9a415d014a24796e2e2245f61fbb7c"
+}

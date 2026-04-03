@@ -32,8 +32,8 @@ export const NETWORK_CONFIG: Record<number, {
   8453: {
     name: 'Base Mainnet',
     shortName: 'Base',
-    factoryAddress: '0x0000000000000000000000000000000000000000', // TODO: Deploy contracts to Base
-    lockerAddress: '0x0000000000000000000000000000000000000000', // TODO: Deploy contracts to Base
+    factoryAddress: '0x5543D0e48e6812B0A0F671d2F7E81103E8Fe39B2',
+    lockerAddress: '0x49Fd91582C442ae01f3d1Db28272b7B053D38b79',
     explorerUrl: 'https://basescan.org',
     minLiquidityETH: '0.01',
     rpcUrl: 'https://mainnet.base.org',
