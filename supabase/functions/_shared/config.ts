@@ -1,68 +1,106 @@
 /**
  * Shared configuration for edge functions
- * Mainnet deployment addresses and RPC configuration
+ * Multi-chain deployment addresses and RPC configuration
  */
 
-export const MAINNET_CONFIG = {
-  // Contract addresses from mainnet deployment
+export interface ChainConfig {
+  CHAIN_ID: number;
+  FACTORY_ADDRESS: string;
+  LOCKER_ADDRESS: string;
+  FACTORY_DEPLOYMENT_BLOCK: number;
+  LOCKER_DEPLOYMENT_BLOCK: number;
+  PRIMARY_RPC: string;
+  FALLBACK_RPCS: string[];
+  CHAIN_NAME: string;
+}
+
+export const ETHEREUM_CONFIG: ChainConfig = {
+  CHAIN_ID: 1,
+  CHAIN_NAME: "Ethereum",
   FACTORY_ADDRESS: "0x6E8717dd111Bea3f5B12785798F3d1380c01D72B",
   LOCKER_ADDRESS: "0xaDEcE045ccC27b3364628499F2DDF4eAaD034D38",
-
-  // Deployment blocks
   FACTORY_DEPLOYMENT_BLOCK: 24328122,
   LOCKER_DEPLOYMENT_BLOCK: 24328123,
-
-  // RPC URLs
   PRIMARY_RPC: "https://ethereum-rpc.publicnode.com",
   FALLBACK_RPCS: [
     "https://eth.llamarpc.com",
     "https://rpc.ankr.com/eth",
     "https://ethereum.blockpi.network/v1/rpc/public"
   ],
-
-  CHAIN_ID: 1,
 };
 
+export const BASE_CONFIG: ChainConfig = {
+  CHAIN_ID: 8453,
+  CHAIN_NAME: "Base",
+  FACTORY_ADDRESS: "0x5543D0e48e6812B0A0F671d2F7E81103E8Fe39B2",
+  LOCKER_ADDRESS: "0x49Fd91582C442ae01f3d1Db28272b7B053D38b79",
+  FACTORY_DEPLOYMENT_BLOCK: 24867400,
+  LOCKER_DEPLOYMENT_BLOCK: 24867401,
+  PRIMARY_RPC: "https://mainnet.base.org",
+  FALLBACK_RPCS: [
+    "https://base.llamarpc.com",
+    "https://base.blockpi.network/v1/rpc/public",
+    "https://base-mainnet.public.blastapi.io"
+  ],
+};
+
+export const CHAIN_CONFIGS: Record<number, ChainConfig> = {
+  1: ETHEREUM_CONFIG,
+  8453: BASE_CONFIG,
+};
+
+export const SUPPORTED_CHAIN_IDS = [1, 8453] as const;
+
 /**
- * Get factory address from env or use mainnet default
+ * Get chain config for a specific chain ID
  */
-export function getFactoryAddress(): string {
-  return Deno.env.get("MCFUN_FACTORY_ADDRESS") || MAINNET_CONFIG.FACTORY_ADDRESS;
+export function getChainConfig(chainId: number): ChainConfig {
+  const config = CHAIN_CONFIGS[chainId];
+  if (!config) {
+    throw new Error(`Unsupported chain ID: ${chainId}`);
+  }
+  return config;
 }
 
 /**
- * Get locker address from env or use mainnet default
+ * Get factory address for a specific chain
  */
-export function getLockerAddress(): string {
-  return Deno.env.get("MCFUN_LOCKER_ADDRESS") || MAINNET_CONFIG.LOCKER_ADDRESS;
+export function getFactoryAddress(chainId: number): string {
+  return getChainConfig(chainId).FACTORY_ADDRESS;
 }
 
 /**
- * Get RPC URLs from env or use mainnet defaults
+ * Get locker address for a specific chain
  */
-export function getRPCProviders(): string[] {
-  const primaryRPC = Deno.env.get("MCFUN_RPC_URL") || MAINNET_CONFIG.PRIMARY_RPC;
-  const fallbackRPCs = Deno.env.get("MCFUN_RPC_URL_FALLBACKS")?.split(",").filter(url => url.trim()) || MAINNET_CONFIG.FALLBACK_RPCS;
-  return [primaryRPC, ...fallbackRPCs];
+export function getLockerAddress(chainId: number): string {
+  return getChainConfig(chainId).LOCKER_ADDRESS;
 }
 
 /**
- * Get chain ID from env or use mainnet default
+ * Get RPC URLs for a specific chain
  */
-export function getChainId(): number {
-  return parseInt(Deno.env.get("MCFUN_CHAIN_ID") || String(MAINNET_CONFIG.CHAIN_ID));
+export function getRPCProviders(chainId: number): string[] {
+  const config = getChainConfig(chainId);
+  return [config.PRIMARY_RPC, ...config.FALLBACK_RPCS];
 }
 
 /**
- * Get factory deployment block from env or use mainnet default
+ * Get factory deployment block for a specific chain
  */
-export function getFactoryDeploymentBlock(): number {
-  return parseInt(Deno.env.get("MCFUN_FACTORY_DEPLOYMENT_BLOCK") || String(MAINNET_CONFIG.FACTORY_DEPLOYMENT_BLOCK));
+export function getFactoryDeploymentBlock(chainId: number): number {
+  return getChainConfig(chainId).FACTORY_DEPLOYMENT_BLOCK;
 }
 
 /**
- * Get locker deployment block from env or use mainnet default
+ * Get locker deployment block for a specific chain
  */
-export function getLockerDeploymentBlock(): number {
-  return parseInt(Deno.env.get("MCFUN_LOCKER_DEPLOYMENT_BLOCK") || String(MAINNET_CONFIG.LOCKER_DEPLOYMENT_BLOCK));
+export function getLockerDeploymentBlock(chainId: number): number {
+  return getChainConfig(chainId).LOCKER_DEPLOYMENT_BLOCK;
+}
+
+/**
+ * Get all supported chain IDs
+ */
+export function getSupportedChainIds(): number[] {
+  return [...SUPPORTED_CHAIN_IDS];
 }

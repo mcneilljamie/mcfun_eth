@@ -1,27 +1,25 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.4";
 import { ethers } from "npm:ethers@6.16.0";
-import { getChainId, getRPCProviders } from "../_shared/config.ts";
+import { getRPCProviders, getChainConfig } from "../_shared/config.ts";
 
 const corsHeaders = {
   "Content-Type": "application/json",
 };
 
-const CHAIN_ID = getChainId();
 const BURN_ADDRESS = "0x000000000000000000000000000000000000dEaD";
 const TOKEN_SUPPLY = 1_000_000n * (10n ** 18n);
-
-// Get RPC providers from shared config (with mainnet defaults)
-const RPC_PROVIDERS = getRPCProviders();
 
 const MAX_EXECUTION_TIME_MS = 23000;
 const PARALLEL_TOKEN_LIMIT = 10;
 
-let currentProviderIndex = 0;
+const providerIndexMap = new Map<number, number>();
 
-function getProvider(): ethers.JsonRpcProvider {
+function getProvider(chainId: number): ethers.JsonRpcProvider {
+  const RPC_PROVIDERS = getRPCProviders(chainId);
+  const currentProviderIndex = providerIndexMap.get(chainId) || 0;
   const url = RPC_PROVIDERS[currentProviderIndex];
-  currentProviderIndex = (currentProviderIndex + 1) % RPC_PROVIDERS.length;
+  providerIndexMap.set(chainId, (currentProviderIndex + 1) % RPC_PROVIDERS.length);
   return new ethers.JsonRpcProvider(url);
 }
 
@@ -40,8 +38,14 @@ Deno.serve(async (req: Request) => {
     });
   }
 
+  const url = new URL(req.url);
+  const chainId = parseInt(url.searchParams.get("chain_id") || "1");
+  const chainConfig = getChainConfig(chainId);
+
+  console.log(`Starting burn indexer for ${chainConfig.CHAIN_NAME} (chain ID: ${chainId})`);
+
   const startTime = Date.now();
-  const provider = getProvider();
+  const provider = getProvider(chainId);
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL")!,
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
@@ -54,13 +58,13 @@ Deno.serve(async (req: Request) => {
     const { data: tokensWithBurns, error: burnsError } = await supabase
       .from("token_burn_totals")
       .select("token_address")
-      .eq("chain_id", CHAIN_ID)
+      .eq("chain_id", chainId)
       .order("last_burn_timestamp", { ascending: false });
 
     const { data: allTokens, error: tokensError } = await supabase
       .from("tokens")
       .select("token_address, symbol, name")
-      .eq("chain_id", CHAIN_ID);
+      .eq("chain_id", chainId);
 
     if (tokensError || !allTokens || allTokens.length === 0) {
       console.error("Failed to load tokens:", tokensError);
@@ -113,7 +117,7 @@ Deno.serve(async (req: Request) => {
           const { data: existingBurn } = await supabase
             .from("token_burn_totals")
             .select("total_amount_burned, burn_count, last_burn_timestamp")
-            .eq("chain_id", CHAIN_ID)
+            .eq("chain_id", chainId)
             .eq("token_address", token.token_address.toLowerCase())
             .maybeSingle();
 
@@ -136,7 +140,7 @@ Deno.serve(async (req: Request) => {
             const { data: tokenData } = await supabase
               .from("tokens")
               .select("current_eth_reserve, current_token_reserve")
-              .eq("chain_id", CHAIN_ID)
+              .eq("chain_id", chainId)
               .eq("token_address", token.token_address.toLowerCase())
               .maybeSingle();
 
@@ -173,7 +177,7 @@ Deno.serve(async (req: Request) => {
           const { error: upsertError } = await supabase
             .from("token_burn_totals")
             .upsert({
-              chain_id: CHAIN_ID,
+              chain_id: chainId,
               token_address: token.token_address.toLowerCase(),
               total_amount_burned: burnedAmount,
               total_value_usd: totalValueUsd.toString(),
@@ -211,6 +215,8 @@ Deno.serve(async (req: Request) => {
     return new Response(
       JSON.stringify({
         success: true,
+        chainId,
+        chainName: chainConfig.CHAIN_NAME,
         ...results,
         executionTimeMs: Date.now() - startTime,
       }),

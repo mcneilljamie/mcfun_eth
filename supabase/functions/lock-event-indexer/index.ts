@@ -2,16 +2,11 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.4";
 import { ethers } from "npm:ethers@6.16.0";
 import { withLock } from "./_shared/lockManager.ts";
-import { getLockerAddress, getRPCProviders, getLockerDeploymentBlock } from "../_shared/config.ts";
+import { getLockerAddress, getRPCProviders, getLockerDeploymentBlock, getChainConfig } from "../_shared/config.ts";
 
 const corsHeaders = {
   "Content-Type": "application/json",
 };
-
-// Get configuration from shared config (with mainnet defaults)
-const LOCKER_ADDRESS = getLockerAddress();
-const RPC_PROVIDERS = getRPCProviders();
-const LOCKER_DEPLOYMENT_BLOCK = getLockerDeploymentBlock();
 
 const LOCKER_ABI = [
   "event TokensLocked(uint256 indexed lockId, address indexed owner, address indexed tokenAddress, uint256 amount, uint256 unlockTime)",
@@ -24,17 +19,19 @@ const ERC20_ABI = [
   "function decimals() view returns (uint8)",
 ];
 
-let currentProviderIndex = 0;
-
+const providerIndexMap = new Map<number, number>();
 const tokenMetadataCache = new Map<string, { name: string; symbol: string; decimals: number }>();
 
-async function createProviderWithFailover(): Promise<ethers.JsonRpcProvider> {
+async function createProviderWithFailover(chainId: number): Promise<ethers.JsonRpcProvider> {
+  const RPC_PROVIDERS = getRPCProviders(chainId);
+  const currentProviderIndex = providerIndexMap.get(chainId) || 0;
+
   for (let i = 0; i < RPC_PROVIDERS.length; i++) {
     const providerUrl = RPC_PROVIDERS[(currentProviderIndex + i) % RPC_PROVIDERS.length];
     try {
       const provider = new ethers.JsonRpcProvider(providerUrl);
       await provider.getBlockNumber();
-      currentProviderIndex = (currentProviderIndex + i) % RPC_PROVIDERS.length;
+      providerIndexMap.set(chainId, (currentProviderIndex + i) % RPC_PROVIDERS.length);
       return provider;
     } catch (error) {
       console.error(`RPC provider ${providerUrl} failed, trying next...`, error);
@@ -140,9 +137,13 @@ Deno.serve(async (req: Request) => {
     });
   }
 
+  const url = new URL(req.url);
+  const chainId = parseInt(url.searchParams.get("chain_id") || "1");
+  const lockKey = `lock_event_indexer_lock_${chainId}`;
+
   try {
-    return await withLock("lock_event_indexer_lock", async () => {
-      return await processLockIndexing(req);
+    return await withLock(lockKey, async () => {
+      return await processLockIndexing(req, chainId);
     }, {
       timeoutSeconds: 300,
       autoRenew: true,
@@ -154,6 +155,7 @@ Deno.serve(async (req: Request) => {
       JSON.stringify({
         success: false,
         error: err.message,
+        chainId,
         message: err.message.includes("Failed to acquire lock")
           ? "Lock event indexer is busy processing. This request will be retried automatically."
           : undefined
@@ -166,14 +168,20 @@ Deno.serve(async (req: Request) => {
   }
 });
 
-async function processLockIndexing(req: Request): Promise<Response> {
+async function processLockIndexing(req: Request, chainId: number): Promise<Response> {
+  const chainConfig = getChainConfig(chainId);
+  console.log(`Starting lock indexer for ${chainConfig.CHAIN_NAME} (chain ID: ${chainId})`);
+
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
   const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+  const LOCKER_ADDRESS = getLockerAddress(chainId);
+  const LOCKER_DEPLOYMENT_BLOCK = getLockerDeploymentBlock(chainId);
+
   try {
 
-    const provider = await retryWithBackoff(() => createProviderWithFailover());
+    const provider = await retryWithBackoff(() => createProviderWithFailover(chainId));
     const lockerContract = new ethers.Contract(LOCKER_ADDRESS, LOCKER_ABI, provider);
 
     const { data: skipBlocksData } = await supabase
@@ -207,7 +215,7 @@ async function processLockIndexing(req: Request): Promise<Response> {
     const { data: indexerState } = await supabase
       .from("lock_indexer_state")
       .select("*")
-      .eq("indexer_name", "lock_indexer")
+      .eq("indexer_name", `lock_indexer_${chainId}`)
       .maybeSingle();
 
     const currentBlock = await provider.getBlockNumber();
@@ -237,14 +245,14 @@ async function processLockIndexing(req: Request): Promise<Response> {
         await supabase
           .from("lock_indexer_state")
           .update({ is_active: false })
-          .eq("indexer_name", "lock_indexer");
+          .eq("indexer_name", `lock_indexer_${chainId}`);
       }
     }
 
     await supabase
       .from("lock_indexer_state")
       .update({ is_active: true })
-      .eq("indexer_name", "lock_indexer");
+      .eq("indexer_name", `lock_indexer_${chainId}`);
 
     let fromBlock: number;
     let toBlock: number;
@@ -434,6 +442,7 @@ async function processLockIndexing(req: Request): Promise<Response> {
                 is_withdrawn: false,
                 tx_hash: event.transactionHash,
                 block_number: event.blockNumber,
+                chain_id: chainId,
               }
             };
           } catch (err: any) {
@@ -490,7 +499,8 @@ async function processLockIndexing(req: Request): Promise<Response> {
             is_withdrawn: true,
             withdraw_tx_hash: event.transactionHash
           })
-          .eq("lock_id", lockId);
+          .eq("lock_id", lockId)
+          .eq("chain_id", chainId);
 
         if (updateError) {
           console.error(`Failed to update lock ${lockId}:`, updateError);
@@ -513,6 +523,7 @@ async function processLockIndexing(req: Request): Promise<Response> {
         last_indexed_block: toBlock,
         last_indexed_at: new Date().toISOString(),
         is_active: false,
+        chain_id: chainId,
         metadata: {
           last_run: new Date().toISOString(),
           blocks_scanned: blocksProcessed,
@@ -525,13 +536,15 @@ async function processLockIndexing(req: Request): Promise<Response> {
           current_block: currentBlock
         }
       })
-      .eq("indexer_name", "lock_indexer");
+      .eq("indexer_name", `lock_indexer_${chainId}`);
 
     console.log(`Updated indexer state: last_indexed_block = ${toBlock}, blocks_behind = ${newBlocksBehind}, blocks/sec = ${blocksPerSecond}`);
 
     return new Response(
       JSON.stringify({
         success: true,
+        chainId,
+        chainName: chainConfig.CHAIN_NAME,
         indexed: {
           locked: processedCount,
           unlocked: allUnlockedEvents.length,
@@ -565,7 +578,7 @@ async function processLockIndexing(req: Request): Promise<Response> {
           last_error_at: new Date().toISOString()
         }
       })
-      .eq("indexer_name", "lock_indexer");
+      .eq("indexer_name", `lock_indexer_${chainId}`);
 
     return new Response(
       JSON.stringify({
