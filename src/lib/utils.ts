@@ -63,6 +63,10 @@ export function formatTimeAgo(timestamp: string): string {
   const time = new Date(timestamp).getTime();
   const diff = now - time;
 
+  if (diff < 0) {
+    return 'just now';
+  }
+
   const seconds = Math.floor(diff / 1000);
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
@@ -71,7 +75,8 @@ export function formatTimeAgo(timestamp: string): string {
   if (days > 0) return `${days}d ago`;
   if (hours > 0) return `${hours}h ago`;
   if (minutes > 0) return `${minutes}m ago`;
-  return `${seconds}s ago`;
+  if (seconds > 0) return `${seconds}s ago`;
+  return 'just now';
 }
 
 export function classNames(...classes: (string | boolean | undefined)[]): string {
