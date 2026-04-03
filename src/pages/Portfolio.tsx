@@ -509,7 +509,6 @@ export default function Portfolio() {
                         <LockIcon className="w-5 h-5 text-purple-600" />
                         <h3 className="text-xl font-bold text-gray-900">{aggLock.token_symbol}</h3>
                         <span className="text-sm text-gray-500">{aggLock.token_name}</span>
-                        <ChainBadge chainId={aggLock.chain_id} size="sm" />
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm">
                         <div className="text-gray-600">
