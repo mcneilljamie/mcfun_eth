@@ -3,17 +3,13 @@ import { createClient } from "npm:@supabase/supabase-js@2.57.4";
 import { ethers } from "npm:ethers@6.16.0";
 import { getClientIP } from "../_shared/auth.ts";
 import { checkRateLimit, createRateLimitResponse } from "../_shared/rateLimit.ts";
-import { getFactoryAddress, getRPCProviders } from "../_shared/config.ts";
+import { getFactoryAddress, getRPCProviders, getChainConfig } from "../_shared/config.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
-
-// Get configuration from shared config (with mainnet defaults)
-const FACTORY_ADDRESS = getFactoryAddress();
-const RPC_PROVIDERS = getRPCProviders();
 
 const FACTORY_ABI = [
   "event TokenLaunched(address indexed tokenAddress, address indexed ammAddress, string name, string symbol, address indexed creator, uint256 liquidityPercent, uint256 initialLiquidityETH)"
@@ -29,9 +25,11 @@ interface RegisterRequest {
   telegramUrl?: string;
   discordUrl?: string;
   xUrl?: string;
+  chainId?: number;
 }
 
-async function createProviderWithFailover(): Promise<ethers.JsonRpcProvider> {
+async function createProviderWithFailover(chainId: number): Promise<ethers.JsonRpcProvider> {
+  const RPC_PROVIDERS = getRPCProviders(chainId);
   for (const providerUrl of RPC_PROVIDERS) {
     try {
       const provider = new ethers.JsonRpcProvider(providerUrl);
@@ -80,6 +78,7 @@ Deno.serve(async (req: Request) => {
       telegramUrl,
       discordUrl,
       xUrl,
+      chainId = 1,
     }: RegisterRequest = await req.json();
 
     if (!txHash || !tokenAddress || !ammAddress || !name || !symbol) {
@@ -92,9 +91,11 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const provider = await createProviderWithFailover();
+    const chainConfig = getChainConfig(chainId);
+    const FACTORY_ADDRESS = getFactoryAddress(chainId);
+    const provider = await createProviderWithFailover(chainId);
 
-    console.log(`Validating token launch for tx: ${txHash}`);
+    console.log(`Validating token launch for tx: ${txHash} on ${chainConfig.CHAIN_NAME}`);
 
     const receipt = await provider.getTransactionReceipt(txHash);
 
@@ -241,6 +242,8 @@ Deno.serve(async (req: Request) => {
         created_at: new Date(block.timestamp * 1000).toISOString(),
         block_number: block.number,
         block_hash: block.hash,
+        chain_id: chainId,
+        launch_eth_price_usd: ethPriceUsd,
       }, {
         onConflict: "token_address",
       });

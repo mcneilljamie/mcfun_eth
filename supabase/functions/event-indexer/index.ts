@@ -78,6 +78,65 @@ Deno.serve(async (req: Request) => {
       return new Response(JSON.stringify({message: "No new blocks", blocksBehind: 0, chainId}), { headers: corsHeaders });
     }
 
+    const factoryAddress = getFactoryAddress(chainId);
+    const factory = new ethers.Contract(factoryAddress, FACTORY_ABI, provider);
+
+    let tokensLaunched = 0;
+    try {
+      const launchEvents = await factory.queryFilter(factory.filters.TokenLaunched(), startBlock, endBlock);
+
+      for (const event of launchEvents) {
+        const block = await provider.getBlock(event.blockNumber);
+        if (!block) continue;
+
+        const { data: ethPriceData } = await supabase
+          .from("eth_price_history")
+          .select("price_usd")
+          .lte("timestamp", new Date(block.timestamp * 1000).toISOString())
+          .order("timestamp", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (!ethPriceData?.price_usd) {
+          console.warn(`No ETH price found for token launch at block ${event.blockNumber}`);
+          continue;
+        }
+
+        const tokenAddress = event.args!.tokenAddress.toLowerCase();
+        const ammAddress = event.args!.ammAddress.toLowerCase();
+        const liquidityPercent = Number(event.args!.liquidityPercent);
+        const initialLiquidityETH = ethers.formatEther(event.args!.initialLiquidityETH);
+        const initialTokenReserve = 1000000 * liquidityPercent / 100;
+        const launchPriceEth = parseFloat(initialLiquidityETH) / initialTokenReserve;
+
+        const { error } = await supabase.from("tokens").upsert({
+          token_address: tokenAddress,
+          amm_address: ammAddress,
+          name: event.args!.name,
+          symbol: event.args!.symbol,
+          creator_address: event.args!.creator.toLowerCase(),
+          liquidity_percent: liquidityPercent,
+          initial_liquidity_eth: initialLiquidityETH,
+          launch_price_eth: launchPriceEth,
+          current_eth_reserve: initialLiquidityETH,
+          current_token_reserve: initialTokenReserve,
+          total_volume_eth: 0,
+          created_at: new Date(block.timestamp * 1000).toISOString(),
+          block_number: block.number,
+          block_hash: block.hash,
+          chain_id: chainId,
+          launch_eth_price_usd: parseFloat(ethPriceData.price_usd),
+        }, { onConflict: "token_address" });
+
+        if (!error) {
+          tokensLaunched++;
+          console.log(`Registered new token: ${event.args!.name} (${event.args!.symbol}) on ${chainConfig.CHAIN_NAME}`);
+        }
+      }
+    } catch (err) {
+      console.error(`Error indexing token launches:`, err);
+    }
+
     const { data: tokens } = await supabase
       .from("tokens")
       .select("token_address, amm_address")
@@ -208,11 +267,12 @@ Deno.serve(async (req: Request) => {
       chain_id: chainId,
     });
 
-    console.log(`[${chainConfig.CHAIN_NAME}] Indexed ${swapsIndexed} swaps from ${tokensProcessed} tokens, blocks ${startBlock}-${endBlock} (${blocksProcessed} blocks in ${processingTimeMs}ms, ${blocksPerSecond} blocks/sec)`);
+    console.log(`[${chainConfig.CHAIN_NAME}] Indexed ${tokensLaunched} token launches, ${swapsIndexed} swaps from ${tokensProcessed} tokens, blocks ${startBlock}-${endBlock} (${blocksProcessed} blocks in ${processingTimeMs}ms, ${blocksPerSecond} blocks/sec)`);
 
     return new Response(JSON.stringify({
       chainId,
       chainName: chainConfig.CHAIN_NAME,
+      tokensLaunched,
       swapsIndexed,
       tokensProcessed,
       fromBlock: startBlock,
