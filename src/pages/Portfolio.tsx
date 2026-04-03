@@ -6,6 +6,7 @@ import { getEthPriceUSD } from '../lib/ethPrice';
 import { Loader2, Wallet, Lock as LockIcon, Clock } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { ChainBadge } from '../components/ChainBadge';
 
 interface TokenBalance {
   tokenAddress: string;
@@ -38,6 +39,7 @@ interface LockedToken {
   value_eth: number;
   value_usd: number;
   tx_hash: string;
+  chain_id: number;
 }
 
 interface AggregatedLockedToken {
@@ -50,6 +52,7 @@ interface AggregatedLockedToken {
   current_price_usd: number;
   earliest_unlock: string;
   has_unlockable: boolean;
+  chain_id: number;
 }
 
 export default function Portfolio() {
@@ -216,39 +219,26 @@ export default function Portfolio() {
         });
 
         if (locksData && locksData.length > 0) {
-          // Group locks by token address
+          // Group locks by token address AND chain ID
           const tokenGroups = new Map<string, any[]>();
           for (const lockData of locksData) {
-            const tokenAddr = lockData.token_address.toLowerCase();
-            if (!tokenGroups.has(tokenAddr)) {
-              tokenGroups.set(tokenAddr, []);
+            // Create a composite key: address + chain ID
+            const groupKey = `${lockData.token_address.toLowerCase()}_${lockData.chain_id}`;
+            if (!tokenGroups.has(groupKey)) {
+              tokenGroups.set(groupKey, []);
             }
-            tokenGroups.get(tokenAddr)!.push(lockData);
+            tokenGroups.get(groupKey)!.push(lockData);
           }
 
           // Process each token's aggregated locks
-          for (const [tokenAddr, locks] of tokenGroups) {
+          for (const [groupKey, locks] of tokenGroups) {
+            const tokenAddr = locks[0].token_address.toLowerCase();
+            const chainId = locks[0].chain_id;
             try {
-              // Get current price from database
-              const { data: tokenData } = await supabase
-                .from('tokens')
-                .select('amm_address, current_eth_reserve, current_token_reserve')
-                .eq('token_address', tokenAddr)
-                .maybeSingle();
+              // Use price data already calculated by the database function
+              const priceUsd = locks[0].current_price_usd || 0;
 
-              let priceEth = 0;
-              if (tokenData?.amm_address) {
-                try {
-                  const reserves = await import('../lib/contracts').then(m =>
-                    m.getAMMReserves(provider, tokenData.amm_address)
-                  );
-                  priceEth = parseFloat(reserves.reserveETH) / parseFloat(reserves.reserveToken);
-                } catch (err) {
-                  console.error(`Failed to get reserves for ${tokenAddr}:`, err);
-                }
-              }
-
-              const priceUsd = priceEth * ethPrice;
+              console.log(`Token: ${locks[0].token_symbol} (Chain ${chainId}), Price USD: $${priceUsd}`);
 
               // Aggregate all locks for this token
               let totalAmountLocked = 0;
@@ -275,7 +265,7 @@ export default function Portfolio() {
               const valueUsd = totalAmountLocked * priceUsd;
 
               aggregatedTokens.push({
-                id: tokenAddr,
+                id: `${tokenAddr}_${chainId}`,
                 lock_id: locks[0].lock_id,
                 token_address: tokenAddr,
                 token_symbol: locks[0].token_symbol,
@@ -287,6 +277,7 @@ export default function Portfolio() {
                 is_unlockable: hasUnlockable,
                 current_price_usd: priceUsd,
                 value_usd: valueUsd,
+                chain_id: chainId,
               });
 
               lockedValue += valueUsd;
@@ -315,6 +306,7 @@ export default function Portfolio() {
         current_price_usd: lock.current_price_usd,
         earliest_unlock: lock.unlock_timestamp,
         has_unlockable: lock.is_unlockable,
+        chain_id: lock.chain_id,
       }));
       // Sort by total value descending
       aggregatedArray.sort((a, b) => b.total_value_usd - a.total_value_usd);
@@ -511,10 +503,11 @@ export default function Portfolio() {
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
+                      <div className="flex items-center gap-3 mb-2 flex-wrap">
                         <LockIcon className="w-5 h-5 text-purple-600" />
                         <h3 className="text-xl font-bold text-gray-900">{aggLock.token_symbol}</h3>
                         <span className="text-sm text-gray-500">{aggLock.token_name}</span>
+                        <ChainBadge chainId={aggLock.chain_id} size="sm" />
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm">
                         <div className="text-gray-600">
