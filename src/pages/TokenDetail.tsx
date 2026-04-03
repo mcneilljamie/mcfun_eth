@@ -30,7 +30,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
   const [snapshotCount, setSnapshotCount] = useState<number>(0);
   const { currentPrice: chartPrice } = useChartData(tokenAddress || '', 'ALL');
   const [activeLockCount, setActiveLockCount] = useState<number>(0);
-  const { reserves: liveReserves } = useLiveReserves(provider, token?.amm_address || null, 30000, chainId || DEFAULT_CHAIN_ID);
+  const { reserves: liveReserves } = useLiveReserves(provider, token?.amm_address || null, 30000, token?.chain_id || DEFAULT_CHAIN_ID);
   const [returnDisplayMode, setReturnDisplayMode] = useState<'multiple' | 'percentage'>(() => {
     const saved = localStorage.getItem('mcfun_return_display_mode');
     return (saved === 'percentage' || saved === 'multiple') ? saved : 'multiple';
@@ -358,7 +358,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                   )}
                 </button>
                 <a
-                  href={`${getExplorerUrl(chainId || DEFAULT_CHAIN_ID)}/token/${token.token_address}`}
+                  href={`${getExplorerUrl(token.chain_id)}/token/${token.token_address}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-600 hover:text-gray-900 transition-colors"
@@ -536,7 +536,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
               <div className={`flex justify-between items-center py-2 ${activeLockCount > 0 ? 'border-b border-gray-100' : ''}`}>
                 <span className="text-gray-600">{t('tokenDetail.tokenContract')}</span>
                 <a
-                  href={`${getExplorerUrl(chainId || DEFAULT_CHAIN_ID)}/token/${token.token_address}`}
+                  href={`${getExplorerUrl(token.chain_id)}/token/${token.token_address}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center space-x-2 text-gray-900 hover:text-gray-700 transition-colors"
@@ -588,7 +588,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
               <div className="flex justify-between items-center py-2">
                 <span className="text-gray-600">{t('tokenDetail.ammContract')}</span>
                 <a
-                  href={`${getExplorerUrl(chainId || DEFAULT_CHAIN_ID)}/address/${token.amm_address}`}
+                  href={`${getExplorerUrl(token.chain_id)}/address/${token.amm_address}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center space-x-2 text-gray-900 hover:text-gray-700 transition-colors"
