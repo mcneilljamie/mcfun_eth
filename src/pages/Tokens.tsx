@@ -48,11 +48,11 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   const [isAnimating, setIsAnimating] = useState(false);
   const previousOrderRef = useRef<string[]>([]);
 
-  const readOnlyProvider = useMemo(() => {
-    const rpcUrl = DEFAULT_CHAIN_ID === 1
-      ? import.meta.env.VITE_MAINNET_RPC_URL || 'https://eth.llamarpc.com'
-      : import.meta.env.VITE_SEPOLIA_RPC_URL || 'https://ethereum-sepolia-rpc.publicnode.com';
-    return new JsonRpcProvider(rpcUrl);
+  const readOnlyProviders = useMemo(() => {
+    return {
+      1: new JsonRpcProvider(import.meta.env.VITE_MAINNET_RPC_URL || 'https://eth.llamarpc.com'),
+      8453: new JsonRpcProvider('https://mainnet.base.org')
+    };
   }, []);
 
   useEffect(() => {
@@ -118,29 +118,33 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   }, [filteredTokens]);
 
   useEffect(() => {
-    const activeProvider = provider || readOnlyProvider;
-
-    if (filteredTokens.length > 0 && activeProvider && ethPriceUSD > 0) {
+    if (filteredTokens.length > 0 && ethPriceUSD > 0) {
       loadTokenData();
       const dataInterval = setInterval(loadTokenData, 30000);
 
-      let lastBlockUpdate = Date.now();
-      const blockListener = () => {
-        const now = Date.now();
-        if (now - lastBlockUpdate >= 30000) {
-          lastBlockUpdate = now;
-          loadTokenData();
-        }
-      };
+      // Listen to blocks from all supported chains
+      const listeners: Array<() => void> = [];
 
-      activeProvider.on('block', blockListener);
+      Object.entries(readOnlyProviders).forEach(([chainId, chainProvider]) => {
+        let lastBlockUpdate = Date.now();
+        const blockListener = () => {
+          const now = Date.now();
+          if (now - lastBlockUpdate >= 30000) {
+            lastBlockUpdate = now;
+            loadTokenData();
+          }
+        };
+
+        chainProvider.on('block', blockListener);
+        listeners.push(() => chainProvider.off('block', blockListener));
+      });
 
       return () => {
         clearInterval(dataInterval);
-        activeProvider.off('block', blockListener);
+        listeners.forEach(cleanup => cleanup());
       };
     }
-  }, [filteredTokens, provider, readOnlyProvider, ethPriceUSD]);
+  }, [filteredTokens, readOnlyProviders, ethPriceUSD]);
 
   const loadEthPrice = async () => {
     const price = await getEthPriceUSD();
@@ -213,7 +217,6 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
       const { data, error } = await supabase
         .from('tokens')
         .select('*')
-        .eq('chain_id', DEFAULT_CHAIN_ID)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -234,8 +237,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   };
 
   const loadTokenData = async () => {
-    const activeProvider = provider || readOnlyProvider;
-    if (!activeProvider || filteredTokens.length === 0 || ethPriceUSD === 0 || isUpdating) return;
+    if (filteredTokens.length === 0 || ethPriceUSD === 0 || isUpdating) return;
 
     setIsUpdating(true);
 
