@@ -64,10 +64,10 @@ export function About() {
         setLastUpdated(new Date(ethPriceData.timestamp));
       }
 
-      // Load all tokens (same as Tokens page)
+      // Load all tokens from ALL chains (Ethereum + Base)
       const { data: tokensData, error: tokensError } = await supabase
         .from('tokens')
-        .select('current_eth_reserve, initial_liquidity_eth, current_token_reserve, price_change_24h, total_volume_eth');
+        .select('current_eth_reserve, initial_liquidity_eth, current_token_reserve, price_change_24h, total_volume_eth, chain_id');
 
       if (tokensError) {
         console.error('Database error loading tokens:', tokensError);
