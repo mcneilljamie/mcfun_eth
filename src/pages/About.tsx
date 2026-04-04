@@ -308,7 +308,7 @@ export function About() {
                   {liquidityToFDVPercent > 0 ? `${liquidityToFDVPercent.toFixed(1)}%` : '0%'}
                 </div>
               )}
-              <p className="text-xs text-gray-600 mt-1">Platform liquidity as % of market cap</p>
+              <p className="text-xs text-gray-600 mt-1">Total platform liquidity as % of market cap</p>
             </div>
           </div>
         </div>
