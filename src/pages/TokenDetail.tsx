@@ -533,7 +533,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                   </a>
                 </div>
               )}
-              <div className={`flex justify-between items-center py-2 ${activeLockCount > 0 ? 'border-b border-gray-100' : ''}`}>
+              <div className="flex justify-between items-center py-2 border-b border-gray-100">
                 <span className="text-gray-600">{t('tokenDetail.tokenContract')}</span>
                 <a
                   href={`${getExplorerUrl(token.chain_id)}/token/${token.token_address}`}
@@ -544,6 +544,12 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                   <span className="font-mono text-sm">{formatAddress(token.token_address)}</span>
                   <ExternalLink className="w-4 h-4" />
                 </a>
+              </div>
+              <div className={`flex justify-between items-center py-2 ${activeLockCount > 0 ? 'border-b border-gray-100' : ''}`}>
+                <span className="text-gray-600">Blockchain</span>
+                <span className="font-semibold text-gray-900">
+                  {token.chain_id === 1 ? 'Ethereum' : token.chain_id === 8453 ? 'Base' : 'Unknown'}
+                </span>
               </div>
               {activeLockCount > 0 && (
                 <div className="flex justify-between items-center py-2">
@@ -573,12 +579,6 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                 <span className="text-gray-600">{token.symbol} {t('tokenDetail.reserve')}</span>
                 <span className="font-semibold text-gray-900">
                   {parseFloat(token.current_token_reserve?.toString() || liveReserves?.reserveToken || '0').toLocaleString()} {token.symbol}
-                </span>
-              </div>
-              <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-gray-600">Blockchain</span>
-                <span className="font-semibold text-gray-900">
-                  {token.chain_id === 1 ? 'Ethereum' : token.chain_id === 8453 ? 'Base' : 'Unknown'}
                 </span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
