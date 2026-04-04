@@ -159,13 +159,13 @@ export function About() {
 
             <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 mb-2">
-                <Flame className="w-5 h-5 sm:w-6 sm:h-6 text-red-600" />
+                <Flame className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                 <h3 className="text-sm sm:text-base font-bold text-gray-900">Total Burned</h3>
               </div>
               {isLoading ? (
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
               ) : (
-                <div className="text-2xl sm:text-3xl font-bold text-red-700">
+                <div className="text-2xl sm:text-3xl font-bold text-green-700">
                   {platformStats ? formatUSD(platformStats.totalBurnedUsd, true) : '$0'}
                 </div>
               )}
