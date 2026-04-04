@@ -8,6 +8,7 @@ import { getEthPriceUSD } from '../lib/ethPrice';
 interface PlatformStats {
   totalMarketCapUsd: number;
   totalVolumeEth: number;
+  totalBurnedUsd: number;
   tokenCount: number;
 }
 
@@ -64,6 +65,25 @@ export function About() {
         setLastUpdated(new Date(ethPriceData.timestamp));
       }
 
+      // Load platform stats
+      const { data: statsData, error: statsError } = await supabase
+        .from('platform_stats')
+        .select('total_market_cap_usd, total_volume_eth, total_burned_usd, token_count')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (statsError) {
+        console.error('Error loading platform stats:', statsError);
+      } else if (statsData) {
+        setPlatformStats({
+          totalMarketCapUsd: parseFloat(statsData.total_market_cap_usd || '0'),
+          totalVolumeEth: parseFloat(statsData.total_volume_eth || '0'),
+          totalBurnedUsd: parseFloat(statsData.total_burned_usd || '0'),
+          tokenCount: statsData.token_count || 0,
+        });
+      }
+
       // Load all tokens from ALL chains (Ethereum + Base)
       const { data: tokensData, error: tokensError } = await supabase
         .from('tokens')
@@ -78,33 +98,6 @@ export function About() {
           return sum + reserve;
         }, 0);
         setTotalLiquidityUSD(totalEth * ethPrice * 2);
-
-        // Calculate total market cap (same calculation as Tokens page)
-        const TOKEN_TOTAL_SUPPLY = 1000000;
-        let totalMarketCapUsd = 0;
-
-        for (const token of tokensData) {
-          const ethReserve = parseFloat(token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
-          const tokenReserve = parseFloat(token.current_token_reserve?.toString() || '1000000');
-
-          if (tokenReserve > 0 && ethReserve > 0 && !isNaN(ethReserve) && !isNaN(tokenReserve)) {
-            const priceInEth = ethReserve / tokenReserve;
-            const currentPriceUSD = priceInEth * ethPrice;
-            const marketCap = currentPriceUSD * TOKEN_TOTAL_SUPPLY;
-            totalMarketCapUsd += marketCap;
-          }
-        }
-
-        // Calculate total volume
-        const totalVolumeEth = tokensData.reduce((sum, token) => {
-          return sum + parseFloat(token.total_volume_eth || '0');
-        }, 0);
-
-        setPlatformStats({
-          totalMarketCapUsd,
-          totalVolumeEth,
-          tokenCount: tokensData.length,
-        });
       }
     } catch (err) {
       console.error('Failed to load data:', err);
@@ -133,7 +126,7 @@ export function About() {
             )}
           </div>
 
-          <div className="grid md:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
@@ -162,6 +155,21 @@ export function About() {
                 </div>
               )}
               <p className="text-xs text-gray-600 mt-1">{t('aboutPage.combinedFDV')}</p>
+            </div>
+
+            <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Flame className="w-5 h-5 sm:w-6 sm:h-6 text-red-600" />
+                <h3 className="text-sm sm:text-base font-bold text-gray-900">Total Burned</h3>
+              </div>
+              {isLoading ? (
+                <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
+              ) : (
+                <div className="text-2xl sm:text-3xl font-bold text-red-700">
+                  {platformStats ? formatUSD(platformStats.totalBurnedUsd, true) : '$0'}
+                </div>
+              )}
+              <p className="text-xs text-gray-600 mt-1">Total value burned</p>
             </div>
 
             <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
