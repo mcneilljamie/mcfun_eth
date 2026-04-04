@@ -215,7 +215,7 @@ export function About() {
                   {platformStats ? formatUSD(platformStats.totalLockedUsd, true) : '$0'}
                 </div>
               )}
-              <p className="text-xs text-gray-600 mt-1">Total value locked</p>
+              <p className="text-xs text-gray-600 mt-1">Total value locked on McFun</p>
             </div>
 
             <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
