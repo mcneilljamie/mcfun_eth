@@ -11,6 +11,8 @@ interface PlatformStats {
   totalBurnedUsd: number;
   totalLockedUsd: number;
   tokenCount: number;
+  ethereumCount: number;
+  baseCount: number;
 }
 
 export function About() {
@@ -76,13 +78,25 @@ export function About() {
 
       if (statsError) {
         console.error('Error loading platform stats:', statsError);
-      } else if (statsData) {
+      }
+
+      // Count tokens by chain first, before using statsData
+      const { data: chainCountData } = await supabase
+        .from('tokens')
+        .select('chain_id');
+
+      const ethereumCount = chainCountData?.filter(t => t.chain_id === 1).length || 0;
+      const baseCount = chainCountData?.filter(t => t.chain_id === 8453).length || 0;
+
+      if (statsData) {
         setPlatformStats({
           totalMarketCapUsd: parseFloat(statsData.total_market_cap_usd || '0'),
           totalVolumeEth: parseFloat(statsData.total_volume_eth || '0'),
           totalBurnedUsd: parseFloat(statsData.total_burned_usd || '0'),
           totalLockedUsd: parseFloat(statsData.total_locked_usd || '0'),
           tokenCount: statsData.token_count || 0,
+          ethereumCount,
+          baseCount,
         });
       }
 
@@ -128,7 +142,7 @@ export function About() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
@@ -202,6 +216,24 @@ export function About() {
                 </div>
               )}
               <p className="text-xs text-gray-600 mt-1">{t('aboutPage.totalProjects')}</p>
+            </div>
+
+            <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <ArrowLeftRight className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <h3 className="text-sm sm:text-base font-bold text-gray-900">Chain Split</h3>
+              </div>
+              {isLoading ? (
+                <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
+              ) : (
+                <div className="text-2xl sm:text-3xl font-bold text-green-700">
+                  {platformStats && platformStats.tokenCount > 0
+                    ? `${Math.round((platformStats.ethereumCount / platformStats.tokenCount) * 100)}% : ${Math.round((platformStats.baseCount / platformStats.tokenCount) * 100)}%`
+                    : '0% : 0%'
+                  }
+                </div>
+              )}
+              <p className="text-xs text-gray-600 mt-1">Ethereum : Base</p>
             </div>
           </div>
         </div>
