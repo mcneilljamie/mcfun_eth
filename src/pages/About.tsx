@@ -18,6 +18,9 @@ interface PlatformStats {
 export function About() {
   const { t } = useTranslation();
   const [totalLiquidityUSD, setTotalLiquidityUSD] = useState<number>(0);
+  const [ethereumLiquidityUSD, setEthereumLiquidityUSD] = useState<number>(0);
+  const [baseLiquidityUSD, setBaseLiquidityUSD] = useState<number>(0);
+  const [liquidityToFDVPercent, setLiquidityToFDVPercent] = useState<number>(0);
   const [platformStats, setPlatformStats] = useState<PlatformStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -113,7 +116,34 @@ export function About() {
           const reserve = parseFloat(token.current_eth_reserve || token.initial_liquidity_eth || '0');
           return sum + reserve;
         }, 0);
-        setTotalLiquidityUSD(totalEth * ethPrice * 2);
+
+        // Calculate Ethereum liquidity
+        const ethereumEth = tokensData
+          .filter(token => token.chain_id === 1)
+          .reduce((sum, token) => {
+            const reserve = parseFloat(token.current_eth_reserve || token.initial_liquidity_eth || '0');
+            return sum + reserve;
+          }, 0);
+
+        // Calculate Base liquidity
+        const baseEth = tokensData
+          .filter(token => token.chain_id === 8453)
+          .reduce((sum, token) => {
+            const reserve = parseFloat(token.current_eth_reserve || token.initial_liquidity_eth || '0');
+            return sum + reserve;
+          }, 0);
+
+        const totalLiqUSD = totalEth * ethPrice * 2;
+        setTotalLiquidityUSD(totalLiqUSD);
+        setEthereumLiquidityUSD(ethereumEth * ethPrice * 2);
+        setBaseLiquidityUSD(baseEth * ethPrice * 2);
+
+        // Calculate liquidity to FDV percentage
+        if (statsData && parseFloat(statsData.total_market_cap_usd || '0') > 0) {
+          const fdv = parseFloat(statsData.total_market_cap_usd);
+          const liquidityPercent = (totalLiqUSD / fdv) * 100;
+          setLiquidityToFDVPercent(liquidityPercent);
+        }
       }
     } catch (err) {
       console.error('Failed to load data:', err);
@@ -234,6 +264,51 @@ export function About() {
                 </div>
               )}
               <p className="text-xs text-gray-600 mt-1">Ethereum : Base</p>
+            </div>
+
+            <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Droplets className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <h3 className="text-sm sm:text-base font-bold text-gray-900">Ethereum Liquidity</h3>
+              </div>
+              {isLoading ? (
+                <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
+              ) : (
+                <div className="text-2xl sm:text-3xl font-bold text-green-700">
+                  {formatUSD(ethereumLiquidityUSD, true)}
+                </div>
+              )}
+              <p className="text-xs text-gray-600 mt-1">Total liquidity on Ethereum</p>
+            </div>
+
+            <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Droplets className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <h3 className="text-sm sm:text-base font-bold text-gray-900">Base Liquidity</h3>
+              </div>
+              {isLoading ? (
+                <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
+              ) : (
+                <div className="text-2xl sm:text-3xl font-bold text-green-700">
+                  {formatUSD(baseLiquidityUSD, true)}
+                </div>
+              )}
+              <p className="text-xs text-gray-600 mt-1">Total liquidity on Base</p>
+            </div>
+
+            <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <h3 className="text-sm sm:text-base font-bold text-gray-900">Liquidity % of FDV</h3>
+              </div>
+              {isLoading ? (
+                <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
+              ) : (
+                <div className="text-2xl sm:text-3xl font-bold text-green-700">
+                  {liquidityToFDVPercent > 0 ? `${liquidityToFDVPercent.toFixed(1)}%` : '0%'}
+                </div>
+              )}
+              <p className="text-xs text-gray-600 mt-1">Platform liquidity as % of market cap</p>
             </div>
           </div>
         </div>
