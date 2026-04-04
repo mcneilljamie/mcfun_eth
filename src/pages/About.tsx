@@ -9,6 +9,7 @@ interface PlatformStats {
   totalMarketCapUsd: number;
   totalVolumeEth: number;
   totalBurnedUsd: number;
+  totalLockedUsd: number;
   tokenCount: number;
 }
 
@@ -68,7 +69,7 @@ export function About() {
       // Load platform stats
       const { data: statsData, error: statsError } = await supabase
         .from('platform_stats')
-        .select('total_market_cap_usd, total_volume_eth, total_burned_usd, token_count')
+        .select('total_market_cap_usd, total_volume_eth, total_burned_usd, total_locked_usd, token_count')
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
@@ -80,6 +81,7 @@ export function About() {
           totalMarketCapUsd: parseFloat(statsData.total_market_cap_usd || '0'),
           totalVolumeEth: parseFloat(statsData.total_volume_eth || '0'),
           totalBurnedUsd: parseFloat(statsData.total_burned_usd || '0'),
+          totalLockedUsd: parseFloat(statsData.total_locked_usd || '0'),
           tokenCount: statsData.token_count || 0,
         });
       }
@@ -126,7 +128,7 @@ export function About() {
             )}
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
             <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
@@ -155,6 +157,21 @@ export function About() {
                 </div>
               )}
               <p className="text-xs text-gray-600 mt-1">{t('aboutPage.combinedFDV')}</p>
+            </div>
+
+            <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Lock className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <h3 className="text-sm sm:text-base font-bold text-gray-900">Total Locked</h3>
+              </div>
+              {isLoading ? (
+                <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
+              ) : (
+                <div className="text-2xl sm:text-3xl font-bold text-green-700">
+                  {platformStats ? formatUSD(platformStats.totalLockedUsd, true) : '$0'}
+                </div>
+              )}
+              <p className="text-xs text-gray-600 mt-1">Total value locked</p>
             </div>
 
             <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
