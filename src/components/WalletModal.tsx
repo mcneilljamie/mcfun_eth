@@ -86,14 +86,14 @@ export function WalletModal({ isOpen, onClose, onConnect, isConnecting }: Wallet
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-3xl max-w-4xl w-full shadow-2xl transform transition-all flex overflow-hidden sm:h-[580px] max-h-[85vh]">
+      <div className="bg-white dark:bg-gray-800 rounded-3xl max-w-4xl w-full shadow-2xl transform transition-all flex overflow-hidden sm:h-[580px] max-h-[85vh]">
         {/* Left Panel - Wallet List */}
-        <div className="w-full sm:w-2/5 sm:border-r border-gray-200 flex flex-col">
-          <div className="p-6 border-b border-gray-200">
-            <h2 className="text-xl font-bold text-gray-900">{t('wallet.connectWallet')}</h2>
+        <div className="w-full sm:w-2/5 sm:border-r border-gray-200 dark:border-gray-700 flex flex-col">
+          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('wallet.connectWallet')}</h2>
             <button
               onClick={onClose}
-              className="absolute top-6 right-6 text-gray-400 hover:text-gray-600 transition-colors"
+              className="absolute top-6 right-6 text-gray-400 hover:text-gray-600 dark:text-gray-400 transition-colors"
             >
               <X size={24} />
             </button>
@@ -115,13 +115,13 @@ export function WalletModal({ isOpen, onClose, onConnect, isConnecting }: Wallet
                         onClose();
                       }}
                       disabled={isConnecting}
-                      className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-left group"
+                      className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-left group"
                     >
                       <div className="flex-shrink-0">
                         {wallet.icon}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-gray-900 text-sm">
+                        <p className="font-semibold text-gray-900 dark:text-white text-sm">
                           {wallet.name}
                         </p>
                         {wallet.status && (
@@ -131,7 +131,7 @@ export function WalletModal({ isOpen, onClose, onConnect, isConnecting }: Wallet
                         )}
                       </div>
                       {isConnecting && (
-                        <div className="w-4 h-4 border-2 border-gray-900 border-t-transparent rounded-full animate-spin" />
+                        <div className="w-4 h-4 border-2 border-gray-900 dark:border-white border-t-transparent rounded-full animate-spin" />
                       )}
                     </button>
                   ))}
@@ -141,7 +141,7 @@ export function WalletModal({ isOpen, onClose, onConnect, isConnecting }: Wallet
 
             {/* Popular Section */}
             <div className="p-4">
-              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 px-2">
+              <h3 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 px-2">
                 {t('wallet.popular')}
               </h3>
               <div className="space-y-1">
@@ -157,18 +157,18 @@ export function WalletModal({ isOpen, onClose, onConnect, isConnecting }: Wallet
                       }
                     }}
                     disabled={isConnecting}
-                    className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-left group"
+                    className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-left group"
                   >
                     <div className="flex-shrink-0">
                       {wallet.icon}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-gray-900 text-sm">
+                      <p className="font-semibold text-gray-900 dark:text-white text-sm">
                         {wallet.name}
                       </p>
                     </div>
                     {isConnecting && wallet.available && (
-                      <div className="w-4 h-4 border-2 border-gray-900 border-t-transparent rounded-full animate-spin" />
+                      <div className="w-4 h-4 border-2 border-gray-900 dark:border-white border-t-transparent rounded-full animate-spin" />
                     )}
                   </button>
                 ))}
@@ -178,8 +178,8 @@ export function WalletModal({ isOpen, onClose, onConnect, isConnecting }: Wallet
         </div>
 
         {/* Right Panel - Educational Content - Hidden on mobile */}
-        <div className="hidden sm:flex flex-1 bg-gray-50 p-8 flex-col">
-          <h2 className="text-2xl font-bold text-gray-900 mb-8">
+        <div className="hidden sm:flex flex-1 bg-gray-50 dark:bg-gray-900 p-8 flex-col">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-8">
             {t('wallet.whatIsWallet')}
           </h2>
 
@@ -192,10 +192,10 @@ export function WalletModal({ isOpen, onClose, onConnect, isConnecting }: Wallet
                 </div>
               </div>
               <div>
-                <h3 className="font-bold text-gray-900 mb-2">
+                <h3 className="font-bold text-gray-900 dark:text-white mb-2">
                   {t('wallet.digitalAssetsTitle')}
                 </h3>
-                <p className="text-sm text-gray-600 leading-relaxed">
+                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
                   {t('wallet.digitalAssetsDescription')}
                 </p>
               </div>
@@ -209,10 +209,10 @@ export function WalletModal({ isOpen, onClose, onConnect, isConnecting }: Wallet
                 </div>
               </div>
               <div>
-                <h3 className="font-bold text-gray-900 mb-2">
+                <h3 className="font-bold text-gray-900 dark:text-white mb-2">
                   {t('wallet.newWayToLoginTitle')}
                 </h3>
-                <p className="text-sm text-gray-600 leading-relaxed">
+                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
                   {t('wallet.newWayToLoginDescription')}
                 </p>
               </div>

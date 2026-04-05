@@ -275,14 +275,14 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <button
             onClick={() => navigate('/tokens')}
-            className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors mb-6"
+            className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white transition-colors mb-6"
           >
             <ArrowLeft className="w-5 h-5" />
             <span>{t('tokenDetail.backToTokens')}</span>
           </button>
           <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-            <p className="mt-4 text-gray-600">{t('tokenDetail.loadingToken')}</p>
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white"></div>
+            <p className="mt-4 text-gray-600 dark:text-gray-400">{t('tokenDetail.loadingToken')}</p>
           </div>
         </div>
       </div>
@@ -295,21 +295,21 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <button
             onClick={() => navigate('/tokens')}
-            className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors mb-6"
+            className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white transition-colors mb-6"
           >
             <ArrowLeft className="w-5 h-5" />
             <span>{t('tokenDetail.backToTokens')}</span>
           </button>
-          <div className="bg-white rounded-xl shadow-lg p-8 text-center">
-            <p className="text-gray-600 mb-4">{error || t('tokenDetail.tokenNotFound')}</p>
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 text-center">
+            <p className="text-gray-600 dark:text-gray-400 mb-4">{error || t('tokenDetail.tokenNotFound')}</p>
             {tokenAddress && (
-              <p className="text-sm text-gray-500 font-mono">
+              <p className="text-sm text-gray-500 dark:text-gray-400 font-mono">
                 Address: {tokenAddress}
               </p>
             )}
             <button
               onClick={() => navigate('/tokens')}
-              className="mt-6 px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+              className="mt-6 px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
             >
               Back to Tokens
             </button>
@@ -325,7 +325,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
         <div className="flex items-center justify-between mb-6">
           <button
             onClick={() => navigate('/tokens')}
-            className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+            className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
             <span>{t('tokenDetail.backToTokens')}</span>
@@ -333,22 +333,22 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
 
           <button
             onClick={shareLink}
-            className="flex items-center space-x-2 px-4 py-2 bg-white text-gray-700 rounded-lg hover:bg-gray-50 transition-colors shadow-sm border border-gray-200"
+            className="flex items-center space-x-2 px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 transition-colors shadow-sm border border-gray-200 dark:border-gray-700"
           >
             <Share2 className="w-4 h-4" />
             <span className="text-sm font-medium">{t('tokenDetail.share')}</span>
           </button>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8 mb-6">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 sm:p-8 mb-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
             <div className="min-w-0">
-              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 break-words mb-2">{token.name}</h1>
+              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white break-words mb-2">{token.name}</h1>
               <div className="flex items-center space-x-3 flex-wrap">
-                <span className="text-xl text-gray-600 whitespace-nowrap">{token.symbol}</span>
+                <span className="text-xl text-gray-600 dark:text-gray-400 whitespace-nowrap">{token.symbol}</span>
                 <button
                   onClick={() => copyToClipboard(token.token_address, 'token')}
-                  className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors text-sm"
+                  className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white transition-colors text-sm"
                 >
                   <span className="font-mono">{formatAddress(token.token_address)}</span>
                   {copiedAddress === 'token' ? (
@@ -361,7 +361,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                   href={`${getExplorerUrl(token.chain_id)}/token/${token.token_address}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-600 hover:text-gray-900 transition-colors"
+                  className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white transition-colors"
                   title={t('tokenDetail.viewOnEtherscan')}
                 >
                   <ExternalLink className="w-4 h-4" />
@@ -371,7 +371,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                     href={ensureProtocol(token.website)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors flex items-center space-x-1"
+                    className="px-3 py-1 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-600 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium transition-colors flex items-center space-x-1"
                     title="Visit Website"
                   >
                     <ExternalLink className="w-3 h-3" />
@@ -414,7 +414,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                       href={ensureProtocol(token.x_url)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-8 h-8 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors flex items-center justify-center"
+                      className="w-8 h-8 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-600 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg transition-colors flex items-center justify-center"
                       title="Follow on X"
                     >
                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -428,7 +428,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
 
             <button
               onClick={() => onTrade(token)}
-              className="bg-gray-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors flex items-center space-x-2"
+              className="bg-gray-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors flex items-center space-x-2"
             >
               <TrendingUp className="w-5 h-5" />
               <span>{t('tokenDetail.trade')}</span>
@@ -436,48 +436,48 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
-            <div className="bg-gray-50 rounded-lg p-4">
-              <div className="text-sm text-gray-600 mb-1">{t('tokenDetail.price')}</div>
-              <div className="text-xl sm:text-2xl font-bold text-gray-900">
+            <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
+              <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">{t('tokenDetail.price')}</div>
+              <div className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
                 {formatUSD(calculateTokenPriceUSD())}
               </div>
             </div>
 
-            <div className="bg-gray-50 rounded-lg p-4">
-              <div className="text-sm text-gray-600 mb-1">{t('tokenDetail.marketCap')}</div>
-              <div className="text-xl sm:text-2xl font-bold text-gray-900">
+            <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
+              <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">{t('tokenDetail.marketCap')}</div>
+              <div className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
                 {formatUSD(calculateMarketCap(), true)}
               </div>
             </div>
 
-            <div className="bg-gray-50 rounded-lg p-4">
-              <div className="text-sm text-gray-600 mb-1">Liquidity on McFun</div>
-              <div className="text-xl sm:text-2xl font-bold text-gray-900">
+            <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
+              <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Liquidity on McFun</div>
+              <div className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
                 {formatUSD(ethToUSD(token.current_eth_reserve || liveReserves?.reserveETH || token.initial_liquidity_eth, ethPriceUSD) * 2, true)}
               </div>
-              <div className="text-sm text-gray-500 mt-1">
+              <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                 {formatCurrency(token.current_eth_reserve || liveReserves?.reserveETH || token.initial_liquidity_eth)} / {parseFloat(token.current_token_reserve?.toString() || liveReserves?.reserveToken || '0').toLocaleString()} {token.symbol}
               </div>
             </div>
 
-            <div className="bg-gray-50 rounded-lg p-4">
+            <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
               <div className="flex items-center justify-between mb-1">
-                <div className="text-sm text-gray-600">{t('tokens.table.returnMultiple')}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">{t('tokens.table.returnMultiple')}</div>
                 <button
                   onClick={toggleReturnDisplayMode}
-                  className="text-xs px-2 py-1 bg-white hover:bg-gray-100 text-gray-700 rounded border border-gray-300 transition-colors"
+                  className="text-xs px-2 py-1 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded border border-gray-300 dark:border-gray-600 transition-colors"
                   title="Toggle display format"
                 >
                   {returnDisplayMode === 'multiple' ? '%' : 'x'}
                 </button>
               </div>
-              <div className="text-xl sm:text-2xl font-bold text-gray-900">
+              <div className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
                 {formatReturnSinceLaunch()}
               </div>
             </div>
           </div>
 
-          <div className="flex items-center justify-end text-sm text-gray-600 pt-2 border-t border-gray-200">
+          <div className="flex items-center justify-end text-sm text-gray-600 dark:text-gray-400 pt-2 border-t border-gray-200 dark:border-gray-700">
             <span>Stats update in real time</span>
           </div>
         </div>
@@ -498,18 +498,18 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">{t('tokenDetail.tokenInformation')}</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{t('tokenDetail.tokenInformation')}</h2>
             <div className="space-y-3">
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-gray-600">{t('tokenDetail.totalSupply')}</span>
-                <span className="font-semibold text-gray-900">1,000,000 {token.symbol}</span>
+                <span className="text-gray-600 dark:text-gray-400">{t('tokenDetail.totalSupply')}</span>
+                <span className="font-semibold text-gray-900 dark:text-white">1,000,000 {token.symbol}</span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-gray-600">{t('tokenDetail.creator')}</span>
+                <span className="text-gray-600 dark:text-gray-400">{t('tokenDetail.creator')}</span>
                 <button
                   onClick={() => copyToClipboard(token.creator_address, 'creator')}
-                  className="flex items-center space-x-2 text-gray-900 hover:text-gray-700 transition-colors"
+                  className="flex items-center space-x-2 text-gray-900 dark:text-white hover:text-gray-700 dark:text-gray-300 transition-colors"
                 >
                   <span className="font-mono text-sm">{formatAddress(token.creator_address)}</span>
                   {copiedAddress === 'creator' ? (
@@ -521,12 +521,12 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
               </div>
               {token.website && (
                 <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="text-gray-600">{t('tokenDetail.website')}</span>
+                  <span className="text-gray-600 dark:text-gray-400">{t('tokenDetail.website')}</span>
                   <a
                     href={ensureProtocol(token.website)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center space-x-2 text-gray-900 hover:text-gray-700 transition-colors"
+                    className="flex items-center space-x-2 text-gray-900 dark:text-white hover:text-gray-700 dark:text-gray-300 transition-colors"
                   >
                     <span className="text-sm truncate max-w-[200px]">{token.website.replace(/^https?:\/\//, '')}</span>
                     <ExternalLink className="w-4 h-4" />
@@ -534,29 +534,29 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                 </div>
               )}
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-gray-600">{t('tokenDetail.tokenContract')}</span>
+                <span className="text-gray-600 dark:text-gray-400">{t('tokenDetail.tokenContract')}</span>
                 <a
                   href={`${getExplorerUrl(token.chain_id)}/token/${token.token_address}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center space-x-2 text-gray-900 hover:text-gray-700 transition-colors"
+                  className="flex items-center space-x-2 text-gray-900 dark:text-white hover:text-gray-700 dark:text-gray-300 transition-colors"
                 >
                   <span className="font-mono text-sm">{formatAddress(token.token_address)}</span>
                   <ExternalLink className="w-4 h-4" />
                 </a>
               </div>
               <div className={`flex justify-between items-center py-2 ${activeLockCount > 0 ? 'border-b border-gray-100' : ''}`}>
-                <span className="text-gray-600">Blockchain</span>
-                <span className="font-semibold text-gray-900">
+                <span className="text-gray-600 dark:text-gray-400">Blockchain</span>
+                <span className="font-semibold text-gray-900 dark:text-white">
                   {token.chain_id === 1 ? 'Ethereum' : token.chain_id === 8453 ? 'Base' : 'Unknown'}
                 </span>
               </div>
               {activeLockCount > 0 && (
                 <div className="flex justify-between items-center py-2">
-                  <span className="text-gray-600">Active Locks</span>
+                  <span className="text-gray-600 dark:text-gray-400">Active Locks</span>
                   <button
                     onClick={() => navigate(`/lock/${token.token_address}`)}
-                    className="flex items-center space-x-2 text-gray-900 hover:text-gray-700 transition-colors"
+                    className="flex items-center space-x-2 text-gray-900 dark:text-white hover:text-gray-700 dark:text-gray-300 transition-colors"
                   >
                     <span className="font-semibold text-sm">View {activeLockCount} lock{activeLockCount !== 1 ? 's' : ''}</span>
                     <ExternalLink className="w-4 h-4" />
@@ -566,32 +566,32 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">{t('tokenDetail.poolInformation')}</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{t('tokenDetail.poolInformation')}</h2>
             <div className="space-y-3">
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-gray-600">{t('tokenDetail.ethReserve')}</span>
-                <span className="font-semibold text-gray-900">
+                <span className="text-gray-600 dark:text-gray-400">{t('tokenDetail.ethReserve')}</span>
+                <span className="font-semibold text-gray-900 dark:text-white">
                   {formatCurrency(token.current_eth_reserve || liveReserves?.reserveETH || token.initial_liquidity_eth)}
                 </span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-gray-600">{token.symbol} {t('tokenDetail.reserve')}</span>
-                <span className="font-semibold text-gray-900">
+                <span className="text-gray-600 dark:text-gray-400">{token.symbol} {t('tokenDetail.reserve')}</span>
+                <span className="font-semibold text-gray-900 dark:text-white">
                   {parseFloat(token.current_token_reserve?.toString() || liveReserves?.reserveToken || '0').toLocaleString()} {token.symbol}
                 </span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                <span className="text-gray-600">{t('tokenDetail.created')}</span>
-                <span className="font-semibold text-gray-900">{formatTimeAgo(token.created_at)}</span>
+                <span className="text-gray-600 dark:text-gray-400">{t('tokenDetail.created')}</span>
+                <span className="font-semibold text-gray-900 dark:text-white">{formatTimeAgo(token.created_at)}</span>
               </div>
               <div className="flex justify-between items-center py-2">
-                <span className="text-gray-600">{t('tokenDetail.ammContract')}</span>
+                <span className="text-gray-600 dark:text-gray-400">{t('tokenDetail.ammContract')}</span>
                 <a
                   href={`${getExplorerUrl(token.chain_id)}/address/${token.amm_address}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center space-x-2 text-gray-900 hover:text-gray-700 transition-colors"
+                  className="flex items-center space-x-2 text-gray-900 dark:text-white hover:text-gray-700 dark:text-gray-300 transition-colors"
                 >
                   <span className="font-mono text-sm">{formatAddress(token.amm_address)}</span>
                   <ExternalLink className="w-4 h-4" />

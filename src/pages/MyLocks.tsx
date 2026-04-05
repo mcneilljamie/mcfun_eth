@@ -368,8 +368,8 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center">
           <Wallet className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('myLocks.connectWallet')}</h2>
-          <p className="text-gray-600">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{t('myLocks.connectWallet')}</h2>
+          <p className="text-gray-600 dark:text-gray-400">
             {t('myLocks.connectWalletDescription')}
           </p>
         </div>
@@ -382,7 +382,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center justify-center">
           <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-          <span className="ml-3 text-gray-600">{t('myLocks.loading')}</span>
+          <span className="ml-3 text-gray-600 dark:text-gray-400">{t('myLocks.loading')}</span>
         </div>
       </div>
     );
@@ -414,20 +414,20 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center">
           <LockIcon className="w-8 h-8 mr-3 text-blue-600" />
           {t('myLocks.title')}
         </h1>
-        <p className="text-gray-600">
+        <p className="text-gray-600 dark:text-gray-400">
           {t('myLocks.subtitle')}
         </p>
       </div>
 
       {activeLocks.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-lg p-12 text-center">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-12 text-center">
           <LockIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-gray-900 mb-2">{t('myLocks.noActiveLocks')}</h2>
-          <p className="text-gray-600 mb-6">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{t('myLocks.noActiveLocks')}</h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
             {t('myLocks.noLocksDescription')}
           </p>
           <button
@@ -457,13 +457,13 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
               return (
                 <div
                   key={lock.lockId}
-                  className="bg-white rounded-xl border-2 border-gray-200 p-6 hover:shadow-lg transition-all"
+                  className="bg-white dark:bg-gray-800 rounded-xl border-2 border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg transition-all"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-3 mb-2 flex-wrap">
-                        <h3 className="text-2xl font-bold text-gray-900 whitespace-nowrap">{lock.tokenSymbol || 'TOKEN'}</h3>
-                        <span className="text-sm text-gray-500 break-words">{lock.tokenName || 'Unknown Token'}</span>
+                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white whitespace-nowrap">{lock.tokenSymbol || 'TOKEN'}</h3>
+                        <span className="text-sm text-gray-500 dark:text-gray-400 break-words">{lock.tokenName || 'Unknown Token'}</span>
                         {isUnlockable && (
                           <span className="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
                             {t('myLocks.readyToUnlock')}
@@ -481,15 +481,15 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
                     <div className="text-right">
                       {lock.value_usd && lock.value_usd > 0 ? (
                         <>
-                          <div className="text-3xl font-bold text-gray-900 mb-1">
+                          <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
                             {formatCurrency(lock.value_usd)}
                           </div>
-                          <div className="text-sm text-gray-500">
+                          <div className="text-sm text-gray-500 dark:text-gray-400">
                             {lock.amount_locked_formatted ? formatAmount(lock.amount_locked_formatted) : '...'} {lock.tokenSymbol || ''}
                           </div>
                         </>
                       ) : (
-                        <div className="text-3xl font-bold text-gray-900">
+                        <div className="text-3xl font-bold text-gray-900 dark:text-white">
                           {lock.amount_locked_formatted ? formatAmount(lock.amount_locked_formatted) : '...'} {lock.tokenSymbol || 'TOKEN'}
                         </div>
                       )}
@@ -497,28 +497,28 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <div className="text-xs text-gray-500 mb-1">{t('myLocks.lockedOn')}</div>
-                      <div className="text-sm font-semibold text-gray-900">
+                    <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
+                      <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">{t('myLocks.lockedOn')}</div>
+                      <div className="text-sm font-semibold text-gray-900 dark:text-white">
                         {lockDate.toLocaleDateString()}
                       </div>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <div className="text-xs text-gray-500 mb-1">{t('myLocks.lockDuration')}</div>
-                      <div className="text-sm font-semibold text-gray-900">
+                    <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
+                      <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">{t('myLocks.lockDuration')}</div>
+                      <div className="text-sm font-semibold text-gray-900 dark:text-white">
                         {lock.lock_duration_days ? formatDuration(lock.lock_duration_days) : '...'}
                       </div>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <div className="text-xs text-gray-500 mb-1 flex items-center">
+                    <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
+                      <div className="text-xs text-gray-500 dark:text-gray-400 mb-1 flex items-center">
                         <Clock className="w-3 h-3 mr-1" />
                         {isUnlockable ? t('myLocks.unlockedOn') : t('myLocks.unlocksOn')}
                       </div>
-                      <div className="text-sm font-semibold text-gray-900">
+                      <div className="text-sm font-semibold text-gray-900 dark:text-white">
                         {unlockDate.toLocaleDateString()}
                       </div>
                       {!isUnlockable && (
-                        <div className="text-xs text-gray-500 mt-1">
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                           {formatTimeRemaining(lock.unlockTime)}
                         </div>
                       )}
@@ -566,7 +566,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
 
           {withdrawnLocks.length > 0 && (
             <div className="mt-12">
-              <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
                 <Clock className="w-5 h-5 mr-2 text-gray-400" />
                 {t('myLocks.withdrawnLocks')}
               </h2>
@@ -574,14 +574,14 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
                 {withdrawnLocks.map((lock) => (
                   <div
                     key={lock.lockId}
-                    className="bg-gray-50 rounded-lg border border-gray-200 p-4 opacity-75"
+                    className="bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4 opacity-75"
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="font-semibold text-gray-900">
+                        <div className="font-semibold text-gray-900 dark:text-white">
                           {lock.amount_locked_formatted ? formatAmount(lock.amount_locked_formatted) : '...'} {lock.tokenSymbol || 'TOKEN'}
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-sm text-gray-500 dark:text-gray-400">
                           {t('myLocks.lockedFor')} {lock.lock_duration_days ? formatDuration(lock.lock_duration_days) : '...'} • {t('myLocks.withdrawn')}
                         </div>
                       </div>

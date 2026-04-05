@@ -86,31 +86,31 @@ export function AccountDropdown({ account, chainId, onDisconnect, onShowToast }:
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="bg-gray-900 text-white px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium hover:bg-gray-800 transition-colors flex items-center space-x-2"
+        className="bg-gray-900 text-white px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors flex items-center space-x-2"
       >
         <div className="w-2 h-2 bg-green-400 rounded-full" />
         <span>{formatAddress(account)}</span>
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-2xl border border-gray-200 z-50">
-          <div className="p-4 border-b border-gray-200">
+        <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 z-50">
+          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-500">{t('wallet.balance')}</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400">{t('wallet.balance')}</span>
               <span className={`text-sm font-medium px-2 py-1 rounded-lg ${
                 isSupported ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
               }`}>
                 {networkName}
               </span>
             </div>
-            <div className="text-2xl font-bold text-gray-900">{balance} ETH</div>
-            <div className="text-sm text-gray-500 mt-1">{formatAddress(account)}</div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-white">{balance} ETH</div>
+            <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">{formatAddress(account)}</div>
           </div>
 
           <div className="p-2">
             <button
               onClick={copyAddress}
-              className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 transition-colors text-left"
+              className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 transition-colors text-left"
             >
               {copied ? (
                 <>
@@ -119,21 +119,21 @@ export function AccountDropdown({ account, chainId, onDisconnect, onShowToast }:
                 </>
               ) : (
                 <>
-                  <Copy size={18} className="text-gray-600" />
-                  <span className="text-sm font-medium text-gray-900">{t('wallet.copyAddress')}</span>
+                  <Copy size={18} className="text-gray-600 dark:text-gray-400" />
+                  <span className="text-sm font-medium text-gray-900 dark:text-white">{t('wallet.copyAddress')}</span>
                 </>
               )}
             </button>
 
             <button
               onClick={openInExplorer}
-              className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 transition-colors text-left"
+              className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 transition-colors text-left"
             >
-              <ExternalLink size={18} className="text-gray-600" />
-              <span className="text-sm font-medium text-gray-900">{t('wallet.viewExplorer')}</span>
+              <ExternalLink size={18} className="text-gray-600 dark:text-gray-400" />
+              <span className="text-sm font-medium text-gray-900 dark:text-white">{t('wallet.viewExplorer')}</span>
             </button>
 
-            <div className="border-t border-gray-200 my-2" />
+            <div className="border-t border-gray-200 dark:border-gray-700 my-2" />
 
             <button
               onClick={() => {

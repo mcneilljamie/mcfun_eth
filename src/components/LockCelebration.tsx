@@ -140,7 +140,7 @@ export function LockCelebration({
         .animate-firework:nth-child(12) { --rotation: 330deg; }
       `}</style>
 
-      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative animate-scale-in">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative animate-scale-in">
         <style>{`
           @keyframes scale-in {
             from {
@@ -159,9 +159,9 @@ export function LockCelebration({
 
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          className="absolute top-4 right-4 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 dark:bg-gray-800 transition-colors"
         >
-          <X className="w-5 h-5 text-gray-500" />
+          <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
         </button>
 
         <div className="p-8">
@@ -169,50 +169,50 @@ export function LockCelebration({
             <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-full mb-4 animate-bounce">
               <Lock className="w-10 h-10 text-white" />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2 flex items-center justify-center">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center justify-center">
               <Lock className="w-8 h-8 mr-2 text-green-600" />
               {t('lockCelebration.lockSuccessful')}
             </h2>
-            <p className="text-lg text-gray-600">
+            <p className="text-lg text-gray-600 dark:text-gray-400">
               {t('lockCelebration.subtitle', { amount: formattedAmount, symbol: tokenSymbol, days: formatDuration(durationDays) })}
             </p>
           </div>
 
           <div className="space-y-6">
             <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border-2 border-blue-300">
-              <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
                 <Lock className="w-5 h-5 mr-2 text-blue-600" />
                 {t('lockCelebration.lockDetails')}
               </h3>
 
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">{t('lockCelebration.token')}:</span>
-                  <span className="font-semibold text-gray-900">{tokenName} ({tokenSymbol})</span>
+                  <span className="text-gray-600 dark:text-gray-400">{t('lockCelebration.token')}:</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">{tokenName} ({tokenSymbol})</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">{t('lockCelebration.amount')}:</span>
-                  <span className="font-semibold text-gray-900">{formattedAmount} {tokenSymbol}</span>
+                  <span className="text-gray-600 dark:text-gray-400">{t('lockCelebration.amount')}:</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">{formattedAmount} {tokenSymbol}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">{t('lockCelebration.duration')}:</span>
-                  <span className="font-semibold text-gray-900">{formatDuration(durationDays)}</span>
+                  <span className="text-gray-600 dark:text-gray-400">{t('lockCelebration.duration')}:</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">{formatDuration(durationDays)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">{t('lockCelebration.unlockDate')}:</span>
-                  <span className="font-semibold text-gray-900">{unlockDate.toLocaleDateString()}</span>
+                  <span className="text-gray-600 dark:text-gray-400">{t('lockCelebration.unlockDate')}:</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">{unlockDate.toLocaleDateString()}</span>
                 </div>
               </div>
             </div>
 
             <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border-2 border-purple-300">
-              <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
                 <ExternalLink className="w-5 h-5 mr-2 text-purple-600" />
                 {t('lockCelebration.shareLock')}
               </h3>
 
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   {t('lockCelebration.shareableLink')}
                 </label>
                 <div className="flex items-center space-x-2">
@@ -220,7 +220,7 @@ export function LockCelebration({
                     type="text"
                     value={shareableLink}
                     readOnly
-                    className="flex-1 px-3 py-2 bg-white border border-purple-300 rounded-lg text-sm font-mono"
+                    className="flex-1 px-3 py-2 bg-white dark:bg-gray-800 border border-purple-300 rounded-lg text-sm font-mono"
                   />
                   <button
                     onClick={() => copyToClipboard(shareableLink, 'link')}
@@ -234,21 +234,21 @@ export function LockCelebration({
                     )}
                   </button>
                 </div>
-                <p className="text-xs text-gray-600 mt-1">
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                   {t('lockCelebration.shareDescription')}
                 </p>
               </div>
             </div>
 
             <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6">
-              <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
                 <ExternalLink className="w-5 h-5 mr-2" />
                 {t('lockCelebration.contractInfo')}
               </h3>
 
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t('lockCelebration.tokenContract')}
                   </label>
                   <div className="flex items-center space-x-2">
@@ -256,11 +256,11 @@ export function LockCelebration({
                       type="text"
                       value={tokenAddress}
                       readOnly
-                      className="flex-1 px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm font-mono"
+                      className="flex-1 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-mono"
                     />
                     <button
                       onClick={() => copyToClipboard(tokenAddress, 'token')}
-                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
                       title={t('lockCelebration.copyTokenAddress')}
                     >
                       {copiedItem === 'token' ? (
@@ -273,7 +273,7 @@ export function LockCelebration({
                       href={`${explorerUrl}/token/${tokenAddress}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
                       title={t('lockCelebration.viewOnEtherscan')}
                     >
                       <ExternalLink className="w-5 h-5" />
@@ -282,7 +282,7 @@ export function LockCelebration({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t('lockCelebration.transactionHash')}
                   </label>
                   <div className="flex items-center space-x-2">
@@ -290,11 +290,11 @@ export function LockCelebration({
                       type="text"
                       value={txHash}
                       readOnly
-                      className="flex-1 px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm font-mono"
+                      className="flex-1 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-mono"
                     />
                     <button
                       onClick={() => copyToClipboard(txHash, 'tx')}
-                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
                       title={t('lockCelebration.copyTxHash')}
                     >
                       {copiedItem === 'tx' ? (
@@ -307,7 +307,7 @@ export function LockCelebration({
                       href={`${explorerUrl}/tx/${txHash}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
                       title={t('lockCelebration.viewOnExplorer')}
                     >
                       <ExternalLink className="w-5 h-5" />
@@ -330,7 +330,7 @@ export function LockCelebration({
               </button>
               <button
                 onClick={onClose}
-                className="flex-1 bg-gray-900 text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
+                className="flex-1 bg-gray-900 text-white py-3 rounded-lg font-semibold hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
               >
                 {t('lockCelebration.close')}
               </button>

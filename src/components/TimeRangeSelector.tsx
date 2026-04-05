@@ -12,7 +12,7 @@ export function TimeRangeSelector({ selected, onChange, theme = 'dark' }: TimeRa
   const isDark = theme === 'dark';
 
   return (
-    <div className={`flex gap-1 ${isDark ? 'bg-gray-800' : 'bg-gray-100'} rounded-lg p-1`}>
+    <div className={`flex gap-1 ${isDark ? 'bg-gray-800' : 'bg-gray-100 dark:bg-gray-800'} rounded-lg p-1`}>
       {TIME_RANGES.map((range) => (
         <button
           key={range}
@@ -22,7 +22,7 @@ export function TimeRangeSelector({ selected, onChange, theme = 'dark' }: TimeRa
               ? 'bg-blue-600 text-white'
               : isDark
               ? 'text-gray-400 hover:text-white hover:bg-gray-700'
-              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600 dark:bg-gray-700'
           }`}
         >
           {range}

@@ -173,27 +173,27 @@ export function About() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="max-w-5xl mx-auto px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
         <div className="text-center mb-8 sm:mb-12">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-3 sm:mb-4 px-2">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4 px-2">
             {t('about.title')}
           </h1>
-          <p className="text-base sm:text-xl text-gray-600 max-w-3xl mx-auto px-4">
+          <p className="text-base sm:text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto px-4">
             {t('about.subtitle')}
           </p>
         </div>
 
         <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8 border-2 border-green-200">
           <div className="text-center mb-6">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">{t('aboutPage.platformStats')}</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{t('aboutPage.platformStats')}</h2>
             {timeAgo && (
-              <p className="text-xs text-gray-500 mt-1">Last updated {timeAgo}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Last updated {timeAgo}</p>
             )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
+            <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
-                <h3 className="text-sm sm:text-base font-bold text-gray-900">{t('aboutPage.totalLiquidity')}</h3>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">{t('aboutPage.totalLiquidity')}</h3>
               </div>
               {isLoading ? (
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
@@ -202,13 +202,13 @@ export function About() {
                   {formatUSD(totalLiquidityUSD, true)}
                 </div>
               )}
-              <p className="text-xs text-gray-600 mt-1">{t('aboutPage.totalEthInPools')}</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{t('aboutPage.totalEthInPools')}</p>
             </div>
 
-            <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
+            <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
-                <h3 className="text-sm sm:text-base font-bold text-gray-900">{t('aboutPage.totalMarketCap')}</h3>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">{t('aboutPage.totalMarketCap')}</h3>
               </div>
               {isLoading ? (
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
@@ -217,13 +217,13 @@ export function About() {
                   {platformStats ? formatUSD(platformStats.totalMarketCapUsd, true) : '$0'}
                 </div>
               )}
-              <p className="text-xs text-gray-600 mt-1">{t('aboutPage.combinedFDV')}</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{t('aboutPage.combinedFDV')}</p>
             </div>
 
-            <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
+            <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Lock className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
-                <h3 className="text-sm sm:text-base font-bold text-gray-900">Total Locked</h3>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">Total Locked</h3>
               </div>
               {isLoading ? (
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
@@ -232,13 +232,13 @@ export function About() {
                   {platformStats ? formatUSD(platformStats.totalLockedUsd, true) : '$0'}
                 </div>
               )}
-              <p className="text-xs text-gray-600 mt-1">Total value locked on McFun</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Total value locked on McFun</p>
             </div>
 
-            <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
+            <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Flame className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
-                <h3 className="text-sm sm:text-base font-bold text-gray-900">Total Burned</h3>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">Total Burned</h3>
               </div>
               {isLoading ? (
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
@@ -247,13 +247,13 @@ export function About() {
                   {platformStats ? formatUSD(platformStats.totalBurnedUsd, true) : '$0'}
                 </div>
               )}
-              <p className="text-xs text-gray-600 mt-1">Total value burned</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Total value burned</p>
             </div>
 
-            <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
+            <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Coins className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
-                <h3 className="text-sm sm:text-base font-bold text-gray-900">{t('aboutPage.projectsListed')}</h3>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">{t('aboutPage.projectsListed')}</h3>
               </div>
               {isLoading ? (
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
@@ -262,13 +262,13 @@ export function About() {
                   {platformStats ? platformStats.tokenCount.toLocaleString() : '0'}
                 </div>
               )}
-              <p className="text-xs text-gray-600 mt-1">{t('aboutPage.totalProjects')}</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{t('aboutPage.totalProjects')}</p>
             </div>
 
-            <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
+            <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <ArrowLeftRight className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
-                <h3 className="text-sm sm:text-base font-bold text-gray-900">Tokens by Chain</h3>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">Tokens by Chain</h3>
               </div>
               {isLoading ? (
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
@@ -280,13 +280,13 @@ export function About() {
                   }
                 </div>
               )}
-              <p className="text-xs text-gray-600 mt-1">Ethereum : Base</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Ethereum : Base</p>
             </div>
 
-            <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
+            <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Droplets className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
-                <h3 className="text-sm sm:text-base font-bold text-gray-900">Ethereum Liquidity</h3>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">Ethereum Liquidity</h3>
               </div>
               {isLoading ? (
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
@@ -295,13 +295,13 @@ export function About() {
                   {formatUSD(ethereumLiquidityUSD, true)}
                 </div>
               )}
-              <p className="text-xs text-gray-600 mt-1">Total liquidity on Ethereum</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Total liquidity on Ethereum</p>
             </div>
 
-            <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
+            <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Droplets className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
-                <h3 className="text-sm sm:text-base font-bold text-gray-900">Base Liquidity</h3>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">Base Liquidity</h3>
               </div>
               {isLoading ? (
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
@@ -310,13 +310,13 @@ export function About() {
                   {formatUSD(baseLiquidityUSD, true)}
                 </div>
               )}
-              <p className="text-xs text-gray-600 mt-1">Total liquidity on Base</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Total liquidity on Base</p>
             </div>
 
-            <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
+            <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
-                <h3 className="text-sm sm:text-base font-bold text-gray-900">MCFUN % of FDV</h3>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">MCFUN % of FDV</h3>
               </div>
               {isLoading ? (
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
@@ -325,50 +325,50 @@ export function About() {
                   {mcfunMarketCapPercent > 0 ? `${mcfunMarketCapPercent.toFixed(1)}%` : '0%'}
                 </div>
               )}
-              <a href="https://mcfun.io/token/0xe03e4d90a46f62ac405708ba5036f292d5e0edc8" className="text-xs text-gray-600 hover:text-gray-800 mt-1 inline-block">MCFUN as a share of total platform FDV</a>
+              <a href="https://mcfun.io/token/0xe03e4d90a46f62ac405708ba5036f292d5e0edc8" className="text-xs text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:text-gray-100 mt-1 inline-block">MCFUN as a share of total platform FDV</a>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
             <Zap className="w-6 h-6 sm:w-8 sm:h-8" />
             {t('about.howWorks.title')}
           </h2>
 
           <div className="space-y-5 sm:space-y-6">
             <div>
-              <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">{t('about.howWorks.step1.title')}</h3>
-              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2 sm:mb-3">{t('about.howWorks.step1.title')}</h3>
+              <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
                 {t('about.howWorks.step1.description')}
               </p>
             </div>
 
             <div>
-              <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">{t('about.howWorks.step2.title')}</h3>
-              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2 sm:mb-3">{t('about.howWorks.step2.title')}</h3>
+              <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
                 {t('about.howWorks.step2.description')}
               </p>
             </div>
 
             <div>
-              <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">{t('about.howWorks.step3.title')}</h3>
-              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2 sm:mb-3">{t('about.howWorks.step3.title')}</h3>
+              <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
                 {t('about.howWorks.step3.description')}
               </p>
             </div>
 
             <div>
-              <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">{t('about.howWorks.step4.title')}</h3>
-              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2 sm:mb-3">{t('about.howWorks.step4.title')}</h3>
+              <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
                 {t('about.howWorks.step4.description')}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
             <Shield className="w-6 h-6 sm:w-8 sm:h-8" />
             {t('about.why.title')}
           </h2>
@@ -381,8 +381,8 @@ export function About() {
                 </div>
               </div>
               <div>
-                <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('about.why.unruggable.title')}</h3>
-                <p className="text-xs sm:text-sm text-gray-600">
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white mb-1">{t('about.why.unruggable.title')}</h3>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   {t('about.why.unruggable.description')}
                 </p>
               </div>
@@ -395,8 +395,8 @@ export function About() {
                 </div>
               </div>
               <div>
-                <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('about.why.permanentListings.title')}</h3>
-                <p className="text-xs sm:text-sm text-gray-600">
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white mb-1">{t('about.why.permanentListings.title')}</h3>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   {t('about.why.permanentListings.description')}
                 </p>
               </div>
@@ -409,8 +409,8 @@ export function About() {
                 </div>
               </div>
               <div>
-                <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('about.why.portfolioTracking.title')}</h3>
-                <p className="text-xs sm:text-sm text-gray-600">
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white mb-1">{t('about.why.portfolioTracking.title')}</h3>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   {t('about.why.portfolioTracking.description')}
                 </p>
               </div>
@@ -423,8 +423,8 @@ export function About() {
                 </div>
               </div>
               <div>
-                <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('about.why.freeTokenLocking.title')}</h3>
-                <p className="text-xs sm:text-sm text-gray-600">
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white mb-1">{t('about.why.freeTokenLocking.title')}</h3>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   {t('about.why.freeTokenLocking.description')}
                 </p>
               </div>
@@ -437,8 +437,8 @@ export function About() {
                 </div>
               </div>
               <div>
-                <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('about.why.easyBurning.title')}</h3>
-                <p className="text-xs sm:text-sm text-gray-600">
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white mb-1">{t('about.why.easyBurning.title')}</h3>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   {t('about.why.easyBurning.description')}
                 </p>
               </div>
@@ -451,8 +451,8 @@ export function About() {
                 </div>
               </div>
               <div>
-                <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('about.why.extremeLowFees.title')}</h3>
-                <p className="text-xs sm:text-sm text-gray-600">
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white mb-1">{t('about.why.extremeLowFees.title')}</h3>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   {t('about.why.extremeLowFees.description')}
                 </p>
               </div>
@@ -465,8 +465,8 @@ export function About() {
                 </div>
               </div>
               <div>
-                <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('about.why.simple.title')}</h3>
-                <p className="text-xs sm:text-sm text-gray-600">
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white mb-1">{t('about.why.simple.title')}</h3>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   {t('about.why.simple.description')}
                 </p>
               </div>
@@ -479,8 +479,8 @@ export function About() {
                 </div>
               </div>
               <div>
-                <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('about.why.lowBarrier.title')}</h3>
-                <p className="text-xs sm:text-sm text-gray-600">
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white mb-1">{t('about.why.lowBarrier.title')}</h3>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   {t('about.why.lowBarrier.description')}
                 </p>
               </div>
@@ -493,8 +493,8 @@ export function About() {
                 </div>
               </div>
               <div>
-                <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('about.why.instant.title')}</h3>
-                <p className="text-xs sm:text-sm text-gray-600">
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white mb-1">{t('about.why.instant.title')}</h3>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   {t('about.why.instant.description')}
                 </p>
               </div>
@@ -507,8 +507,8 @@ export function About() {
                 </div>
               </div>
               <div>
-                <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('about.why.transparent.title')}</h3>
-                <p className="text-xs sm:text-sm text-gray-600">
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white mb-1">{t('about.why.transparent.title')}</h3>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   {t('about.why.transparent.description')}
                 </p>
               </div>
@@ -565,54 +565,54 @@ export function About() {
         </div>
 
         <div className="bg-gradient-to-br from-emerald-50 to-green-100 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8 border-2 border-emerald-200">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
             <ArrowLeftRight className="w-6 h-6 sm:w-8 sm:h-8 text-emerald-600" />
             {t('about.trading.title')}
           </h2>
 
           <div className="space-y-4">
-            <div className="bg-white/80 backdrop-blur rounded-lg p-4 border border-emerald-200">
+            <div className="bg-white dark:bg-gray-800/80 backdrop-blur rounded-lg p-4 border border-emerald-200">
               <div className="flex items-start gap-3">
                 <Coins className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('about.trading.builtInAMM.title')}</h3>
-                  <p className="text-xs sm:text-sm text-gray-700">
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white mb-1">{t('about.trading.builtInAMM.title')}</h3>
+                  <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300">
                     {t('about.trading.builtInAMM.description')}
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white/80 backdrop-blur rounded-lg p-4 border border-emerald-200">
+            <div className="bg-white dark:bg-gray-800/80 backdrop-blur rounded-lg p-4 border border-emerald-200">
               <div className="flex items-start gap-3">
                 <Zap className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('about.trading.instantTrades.title')}</h3>
-                  <p className="text-xs sm:text-sm text-gray-700">
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white mb-1">{t('about.trading.instantTrades.title')}</h3>
+                  <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300">
                     {t('about.trading.instantTrades.description')}
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white/80 backdrop-blur rounded-lg p-4 border border-emerald-200">
+            <div className="bg-white dark:bg-gray-800/80 backdrop-blur rounded-lg p-4 border border-emerald-200">
               <div className="flex items-start gap-3">
                 <DollarSign className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('about.trading.fairPricing.title')}</h3>
-                  <p className="text-xs sm:text-sm text-gray-700">
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white mb-1">{t('about.trading.fairPricing.title')}</h3>
+                  <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300">
                     {t('about.trading.fairPricing.description')}
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white/80 backdrop-blur rounded-lg p-4 border border-emerald-200">
+            <div className="bg-white dark:bg-gray-800/80 backdrop-blur rounded-lg p-4 border border-emerald-200">
               <div className="flex items-start gap-3">
                 <Droplets className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('about.trading.permanentLiquidity.title')}</h3>
-                  <p className="text-xs sm:text-sm text-gray-700">
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white mb-1">{t('about.trading.permanentLiquidity.title')}</h3>
+                  <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300">
                     {t('about.trading.permanentLiquidity.description')}
                   </p>
                 </div>
@@ -622,31 +622,31 @@ export function About() {
         </div>
 
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8 border-2 border-blue-200">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
             <Eye className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
             {t('about.visibility.title')}
           </h2>
-          <p className="text-sm sm:text-base text-gray-700 leading-relaxed mb-4">
+          <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
             {t('about.visibility.description')}
           </p>
           <div className="space-y-4">
-            <div className="bg-white/80 backdrop-blur rounded-lg p-4 border border-blue-200">
+            <div className="bg-white dark:bg-gray-800/80 backdrop-blur rounded-lg p-4 border border-blue-200">
               <div className="flex items-start gap-3">
                 <TrendingUp className="w-5 h-5 text-blue-600 flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('about.visibility.ranking.title')}</h3>
-                  <p className="text-xs sm:text-sm text-gray-700">
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white mb-1">{t('about.visibility.ranking.title')}</h3>
+                  <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300">
                     {t('about.visibility.ranking.description')}
                   </p>
                 </div>
               </div>
             </div>
-            <div className="bg-white/80 backdrop-blur rounded-lg p-4 border border-blue-200">
+            <div className="bg-white dark:bg-gray-800/80 backdrop-blur rounded-lg p-4 border border-blue-200">
               <div className="flex items-start gap-3">
                 <Eye className="w-5 h-5 text-blue-600 flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('about.visibility.permanent.title')}</h3>
-                  <p className="text-xs sm:text-sm text-gray-700">
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white mb-1">{t('about.visibility.permanent.title')}</h3>
+                  <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300">
                     {t('about.visibility.permanent.description')}
                   </p>
                 </div>
@@ -656,31 +656,31 @@ export function About() {
         </div>
 
         <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8 border-2 border-purple-200">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
             <Wallet className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600" />
             {t('aboutPage.trackHoldings')}
           </h2>
-          <p className="text-sm sm:text-base text-gray-700 leading-relaxed mb-4">
+          <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
             {t('aboutPage.trackHoldingsDescription')}
           </p>
           <div className="space-y-4">
-            <div className="bg-white/80 backdrop-blur rounded-lg p-4 border border-purple-200">
+            <div className="bg-white dark:bg-gray-800/80 backdrop-blur rounded-lg p-4 border border-purple-200">
               <div className="flex items-start gap-3">
                 <BarChart3 className="w-5 h-5 text-purple-600 flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('aboutPage.realtimeTracking')}</h3>
-                  <p className="text-xs sm:text-sm text-gray-700">
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white mb-1">{t('aboutPage.realtimeTracking')}</h3>
+                  <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300">
                     {t('aboutPage.realtimeTrackingDescription')}
                   </p>
                 </div>
               </div>
             </div>
-            <div className="bg-white/80 backdrop-blur rounded-lg p-4 border border-purple-200">
+            <div className="bg-white dark:bg-gray-800/80 backdrop-blur rounded-lg p-4 border border-purple-200">
               <div className="flex items-start gap-3">
                 <Lock className="w-5 h-5 text-purple-600 flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('aboutPage.trackLockedTokens')}</h3>
-                  <p className="text-xs sm:text-sm text-gray-700">
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white mb-1">{t('aboutPage.trackLockedTokens')}</h3>
+                  <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300">
                     {t('aboutPage.trackLockedTokensDescription')}
                   </p>
                 </div>
@@ -690,42 +690,42 @@ export function About() {
         </div>
 
         <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8 border-2 border-amber-200">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
             <Lock className="w-6 h-6 sm:w-8 sm:h-8 text-amber-600" />
             {t('aboutPage.tokenLocking')}
           </h2>
-          <p className="text-sm sm:text-base text-gray-700 leading-relaxed mb-4">
+          <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
             {t('aboutPage.tokenLockingDescription')}
           </p>
           <div className="space-y-4">
-            <div className="bg-white/80 backdrop-blur rounded-lg p-4 border border-amber-200">
+            <div className="bg-white dark:bg-gray-800/80 backdrop-blur rounded-lg p-4 border border-amber-200">
               <div className="flex items-start gap-3">
                 <Check className="w-5 h-5 text-amber-600 flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('aboutPage.lockAnyToken')}</h3>
-                  <p className="text-xs sm:text-sm text-gray-700">
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white mb-1">{t('aboutPage.lockAnyToken')}</h3>
+                  <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300">
                     {t('aboutPage.lockAnyTokenDescription')}
                   </p>
                 </div>
               </div>
             </div>
-            <div className="bg-white/80 backdrop-blur rounded-lg p-4 border border-amber-200">
+            <div className="bg-white dark:bg-gray-800/80 backdrop-blur rounded-lg p-4 border border-amber-200">
               <div className="flex items-start gap-3">
                 <Shield className="w-5 h-5 text-amber-600 flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('aboutPage.proveTrust')}</h3>
-                  <p className="text-xs sm:text-sm text-gray-700">
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white mb-1">{t('aboutPage.proveTrust')}</h3>
+                  <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300">
                     {t('aboutPage.proveTrustDescription')}
                   </p>
                 </div>
               </div>
             </div>
-            <div className="bg-white/80 backdrop-blur rounded-lg p-4 border border-amber-200">
+            <div className="bg-white dark:bg-gray-800/80 backdrop-blur rounded-lg p-4 border border-amber-200">
               <div className="flex items-start gap-3">
                 <TrendingUp className="w-5 h-5 text-amber-600 flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('aboutPage.deferGratification')}</h3>
-                  <p className="text-xs sm:text-sm text-gray-700">
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white mb-1">{t('aboutPage.deferGratification')}</h3>
+                  <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300">
                     {t('aboutPage.deferGratificationDescription')}
                   </p>
                 </div>
@@ -735,42 +735,42 @@ export function About() {
         </div>
 
         <div className="bg-gradient-to-br from-red-50 to-rose-50 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8 border-2 border-red-200">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
             <Flame className="w-6 h-6 sm:w-8 sm:h-8 text-red-600" />
             {t('aboutPage.tokenBurning')}
           </h2>
-          <p className="text-sm sm:text-base text-gray-700 leading-relaxed mb-4">
+          <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
             {t('aboutPage.tokenBurningDescription')}
           </p>
           <div className="space-y-4">
-            <div className="bg-white/80 backdrop-blur rounded-lg p-4 border border-red-200">
+            <div className="bg-white dark:bg-gray-800/80 backdrop-blur rounded-lg p-4 border border-red-200">
               <div className="flex items-start gap-3">
                 <Flame className="w-5 h-5 text-red-600 flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('aboutPage.reduceSupply')}</h3>
-                  <p className="text-xs sm:text-sm text-gray-700">
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white mb-1">{t('aboutPage.reduceSupply')}</h3>
+                  <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300">
                     {t('aboutPage.reduceSupplyDescription')}
                   </p>
                 </div>
               </div>
             </div>
-            <div className="bg-white/80 backdrop-blur rounded-lg p-4 border border-red-200">
+            <div className="bg-white dark:bg-gray-800/80 backdrop-blur rounded-lg p-4 border border-red-200">
               <div className="flex items-start gap-3">
                 <TrendingUp className="w-5 h-5 text-red-600 flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('aboutPage.increaseScarcity')}</h3>
-                  <p className="text-xs sm:text-sm text-gray-700">
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white mb-1">{t('aboutPage.increaseScarcity')}</h3>
+                  <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300">
                     {t('aboutPage.increaseScarcityDescription')}
                   </p>
                 </div>
               </div>
             </div>
-            <div className="bg-white/80 backdrop-blur rounded-lg p-4 border border-red-200">
+            <div className="bg-white dark:bg-gray-800/80 backdrop-blur rounded-lg p-4 border border-red-200">
               <div className="flex items-start gap-3">
                 <Check className="w-5 h-5 text-red-600 flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{t('aboutPage.permanentRemoval')}</h3>
-                  <p className="text-xs sm:text-sm text-gray-700">
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white mb-1">{t('aboutPage.permanentRemoval')}</h3>
+                  <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300">
                     {t('aboutPage.permanentRemovalDescription')}
                   </p>
                 </div>
@@ -779,46 +779,46 @@ export function About() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
             <DollarSign className="w-6 h-6 sm:w-8 sm:h-8" />
             {t('about.fees.title')}
           </h2>
 
           <div className="space-y-4 sm:space-y-6">
-            <div className="bg-gray-50 p-4 sm:p-6 rounded-lg border-2 border-gray-200">
+            <div className="bg-gray-50 dark:bg-gray-900 p-4 sm:p-6 rounded-lg border-2 border-gray-200 dark:border-gray-700">
               <div className="flex items-start gap-3 sm:gap-4">
-                <Coins className="w-6 h-6 sm:w-8 sm:h-8 text-gray-900 flex-shrink-0 mt-1" />
+                <Coins className="w-6 h-6 sm:w-8 sm:h-8 text-gray-900 dark:text-white flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">{t('about.fees.launch.title')}</h3>
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2">{t('about.fees.launch.title')}</h3>
                   <div className="text-2xl sm:text-3xl font-bold text-green-600 mb-2">{t('about.fees.launch.amount')}</div>
-                  <p className="text-sm sm:text-base text-gray-700">
+                  <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300">
                     {t('about.fees.launch.description')}
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-gray-50 p-4 sm:p-6 rounded-lg border-2 border-gray-200">
+            <div className="bg-gray-50 dark:bg-gray-900 p-4 sm:p-6 rounded-lg border-2 border-gray-200 dark:border-gray-700">
               <div className="flex items-start gap-3 sm:gap-4">
-                <Lock className="w-6 h-6 sm:w-8 sm:h-8 text-gray-900 flex-shrink-0 mt-1" />
+                <Lock className="w-6 h-6 sm:w-8 sm:h-8 text-gray-900 dark:text-white flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">{t('about.fees.locking.title')}</h3>
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2">{t('about.fees.locking.title')}</h3>
                   <div className="text-2xl sm:text-3xl font-bold text-green-600 mb-2">{t('about.fees.locking.amount')}</div>
-                  <p className="text-sm sm:text-base text-gray-700">
+                  <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300">
                     {t('about.fees.locking.description')}
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-gray-50 p-4 sm:p-6 rounded-lg border-2 border-gray-200">
+            <div className="bg-gray-50 dark:bg-gray-900 p-4 sm:p-6 rounded-lg border-2 border-gray-200 dark:border-gray-700">
               <div className="flex items-start gap-3 sm:gap-4">
-                <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-gray-900 flex-shrink-0 mt-1" />
+                <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-gray-900 dark:text-white flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">{t('about.fees.trading.title')}</h3>
-                  <div className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{t('about.fees.trading.amount')}</div>
-                  <p className="text-sm sm:text-base text-gray-700">
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2">{t('about.fees.trading.title')}</h3>
+                  <div className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">{t('about.fees.trading.amount')}</div>
+                  <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300">
                     {t('about.fees.trading.description')}
                   </p>
                 </div>
@@ -827,11 +827,11 @@ export function About() {
           </div>
         </div>
 
-        <div className="bg-gray-100 rounded-xl shadow-lg p-5 sm:p-8 border border-gray-300">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 text-center">
+        <div className="bg-gray-100 dark:bg-gray-800 rounded-xl shadow-lg p-5 sm:p-8 border border-gray-300 dark:border-gray-600">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4 text-center">
             {t('aboutPage.riskDisclaimer')}
           </h2>
-          <div className="space-y-3 text-xs sm:text-sm text-gray-800 leading-relaxed">
+          <div className="space-y-3 text-xs sm:text-sm text-gray-800 dark:text-gray-100 leading-relaxed">
             <p className="font-semibold">
               {t('aboutPage.disclaimerImportant')}
             </p>

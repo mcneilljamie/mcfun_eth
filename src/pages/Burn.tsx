@@ -359,18 +359,18 @@ export function Burn({ onShowToast }: BurnPageProps) {
   const explorerUrl = getExplorerUrl(chainId || DEFAULT_CHAIN_ID);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">{t('burn.title')}</h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">{t('burn.title')}</h1>
+          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
             {t('burn.subtitle')}
           </p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8 mb-12">
-          <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-red-200">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-2 border-red-200">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
               <Flame className="w-6 h-6 mr-2 text-red-600" />
               {t('burn.burnTokens')}
             </h2>
@@ -378,12 +378,12 @@ export function Burn({ onShowToast }: BurnPageProps) {
             {!account ? (
               <div className="text-center py-12">
                 <Flame className="w-16 h-16 text-red-400 mx-auto mb-4" />
-                <p className="text-gray-600 mb-4">{t('burn.connectWallet')}</p>
+                <p className="text-gray-600 dark:text-gray-400 mb-4">{t('burn.connectWallet')}</p>
               </div>
             ) : (
               <div className="space-y-4">
                 <div className="relative">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t('burn.tokenAddress')}
                   </label>
                   <input
@@ -397,12 +397,12 @@ export function Burn({ onShowToast }: BurnPageProps) {
                     onFocus={() => setShowTokenDropdown(true)}
                     onBlur={() => setTimeout(() => setShowTokenDropdown(false), 200)}
                     placeholder="0x..."
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                   />
                   {showTokenDropdown && popularTokens.length > 0 && (
-                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-64 overflow-y-auto">
-                      <div className="p-2 border-b border-gray-200 bg-gray-50">
-                        <div className="text-xs font-semibold text-gray-600 uppercase">{t('burn.popularTokensDropdown')}</div>
+                    <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-h-64 overflow-y-auto">
+                      <div className="p-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+                        <div className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase">{t('burn.popularTokensDropdown')}</div>
                       </div>
                       {popularTokens.map((token) => (
                         <button
@@ -416,13 +416,13 @@ export function Burn({ onShowToast }: BurnPageProps) {
                           <div className="flex items-center justify-between">
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2">
-                                <span className="font-semibold text-gray-900">{token.symbol}</span>
-                                <span className="text-sm text-gray-600 truncate">{token.name}</span>
+                                <span className="font-semibold text-gray-900 dark:text-white">{token.symbol}</span>
+                                <span className="text-sm text-gray-600 dark:text-gray-400 truncate">{token.name}</span>
                               </div>
-                              <div className="text-xs text-gray-500 font-mono truncate mt-1">{token.token_address}</div>
+                              <div className="text-xs text-gray-500 dark:text-gray-400 font-mono truncate mt-1">{token.token_address}</div>
                             </div>
                             <div className="ml-2 text-right">
-                              <div className="text-sm font-semibold text-gray-900">
+                              <div className="text-sm font-semibold text-gray-900 dark:text-white">
                                 {(() => {
                                   const TOKEN_TOTAL_SUPPLY = 1000000;
                                   const ethReserve = parseFloat(token.current_eth_reserve.toString());
@@ -434,7 +434,7 @@ export function Burn({ onShowToast }: BurnPageProps) {
                                   return formatUSD(marketCap);
                                 })()}
                               </div>
-                              <div className="text-xs text-gray-500">Market Cap</div>
+                              <div className="text-xs text-gray-500 dark:text-gray-400">Market Cap</div>
                             </div>
                           </div>
                         </button>
@@ -456,14 +456,14 @@ export function Burn({ onShowToast }: BurnPageProps) {
                 {tokenInfo && (
                   <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm text-gray-600">{t('burn.token')}:</span>
-                      <span className="font-semibold text-gray-900">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">{t('burn.token')}:</span>
+                      <span className="font-semibold text-gray-900 dark:text-white">
                         {tokenInfo.name} ({tokenInfo.symbol})
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">{t('burn.yourBalance')}:</span>
-                      <span className="font-semibold text-gray-900">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">{t('burn.yourBalance')}:</span>
+                      <span className="font-semibold text-gray-900 dark:text-white">
                         {formatNumberWithCommas(tokenInfo.balance, 4)} {tokenInfo.symbol}
                       </span>
                     </div>
@@ -471,7 +471,7 @@ export function Burn({ onShowToast }: BurnPageProps) {
                 )}
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t('burn.amountToBurn')}
                   </label>
                   <input
@@ -485,7 +485,7 @@ export function Burn({ onShowToast }: BurnPageProps) {
                     min="0"
                     step="any"
                     disabled={!tokenInfo}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent disabled:bg-gray-100"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent disabled:bg-gray-100 dark:bg-gray-800"
                   />
                 </div>
 
@@ -539,15 +539,15 @@ export function Burn({ onShowToast }: BurnPageProps) {
           </div>
 
           <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl shadow-lg p-6 border-2 border-red-200">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('burn.howItWorks')}</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{t('burn.howItWorks')}</h2>
             <div className="space-y-4">
               <div className="flex items-start">
                 <div className="flex-shrink-0 w-8 h-8 bg-red-600 text-white rounded-full flex items-center justify-center font-bold mr-3">
                   1
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">{t('burn.step1Title')}</h3>
-                  <p className="text-sm text-gray-700">{t('burn.step1Description')}</p>
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{t('burn.step1Title')}</h3>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">{t('burn.step1Description')}</p>
                 </div>
               </div>
               <div className="flex items-start">
@@ -555,8 +555,8 @@ export function Burn({ onShowToast }: BurnPageProps) {
                   2
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">{t('burn.step2Title')}</h3>
-                  <p className="text-sm text-gray-700">{t('burn.step2Description')}</p>
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{t('burn.step2Title')}</h3>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">{t('burn.step2Description')}</p>
                 </div>
               </div>
               <div className="flex items-start">
@@ -564,16 +564,16 @@ export function Burn({ onShowToast }: BurnPageProps) {
                   3
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">{t('burn.step3Title')}</h3>
-                  <p className="text-sm text-gray-700">{t('burn.step3Description')}</p>
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{t('burn.step3Title')}</h3>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">{t('burn.step3Description')}</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
             <Trophy className="w-6 h-6 mr-2 text-red-600" />
             {t('burn.topBurnedTokens')}
           </h2>
@@ -587,7 +587,7 @@ export function Burn({ onShowToast }: BurnPageProps) {
                   <button
                     key={burn.token_address}
                     onClick={() => navigate(`/token/${burn.token_address}`)}
-                    className="w-full border border-gray-200 rounded-lg p-4 hover:border-red-400 hover:shadow-md transition-all cursor-pointer text-left"
+                    className="w-full border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-red-400 hover:shadow-md transition-all cursor-pointer text-left"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3 flex-1">
@@ -603,21 +603,21 @@ export function Burn({ onShowToast }: BurnPageProps) {
                               }`}
                             />
                           )}
-                          <span className="font-bold text-gray-500 text-lg">#{index + 1}</span>
+                          <span className="font-bold text-gray-500 dark:text-gray-400 text-lg">#{index + 1}</span>
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <h3 className="text-lg font-bold text-gray-900 whitespace-nowrap">{burn.token_symbol}</h3>
-                            <span className="text-sm text-gray-500 break-words">{burn.token_name || 'Unknown'}</span>
+                            <h3 className="text-lg font-bold text-gray-900 dark:text-white whitespace-nowrap">{burn.token_symbol}</h3>
+                            <span className="text-sm text-gray-500 dark:text-gray-400 break-words">{burn.token_name || 'Unknown'}</span>
                           </div>
                         </div>
                       </div>
                       <div className="text-right ml-4">
-                        <div className="text-sm text-gray-500 mb-1">{t('burn.totalValue')}</div>
-                        <div className="text-2xl font-bold text-gray-900">
+                        <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t('burn.totalValue')}</div>
+                        <div className="text-2xl font-bold text-gray-900 dark:text-white">
                           {formatCurrency(totalValueUsd)}
                         </div>
-                        <div className="text-sm text-gray-600 mt-1">
+                        <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                           {burn.percent_supply_burned ? (
                             <span className="font-semibold">
                               {burn.percent_supply_burned < 0.01
@@ -637,8 +637,8 @@ export function Burn({ onShowToast }: BurnPageProps) {
           ) : (
             <div className="text-center py-12">
               <Flame className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('burn.noBurnsYet')}</h3>
-              <p className="text-gray-600 mb-4">{t('burn.noBurnsDescription')}</p>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{t('burn.noBurnsYet')}</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">{t('burn.noBurnsDescription')}</p>
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-md mx-auto">
                 <p className="text-sm text-blue-800">
                   <span className="font-semibold">{t('burn.indexingNote')}</span> {t('burn.indexingDescription')}

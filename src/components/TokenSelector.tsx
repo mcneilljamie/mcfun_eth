@@ -138,24 +138,24 @@ export function TokenSelector({ selectedToken, onSelectToken, disabled = false }
         type="button"
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
-        className="w-full flex items-center justify-between px-4 py-3 border border-gray-300 rounded-lg hover:border-gray-400 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-white"
+        className="w-full flex items-center justify-between px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:border-gray-400 focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-white dark:bg-gray-800"
       >
         {selectedToken ? (
           <div className="flex items-center space-x-3">
             <div className="flex flex-col items-start">
-              <span className="text-sm font-semibold text-gray-900">{selectedToken.symbol}</span>
-              <span className="text-xs text-gray-500">{selectedToken.name}</span>
+              <span className="text-sm font-semibold text-gray-900 dark:text-white">{selectedToken.symbol}</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">{selectedToken.name}</span>
             </div>
           </div>
         ) : (
-          <span className="text-gray-500">Select a token</span>
+          <span className="text-gray-500 dark:text-gray-400">Select a token</span>
         )}
         <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${isOpen ? 'transform rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
-        <div className="absolute z-50 w-full mt-2 bg-white border border-gray-200 rounded-lg shadow-xl max-h-[400px] flex flex-col">
-          <div className="p-3 border-b border-gray-200">
+        <div className="absolute z-50 w-full mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl max-h-[400px] flex flex-col">
+          <div className="p-3 border-b border-gray-200 dark:border-gray-700">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
@@ -164,12 +164,12 @@ export function TokenSelector({ selectedToken, onSelectToken, disabled = false }
                 placeholder="Search by name, symbol, or address"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-9 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-sm"
+                className="w-full pl-9 pr-9 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-sm"
               />
               {searchQuery && (
                 <button
                   onClick={handleClearSearch}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:text-gray-400"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -180,11 +180,11 @@ export function TokenSelector({ selectedToken, onSelectToken, disabled = false }
           <div className="overflow-y-auto flex-1">
             {isLoading ? (
               <div className="flex items-center justify-center py-8">
-                <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
+                <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900 dark:border-white"></div>
               </div>
             ) : filteredTokens.length === 0 ? (
               <div className="text-center py-8 px-4">
-                <p className="text-gray-500 text-sm">
+                <p className="text-gray-500 dark:text-gray-400 text-sm">
                   {searchQuery ? 'No tokens found matching your search' : 'No tokens available'}
                 </p>
               </div>
@@ -192,15 +192,15 @@ export function TokenSelector({ selectedToken, onSelectToken, disabled = false }
               <div className="py-2">
                 {!searchQuery && (
                   <div className="px-3 py-2">
-                    <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Popular Tokens</h3>
+                    <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Popular Tokens</h3>
                   </div>
                 )}
                 {filteredTokens.map((token, index) => (
                   <button
                     key={token.id}
                     onClick={() => handleSelectToken(token)}
-                    className={`w-full px-3 py-2 hover:bg-gray-50 transition-colors text-left flex items-center justify-between group ${
-                      selectedToken?.token_address === token.token_address ? 'bg-gray-50' : ''
+                    className={`w-full px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 transition-colors text-left flex items-center justify-between group ${
+                      selectedToken?.token_address === token.token_address ? 'bg-gray-50 dark:bg-gray-900' : ''
                     }`}
                   >
                     <div className="flex items-center space-x-3 flex-1 min-w-0">
@@ -217,19 +217,19 @@ export function TokenSelector({ selectedToken, onSelectToken, disabled = false }
                       )}
                       <div className="flex flex-col min-w-0">
                         <div className="flex items-center space-x-2">
-                          <span className="text-sm font-semibold text-gray-900">{token.symbol}</span>
-                          <span className="text-xs text-gray-500 truncate">{token.name}</span>
+                          <span className="text-sm font-semibold text-gray-900 dark:text-white">{token.symbol}</span>
+                          <span className="text-xs text-gray-500 dark:text-gray-400 truncate">{token.name}</span>
                         </div>
                         <div className="flex items-center space-x-2">
                           <span className="text-xs text-gray-400 font-mono truncate">{token.token_address.slice(0, 10)}...{token.token_address.slice(-8)}</span>
-                          <span className="text-xs px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded">
+                          <span className="text-xs px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded">
                             {token.chain_id === 1 ? 'ETH' : token.chain_id === 8453 ? 'Base' : 'Unknown'}
                           </span>
                         </div>
                       </div>
                     </div>
                     <div className="flex flex-col items-end flex-shrink-0 ml-2">
-                      <span className="text-xs font-medium text-gray-600">
+                      <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
                         {formatUSD(calculateMarketCap(token), true)}
                       </span>
                       <span className="text-xs text-gray-400">market cap</span>

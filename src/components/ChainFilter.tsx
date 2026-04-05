@@ -15,8 +15,8 @@ export function ChainFilter({ selectedChain, onChainChange }: ChainFilterProps) 
         onClick={() => onChainChange('all')}
         className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
           selectedChain === 'all'
-            ? 'bg-gray-900 text-white shadow-sm'
-            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-sm'
+            : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:bg-gray-700'
         }`}
       >
         All Chains
@@ -27,8 +27,8 @@ export function ChainFilter({ selectedChain, onChainChange }: ChainFilterProps) 
           onClick={() => onChainChange(chainId)}
           className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
             selectedChain === chainId
-              ? 'bg-gray-900 text-white shadow-sm'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-sm'
+              : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:bg-gray-700'
           }`}
         >
           {getNetworkShortName(chainId)}

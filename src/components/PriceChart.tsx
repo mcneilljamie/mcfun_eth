@@ -208,12 +208,12 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
   const isDark = theme === 'dark';
 
   return (
-    <div className={`${isDark ? 'bg-gray-900' : 'bg-white'} rounded-xl ${isDark ? 'p-6' : 'p-6 shadow-lg'} space-y-4`}>
+    <div className={`${isDark ? 'bg-gray-900' : 'bg-white dark:bg-gray-800'} rounded-xl ${isDark ? 'p-6' : 'p-6 shadow-lg'} space-y-4`}>
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex-1">
           <div className="flex items-center gap-3">
-            <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900 dark:text-white'}`}>
               {tokenSymbol} {chartMode === 'price' ? 'Price' : 'Market Cap'}
             </h3>
             {loading && (
@@ -221,13 +221,13 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
             )}
           </div>
           <div className="mt-2 flex items-baseline gap-3">
-            <span className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            <span className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900 dark:text-white'}`}>
               ${formatDisplayValue(displayValue)}
             </span>
             {priceChange !== null && (
               <div className={`flex items-center gap-1 ${
                 priceChange === 0
-                  ? 'text-gray-500'
+                  ? 'text-gray-500 dark:text-gray-400'
                   : priceChange > 0
                   ? 'text-green-600'
                   : 'text-red-600'
@@ -244,23 +244,23 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
               </div>
             )}
           </div>
-          <p className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-500'} mt-1`}>
+          <p className={`text-xs ${isDark ? 'text-gray-500 dark:text-gray-400' : 'text-gray-500 dark:text-gray-400'} mt-1`}>
             Updates with each new trade
           </p>
         </div>
 
         {/* Toggle */}
-        <div className={`flex rounded-lg overflow-hidden border ${isDark ? 'border-gray-700' : 'border-gray-300'} w-full sm:w-auto`}>
+        <div className={`flex rounded-lg overflow-hidden border ${isDark ? 'border-gray-700' : 'border-gray-300 dark:border-gray-600'} w-full sm:w-auto`}>
           <button
             onClick={() => setChartMode('price')}
             className={`flex-1 sm:flex-none px-6 sm:px-4 py-3 sm:py-2 text-base sm:text-sm font-medium transition-colors ${
               chartMode === 'price'
                 ? isDark
                   ? 'bg-gray-700 text-white'
-                  : 'bg-gray-900 text-white'
+                  : 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
                 : isDark
                 ? 'bg-gray-800 text-gray-400 hover:text-white'
-                : 'bg-white text-gray-600 hover:text-gray-900'
+                : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white'
             }`}
           >
             Price
@@ -271,10 +271,10 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
               chartMode === 'marketCap'
                 ? isDark
                   ? 'bg-gray-700 text-white'
-                  : 'bg-gray-900 text-white'
+                  : 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
                 : isDark
                 ? 'bg-gray-800 text-gray-400 hover:text-white'
-                : 'bg-white text-gray-600 hover:text-gray-900'
+                : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white'
             }`}
           >
             Market Cap
@@ -288,14 +288,14 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
           <div className="h-[400px] flex items-center justify-center">
             <div className="text-center">
               <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-              <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>Loading chart data...</p>
+              <p className={isDark ? 'text-gray-400' : 'text-gray-600 dark:text-gray-400'}>Loading chart data...</p>
             </div>
           </div>
         ) : data.length === 0 ? (
           <div className="h-[400px] flex items-center justify-center">
             <div className="text-center">
-              <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'} mb-2`}>No price data available yet</p>
-              <p className={`text-sm ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
+              <p className={`${isDark ? 'text-gray-400' : 'text-gray-600 dark:text-gray-400'} mb-2`}>No price data available yet</p>
+              <p className={`text-sm ${isDark ? 'text-gray-500 dark:text-gray-400' : 'text-gray-500 dark:text-gray-400'}`}>
                 Chart appears after the first trade (1-2 minutes for snapshots)
               </p>
             </div>
@@ -307,7 +307,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
 
       {/* Data info */}
       {data.length > 0 && (
-        <div className={`flex items-center justify-end text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'} pt-2 border-t ${isDark ? 'border-gray-800' : 'border-gray-200'}`}>
+        <div className={`flex items-center justify-end text-sm ${isDark ? 'text-gray-400' : 'text-gray-600 dark:text-gray-400'} pt-2 border-t ${isDark ? 'border-gray-800' : 'border-gray-200 dark:border-gray-700'}`}>
           <span>Charts update with each new trade</span>
         </div>
       )}

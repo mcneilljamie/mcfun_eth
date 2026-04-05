@@ -30,10 +30,10 @@ export function Toast({ message, type = 'info', onClose, duration = 5000 }: Toas
     <div className={`fixed bottom-4 right-4 z-50 max-w-sm w-full sm:w-auto animate-slide-up`}>
       <div className={`${colors[type]} border rounded-lg shadow-lg p-4 flex items-start space-x-3`}>
         {icons[type]}
-        <p className="flex-1 text-sm font-medium text-gray-900">{message}</p>
+        <p className="flex-1 text-sm font-medium text-gray-900 dark:text-white">{message}</p>
         <button
           onClick={onClose}
-          className="text-gray-400 hover:text-gray-600 transition-colors"
+          className="text-gray-400 hover:text-gray-600 dark:text-gray-400 transition-colors"
         >
           <X size={18} />
         </button>

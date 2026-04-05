@@ -41,7 +41,7 @@ export function LanguageSelector() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors text-base font-medium text-gray-900"
+        className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-600 dark:bg-gray-700 transition-colors text-base font-medium text-gray-900 dark:text-white"
         aria-label="Select language"
       >
         <span className="text-xl">{currentLanguage.flag}</span>
@@ -51,36 +51,36 @@ export function LanguageSelector() {
         <>
           {/* Mobile: Scrollable list */}
           {isMobile ? (
-            <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-white rounded-lg shadow-lg border border-gray-200 w-[240px] max-h-[60vh] overflow-y-auto z-50">
+            <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 w-[240px] max-h-[60vh] overflow-y-auto z-50">
               <div className="py-1">
                 {Object.entries(languages).map(([code, { nativeName, flag }]) => (
                   <button
                     key={code}
                     onClick={() => handleLanguageChange(code)}
-                    className={`w-full px-4 py-3 hover:bg-gray-100 transition-colors flex items-center gap-3 ${
-                      i18n.language === code ? 'bg-gray-100' : ''
+                    className={`w-full px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 dark:bg-gray-800 transition-colors flex items-center gap-3 ${
+                      i18n.language === code ? 'bg-gray-100 dark:bg-gray-800' : ''
                     }`}
                   >
                     <span className="text-2xl">{flag}</span>
-                    <span className="text-sm text-gray-900 font-medium">{nativeName}</span>
+                    <span className="text-sm text-gray-900 dark:text-white font-medium">{nativeName}</span>
                   </button>
                 ))}
               </div>
             </div>
           ) : (
             /* Desktop: Grid layout */
-            <div className={`absolute top-full mt-2 ${isRTL ? 'left-0' : 'right-0'} bg-white rounded-lg shadow-lg border border-gray-200 p-2 w-[420px] z-50`}>
+            <div className={`absolute top-full mt-2 ${isRTL ? 'left-0' : 'right-0'} bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-2 w-[420px] z-50`}>
               <div className="grid grid-cols-4 gap-1">
                 {Object.entries(languages).map(([code, { nativeName, flag }]) => (
                   <button
                     key={code}
                     onClick={() => handleLanguageChange(code)}
-                    className={`px-3 py-2.5 rounded-md hover:bg-gray-100 transition-colors flex flex-col items-center justify-center gap-1 ${
-                      i18n.language === code ? 'bg-gray-100 ring-2 ring-gray-300' : ''
+                    className={`px-3 py-2.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 dark:bg-gray-800 transition-colors flex flex-col items-center justify-center gap-1 ${
+                      i18n.language === code ? 'bg-gray-100 dark:bg-gray-800 ring-2 ring-gray-300' : ''
                     }`}
                   >
                     <span className="text-2xl">{flag}</span>
-                    <span className="text-xs text-gray-900 text-center leading-tight">{nativeName}</span>
+                    <span className="text-xs text-gray-900 dark:text-white text-center leading-tight">{nativeName}</span>
                   </button>
                 ))}
               </div>

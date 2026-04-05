@@ -101,7 +101,7 @@ export function SwapConfirmation({
         </div>
       ))}
 
-      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative animate-scale-in">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative animate-scale-in">
         <style>{`
           @keyframes scale-in {
             from {
@@ -142,9 +142,9 @@ export function SwapConfirmation({
 
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          className="absolute top-4 right-4 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 dark:bg-gray-800 transition-colors"
         >
-          <X className="w-5 h-5 text-gray-500" />
+          <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
         </button>
 
         <div className="p-8">
@@ -152,27 +152,27 @@ export function SwapConfirmation({
             <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full mb-4">
               <CheckCheck className="w-10 h-10 text-white" />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
               {t('swapConfirmation.title')}
             </h2>
-            <p className="text-lg text-gray-600">
+            <p className="text-lg text-gray-600 dark:text-gray-400">
               {t('swapConfirmation.subtitle')}
             </p>
           </div>
 
           <div className="space-y-6">
             <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
-              <h3 className="font-semibold text-gray-900 mb-4">{t('swapConfirmation.swapDetails')}</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-4">{t('swapConfirmation.swapDetails')}</h3>
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">{t('swapConfirmation.youPaid')}</span>
-                  <span className="font-semibold text-gray-900">
+                  <span className="text-gray-600 dark:text-gray-400">{t('swapConfirmation.youPaid')}</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">
                     {formatNumber(amountIn, isETHToToken ? 6 : 4)} {isETHToToken ? 'ETH' : tokenSymbol}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">{t('swapConfirmation.youReceived')}</span>
-                  <span className="font-semibold text-gray-900">
+                  <span className="text-gray-600 dark:text-gray-400">{t('swapConfirmation.youReceived')}</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">
                     {formatNumber(amountOut, isETHToToken ? 4 : 6)} {isETHToToken ? tokenSymbol : 'ETH'}
                   </span>
                 </div>
@@ -180,14 +180,14 @@ export function SwapConfirmation({
             </div>
 
             <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6">
-              <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
                 <ExternalLink className="w-5 h-5 mr-2" />
                 {t('swapConfirmation.transactionInfo')}
               </h3>
 
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t('swapConfirmation.transactionHash')}
                   </label>
                   <div className="flex items-center space-x-2">
@@ -195,11 +195,11 @@ export function SwapConfirmation({
                       type="text"
                       value={txHash}
                       readOnly
-                      className="flex-1 px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm font-mono"
+                      className="flex-1 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-mono"
                     />
                     <button
                       onClick={() => copyToClipboard(txHash, 'tx')}
-                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
                       title={t('swapConfirmation.copyTxHash')}
                     >
                       {copiedItem === 'tx' ? (
@@ -212,7 +212,7 @@ export function SwapConfirmation({
                       href={txExplorerUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
                       title={t('swapConfirmation.viewOnExplorer')}
                     >
                       <ExternalLink className="w-5 h-5" />
@@ -221,7 +221,7 @@ export function SwapConfirmation({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t('swapConfirmation.tokenContract')}
                   </label>
                   <div className="flex items-center space-x-2">
@@ -229,11 +229,11 @@ export function SwapConfirmation({
                       type="text"
                       value={tokenAddress}
                       readOnly
-                      className="flex-1 px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm font-mono"
+                      className="flex-1 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-mono"
                     />
                     <button
                       onClick={() => copyToClipboard(tokenAddress, 'token')}
-                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
                       title={t('swapConfirmation.copyTokenAddress')}
                     >
                       {copiedItem === 'token' ? (
@@ -246,7 +246,7 @@ export function SwapConfirmation({
                       href={tokenExplorerUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
                       title={t('swapConfirmation.viewOnEtherscan')}
                     >
                       <ExternalLink className="w-5 h-5" />
@@ -255,7 +255,7 @@ export function SwapConfirmation({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t('swapConfirmation.dexPool')}
                   </label>
                   <div className="flex items-center space-x-2">
@@ -263,11 +263,11 @@ export function SwapConfirmation({
                       type="text"
                       value={ammAddress}
                       readOnly
-                      className="flex-1 px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm font-mono"
+                      className="flex-1 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-mono"
                     />
                     <button
                       onClick={() => copyToClipboard(ammAddress, 'pool')}
-                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
                       title={t('swapConfirmation.copyPoolAddress')}
                     >
                       {copiedItem === 'pool' ? (
@@ -280,7 +280,7 @@ export function SwapConfirmation({
                       href={poolExplorerUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
                       title={t('swapConfirmation.viewOnEtherscan')}
                     >
                       <ExternalLink className="w-5 h-5" />
@@ -293,13 +293,13 @@ export function SwapConfirmation({
             <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={onViewToken}
-                className="flex-1 bg-gray-900 text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
+                className="flex-1 bg-gray-900 text-white py-3 rounded-lg font-semibold hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
               >
                 {t('swapConfirmation.goToToken')}
               </button>
               <button
                 onClick={onClose}
-                className="flex-1 bg-gray-100 text-gray-900 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
+                className="flex-1 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white py-3 rounded-lg font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 dark:bg-gray-700 transition-colors"
               >
                 {t('swapConfirmation.makeAnotherSwap')}
               </button>

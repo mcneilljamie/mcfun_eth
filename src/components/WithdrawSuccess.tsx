@@ -34,10 +34,10 @@ export function WithdrawSuccess({ isOpen, onClose, txHash, chainId, tokenSymbol,
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl max-w-md w-full p-6 relative">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full p-6 relative">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:text-gray-400 transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
@@ -46,22 +46,22 @@ export function WithdrawSuccess({ isOpen, onClose, txHash, chainId, tokenSymbol,
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Check className="w-8 h-8 text-green-600" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
             {t('withdrawSuccess.title')}
           </h2>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-400">
             {t('withdrawSuccess.subtitle', { amount: formattedAmount, symbol: tokenSymbol })}
           </p>
         </div>
 
-        <div className="bg-gray-50 rounded-lg p-4 mb-4">
+        <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 mb-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-700">
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
               {t('withdrawSuccess.transactionHash')}
             </span>
             <button
               onClick={handleCopy}
-              className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+              className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white transition-colors"
             >
               {copied ? (
                 <>
@@ -76,7 +76,7 @@ export function WithdrawSuccess({ isOpen, onClose, txHash, chainId, tokenSymbol,
               )}
             </button>
           </div>
-          <div className="font-mono text-xs text-gray-600 break-all bg-white rounded p-2">
+          <div className="font-mono text-xs text-gray-600 dark:text-gray-400 break-all bg-white dark:bg-gray-800 rounded p-2">
             {txHash}
           </div>
         </div>
@@ -86,14 +86,14 @@ export function WithdrawSuccess({ isOpen, onClose, txHash, chainId, tokenSymbol,
             href={explorerUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-1 flex items-center justify-center gap-2 bg-gray-900 text-white px-4 py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors"
+            className="flex-1 flex items-center justify-center gap-2 bg-gray-900 text-white px-4 py-3 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
           >
             <ExternalLink className="w-4 h-4" />
             {t('withdrawSuccess.viewOnExplorer')}
           </a>
           <button
             onClick={onClose}
-            className="flex-1 bg-gray-100 text-gray-900 px-4 py-3 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+            className="flex-1 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-3 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-600 dark:bg-gray-700 transition-colors"
           >
             {t('withdrawSuccess.close')}
           </button>

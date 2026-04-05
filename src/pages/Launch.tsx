@@ -275,8 +275,8 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center">
           <Rocket className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('launch.connectWallet')}</h2>
-          <p className="text-gray-600">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{t('launch.connectWallet')}</h2>
+          <p className="text-gray-600 dark:text-gray-400">
             {t('launch.connectWalletDescription')}
           </p>
         </div>
@@ -302,12 +302,12 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
 
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6 sm:py-12">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-xl shadow-lg p-5 sm:p-8">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-5 sm:p-8">
             <div className="flex items-center space-x-3 mb-6">
               <div className="bg-gray-900 p-2 rounded-lg">
                 <Rocket className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('launch.title')}</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">{t('launch.title')}</h1>
             </div>
 
           {error && (
@@ -321,7 +321,7 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
 
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Select Blockchain
               </label>
               <div className="grid grid-cols-2 gap-3">
@@ -333,22 +333,22 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                     disabled={isLaunching}
                     className={`relative p-4 rounded-lg border-2 transition-all ${
                       selectedChainId === chainId
-                        ? 'border-gray-900 bg-gray-50'
-                        : 'border-gray-200 hover:border-gray-300'
+                        ? 'border-gray-900 dark:border-white bg-gray-50 dark:bg-gray-900'
+                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:border-gray-600'
                     } ${isLaunching ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                   >
                     <div className="flex flex-col items-start">
                       <div className="flex items-center justify-between w-full mb-2">
-                        <span className="font-semibold text-gray-900">
+                        <span className="font-semibold text-gray-900 dark:text-white">
                           {getNetworkShortName(chainId)}
                         </span>
                         {selectedChainId === chainId && (
                           <div className="w-5 h-5 bg-gray-900 rounded-full flex items-center justify-center">
-                            <div className="w-2 h-2 bg-white rounded-full"></div>
+                            <div className="w-2 h-2 bg-white dark:bg-gray-800 rounded-full"></div>
                           </div>
                         )}
                       </div>
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
                         Min: {getMinLiquidityETH(chainId)} ETH
                       </span>
                     </div>
@@ -363,7 +363,7 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 {t('launch.form.tokenName')}
               </label>
               <input
@@ -372,16 +372,16 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                 onChange={(e) => setName(e.target.value)}
                 placeholder={t('launch.form.tokenNamePlaceholder')}
                 maxLength={MAX_NAME_LENGTH}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                 disabled={isLaunching}
               />
-              <p className="text-xs mt-1 text-gray-500">
+              <p className="text-xs mt-1 text-gray-500 dark:text-gray-400">
                 {name.length}/{MAX_NAME_LENGTH} {t(`common.${name.length === 1 ? 'character' : 'characters'}`)}
               </p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 {t('launch.form.tokenSymbol')}
               </label>
               <input
@@ -390,16 +390,16 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                 onChange={(e) => setSymbol(e.target.value.toUpperCase())}
                 placeholder={t('launch.form.tokenSymbolPlaceholder')}
                 maxLength={MAX_SYMBOL_LENGTH}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent uppercase"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent uppercase"
                 disabled={isLaunching}
               />
-              <p className="text-xs mt-1 text-gray-500">
+              <p className="text-xs mt-1 text-gray-500 dark:text-gray-400">
                 {symbol.length}/{MAX_SYMBOL_LENGTH} {t(`common.${symbol.length === 1 ? 'character' : 'characters'}`)}
               </p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Website <span className="text-gray-400 font-normal">(Optional)</span>
               </label>
               <input
@@ -407,16 +407,16 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                 value={website}
                 onChange={(e) => setWebsite(e.target.value)}
                 placeholder="https://yourtoken.com"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                 disabled={isLaunching}
               />
             </div>
 
-            <div className="bg-gray-50 rounded-lg p-4 space-y-4">
-              <h3 className="text-sm font-medium text-gray-900">Social Media Links <span className="text-gray-400 font-normal">(Optional)</span></h3>
+            <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 space-y-4">
+              <h3 className="text-sm font-medium text-gray-900 dark:text-white">Social Media Links <span className="text-gray-400 font-normal">(Optional)</span></h3>
 
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-2">
+                <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Telegram
                 </label>
                 <input
@@ -424,13 +424,13 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                   value={telegramUrl}
                   onChange={(e) => setTelegramUrl(e.target.value)}
                   placeholder="https://t.me/yourchannel"
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                   disabled={isLaunching}
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-2">
+                <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Discord
                 </label>
                 <input
@@ -438,13 +438,13 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                   value={discordUrl}
                   onChange={(e) => setDiscordUrl(e.target.value)}
                   placeholder="https://discord.gg/yourserver"
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                   disabled={isLaunching}
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-2">
+                <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
                   X (Twitter)
                 </label>
                 <input
@@ -452,17 +452,17 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                   value={xUrl}
                   onChange={(e) => setXUrl(e.target.value)}
                   placeholder="https://x.com/yourhandle"
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                   disabled={isLaunching}
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 {t('launch.form.liquidityAllocation', { percent: liquidityPercent })}
               </label>
-              <p className="text-sm text-gray-500 mb-3">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
                 {t('launch.form.liquidityNote', { min: MIN_LIQUIDITY_PERCENT, recommended: RECOMMENDED_LIQUIDITY_PERCENT })}
               </p>
               <input
@@ -471,10 +471,10 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                 max="100"
                 value={liquidityPercent}
                 onChange={(e) => setLiquidityPercent(parseInt(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-gray-900"
+                className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-gray-900"
                 disabled={isLaunching}
               />
-              <div className="flex justify-between text-xs text-gray-500 mt-1">
+              <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
                 <span>{MIN_LIQUIDITY_PERCENT}%</span>
                 <span>100%</span>
               </div>
@@ -482,11 +482,11 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
 
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   {t('launch.form.initialLiquidity')}
                 </label>
                 {account && (
-                  <div className={`flex items-center space-x-1 text-sm ${hasInsufficientBalance ? 'text-blue-600' : 'text-gray-600'}`}>
+                  <div className={`flex items-center space-x-1 text-sm ${hasInsufficientBalance ? 'text-blue-600' : 'text-gray-600 dark:text-gray-400'}`}>
                     <Wallet className="w-4 h-4" />
                     <span>
                       {isLoadingBalance ? (
@@ -500,7 +500,7 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                   </div>
                 )}
               </div>
-              <p className="text-sm text-gray-500 mb-3">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
                 {t('launch.form.liquidityWarning', { min: minLiquidityETH })}
               </p>
               <input
@@ -513,7 +513,7 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                 className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent ${
                   hasInsufficientBalance
                     ? 'border-blue-300 bg-blue-50'
-                    : 'border-gray-300'
+                    : 'border-gray-300 dark:border-gray-600'
                 }`}
                 disabled={isLaunching}
               />
@@ -530,24 +530,24 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
               )}
             </div>
 
-            <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-              <h3 className="font-medium text-gray-900 mb-3">{t('launch.form.distribution')}</h3>
+            <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 space-y-2">
+              <h3 className="font-medium text-gray-900 dark:text-white mb-3">{t('launch.form.distribution')}</h3>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">{t('launch.form.totalSupply')}</span>
-                <span className="font-medium text-gray-900">{formatNumber(TOTAL_SUPPLY)} {t('common.tokens')}</span>
+                <span className="text-gray-600 dark:text-gray-400">{t('launch.form.totalSupply')}</span>
+                <span className="font-medium text-gray-900 dark:text-white">{formatNumber(TOTAL_SUPPLY)} {t('common.tokens')}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">{t('launch.form.toLiquidity')}</span>
-                <span className="font-medium text-gray-900">{formatNumber(tokensToLiquidity)} {t('common.tokens')}</span>
+                <span className="text-gray-600 dark:text-gray-400">{t('launch.form.toLiquidity')}</span>
+                <span className="font-medium text-gray-900 dark:text-white">{formatNumber(tokensToLiquidity)} {t('common.tokens')}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">{t('launch.form.toWallet')}</span>
-                <span className="font-medium text-gray-900">{formatNumber(tokensToCreator)} {t('common.tokens')}</span>
+                <span className="text-gray-600 dark:text-gray-400">{t('launch.form.toWallet')}</span>
+                <span className="font-medium text-gray-900 dark:text-white">{formatNumber(tokensToCreator)} {t('common.tokens')}</span>
               </div>
-              <div className="border-t border-gray-200 pt-2 mt-2">
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-2 mt-2">
                 <div className="flex justify-between text-sm font-semibold">
-                  <span className="text-gray-900">{t('launch.form.initialLiq')}</span>
-                  <span className="text-gray-900">{ethAmount} {t('common.eth')}</span>
+                  <span className="text-gray-900 dark:text-white">{t('launch.form.initialLiq')}</span>
+                  <span className="text-gray-900 dark:text-white">{ethAmount} {t('common.eth')}</span>
                 </div>
               </div>
             </div>
@@ -567,7 +567,7 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
             <button
               onClick={handleLaunch}
               disabled={isLaunching || !signer || hasInsufficientBalance}
-              className="w-full bg-gray-900 text-white py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:bg-gray-800 transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2 touch-manipulation"
+              className="w-full bg-gray-900 text-white py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:bg-gray-800 dark:hover:bg-gray-100 transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2 touch-manipulation"
             >
               {isLaunching ? (
                 <>

@@ -60,7 +60,7 @@ export function NetworkWarning() {
                 })}
               </p>
 
-              <div className="bg-white/60 backdrop-blur-sm border border-red-200 rounded-xl p-4 mb-4">
+              <div className="bg-white dark:bg-gray-800/60 backdrop-blur-sm border border-red-200 rounded-xl p-4 mb-4">
                 <div className="flex items-center justify-between text-sm">
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />

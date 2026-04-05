@@ -370,8 +370,8 @@ export default function Portfolio() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center">
           <Wallet className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('portfolio.connectWallet')}</h2>
-          <p className="text-gray-600">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{t('portfolio.connectWallet')}</h2>
+          <p className="text-gray-600 dark:text-gray-400">
             {t('portfolio.connectWalletDescription')}
           </p>
         </div>
@@ -384,7 +384,7 @@ export default function Portfolio() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center justify-center">
           <Loader2 className="w-8 h-8 animate-spin text-green-700" />
-          <span className="ml-3 text-gray-600">{t('portfolio.loading')}</span>
+          <span className="ml-3 text-gray-600 dark:text-gray-400">{t('portfolio.loading')}</span>
         </div>
       </div>
     );
@@ -397,7 +397,7 @@ export default function Portfolio() {
         <h1 className="text-3xl font-bold mb-2">{t('portfolio.portfolioValue')}</h1>
         <div className="text-5xl font-bold mb-6">{formatCurrency(totalValueUsd)}</div>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-          <div className="bg-white/10 backdrop-blur rounded-lg p-4">
+          <div className="bg-white dark:bg-gray-800/10 backdrop-blur rounded-lg p-4">
             <div className="text-green-50 text-sm mb-2">{t('portfolio.ethBalance')}</div>
             <div className="text-2xl font-bold mb-1">
               {parseFloat(ethBalance).toLocaleString('en-US', { minimumFractionDigits: 4, maximumFractionDigits: 4 })} ETH
@@ -406,13 +406,13 @@ export default function Portfolio() {
               {formatCurrency(parseFloat(ethBalance) * ethPriceUsd)}
             </div>
           </div>
-          <div className="bg-white/10 backdrop-blur rounded-lg p-4">
+          <div className="bg-white dark:bg-gray-800/10 backdrop-blur rounded-lg p-4">
             <div className="text-green-50 text-sm mb-2">{t('portfolio.tokensValue')}</div>
             <div className="text-2xl font-bold">
               {formatCurrency(tokens.reduce((sum, t) => sum + t.valueUsd, 0))}
             </div>
           </div>
-          <div className="bg-white/10 backdrop-blur rounded-lg p-4">
+          <div className="bg-white dark:bg-gray-800/10 backdrop-blur rounded-lg p-4">
             <div className="text-green-50 text-sm mb-2 flex items-center">
               <LockIcon className="w-4 h-4 mr-1" />
               {t('portfolio.lockedValue')}
@@ -433,8 +433,8 @@ export default function Portfolio() {
 
       {/* Token Holdings */}
       {tokens.length === 0 && aggregatedLockedTokens.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-lg p-12 text-center">
-          <p className="text-gray-600 text-lg mb-6">{t('portfolio.noHoldings')}</p>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-12 text-center">
+          <p className="text-gray-600 dark:text-gray-400 text-lg mb-6">{t('portfolio.noHoldings')}</p>
           <Link
             to="/tokens"
             className="inline-block px-8 py-3 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors shadow-md"
@@ -444,28 +444,28 @@ export default function Portfolio() {
         </div>
       ) : tokens.length > 0 ? (
         <div className="space-y-3 mb-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">{t('portfolio.yourHoldings')}</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{t('portfolio.yourHoldings')}</h2>
           {tokens.map((token) => (
             <div
               key={token.tokenAddress}
               onClick={() => navigate(`/token/${token.tokenAddress}`)}
-              className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg hover:border-green-400 transition-all cursor-pointer"
+              className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg hover:border-green-400 transition-all cursor-pointer"
             >
               <div className="flex items-center justify-between">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 mb-2 flex-wrap">
-                    <h3 className="text-xl font-bold text-gray-900 whitespace-nowrap">{token.symbol}</h3>
-                    <span className="text-sm text-gray-500 break-words">{token.name}</span>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white whitespace-nowrap">{token.symbol}</h3>
+                    <span className="text-sm text-gray-500 dark:text-gray-400 break-words">{token.name}</span>
                   </div>
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
                     {t('portfolio.balance')}: {formatNumber(token.balance)} {token.symbol}
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-gray-900 mb-1">
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
                     {formatCurrency(token.valueUsd)}
                   </div>
-                  <div className="text-sm text-gray-500">
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
                     {formatPrice(token.priceUsd)} {t('portfolio.perToken')}
                   </div>
                 </div>
@@ -479,7 +479,7 @@ export default function Portfolio() {
       {aggregatedLockedTokens.length > 0 && (
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900 flex items-center">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center">
               <LockIcon className="w-5 h-5 mr-2 text-green-700" />
               {t('portfolio.lockedTokens')}
             </h2>
@@ -507,27 +507,27 @@ export default function Portfolio() {
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2 flex-wrap">
                         <LockIcon className="w-5 h-5 text-purple-600" />
-                        <h3 className="text-xl font-bold text-gray-900">{aggLock.token_symbol}</h3>
-                        <span className="text-sm text-gray-500">{aggLock.token_name}</span>
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-white">{aggLock.token_symbol}</h3>
+                        <span className="text-sm text-gray-500 dark:text-gray-400">{aggLock.token_name}</span>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm">
-                        <div className="text-gray-600">
-                          {t('portfolio.locked')}: <span className="font-semibold text-gray-900">{formatNumber(aggLock.total_amount_locked)} {aggLock.token_symbol}</span>
+                        <div className="text-gray-600 dark:text-gray-400">
+                          {t('portfolio.locked')}: <span className="font-semibold text-gray-900 dark:text-white">{formatNumber(aggLock.total_amount_locked)} {aggLock.token_symbol}</span>
                         </div>
-                        <div className="text-gray-600 flex items-center">
+                        <div className="text-gray-600 dark:text-gray-400 flex items-center">
                           <Clock className="w-4 h-4 mr-1" />
                           {aggLock.lock_count} {aggLock.lock_count === 1 ? 'lock' : 'locks'}
                         </div>
-                        <div className="text-gray-600">
-                          {t('portfolio.unlocks')}: <span className="font-semibold text-gray-900">{new Date(aggLock.earliest_unlock).toLocaleDateString()}</span>
+                        <div className="text-gray-600 dark:text-gray-400">
+                          {t('portfolio.unlocks')}: <span className="font-semibold text-gray-900 dark:text-white">{new Date(aggLock.earliest_unlock).toLocaleDateString()}</span>
                         </div>
                       </div>
                     </div>
                     <div className="text-right ml-4">
-                      <div className="text-2xl font-bold text-gray-900 mb-1">
+                      <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
                         {formatCurrency(aggLock.total_value_usd)}
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
                         {formatPrice(aggLock.current_price_usd)} {t('portfolio.perToken')}
                       </div>
                     </div>

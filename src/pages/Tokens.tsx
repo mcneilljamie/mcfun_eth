@@ -343,14 +343,14 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6 sm:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-8">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-8">
           <div className="flex flex-col gap-4 mb-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex items-center space-x-3">
                 <div className="bg-gray-900 p-2 rounded-lg">
                   <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('tokens.title')}</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">{t('tokens.title')}</h1>
               </div>
 
               <div className="relative w-full sm:w-auto">
@@ -360,7 +360,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                   placeholder={t('tokens.search')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                  className="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                 />
               </div>
             </div>
@@ -368,14 +368,14 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
             <div className="flex flex-col gap-3">
               <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                 <div className="flex flex-col gap-2">
-                  <span className="text-sm font-medium text-gray-700">{t('tokens.rankBy')}:</span>
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('tokens.rankBy')}:</span>
                   <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:gap-2">
                 <button
                   onClick={() => setSortBy('marketCap')}
                   className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
                     sortBy === 'marketCap'
-                      ? 'bg-gray-900 text-white shadow-sm'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-sm'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 dark:bg-gray-700'
                   }`}
                 >
                   {t('tokens.marketCap')}
@@ -384,8 +384,8 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                   onClick={() => setSortBy('liquidity')}
                   className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
                     sortBy === 'liquidity'
-                      ? 'bg-gray-900 text-white shadow-sm'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-sm'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 dark:bg-gray-700'
                   }`}
                 >
                   {t('tokens.liquidity')}
@@ -394,8 +394,8 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                   onClick={() => setSortBy('age-newest')}
                   className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
                     sortBy === 'age-newest'
-                      ? 'bg-gray-900 text-white shadow-sm'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-sm'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 dark:bg-gray-700'
                   }`}
                 >
                   {t('tokens.ageNewest')}
@@ -404,8 +404,8 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                   onClick={() => setSortBy('age-oldest')}
                   className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
                     sortBy === 'age-oldest'
-                      ? 'bg-gray-900 text-white shadow-sm'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-sm'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 dark:bg-gray-700'
                   }`}
                 >
                   {t('tokens.ageOldest')}
@@ -414,8 +414,8 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                   onClick={() => setSortBy('price-increase')}
                   className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
                     sortBy === 'price-increase'
-                      ? 'bg-gray-900 text-white shadow-sm'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-sm'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 dark:bg-gray-700'
                   }`}
                 >
                   {t('tokens.priceIncrease')}
@@ -424,8 +424,8 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                   onClick={() => setSortBy('price-decrease')}
                   className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
                     sortBy === 'price-decrease'
-                      ? 'bg-gray-900 text-white shadow-sm'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-sm'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 dark:bg-gray-700'
                   }`}
                 >
                   {t('tokens.priceDecrease')}
@@ -434,7 +434,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <span className="text-sm font-medium text-gray-700">Filter by Blockchain:</span>
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Filter by Blockchain:</span>
                   <ChainFilter selectedChain={selectedChain} onChainChange={setSelectedChain} />
                 </div>
               </div>
@@ -443,13 +443,13 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
 
           {isLoading ? (
             <div className="text-center py-12">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-              <p className="mt-4 text-gray-600">{t('tokens.loading')}</p>
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white"></div>
+              <p className="mt-4 text-gray-600 dark:text-gray-400">{t('tokens.loading')}</p>
             </div>
           ) : filteredTokens.length === 0 ? (
             <div className="text-center py-12">
               <Trophy className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-400">
                 {searchQuery ? t('tokens.noResults') : t('tokens.noTokens')}
               </p>
             </div>
@@ -459,16 +459,16 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
               <div className="hidden lg:block overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-gray-200">
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.rank')}</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.token')}</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.price')}</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.priceChange')}</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.marketCap')}</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.liquidity')}</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">Blockchain</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.created')}</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">{t('tokens.table.action')}</th>
+                    <tr className="border-b border-gray-200 dark:border-gray-700">
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">{t('tokens.table.rank')}</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">{t('tokens.table.token')}</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">{t('tokens.table.price')}</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">{t('tokens.table.priceChange')}</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">{t('tokens.table.marketCap')}</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">{t('tokens.table.liquidity')}</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">Blockchain</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">{t('tokens.table.created')}</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">{t('tokens.table.action')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -477,7 +477,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                       return (
                       <tr
                         key={token.id}
-                        className={`border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors ${
+                        className={`border-b border-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 cursor-pointer transition-colors ${
                           isAnimating ? 'token-reordering' : ''
                         }`}
                         onClick={() => onViewToken(token.token_address)}
@@ -495,17 +495,17 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                                 }`}
                               />
                             )}
-                            <span className="font-medium text-gray-900">{index + 1}</span>
+                            <span className="font-medium text-gray-900 dark:text-white">{index + 1}</span>
                           </div>
                         </td>
                         <td className="py-4 px-4">
                           <div className="min-w-0">
-                            <div className="font-semibold text-gray-900 break-words mb-1">{token.name}</div>
-                            <div className="text-sm text-gray-500 whitespace-nowrap">{token.symbol}</div>
+                            <div className="font-semibold text-gray-900 dark:text-white break-words mb-1">{token.name}</div>
+                            <div className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">{token.symbol}</div>
                           </div>
                         </td>
                         <td className="py-4 px-4">
-                          <div className="font-semibold text-gray-900">
+                          <div className="font-semibold text-gray-900 dark:text-white">
                             {tokenData ? formatUSD(tokenData.currentPriceUSD, false) : '–'}
                           </div>
                         </td>
@@ -513,7 +513,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                           {tokenData ? (
                             <div className={`font-semibold ${
                               tokenData.priceChange === null || tokenData.priceChange === 0
-                                ? 'text-gray-500'
+                                ? 'text-gray-500 dark:text-gray-400'
                                 : tokenData.priceChange > 0
                                 ? 'text-green-600'
                                 : 'text-red-600'
@@ -521,26 +521,26 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                               {tokenData.priceChange === null || tokenData.priceChange === 0 ? '–' : `${tokenData.priceChange >= 0 ? '+' : ''}${tokenData.priceChange.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`}
                             </div>
                           ) : (
-                            <span className="text-gray-500">–</span>
+                            <span className="text-gray-500 dark:text-gray-400">–</span>
                           )}
                         </td>
                         <td className="py-4 px-4">
-                          <div className="font-semibold text-gray-900">
+                          <div className="font-semibold text-gray-900 dark:text-white">
                             {tokenData ? formatUSD(tokenData.marketCap, true) : '–'}
                           </div>
                         </td>
                         <td className="py-4 px-4">
-                          <div className="font-semibold text-gray-900">
+                          <div className="font-semibold text-gray-900 dark:text-white">
                             {tokenData ? formatUSD(tokenData.liquidityUSD, true) : '–'}
                           </div>
                         </td>
                         <td className="py-4 px-4">
-                          <div className="text-sm text-gray-900">
+                          <div className="text-sm text-gray-900 dark:text-white">
                             {token.chain_id === 1 ? 'Ethereum' : token.chain_id === 8453 ? 'Base' : 'Unknown'}
                           </div>
                         </td>
                         <td className="py-4 px-4">
-                          <div className="text-sm text-gray-600">
+                          <div className="text-sm text-gray-600 dark:text-gray-400">
                             {formatTimeAgo(token.created_at)}
                           </div>
                         </td>
@@ -550,7 +550,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                               e.stopPropagation();
                               onSelectToken(token);
                             }}
-                            className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors flex items-center space-x-2"
+                            className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors flex items-center space-x-2"
                           >
                             <TrendingUp className="w-4 h-4" />
                             <span>{t('tokens.table.trade')}</span>
@@ -570,7 +570,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                   return (
                   <div
                     key={token.id}
-                    className={`bg-gray-50 rounded-lg p-4 border border-gray-200 cursor-pointer hover:border-gray-300 transition-colors ${
+                    className={`bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700 cursor-pointer hover:border-gray-300 dark:border-gray-600 transition-colors ${
                       isAnimating ? 'token-reordering' : ''
                     }`}
                     onClick={() => onViewToken(token.token_address)}
@@ -588,14 +588,14 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                             }`}
                           />
                         )}
-                        <span className="font-medium text-gray-500 text-sm">#{index + 1}</span>
+                        <span className="font-medium text-gray-500 dark:text-gray-400 text-sm">#{index + 1}</span>
                       </div>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           onSelectToken(token);
                         }}
-                        className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors flex items-center space-x-2"
+                        className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors flex items-center space-x-2"
                       >
                         <TrendingUp className="w-4 h-4" />
                         <span>{t('tokens.table.trade')}</span>
@@ -603,21 +603,21 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                     </div>
 
                     <div className="mb-3">
-                      <div className="font-bold text-gray-900 text-lg break-words mb-1">{token.name}</div>
-                      <div className="text-sm text-gray-500 whitespace-nowrap">{token.symbol}</div>
+                      <div className="font-bold text-gray-900 dark:text-white text-lg break-words mb-1">{token.name}</div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">{token.symbol}</div>
                     </div>
 
                     <div className="space-y-2 mb-3">
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">{t('tokens.table.price')}:</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">{t('tokens.table.price')}:</span>
                         <div className="text-right">
-                          <div className="font-semibold text-gray-900">
+                          <div className="font-semibold text-gray-900 dark:text-white">
                             {tokenData ? formatUSD(tokenData.currentPriceUSD, false) : '–'}
                           </div>
                           {tokenData && (
                             <span className={`text-xs font-medium ${
                               tokenData.priceChange === null || tokenData.priceChange === 0
-                                ? 'text-gray-500'
+                                ? 'text-gray-500 dark:text-gray-400'
                                 : tokenData.priceChange > 0
                                 ? 'text-green-600'
                                 : 'text-red-600'
@@ -629,29 +629,29 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                       </div>
 
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">{t('tokens.table.marketCap')}:</span>
-                        <span className="font-semibold text-gray-900">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">{t('tokens.table.marketCap')}:</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">
                           {tokenData ? formatUSD(tokenData.marketCap, true) : '–'}
                         </span>
                       </div>
 
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">{t('tokens.table.liquidity')}:</span>
-                        <span className="font-semibold text-gray-900">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">{t('tokens.table.liquidity')}:</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">
                           {tokenData ? formatUSD(tokenData.liquidityUSD, true) : '–'}
                         </span>
                       </div>
 
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Blockchain:</span>
-                        <span className="text-sm text-gray-900">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">Blockchain:</span>
+                        <span className="text-sm text-gray-900 dark:text-white">
                           {token.chain_id === 1 ? 'Ethereum' : token.chain_id === 8453 ? 'Base' : 'Unknown'}
                         </span>
                       </div>
 
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">{t('tokens.table.created')}:</span>
-                        <span className="text-sm text-gray-900">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">{t('tokens.table.created')}:</span>
+                        <span className="text-sm text-gray-900 dark:text-white">
                           {formatTimeAgo(token.created_at)}
                         </span>
                       </div>
@@ -665,7 +665,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
 
           {!isLoading && filteredTokens.length > 0 && (
             <div className="mt-6">
-              <div className="text-sm text-gray-500 text-center">
+              <div className="text-sm text-gray-500 dark:text-gray-400 text-center">
                 Showing all {filteredTokens.length} tokens
               </div>
             </div>
