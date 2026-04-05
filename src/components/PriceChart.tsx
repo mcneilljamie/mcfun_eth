@@ -85,6 +85,18 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
       },
       crosshair: {
         mode: 1,
+        vertLine: {
+          color: isDark ? '#6b7280' : '#9ca3af',
+          width: 1,
+          style: 3,
+          labelBackgroundColor: isDark ? '#3b82f6' : '#2563eb',
+        },
+        horzLine: {
+          color: isDark ? '#6b7280' : '#9ca3af',
+          width: 1,
+          style: 3,
+          labelBackgroundColor: isDark ? '#3b82f6' : '#2563eb',
+        },
       },
     });
 
