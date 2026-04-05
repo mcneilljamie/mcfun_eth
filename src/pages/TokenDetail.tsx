@@ -11,6 +11,7 @@ import { PriceChart } from '../components/PriceChart';
 import { useChartData } from '../hooks/useChartData';
 import { useLiveReserves } from '../hooks/useLiveReserves';
 import { ToastMessage } from '../App';
+import { useTheme } from '../lib/theme';
 
 interface TokenDetailProps {
   onTrade: (token: Token) => void;
@@ -22,6 +23,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { provider, chainId } = useWeb3();
+  const { theme } = useTheme();
   const [token, setToken] = useState<Token | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -494,7 +496,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
         <PriceChart
           tokenAddress={token.token_address}
           tokenSymbol={token.symbol}
-          theme="light"
+          theme={theme}
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">

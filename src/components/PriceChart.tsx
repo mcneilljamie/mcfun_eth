@@ -61,17 +61,17 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
 
     const chart = createChart(chartContainerRef.current, {
       layout: {
-        background: { color: isDark ? '#1a1a1a' : '#ffffff' },
-        textColor: isDark ? '#d1d5db' : '#374151',
+        background: { color: isDark ? '#111827' : '#ffffff' },
+        textColor: isDark ? '#e5e7eb' : '#374151',
       },
       grid: {
-        vertLines: { color: isDark ? '#2a2a2a' : '#f3f4f6' },
-        horzLines: { color: isDark ? '#2a2a2a' : '#f3f4f6' },
+        vertLines: { color: isDark ? '#374151' : '#f3f4f6' },
+        horzLines: { color: isDark ? '#374151' : '#f3f4f6' },
       },
       width: containerWidth,
       height: 400,
       rightPriceScale: {
-        borderColor: isDark ? '#2a2a2a' : '#e5e7eb',
+        borderColor: isDark ? '#4b5563' : '#e5e7eb',
         scaleMargins: {
           top: 0.2,
           bottom: 0.1,
@@ -79,7 +79,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
         autoScale: true,
       },
       timeScale: {
-        borderColor: isDark ? '#2a2a2a' : '#e5e7eb',
+        borderColor: isDark ? '#4b5563' : '#e5e7eb',
         timeVisible: true,
         secondsVisible: false,
       },
@@ -93,9 +93,15 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
     const minMove = chartMode === 'marketCap' ? 1 : (displayPrice < 1 ? 0.00001 : 0.001);
 
     const areaSeries = chart.addSeries(AreaSeries, {
-      lineColor: (priceChange !== null && priceChange >= 0) ? '#10b981' : '#ef4444',
-      topColor: (priceChange !== null && priceChange >= 0) ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)',
-      bottomColor: (priceChange !== null && priceChange >= 0) ? 'rgba(16, 185, 129, 0.0)' : 'rgba(239, 68, 68, 0.0)',
+      lineColor: (priceChange !== null && priceChange >= 0)
+        ? (isDark ? '#34d399' : '#10b981')  // Brighter green in dark mode
+        : (isDark ? '#f87171' : '#ef4444'), // Brighter red in dark mode
+      topColor: (priceChange !== null && priceChange >= 0)
+        ? (isDark ? 'rgba(52, 211, 153, 0.3)' : 'rgba(16, 185, 129, 0.4)')
+        : (isDark ? 'rgba(248, 113, 113, 0.3)' : 'rgba(239, 68, 68, 0.4)'),
+      bottomColor: (priceChange !== null && priceChange >= 0)
+        ? (isDark ? 'rgba(52, 211, 153, 0.0)' : 'rgba(16, 185, 129, 0.0)')
+        : (isDark ? 'rgba(248, 113, 113, 0.0)' : 'rgba(239, 68, 68, 0.0)'),
       lineWidth: 2,
       lineType: 0,
       priceFormat: {
