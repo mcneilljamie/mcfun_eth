@@ -119,16 +119,16 @@ export function Home({ onNavigate }: HomeProps) {
             {t('home.why.description')}
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 max-w-4xl mx-auto">
-            <div className="bg-white dark:bg-gray-800/10 backdrop-blur-sm px-5 sm:px-6 py-4 rounded-lg">
-              <div className="text-xl sm:text-2xl font-bold mb-1">{t('home.why.benefits.simple.title')}</div>
+            <div className="bg-white/10 dark:bg-gray-800/10 backdrop-blur-sm px-5 sm:px-6 py-4 rounded-lg">
+              <div className="text-xl sm:text-2xl font-bold mb-1 text-white">{t('home.why.benefits.simple.title')}</div>
               <div className="text-xs sm:text-sm text-gray-300">{t('home.why.benefits.simple.description')}</div>
             </div>
-            <div className="bg-white dark:bg-gray-800/10 backdrop-blur-sm px-5 sm:px-6 py-4 rounded-lg">
-              <div className="text-xl sm:text-2xl font-bold mb-1">{t('home.why.benefits.safe.title')}</div>
+            <div className="bg-white/10 dark:bg-gray-800/10 backdrop-blur-sm px-5 sm:px-6 py-4 rounded-lg">
+              <div className="text-xl sm:text-2xl font-bold mb-1 text-white">{t('home.why.benefits.safe.title')}</div>
               <div className="text-xs sm:text-sm text-gray-300">{t('home.why.benefits.safe.description')}</div>
             </div>
-            <div className="bg-white dark:bg-gray-800/10 backdrop-blur-sm px-5 sm:px-6 py-4 rounded-lg">
-              <div className="text-xl sm:text-2xl font-bold mb-1">{t('home.why.benefits.lowCost.title')}</div>
+            <div className="bg-white/10 dark:bg-gray-800/10 backdrop-blur-sm px-5 sm:px-6 py-4 rounded-lg">
+              <div className="text-xl sm:text-2xl font-bold mb-1 text-white">{t('home.why.benefits.lowCost.title')}</div>
               <div className="text-xs sm:text-sm text-gray-300">{t('home.why.benefits.lowCost.description')}</div>
             </div>
           </div>
