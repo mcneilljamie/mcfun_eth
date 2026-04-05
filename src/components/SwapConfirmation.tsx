@@ -161,7 +161,7 @@ export function SwapConfirmation({
           </div>
 
           <div className="space-y-6">
-            <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-gray-800 dark:to-gray-900 rounded-xl p-6 border border-green-200 dark:border-gray-700">
               <h3 className="font-semibold text-gray-900 dark:text-white mb-4">{t('swapConfirmation.swapDetails')}</h3>
               <div className="space-y-3">
                 <div className="flex justify-between items-center">

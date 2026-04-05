@@ -1135,7 +1135,7 @@ export function Lock({ onShowToast }: LockPageProps) {
             )}
           </div>
 
-          <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl shadow-lg p-6 border-2 border-purple-200">
+          <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-lg p-6 border-2 border-purple-200 dark:border-gray-700">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{t('lock.howItWorks')}</h2>
             <div className="space-y-4">
               <div className="flex items-start">

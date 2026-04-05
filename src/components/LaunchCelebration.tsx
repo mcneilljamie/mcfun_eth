@@ -169,7 +169,7 @@ export function LaunchCelebration({
           </div>
 
           <div className="space-y-6">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border-2 border-blue-300">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-900 rounded-xl p-6 border-2 border-blue-300 dark:border-gray-700">
               <h3 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
                 <Sparkles className="w-5 h-5 mr-2 text-blue-600" />
                 {t('launchCelebration.shareToken')}

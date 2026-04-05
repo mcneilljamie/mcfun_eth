@@ -26,7 +26,7 @@ export function NetworkWarning() {
 
   return (
     <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-2xl px-4 animate-slide-up">
-      <div className="relative bg-gradient-to-br from-red-50 to-orange-50 border-2 border-red-300 rounded-2xl shadow-2xl overflow-hidden">
+      <div className="relative bg-gradient-to-br from-red-50 to-orange-50 dark:from-gray-800 dark:to-gray-900 border-2 border-red-300 dark:border-gray-700 rounded-2xl shadow-2xl overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-red-400/10 to-orange-400/10" />
 
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-red-500 via-orange-500 to-red-500 animate-pulse" />

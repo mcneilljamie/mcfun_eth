@@ -564,7 +564,7 @@ export function About() {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-emerald-50 to-green-100 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8 border-2 border-emerald-200">
+        <div className="bg-gradient-to-br from-emerald-50 to-green-100 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8 border-2 border-emerald-200 dark:border-gray-700">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
             <ArrowLeftRight className="w-6 h-6 sm:w-8 sm:h-8 text-emerald-600" />
             {t('about.trading.title')}
@@ -621,7 +621,7 @@ export function About() {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8 border-2 border-blue-200">
+        <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8 border-2 border-blue-200 dark:border-gray-700">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
             <Eye className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
             {t('about.visibility.title')}
@@ -655,7 +655,7 @@ export function About() {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8 border-2 border-purple-200">
+        <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8 border-2 border-purple-200 dark:border-gray-700">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
             <Wallet className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600" />
             {t('aboutPage.trackHoldings')}
@@ -689,7 +689,7 @@ export function About() {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8 border-2 border-amber-200">
+        <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8 border-2 border-amber-200 dark:border-gray-700">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
             <Lock className="w-6 h-6 sm:w-8 sm:h-8 text-amber-600" />
             {t('aboutPage.tokenLocking')}
@@ -734,7 +734,7 @@ export function About() {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-red-50 to-rose-50 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8 border-2 border-red-200">
+        <div className="bg-gradient-to-br from-red-50 to-rose-50 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8 border-2 border-red-200 dark:border-gray-700">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
             <Flame className="w-6 h-6 sm:w-8 sm:h-8 text-red-600" />
             {t('aboutPage.tokenBurning')}

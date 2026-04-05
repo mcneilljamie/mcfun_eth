@@ -179,7 +179,7 @@ export function LockCelebration({
           </div>
 
           <div className="space-y-6">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border-2 border-blue-300">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-900 rounded-xl p-6 border-2 border-blue-300 dark:border-gray-700">
               <h3 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
                 <Lock className="w-5 h-5 mr-2 text-blue-600" />
                 {t('lockCelebration.lockDetails')}
@@ -205,7 +205,7 @@ export function LockCelebration({
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border-2 border-purple-300">
+            <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-gray-800 dark:to-gray-900 rounded-xl p-6 border-2 border-purple-300 dark:border-gray-700">
               <h3 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
                 <ExternalLink className="w-5 h-5 mr-2 text-purple-600" />
                 {t('lockCelebration.shareLock')}

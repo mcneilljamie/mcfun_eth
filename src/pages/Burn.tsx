@@ -538,7 +538,7 @@ export function Burn({ onShowToast }: BurnPageProps) {
             )}
           </div>
 
-          <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl shadow-lg p-6 border-2 border-red-200">
+          <div className="bg-gradient-to-br from-red-50 to-orange-50 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-lg p-6 border-2 border-red-200 dark:border-gray-700">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{t('burn.howItWorks')}</h2>
             <div className="space-y-4">
               <div className="flex items-start">
