@@ -300,10 +300,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
         ) : data.length === 0 ? (
           <div className="h-[400px] flex items-center justify-center">
             <div className="text-center">
-              <p className={`${isDark ? 'text-gray-400' : 'text-gray-600 dark:text-gray-400'} mb-2`}>No price data available yet</p>
-              <p className={`text-sm ${isDark ? 'text-gray-500 dark:text-gray-400' : 'text-gray-500 dark:text-gray-400'}`}>
-                Chart appears after the first trade (1-2 minutes for snapshots)
-              </p>
+              <p className={`${isDark ? 'text-gray-400' : 'text-gray-600 dark:text-gray-400'}`}>No price data available yet</p>
             </div>
           </div>
         ) : (
