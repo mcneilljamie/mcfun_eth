@@ -489,14 +489,14 @@ export function Burn({ onShowToast }: BurnPageProps) {
                   />
                 </div>
 
-                <div className="bg-red-50 border-2 border-red-500 rounded-lg p-4">
+                <div className="bg-red-50 dark:bg-red-900/20 border-2 border-red-500 dark:border-red-700/60 rounded-lg p-4">
                   <div className="flex items-start">
-                    <AlertTriangle className="w-6 h-6 text-red-600 mr-3 mt-0.5 flex-shrink-0" />
+                    <AlertTriangle className="w-6 h-6 text-red-600 dark:text-red-500 mr-3 mt-0.5 flex-shrink-0" />
                     <div>
-                      <div className="text-sm font-bold text-red-900 mb-2">
+                      <div className="text-sm font-bold text-red-900 dark:text-red-300 mb-2">
                         {t('burn.warning')}
                       </div>
-                      <div className="text-sm text-red-800">
+                      <div className="text-sm text-red-800 dark:text-red-300">
                         {t('burn.warningDescription')}
                       </div>
                     </div>

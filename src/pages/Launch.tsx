@@ -311,10 +311,10 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
             </div>
 
           {error && (
-            <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700/50 rounded-lg">
               <div className="flex items-start space-x-3">
-                <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                <p className="text-sm text-blue-800">{error}</p>
+                <AlertCircle className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-blue-800 dark:text-blue-300">{error}</p>
               </div>
             </div>
           )}
@@ -486,7 +486,7 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                   {t('launch.form.initialLiquidity')}
                 </label>
                 {account && (
-                  <div className={`flex items-center space-x-1 text-sm ${hasInsufficientBalance ? 'text-blue-600' : 'text-gray-600 dark:text-gray-400'}`}>
+                  <div className={`flex items-center space-x-1 text-sm ${hasInsufficientBalance ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400'}`}>
                     <Wallet className="w-4 h-4" />
                     <span>
                       {isLoadingBalance ? (
@@ -510,19 +510,19 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                 value={ethAmount}
                 onChange={(e) => setEthAmount(e.target.value)}
                 placeholder={minLiquidityETH}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent ${
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-400 focus:border-transparent ${
                   hasInsufficientBalance
-                    ? 'border-blue-300 bg-blue-50'
-                    : 'border-gray-300 dark:border-gray-600'
-                }`}
+                    ? 'border-blue-400 dark:border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-gray-900 dark:text-white'
+                    : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
+                } placeholder:text-gray-400 dark:placeholder:text-gray-500`}
                 disabled={isLaunching}
               />
               {hasInsufficientBalance && (
-                <div className="mt-2 flex items-start space-x-2 text-sm text-blue-600">
+                <div className="mt-2 flex items-start space-x-2 text-sm text-blue-600 dark:text-blue-400">
                   <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="font-medium">{t('launch.form.insufficientBalance')}</p>
-                    <p className="text-xs text-blue-500 mt-1">
+                    <p className="text-xs text-blue-500 dark:text-blue-400 mt-1">
                       {t('launch.form.needMore', { amount: balanceShortfall })}
                     </p>
                   </div>
@@ -544,7 +544,7 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                 <span className="text-gray-600 dark:text-gray-400">{t('launch.form.toWallet')}</span>
                 <span className="font-medium text-gray-900 dark:text-white">{formatNumber(tokensToCreator)} {t('common.tokens')}</span>
               </div>
-              <div className="border-t border-gray-200 dark:border-gray-700 pt-2 mt-2">
+              <div className="border-t border-gray-200 dark:border-gray-700/50 pt-2 mt-2">
                 <div className="flex justify-between text-sm font-semibold">
                   <span className="text-gray-900 dark:text-white">{t('launch.form.initialLiq')}</span>
                   <span className="text-gray-900 dark:text-white">{ethAmount} {t('common.eth')}</span>
@@ -553,12 +553,12 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
             </div>
 
             {hasInsufficientBalance && (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700/50 rounded-lg p-4">
                 <div className="flex items-start space-x-3">
-                  <Info className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
-                  <div className="text-sm text-yellow-800">
+                  <Info className="w-5 h-5 text-yellow-600 dark:text-yellow-500 mt-0.5 flex-shrink-0" />
+                  <div className="text-sm text-yellow-800 dark:text-yellow-300">
                     <p className="font-medium mb-1">{t('launch.form.getEthTitle')}</p>
-                    <p className="text-xs">{t('launch.form.getEthDescription')}</p>
+                    <p className="text-xs text-yellow-700 dark:text-yellow-400">{t('launch.form.getEthDescription')}</p>
                   </div>
                 </div>
               </div>
@@ -584,9 +584,9 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
               )}
             </button>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4">
-              <h4 className="font-medium text-blue-900 mb-2 text-sm sm:text-base">{t('launch.notes.title')}</h4>
-              <ul className="text-xs sm:text-sm text-blue-800 space-y-1 list-disc list-inside">
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700/50 rounded-lg p-3 sm:p-4">
+              <h4 className="font-medium text-blue-900 dark:text-blue-300 mb-2 text-sm sm:text-base">{t('launch.notes.title')}</h4>
+              <ul className="text-xs sm:text-sm text-blue-800 dark:text-blue-300 space-y-1 list-disc list-inside">
                 <li>{t('launch.notes.fixedSupply')}</li>
                 <li>{t('launch.notes.burnedLiquidity')}</li>
                 <li>{t('launch.notes.noFees')}</li>

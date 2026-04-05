@@ -503,11 +503,11 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{t('tokenDetail.tokenInformation')}</h2>
             <div className="space-y-3">
-              <div className="flex justify-between items-center py-2 border-b border-gray-100">
+              <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700/30">
                 <span className="text-gray-600 dark:text-gray-400">{t('tokenDetail.totalSupply')}</span>
                 <span className="font-semibold text-gray-900 dark:text-white">1,000,000 {token.symbol}</span>
               </div>
-              <div className="flex justify-between items-center py-2 border-b border-gray-100">
+              <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700/30">
                 <span className="text-gray-600 dark:text-gray-400">{t('tokenDetail.creator')}</span>
                 <button
                   onClick={() => copyToClipboard(token.creator_address, 'creator')}
@@ -522,7 +522,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                 </button>
               </div>
               {token.website && (
-                <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700/30">
                   <span className="text-gray-600 dark:text-gray-400">{t('tokenDetail.website')}</span>
                   <a
                     href={ensureProtocol(token.website)}
@@ -535,7 +535,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                   </a>
                 </div>
               )}
-              <div className="flex justify-between items-center py-2 border-b border-gray-100">
+              <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700/30">
                 <span className="text-gray-600 dark:text-gray-400">{t('tokenDetail.tokenContract')}</span>
                 <a
                   href={`${getExplorerUrl(token.chain_id)}/token/${token.token_address}`}
@@ -547,7 +547,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                   <ExternalLink className="w-4 h-4" />
                 </a>
               </div>
-              <div className={`flex justify-between items-center py-2 ${activeLockCount > 0 ? 'border-b border-gray-100' : ''}`}>
+              <div className={`flex justify-between items-center py-2 ${activeLockCount > 0 ? 'border-b border-gray-100 dark:border-gray-700/30' : ''}`}>
                 <span className="text-gray-600 dark:text-gray-400">Blockchain</span>
                 <span className="font-semibold text-gray-900 dark:text-white">
                   {token.chain_id === 1 ? 'Ethereum' : token.chain_id === 8453 ? 'Base' : 'Unknown'}
@@ -571,19 +571,19 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{t('tokenDetail.poolInformation')}</h2>
             <div className="space-y-3">
-              <div className="flex justify-between items-center py-2 border-b border-gray-100">
+              <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700/30">
                 <span className="text-gray-600 dark:text-gray-400">{t('tokenDetail.ethReserve')}</span>
                 <span className="font-semibold text-gray-900 dark:text-white">
                   {formatCurrency(token.current_eth_reserve || liveReserves?.reserveETH || token.initial_liquidity_eth)}
                 </span>
               </div>
-              <div className="flex justify-between items-center py-2 border-b border-gray-100">
+              <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700/30">
                 <span className="text-gray-600 dark:text-gray-400">{token.symbol} {t('tokenDetail.reserve')}</span>
                 <span className="font-semibold text-gray-900 dark:text-white">
                   {parseFloat(token.current_token_reserve?.toString() || liveReserves?.reserveToken || '0').toLocaleString()} {token.symbol}
                 </span>
               </div>
-              <div className="flex justify-between items-center py-2 border-b border-gray-100">
+              <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700/30">
                 <span className="text-gray-600 dark:text-gray-400">{t('tokenDetail.created')}</span>
                 <span className="font-semibold text-gray-900 dark:text-white">{formatTimeAgo(token.created_at)}</span>
               </div>
