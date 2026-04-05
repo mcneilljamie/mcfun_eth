@@ -325,7 +325,7 @@ export function About() {
                   {mcfunMarketCapPercent > 0 ? `${mcfunMarketCapPercent.toFixed(1)}%` : '0%'}
                 </div>
               )}
-              <p className="text-xs text-gray-600 mt-1">MCFUN as a share of total platform FDV</p>
+              <a href="https://mcfun.io/token/0xe03e4d90a46f62ac405708ba5036f292d5e0edc8" className="text-xs text-blue-600 hover:text-blue-800 mt-1 inline-block hover:underline">MCFUN as a share of total platform FDV</a>
             </div>
           </div>
         </div>
