@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 
 interface ThemeContextType {
   isDarkMode: boolean;
+  theme: 'light' | 'dark';
   toggleTheme: () => void;
 }
 
@@ -9,12 +10,17 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    const stored = localStorage.getItem('darkMode');
-    return stored ? JSON.parse(stored) : false;
+    const stored = localStorage.getItem('theme');
+    if (stored) {
+      return stored === 'dark';
+    }
+    // Check system preference if no stored preference
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
   });
 
   useEffect(() => {
-    localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
+    const theme = isDarkMode ? 'dark' : 'light';
+    localStorage.setItem('theme', theme);
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
     } else {
@@ -25,7 +31,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const toggleTheme = () => setIsDarkMode((prev: boolean) => !prev);
 
   return (
-    <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
+    <ThemeContext.Provider value={{ isDarkMode, theme: isDarkMode ? 'dark' : 'light', toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );
