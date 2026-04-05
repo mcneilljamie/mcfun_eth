@@ -276,9 +276,15 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
         <div className="text-center">
           <Rocket className="w-16 h-16 text-gray-400 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{t('launch.connectWallet')}</h2>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
             {t('launch.connectWalletDescription')}
           </p>
+          <button
+            onClick={() => onNavigate('tokens')}
+            className="px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg font-semibold hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+          >
+            Explore Tokens
+          </button>
         </div>
       </div>
     );
