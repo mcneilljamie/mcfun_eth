@@ -425,8 +425,8 @@ export default function Portfolio() {
       </div>
 
       {/* Info Message */}
-      <div className="bg-green-50 dark:bg-gray-800/50 border border-green-300 dark:border-gray-600 rounded-lg p-4 mb-6">
-        <p className="text-sm text-green-900 dark:text-gray-300">
+      <div className="bg-green-50 dark:bg-green-900/30 border border-green-300 dark:border-green-700/50 rounded-lg p-4 mb-6">
+        <p className="text-sm text-green-900 dark:text-green-100">
           {t('portfolio.infoMessage')}
         </p>
       </div>
