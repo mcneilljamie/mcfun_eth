@@ -978,7 +978,7 @@ export function Lock({ onShowToast }: LockPageProps) {
                     onFocus={() => setShowTokenDropdown(true)}
                     onBlur={() => setTimeout(() => setShowTokenDropdown(false), 200)}
                     placeholder="0x..."
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                   {showTokenDropdown && popularTokens.length > 0 && (
                     <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-h-64 overflow-y-auto">
@@ -1063,7 +1063,7 @@ export function Lock({ onShowToast }: LockPageProps) {
                     min="0"
                     step="any"
                     disabled={!tokenInfo}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 dark:bg-gray-800"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:bg-gray-100 dark:disabled:bg-gray-800"
                   />
                   <div className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                     {t('lock.minimumAmount')}: {formatNumberWithCommas(minLockAmount, 0)} tokens
@@ -1083,7 +1083,7 @@ export function Lock({ onShowToast }: LockPageProps) {
                     max={MAX_LOCK_DAYS}
                     step="1"
                     disabled={!tokenInfo}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 dark:bg-gray-800"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:bg-gray-100 dark:disabled:bg-gray-800"
                   />
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t('lock.durationHelp', { max: MAX_LOCK_DAYS.toLocaleString() })}</p>
                 </div>
