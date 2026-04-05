@@ -326,7 +326,7 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
         />
       )}
 
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6 sm:py-12">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-6 sm:py-12 transition-colors">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-5 sm:p-8">
             <div className="flex items-center space-x-3 mb-6">
@@ -387,7 +387,7 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
                     onChange={(e) => setAmountIn(e.target.value)}
                     onInput={(e) => setAmountIn((e.target as HTMLInputElement).value)}
                     placeholder="0.0"
-                    className="flex-1 bg-transparent text-xl sm:text-2xl font-semibold outline-none"
+                    className="flex-1 bg-transparent text-xl sm:text-2xl font-semibold outline-none text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500"
                     disabled={isSwapping || !selectedTokenData}
                   />
                   <span className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white whitespace-nowrap">
@@ -399,7 +399,7 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
               <div className="flex justify-center">
                 <button
                   onClick={handleFlip}
-                  className="bg-white dark:bg-gray-800 border-2 border-gray-900 dark:border-white p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 transition-colors touch-manipulation"
+                  className="bg-white dark:bg-gray-800 border-2 border-gray-900 dark:border-white p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors touch-manipulation"
                   disabled={isSwapping}
                 >
                   <ArrowDownUp className="w-5 h-5 text-gray-900 dark:text-white" />
@@ -425,7 +425,7 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
                     type="text"
                     value={isLoadingQuote ? 'Loading...' : amountOut}
                     placeholder="0.0"
-                    className="flex-1 bg-transparent text-xl sm:text-2xl font-semibold outline-none"
+                    className="flex-1 bg-transparent text-xl sm:text-2xl font-semibold outline-none text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500"
                     disabled
                   />
                   <span className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white whitespace-nowrap">

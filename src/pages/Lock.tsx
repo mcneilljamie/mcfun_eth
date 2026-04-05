@@ -740,7 +740,7 @@ export function Lock({ onShowToast }: LockPageProps) {
           <div className="mb-8">
             <button
               onClick={() => navigate('/lock')}
-              className="flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300 mb-4 transition-colors"
+              className="flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-700 mb-4 transition-colors"
             >
               <ArrowLeft className="w-5 h-5 mr-2" />
               {t('lock.backToAllLocks')}
@@ -755,7 +755,7 @@ export function Lock({ onShowToast }: LockPageProps) {
                 </div>
                 <button
                   onClick={handleShareLock}
-                  className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800/10 hover:bg-white dark:bg-gray-800/20 rounded-lg transition-colors backdrop-blur"
+                  className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800/10 hover:bg-white rounded-lg transition-colors backdrop-blur"
                 >
                   <Share2 className="w-5 h-5" />
                   <span className="hidden sm:inline">{t('lock.shareLock')}</span>
@@ -900,7 +900,7 @@ export function Lock({ onShowToast }: LockPageProps) {
                           href={`${getExplorerUrl(chainId || 1)}/tx/${lock.withdraw_tx_hash || lock.tx_hash}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300 flex items-center gap-1"
+                          className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-700 flex items-center gap-1"
                         >
                           {t('lock.viewTransaction')}
                           <ExternalLink className="w-3 h-3" />

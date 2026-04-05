@@ -341,7 +341,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6 sm:py-12">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-6 sm:py-12 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-8">
           <div className="flex flex-col gap-4 mb-6">

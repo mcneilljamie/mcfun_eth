@@ -170,7 +170,7 @@ export function About() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 transition-colors">
       <div className="max-w-5xl mx-auto px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
         <div className="text-center mb-8 sm:mb-12">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4 px-2">
@@ -181,7 +181,7 @@ export function About() {
           </p>
         </div>
 
-        <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8 border-2 border-green-200">
+        <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-lg p-5 sm:p-8 mb-6 sm:mb-8 border-2 border-green-200 dark:border-gray-700">
           <div className="text-center mb-6">
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{t('aboutPage.platformStats')}</h2>
             {timeAgo && (
@@ -198,7 +198,7 @@ export function About() {
               {isLoading ? (
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
               ) : (
-                <div className="text-2xl sm:text-3xl font-bold text-green-700">
+                <div className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-400">
                   {formatUSD(totalLiquidityUSD, true)}
                 </div>
               )}
@@ -213,7 +213,7 @@ export function About() {
               {isLoading ? (
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
               ) : (
-                <div className="text-2xl sm:text-3xl font-bold text-green-700">
+                <div className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-400">
                   {platformStats ? formatUSD(platformStats.totalMarketCapUsd, true) : '$0'}
                 </div>
               )}
@@ -228,7 +228,7 @@ export function About() {
               {isLoading ? (
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
               ) : (
-                <div className="text-2xl sm:text-3xl font-bold text-green-700">
+                <div className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-400">
                   {platformStats ? formatUSD(platformStats.totalLockedUsd, true) : '$0'}
                 </div>
               )}
@@ -243,7 +243,7 @@ export function About() {
               {isLoading ? (
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
               ) : (
-                <div className="text-2xl sm:text-3xl font-bold text-green-700">
+                <div className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-400">
                   {platformStats ? formatUSD(platformStats.totalBurnedUsd, true) : '$0'}
                 </div>
               )}
@@ -258,7 +258,7 @@ export function About() {
               {isLoading ? (
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
               ) : (
-                <div className="text-2xl sm:text-3xl font-bold text-green-700">
+                <div className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-400">
                   {platformStats ? platformStats.tokenCount.toLocaleString() : '0'}
                 </div>
               )}
@@ -273,7 +273,7 @@ export function About() {
               {isLoading ? (
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
               ) : (
-                <div className="text-2xl sm:text-3xl font-bold text-green-700">
+                <div className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-400">
                   {platformStats && platformStats.tokenCount > 0
                     ? `${Math.round((platformStats.ethereumCount / platformStats.tokenCount) * 100)}% : ${Math.round((platformStats.baseCount / platformStats.tokenCount) * 100)}%`
                     : '0% : 0%'
@@ -291,7 +291,7 @@ export function About() {
               {isLoading ? (
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
               ) : (
-                <div className="text-2xl sm:text-3xl font-bold text-green-700">
+                <div className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-400">
                   {formatUSD(ethereumLiquidityUSD, true)}
                 </div>
               )}
@@ -306,7 +306,7 @@ export function About() {
               {isLoading ? (
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
               ) : (
-                <div className="text-2xl sm:text-3xl font-bold text-green-700">
+                <div className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-400">
                   {formatUSD(baseLiquidityUSD, true)}
                 </div>
               )}
@@ -321,11 +321,11 @@ export function About() {
               {isLoading ? (
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
               ) : (
-                <div className="text-2xl sm:text-3xl font-bold text-green-700">
+                <div className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-400">
                   {mcfunMarketCapPercent > 0 ? `${mcfunMarketCapPercent.toFixed(1)}%` : '0%'}
                 </div>
               )}
-              <a href="https://mcfun.io/token/0xe03e4d90a46f62ac405708ba5036f292d5e0edc8" className="text-xs text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:text-gray-100 mt-1 inline-block">MCFUN as a share of total platform FDV</a>
+              <a href="https://mcfun.io/token/0xe03e4d90a46f62ac405708ba5036f292d5e0edc8" className="text-xs text-gray-600 dark:text-gray-400 hover:text-gray-800 mt-1 inline-block">MCFUN as a share of total platform FDV</a>
             </div>
           </div>
         </div>

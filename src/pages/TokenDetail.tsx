@@ -271,11 +271,11 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6 sm:py-12">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-6 sm:py-12 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <button
             onClick={() => navigate('/tokens')}
-            className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white transition-colors mb-6"
+            className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 transition-colors mb-6"
           >
             <ArrowLeft className="w-5 h-5" />
             <span>{t('tokenDetail.backToTokens')}</span>
@@ -291,11 +291,11 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
 
   if (error || !token) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6 sm:py-12">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-6 sm:py-12 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <button
             onClick={() => navigate('/tokens')}
-            className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white transition-colors mb-6"
+            className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 transition-colors mb-6"
           >
             <ArrowLeft className="w-5 h-5" />
             <span>{t('tokenDetail.backToTokens')}</span>
@@ -320,12 +320,12 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6 sm:py-12">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-6 sm:py-12 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-6">
           <button
             onClick={() => navigate('/tokens')}
-            className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white transition-colors"
+            className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
             <span>{t('tokenDetail.backToTokens')}</span>
@@ -333,7 +333,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
 
           <button
             onClick={shareLink}
-            className="flex items-center space-x-2 px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 transition-colors shadow-sm border border-gray-200 dark:border-gray-700"
+            className="flex items-center space-x-2 px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors shadow-sm border border-gray-200 dark:border-gray-700"
           >
             <Share2 className="w-4 h-4" />
             <span className="text-sm font-medium">{t('tokenDetail.share')}</span>
@@ -348,7 +348,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                 <span className="text-xl text-gray-600 dark:text-gray-400 whitespace-nowrap">{token.symbol}</span>
                 <button
                   onClick={() => copyToClipboard(token.token_address, 'token')}
-                  className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white transition-colors text-sm"
+                  className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 transition-colors text-sm"
                 >
                   <span className="font-mono">{formatAddress(token.token_address)}</span>
                   {copiedAddress === 'token' ? (
@@ -361,7 +361,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                   href={`${getExplorerUrl(token.chain_id)}/token/${token.token_address}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white transition-colors"
+                  className="text-gray-600 dark:text-gray-400 hover:text-gray-900 transition-colors"
                   title={t('tokenDetail.viewOnEtherscan')}
                 >
                   <ExternalLink className="w-4 h-4" />
@@ -371,7 +371,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                     href={ensureProtocol(token.website)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-3 py-1 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-600 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium transition-colors flex items-center space-x-1"
+                    className="px-3 py-1 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium transition-colors flex items-center space-x-1"
                     title="Visit Website"
                   >
                     <ExternalLink className="w-3 h-3" />
@@ -414,7 +414,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                       href={ensureProtocol(token.x_url)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-8 h-8 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-600 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg transition-colors flex items-center justify-center"
+                      className="w-8 h-8 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg transition-colors flex items-center justify-center"
                       title="Follow on X"
                     >
                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -465,7 +465,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                 <div className="text-sm text-gray-600 dark:text-gray-400">{t('tokens.table.returnMultiple')}</div>
                 <button
                   onClick={toggleReturnDisplayMode}
-                  className="text-xs px-2 py-1 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded border border-gray-300 dark:border-gray-600 transition-colors"
+                  className="text-xs px-2 py-1 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded border border-gray-300 dark:border-gray-600 transition-colors"
                   title="Toggle display format"
                 >
                   {returnDisplayMode === 'multiple' ? '%' : 'x'}
@@ -509,7 +509,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                 <span className="text-gray-600 dark:text-gray-400">{t('tokenDetail.creator')}</span>
                 <button
                   onClick={() => copyToClipboard(token.creator_address, 'creator')}
-                  className="flex items-center space-x-2 text-gray-900 dark:text-white hover:text-gray-700 dark:text-gray-300 transition-colors"
+                  className="flex items-center space-x-2 text-gray-900 dark:text-white hover:text-gray-700 transition-colors"
                 >
                   <span className="font-mono text-sm">{formatAddress(token.creator_address)}</span>
                   {copiedAddress === 'creator' ? (
@@ -526,7 +526,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                     href={ensureProtocol(token.website)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center space-x-2 text-gray-900 dark:text-white hover:text-gray-700 dark:text-gray-300 transition-colors"
+                    className="flex items-center space-x-2 text-gray-900 dark:text-white hover:text-gray-700 transition-colors"
                   >
                     <span className="text-sm truncate max-w-[200px]">{token.website.replace(/^https?:\/\//, '')}</span>
                     <ExternalLink className="w-4 h-4" />
@@ -539,7 +539,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                   href={`${getExplorerUrl(token.chain_id)}/token/${token.token_address}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center space-x-2 text-gray-900 dark:text-white hover:text-gray-700 dark:text-gray-300 transition-colors"
+                  className="flex items-center space-x-2 text-gray-900 dark:text-white hover:text-gray-700 transition-colors"
                 >
                   <span className="font-mono text-sm">{formatAddress(token.token_address)}</span>
                   <ExternalLink className="w-4 h-4" />
@@ -556,7 +556,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                   <span className="text-gray-600 dark:text-gray-400">Active Locks</span>
                   <button
                     onClick={() => navigate(`/lock/${token.token_address}`)}
-                    className="flex items-center space-x-2 text-gray-900 dark:text-white hover:text-gray-700 dark:text-gray-300 transition-colors"
+                    className="flex items-center space-x-2 text-gray-900 dark:text-white hover:text-gray-700 transition-colors"
                   >
                     <span className="font-semibold text-sm">View {activeLockCount} lock{activeLockCount !== 1 ? 's' : ''}</span>
                     <ExternalLink className="w-4 h-4" />
@@ -591,7 +591,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                   href={`${getExplorerUrl(token.chain_id)}/address/${token.amm_address}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center space-x-2 text-gray-900 dark:text-white hover:text-gray-700 dark:text-gray-300 transition-colors"
+                  className="flex items-center space-x-2 text-gray-900 dark:text-white hover:text-gray-700 transition-colors"
                 >
                   <span className="font-mono text-sm">{formatAddress(token.amm_address)}</span>
                   <ExternalLink className="w-4 h-4" />
