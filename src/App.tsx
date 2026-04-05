@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { Web3Provider } from './lib/web3';
+import { ThemeProvider } from './lib/theme';
 import { Navigation } from './components/Navigation';
 import { NetworkWarning } from './components/NetworkWarning';
 import { Toast } from './components/Toast';
@@ -65,51 +66,53 @@ function AppContent() {
   };
 
   return (
-    <Web3Provider>
-      <div className="min-h-screen bg-gray-100">
-        <Navigation
-          currentPage={getCurrentPage()}
-          onNavigate={handleNavigate}
-          setToast={setToast}
-        />
-        <NetworkWarning />
-
-        <div>
-          <Routes>
-            <Route path="/" element={<Home onNavigate={handleNavigate} />} />
-            <Route path="/launch" element={<Launch onNavigate={handleNavigate} onShowToast={setToast} />} />
-            <Route path="/trade" element={<Trade selectedToken={selectedToken} onShowToast={setToast} />} />
-            <Route path="/tokens" element={
-              <Tokens
-                onSelectToken={handleSelectToken}
-                onViewToken={handleViewTokenDetail}
-                onShowToast={setToast}
-              />
-            } />
-            <Route path="/token/:tokenAddress" element={
-              <TokenDetail
-                onTrade={handleSelectToken}
-                onShowToast={setToast}
-              />
-            } />
-            <Route path="/portfolio" element={<Portfolio />} />
-            <Route path="/lock" element={<Lock onShowToast={setToast} />} />
-            <Route path="/lock/:tokenAddress" element={<Lock onShowToast={setToast} />} />
-            <Route path="/my-locks" element={<MyLocks onShowToast={setToast} />} />
-            <Route path="/burn" element={<Burn onShowToast={setToast} />} />
-            <Route path="/about" element={<About />} />
-          </Routes>
-        </div>
-
-        {toast && (
-          <Toast
-            message={toast.message}
-            type={toast.type}
-            onClose={() => setToast(null)}
+    <ThemeProvider>
+      <Web3Provider>
+        <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors">
+          <Navigation
+            currentPage={getCurrentPage()}
+            onNavigate={handleNavigate}
+            setToast={setToast}
           />
-        )}
-      </div>
-    </Web3Provider>
+          <NetworkWarning />
+
+          <div>
+            <Routes>
+              <Route path="/" element={<Home onNavigate={handleNavigate} />} />
+              <Route path="/launch" element={<Launch onNavigate={handleNavigate} onShowToast={setToast} />} />
+              <Route path="/trade" element={<Trade selectedToken={selectedToken} onShowToast={setToast} />} />
+              <Route path="/tokens" element={
+                <Tokens
+                  onSelectToken={handleSelectToken}
+                  onViewToken={handleViewTokenDetail}
+                  onShowToast={setToast}
+                />
+              } />
+              <Route path="/token/:tokenAddress" element={
+                <TokenDetail
+                  onTrade={handleSelectToken}
+                  onShowToast={setToast}
+                />
+              } />
+              <Route path="/portfolio" element={<Portfolio />} />
+              <Route path="/lock" element={<Lock onShowToast={setToast} />} />
+              <Route path="/lock/:tokenAddress" element={<Lock onShowToast={setToast} />} />
+              <Route path="/my-locks" element={<MyLocks onShowToast={setToast} />} />
+              <Route path="/burn" element={<Burn onShowToast={setToast} />} />
+              <Route path="/about" element={<About />} />
+            </Routes>
+          </div>
+
+          {toast && (
+            <Toast
+              message={toast.message}
+              type={toast.type}
+              onClose={() => setToast(null)}
+            />
+          )}
+        </div>
+      </Web3Provider>
+    </ThemeProvider>
   );
 }
 

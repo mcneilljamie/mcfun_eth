@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useWeb3 } from '../lib/web3';
+import { useTheme } from '../lib/theme';
 import { useTranslation } from 'react-i18next';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Moon, Sun } from 'lucide-react';
 import { LanguageSelector } from './LanguageSelector';
 import { WalletModal } from './WalletModal';
 import { AccountDropdown } from './AccountDropdown';
@@ -15,6 +16,7 @@ interface NavigationProps {
 
 export function Navigation({ currentPage, onNavigate, setToast }: NavigationProps) {
   const { account, connect, disconnect, isConnecting, chainId } = useWeb3();
+  const { isDarkMode, toggleTheme } = useTheme();
   const { t } = useTranslation();
   const [showWalletModal, setShowWalletModal] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -42,15 +44,15 @@ export function Navigation({ currentPage, onNavigate, setToast }: NavigationProp
   };
 
   return (
-    <nav className="bg-white border-b border-gray-200">
+    <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-4 md:space-x-8">
             <button
               onClick={() => handleNavigate('home')}
-              className="flex items-center space-x-2 text-gray-900 font-bold text-lg sm:text-xl hover:text-gray-700 transition-colors"
+              className="flex items-center space-x-2 text-gray-900 dark:text-white font-bold text-lg sm:text-xl hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
             >
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-900 text-white rounded-lg flex items-center justify-center font-bold text-base sm:text-lg">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg flex items-center justify-center font-bold text-base sm:text-lg">
                 MF
               </div>
               <span className="hidden sm:inline">{t('nav.brand')}</span>
@@ -61,8 +63,8 @@ export function Navigation({ currentPage, onNavigate, setToast }: NavigationProp
                 onClick={() => onNavigate('launch')}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                   currentPage === 'launch'
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
                 {t('nav.launch')}
@@ -71,8 +73,8 @@ export function Navigation({ currentPage, onNavigate, setToast }: NavigationProp
                 onClick={() => onNavigate('trade')}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                   currentPage === 'trade'
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
                 {t('nav.trade')}
@@ -81,8 +83,8 @@ export function Navigation({ currentPage, onNavigate, setToast }: NavigationProp
                 onClick={() => onNavigate('tokens')}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                   currentPage === 'tokens'
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
                 {t('nav.tokens')}
@@ -91,8 +93,8 @@ export function Navigation({ currentPage, onNavigate, setToast }: NavigationProp
                 onClick={() => onNavigate('portfolio')}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                   currentPage === 'portfolio'
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
                 {t('nav.portfolio')}
@@ -101,8 +103,8 @@ export function Navigation({ currentPage, onNavigate, setToast }: NavigationProp
                 onClick={() => onNavigate('lock')}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                   currentPage === 'lock'
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
                 {t('nav.lock')}
@@ -111,8 +113,8 @@ export function Navigation({ currentPage, onNavigate, setToast }: NavigationProp
                 onClick={() => onNavigate('my-locks')}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                   currentPage === 'my-locks'
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
                 {t('nav.myLocks')}
@@ -121,8 +123,8 @@ export function Navigation({ currentPage, onNavigate, setToast }: NavigationProp
                 onClick={() => onNavigate('burn')}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                   currentPage === 'burn'
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
                 {t('nav.burn')}
@@ -131,8 +133,8 @@ export function Navigation({ currentPage, onNavigate, setToast }: NavigationProp
                 onClick={() => onNavigate('about')}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                   currentPage === 'about'
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
                 {t('nav.about')}
@@ -141,6 +143,13 @@ export function Navigation({ currentPage, onNavigate, setToast }: NavigationProp
           </div>
 
           <div className="flex items-center gap-2 md:gap-3">
+            <button
+              onClick={toggleTheme}
+              className="p-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              aria-label="Toggle theme"
+            >
+              {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
             <LanguageSelector />
             {account ? (
               <AccountDropdown
@@ -153,14 +162,14 @@ export function Navigation({ currentPage, onNavigate, setToast }: NavigationProp
               <button
                 onClick={() => setShowWalletModal(true)}
                 disabled={isConnecting}
-                className="bg-gray-900 text-white px-3 sm:px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                className="bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-3 sm:px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
               >
                 {isConnecting ? t('nav.connecting') : t('nav.connect')}
               </button>
             )}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              className="md:hidden p-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
               aria-label="Toggle menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -169,14 +178,14 @@ export function Navigation({ currentPage, onNavigate, setToast }: NavigationProp
         </div>
 
         {mobileMenuOpen && (
-          <div className="md:hidden py-3 border-t border-gray-200">
+          <div className="md:hidden py-3 border-t border-gray-200 dark:border-gray-700">
             <div className="flex flex-col space-y-1">
               <button
                 onClick={() => handleNavigate('launch')}
                 className={`px-4 py-3 text-left rounded-lg font-medium transition-colors ${
                   currentPage === 'launch'
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
                 {t('nav.launch')}
@@ -185,8 +194,8 @@ export function Navigation({ currentPage, onNavigate, setToast }: NavigationProp
                 onClick={() => handleNavigate('trade')}
                 className={`px-4 py-3 text-left rounded-lg font-medium transition-colors ${
                   currentPage === 'trade'
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
                 {t('nav.trade')}
@@ -195,8 +204,8 @@ export function Navigation({ currentPage, onNavigate, setToast }: NavigationProp
                 onClick={() => handleNavigate('tokens')}
                 className={`px-4 py-3 text-left rounded-lg font-medium transition-colors ${
                   currentPage === 'tokens'
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
                 {t('nav.tokens')}
@@ -205,8 +214,8 @@ export function Navigation({ currentPage, onNavigate, setToast }: NavigationProp
                 onClick={() => handleNavigate('portfolio')}
                 className={`px-4 py-3 text-left rounded-lg font-medium transition-colors ${
                   currentPage === 'portfolio'
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
                 {t('nav.portfolio')}
@@ -215,8 +224,8 @@ export function Navigation({ currentPage, onNavigate, setToast }: NavigationProp
                 onClick={() => handleNavigate('lock')}
                 className={`px-4 py-3 text-left rounded-lg font-medium transition-colors ${
                   currentPage === 'lock'
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
                 {t('nav.lock')}
@@ -225,8 +234,8 @@ export function Navigation({ currentPage, onNavigate, setToast }: NavigationProp
                 onClick={() => handleNavigate('my-locks')}
                 className={`px-4 py-3 text-left rounded-lg font-medium transition-colors ${
                   currentPage === 'my-locks'
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
                 {t('nav.myLocks')}
@@ -235,8 +244,8 @@ export function Navigation({ currentPage, onNavigate, setToast }: NavigationProp
                 onClick={() => handleNavigate('burn')}
                 className={`px-4 py-3 text-left rounded-lg font-medium transition-colors ${
                   currentPage === 'burn'
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
                 {t('nav.burn')}
@@ -245,8 +254,8 @@ export function Navigation({ currentPage, onNavigate, setToast }: NavigationProp
                 onClick={() => handleNavigate('about')}
                 className={`px-4 py-3 text-left rounded-lg font-medium transition-colors ${
                   currentPage === 'about'
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
                 {t('nav.about')}
