@@ -7,6 +7,7 @@ import { Loader2, Wallet, Lock as LockIcon, Clock } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ChainBadge } from '../components/ChainBadge';
+import { SUPPORTED_CHAIN_IDS, getRpcUrl } from '../contracts/addresses';
 
 interface TokenBalance {
   tokenAddress: string;
@@ -18,6 +19,7 @@ interface TokenBalance {
   valueEth: number;
   valueUsd: number;
   change24h: number;
+  chainId: number;
 }
 
 interface LockedToken {
@@ -69,12 +71,12 @@ export default function Portfolio() {
   const [totalLockedValueUsd, setTotalLockedValueUsd] = useState(0);
 
   useEffect(() => {
-    if (account && provider) {
+    if (account) {
       loadPortfolio();
     } else {
       setLoading(false);
     }
-  }, [account, provider]);
+  }, [account]);
 
   useEffect(() => {
     if (!account) return;
@@ -104,11 +106,10 @@ export default function Portfolio() {
   }, [account]);
 
   const loadPortfolio = async () => {
-    if (!account || !provider) return;
+    if (!account) return;
 
     console.log('=== PORTFOLIO LOAD DEBUG ===');
     console.log('Account:', account);
-    console.log('Provider:', provider);
 
     try {
       setLoading(true);
@@ -119,19 +120,34 @@ export default function Portfolio() {
       console.log('ETH price USD:', ethPrice);
       setEthPriceUsd(ethPrice);
 
-      // Get ETH balance
-      console.log('Fetching ETH balance for account:', account);
-      const balance = await provider.getBalance(account);
-      console.log('Raw ETH balance (wei):', balance.toString());
-      const ethBal = ethers.formatEther(balance);
-      console.log('Formatted ETH balance:', ethBal);
-      setEthBalance(ethBal);
+      // Create providers for all supported chains
+      const providers = new Map<number, ethers.JsonRpcProvider>();
+      for (const chainId of SUPPORTED_CHAIN_IDS) {
+        const rpcUrl = getRpcUrl(chainId);
+        providers.set(chainId, new ethers.JsonRpcProvider(rpcUrl));
+      }
+
+      // Get ETH balance from all chains
+      console.log('Fetching ETH balance for account from all chains:', account);
+      let totalEthBalance = 0;
+      for (const [chainId, chainProvider] of providers) {
+        try {
+          const balance = await chainProvider.getBalance(account);
+          const ethBal = parseFloat(ethers.formatEther(balance));
+          console.log(`Chain ${chainId} ETH balance:`, ethBal);
+          totalEthBalance += ethBal;
+        } catch (err) {
+          console.error(`Error fetching ETH balance for chain ${chainId}:`, err);
+        }
+      }
+      console.log('Total ETH balance across all chains:', totalEthBalance);
+      setEthBalance(totalEthBalance.toString());
 
       // Get all tokens from the platform
       console.log('Fetching all tokens from database...');
       const { data: allTokens } = await supabase
         .from('tokens')
-        .select('token_address, symbol, name, current_eth_reserve, current_token_reserve, price_change_24h, created_at');
+        .select('token_address, symbol, name, current_eth_reserve, current_token_reserve, price_change_24h, created_at, chain_id');
 
       console.log('Found tokens:', allTokens?.length || 0);
 
@@ -145,23 +161,31 @@ export default function Portfolio() {
       const priceChangeMap = new Map<string, number>();
       allTokens.forEach(token => {
         if (token.price_change_24h) {
-          priceChangeMap.set(token.token_address, parseFloat(token.price_change_24h));
+          priceChangeMap.set(`${token.token_address}_${token.chain_id}`, parseFloat(token.price_change_24h));
         }
       });
 
-      // Check balances for each token
+      // Check balances for each token on its respective chain
       const tokenBalances: TokenBalance[] = [];
       const ERC20_ABI = [
         'function balanceOf(address) view returns (uint256)',
         'function decimals() view returns (uint8)',
       ];
 
-      console.log(`Checking balances for ${allTokens.length} tokens...`);
+      console.log(`Checking balances for ${allTokens.length} tokens across all chains...`);
 
       for (const token of allTokens) {
         try {
-          console.log(`Checking ${token.symbol} (${token.token_address})...`);
-          const contract = new ethers.Contract(token.token_address, ERC20_ABI, provider);
+          const chainId = token.chain_id || 1;
+          const chainProvider = providers.get(chainId);
+
+          if (!chainProvider) {
+            console.log(`  ✗ No provider for chain ${chainId}`);
+            continue;
+          }
+
+          console.log(`Checking ${token.symbol} (${token.token_address}) on chain ${chainId}...`);
+          const contract = new ethers.Contract(token.token_address, ERC20_ABI, chainProvider);
           const [balance, decimals] = await Promise.all([
             contract.balanceOf(account),
             contract.decimals(),
@@ -174,14 +198,14 @@ export default function Portfolio() {
           console.log(`  Formatted balance: ${balanceFormatted}`);
 
           if (parseFloat(balanceFormatted) > 0) {
-            console.log(`  ✓ User has ${balanceFormatted} ${token.symbol}`);
+            console.log(`  ✓ User has ${balanceFormatted} ${token.symbol} on chain ${chainId}`);
             const ethReserve = parseFloat(token.current_eth_reserve);
             const tokenReserve = parseFloat(token.current_token_reserve);
             const priceEth = ethReserve / tokenReserve;
             const priceUsd = priceEth * ethPrice;
             const valueEth = parseFloat(balanceFormatted) * priceEth;
             const valueUsd = valueEth * ethPrice;
-            const change24h = priceChangeMap.get(token.token_address) || 0;
+            const change24h = priceChangeMap.get(`${token.token_address}_${chainId}`) || 0;
 
             tokenBalances.push({
               tokenAddress: token.token_address,
@@ -193,9 +217,10 @@ export default function Portfolio() {
               valueEth,
               valueUsd,
               change24h,
+              chainId,
             });
           } else {
-            console.log(`  ✗ User has 0 ${token.symbol}`);
+            console.log(`  ✗ User has 0 ${token.symbol} on chain ${chainId}`);
           }
         } catch (err) {
           console.error(`Error loading balance for ${token.symbol}:`, err);
@@ -447,7 +472,7 @@ export default function Portfolio() {
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{t('portfolio.yourHoldings')}</h2>
           {tokens.map((token) => (
             <div
-              key={token.tokenAddress}
+              key={`${token.tokenAddress}_${token.chainId}`}
               onClick={() => navigate(`/token/${token.tokenAddress}`)}
               className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg hover:border-green-400 transition-all cursor-pointer"
             >
@@ -455,6 +480,7 @@ export default function Portfolio() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 mb-2 flex-wrap">
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white whitespace-nowrap">{token.symbol}</h3>
+                    <ChainBadge chainId={token.chainId} />
                     <span className="text-sm text-gray-500 dark:text-gray-400 break-words">{token.name}</span>
                   </div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">
