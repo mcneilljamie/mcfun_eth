@@ -195,7 +195,7 @@ export function BurnSuccess({
                     />
                     <button
                       onClick={() => copyToClipboard(tokenAddress, 'token')}
-                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
                       title={t('burn.copyTokenAddress')}
                     >
                       {copiedItem === 'token' ? (
@@ -208,7 +208,7 @@ export function BurnSuccess({
                       href={`${explorerUrl}/token/${tokenAddress}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
                       title={t('burn.viewOnExplorer')}
                     >
                       <ExternalLink className="w-5 h-5" />
@@ -229,7 +229,7 @@ export function BurnSuccess({
                     />
                     <button
                       onClick={() => copyToClipboard(txHash, 'tx')}
-                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
                       title={t('burn.copyTxHash')}
                     >
                       {copiedItem === 'tx' ? (
@@ -242,7 +242,7 @@ export function BurnSuccess({
                       href={`${explorerUrl}/tx/${txHash}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
                       title={t('burn.viewTxOnExplorer')}
                     >
                       <ExternalLink className="w-5 h-5" />
@@ -265,7 +265,7 @@ export function BurnSuccess({
               </button>
               <button
                 onClick={onClose}
-                className="flex-1 bg-gray-900 text-white py-3 rounded-lg font-semibold hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+                className="flex-1 bg-gray-900 text-white py-3 rounded-lg font-semibold hover:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
               >
                 {t('common.close')}
               </button>

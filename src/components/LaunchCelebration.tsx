@@ -224,7 +224,7 @@ export function LaunchCelebration({
                     />
                     <button
                       onClick={() => copyToClipboard(tokenAddress, 'token')}
-                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
                       title={t('launchCelebration.copyTokenAddress')}
                     >
                       {copiedItem === 'token' ? (
@@ -237,7 +237,7 @@ export function LaunchCelebration({
                       href={etherscanTokenUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
                       title={t('launchCelebration.viewOnEtherscan')}
                     >
                       <ExternalLink className="w-5 h-5" />
@@ -258,7 +258,7 @@ export function LaunchCelebration({
                     />
                     <button
                       onClick={() => copyToClipboard(ammAddress, 'amm')}
-                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
                       title={t('launchCelebration.copyPoolAddress')}
                     >
                       {copiedItem === 'amm' ? (
@@ -271,7 +271,7 @@ export function LaunchCelebration({
                       href={etherscanPoolUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
                       title={t('launchCelebration.viewOnEtherscan')}
                     >
                       <ExternalLink className="w-5 h-5" />
@@ -292,7 +292,7 @@ export function LaunchCelebration({
                     />
                     <button
                       onClick={() => copyToClipboard(txHash, 'tx')}
-                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
                       title={t('launchCelebration.copyTxHash')}
                     >
                       {copiedItem === 'tx' ? (
@@ -305,7 +305,7 @@ export function LaunchCelebration({
                       href={`${explorerUrl}/tx/${txHash}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
                       title={t('launchCelebration.viewOnExplorer')}
                     >
                       <ExternalLink className="w-5 h-5" />
@@ -318,7 +318,7 @@ export function LaunchCelebration({
             <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={onViewToken}
-                className="flex-1 bg-gray-900 text-white py-3 rounded-lg font-semibold hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+                className="flex-1 bg-gray-900 text-white py-3 rounded-lg font-semibold hover:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
               >
                 {t('launchCelebration.viewYourToken')}
               </button>

@@ -311,7 +311,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
             )}
             <button
               onClick={() => navigate('/tokens')}
-              className="mt-6 px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+              className="mt-6 px-6 py-2 bg-gray-900 dark:bg-gray-700 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-600 transition-colors"
             >
               Back to Tokens
             </button>
@@ -430,7 +430,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
 
             <button
               onClick={() => onTrade(token)}
-              className="bg-gray-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors flex items-center space-x-2"
+              className="bg-gray-900 dark:bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 dark:hover:bg-gray-600 transition-colors flex items-center space-x-2"
             >
               <TrendingUp className="w-5 h-5" />
               <span>{t('tokenDetail.trade')}</span>

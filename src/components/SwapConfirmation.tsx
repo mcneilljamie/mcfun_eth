@@ -199,7 +199,7 @@ export function SwapConfirmation({
                     />
                     <button
                       onClick={() => copyToClipboard(txHash, 'tx')}
-                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
                       title={t('swapConfirmation.copyTxHash')}
                     >
                       {copiedItem === 'tx' ? (
@@ -212,7 +212,7 @@ export function SwapConfirmation({
                       href={txExplorerUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
                       title={t('swapConfirmation.viewOnExplorer')}
                     >
                       <ExternalLink className="w-5 h-5" />
@@ -233,7 +233,7 @@ export function SwapConfirmation({
                     />
                     <button
                       onClick={() => copyToClipboard(tokenAddress, 'token')}
-                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
                       title={t('swapConfirmation.copyTokenAddress')}
                     >
                       {copiedItem === 'token' ? (
@@ -246,7 +246,7 @@ export function SwapConfirmation({
                       href={tokenExplorerUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
                       title={t('swapConfirmation.viewOnEtherscan')}
                     >
                       <ExternalLink className="w-5 h-5" />
@@ -267,7 +267,7 @@ export function SwapConfirmation({
                     />
                     <button
                       onClick={() => copyToClipboard(ammAddress, 'pool')}
-                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
                       title={t('swapConfirmation.copyPoolAddress')}
                     >
                       {copiedItem === 'pool' ? (
@@ -280,7 +280,7 @@ export function SwapConfirmation({
                       href={poolExplorerUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+                      className="p-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
                       title={t('swapConfirmation.viewOnEtherscan')}
                     >
                       <ExternalLink className="w-5 h-5" />
@@ -293,7 +293,7 @@ export function SwapConfirmation({
             <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={onViewToken}
-                className="flex-1 bg-gray-900 text-white py-3 rounded-lg font-semibold hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+                className="flex-1 bg-gray-900 text-white py-3 rounded-lg font-semibold hover:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
               >
                 {t('swapConfirmation.goToToken')}
               </button>

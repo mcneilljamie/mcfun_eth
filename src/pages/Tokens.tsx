@@ -550,7 +550,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                               e.stopPropagation();
                               onSelectToken(token);
                             }}
-                            className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors flex items-center space-x-2"
+                            className="bg-gray-900 dark:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 dark:hover:bg-gray-600 transition-colors flex items-center space-x-2"
                           >
                             <TrendingUp className="w-4 h-4" />
                             <span>{t('tokens.table.trade')}</span>
@@ -595,7 +595,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                           e.stopPropagation();
                           onSelectToken(token);
                         }}
-                        className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors flex items-center space-x-2"
+                        className="bg-gray-900 dark:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 dark:hover:bg-gray-600 transition-colors flex items-center space-x-2"
                       >
                         <TrendingUp className="w-4 h-4" />
                         <span>{t('tokens.table.trade')}</span>

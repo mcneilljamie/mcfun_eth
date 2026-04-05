@@ -86,7 +86,7 @@ export function WithdrawSuccess({ isOpen, onClose, txHash, chainId, tokenSymbol,
             href={explorerUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-1 flex items-center justify-center gap-2 bg-gray-900 text-white px-4 py-3 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
+            className="flex-1 flex items-center justify-center gap-2 bg-gray-900 text-white px-4 py-3 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
           >
             <ExternalLink className="w-4 h-4" />
             {t('withdrawSuccess.viewOnExplorer')}

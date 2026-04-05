@@ -86,7 +86,7 @@ export function AccountDropdown({ account, chainId, onDisconnect, onShowToast }:
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="bg-gray-900 text-white px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors flex items-center space-x-2"
+        className="bg-gray-900 dark:bg-gray-700 text-white px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium hover:bg-gray-800 dark:hover:bg-gray-600 transition-colors flex items-center space-x-2"
       >
         <div className="w-2 h-2 bg-green-400 rounded-full" />
         <span>{formatAddress(account)}</span>
