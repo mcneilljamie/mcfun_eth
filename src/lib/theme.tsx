@@ -14,8 +14,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     if (stored) {
       return stored === 'dark';
     }
-    // Check system preference if no stored preference
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    // Default to dark mode if no stored preference
+    return true;
   });
 
   useEffect(() => {
