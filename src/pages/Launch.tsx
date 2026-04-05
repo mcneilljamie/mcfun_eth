@@ -333,8 +333,8 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                     disabled={isLaunching}
                     className={`relative p-4 rounded-lg border-2 transition-all ${
                       selectedChainId === chainId
-                        ? 'border-gray-900 dark:border-white bg-gray-50 dark:bg-gray-900'
-                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:border-gray-600'
+                        ? 'border-gray-900 dark:border-gray-400 bg-gray-50 dark:bg-gray-700'
+                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                     } ${isLaunching ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                   >
                     <div className="flex flex-col items-start">
@@ -343,7 +343,7 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                           {getNetworkShortName(chainId)}
                         </span>
                         {selectedChainId === chainId && (
-                          <div className="w-5 h-5 bg-gray-900 rounded-full flex items-center justify-center">
+                          <div className="w-5 h-5 bg-gray-900 dark:bg-gray-400 rounded-full flex items-center justify-center">
                             <div className="w-2 h-2 bg-white dark:bg-gray-800 rounded-full"></div>
                           </div>
                         )}
@@ -372,7 +372,7 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                 onChange={(e) => setName(e.target.value)}
                 placeholder={t('launch.form.tokenNamePlaceholder')}
                 maxLength={MAX_NAME_LENGTH}
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-400 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500"
                 disabled={isLaunching}
               />
               <p className="text-xs mt-1 text-gray-500 dark:text-gray-400">
@@ -390,7 +390,7 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                 onChange={(e) => setSymbol(e.target.value.toUpperCase())}
                 placeholder={t('launch.form.tokenSymbolPlaceholder')}
                 maxLength={MAX_SYMBOL_LENGTH}
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent uppercase"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-400 focus:border-transparent uppercase bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500"
                 disabled={isLaunching}
               />
               <p className="text-xs mt-1 text-gray-500 dark:text-gray-400">
@@ -407,13 +407,13 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                 value={website}
                 onChange={(e) => setWebsite(e.target.value)}
                 placeholder="https://yourtoken.com"
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-400 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500"
                 disabled={isLaunching}
               />
             </div>
 
-            <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 space-y-4">
-              <h3 className="text-sm font-medium text-gray-900 dark:text-white">Social Media Links <span className="text-gray-400 font-normal">(Optional)</span></h3>
+            <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 space-y-4">
+              <h3 className="text-sm font-medium text-gray-900 dark:text-white">Social Media Links <span className="text-gray-400 dark:text-gray-500 font-normal">(Optional)</span></h3>
 
               <div>
                 <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -424,7 +424,7 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                   value={telegramUrl}
                   onChange={(e) => setTelegramUrl(e.target.value)}
                   placeholder="https://t.me/yourchannel"
-                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-400 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500"
                   disabled={isLaunching}
                 />
               </div>
@@ -438,7 +438,7 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                   value={discordUrl}
                   onChange={(e) => setDiscordUrl(e.target.value)}
                   placeholder="https://discord.gg/yourserver"
-                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-400 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500"
                   disabled={isLaunching}
                 />
               </div>
@@ -452,7 +452,7 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                   value={xUrl}
                   onChange={(e) => setXUrl(e.target.value)}
                   placeholder="https://x.com/yourhandle"
-                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-400 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500"
                   disabled={isLaunching}
                 />
               </div>
@@ -530,7 +530,7 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
               )}
             </div>
 
-            <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 space-y-2">
+            <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 space-y-2">
               <h3 className="font-medium text-gray-900 dark:text-white mb-3">{t('launch.form.distribution')}</h3>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600 dark:text-gray-400">{t('launch.form.totalSupply')}</span>

@@ -459,16 +459,16 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
               <div className="hidden lg:block overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-gray-200 dark:border-gray-700">
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">{t('tokens.table.rank')}</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">{t('tokens.table.token')}</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">{t('tokens.table.price')}</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">{t('tokens.table.priceChange')}</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">{t('tokens.table.marketCap')}</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">{t('tokens.table.liquidity')}</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">Blockchain</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">{t('tokens.table.created')}</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-300">{t('tokens.table.action')}</th>
+                    <tr className="border-b border-gray-200 dark:border-gray-700/30">
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-400">{t('tokens.table.rank')}</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-400">{t('tokens.table.token')}</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-400">{t('tokens.table.price')}</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-400">{t('tokens.table.priceChange')}</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-400">{t('tokens.table.marketCap')}</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-400">{t('tokens.table.liquidity')}</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-400">Blockchain</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-400">{t('tokens.table.created')}</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-400">{t('tokens.table.action')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -477,7 +477,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                       return (
                       <tr
                         key={token.id}
-                        className={`border-b border-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 cursor-pointer transition-colors ${
+                        className={`border-b border-gray-100 dark:border-gray-800/50 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors ${
                           isAnimating ? 'token-reordering' : ''
                         }`}
                         onClick={() => onViewToken(token.token_address)}
@@ -570,7 +570,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                   return (
                   <div
                     key={token.id}
-                    className={`bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700 cursor-pointer hover:border-gray-300 dark:border-gray-600 transition-colors ${
+                    className={`bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-200 dark:border-gray-700/30 cursor-pointer hover:border-gray-300 dark:hover:border-gray-600/50 transition-colors ${
                       isAnimating ? 'token-reordering' : ''
                     }`}
                     onClick={() => onViewToken(token.token_address)}
