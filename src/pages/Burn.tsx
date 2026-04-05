@@ -506,7 +506,7 @@ export function Burn({ onShowToast }: BurnPageProps) {
                 <button
                   onClick={handleBurn}
                   disabled={isBurning || !tokenInfo || !tokenInfo.isMcFunToken || !amount}
-                  className={`w-full ${confirmBurn ? 'bg-red-700' : 'bg-red-600'} text-white py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center`}
+                  className={`w-full ${confirmBurn ? 'bg-red-700 dark:bg-red-800' : 'bg-red-600 dark:bg-red-700'} text-white py-3 rounded-lg font-semibold hover:bg-red-700 dark:hover:bg-red-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-400 dark:disabled:bg-gray-600 disabled:text-gray-200 dark:disabled:text-gray-400 flex items-center justify-center`}
                 >
                   {isBurning ? (
                     <>

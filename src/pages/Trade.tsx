@@ -570,7 +570,7 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
             <button
               onClick={handleSwap}
               disabled={isSwapping || !selectedTokenData || !amountIn || !amountOut || !signer}
-              className="w-full bg-gray-900 text-white py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:bg-gray-800 dark:hover:bg-gray-100 transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2 touch-manipulation"
+              className="w-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:bg-gray-800 dark:hover:bg-gray-100 transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:bg-gray-400 dark:disabled:bg-gray-600 disabled:text-gray-200 dark:disabled:text-gray-400 flex items-center justify-center space-x-2 touch-manipulation"
             >
               {isSwapping ? (
                 <>

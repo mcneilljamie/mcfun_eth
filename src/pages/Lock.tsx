@@ -1116,7 +1116,7 @@ export function Lock({ onShowToast }: LockPageProps) {
                   <button
                     onClick={handleLock}
                     disabled={isLocking || !tokenInfo || !tokenInfo.isMcFunToken || !amount || !duration}
-                    className="w-full bg-gray-900 text-white py-3 rounded-lg font-semibold hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                    className="w-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 py-3 rounded-lg font-semibold hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-400 dark:disabled:bg-gray-600 disabled:text-gray-200 dark:disabled:text-gray-400 flex items-center justify-center"
                   >
                     {isLocking ? (
                       <>
