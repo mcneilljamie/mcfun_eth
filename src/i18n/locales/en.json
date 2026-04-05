@@ -282,7 +282,7 @@
       "locking": {
         "title": "Token Locking Fees",
         "amount": "$0",
-        "description": "Lock McFun tokens for any duration completely free. You only pay network gas fees."
+        "description": "Lock McFun tokens for up to 10,000 days completely free. You only pay network gas fees."
       },
       "trading": {
         "title": "Trading Fees",
