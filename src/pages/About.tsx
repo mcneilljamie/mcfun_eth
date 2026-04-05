@@ -20,7 +20,7 @@ export function About() {
   const [totalLiquidityUSD, setTotalLiquidityUSD] = useState<number>(0);
   const [ethereumLiquidityUSD, setEthereumLiquidityUSD] = useState<number>(0);
   const [baseLiquidityUSD, setBaseLiquidityUSD] = useState<number>(0);
-  const [liquidityToFDVPercent, setLiquidityToFDVPercent] = useState<number>(0);
+  const [mcfunMarketCapPercent, setMcfunMarketCapPercent] = useState<number>(0);
   const [platformStats, setPlatformStats] = useState<PlatformStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -138,11 +138,28 @@ export function About() {
         setEthereumLiquidityUSD(ethereumEth * ethPrice * 2);
         setBaseLiquidityUSD(baseEth * ethPrice * 2);
 
-        // Calculate liquidity to FDV percentage
-        if (statsData && parseFloat(statsData.total_market_cap_usd || '0') > 0) {
-          const fdv = parseFloat(statsData.total_market_cap_usd);
-          const liquidityPercent = (totalLiqUSD / fdv) * 100;
-          setLiquidityToFDVPercent(liquidityPercent);
+        // Calculate McFun market cap percentage
+        const { data: mcfunToken } = await supabase
+          .from('tokens')
+          .select('current_eth_reserve, current_token_reserve')
+          .eq('symbol', 'MCFUN')
+          .maybeSingle();
+
+        if (mcfunToken && statsData && parseFloat(statsData.total_market_cap_usd || '0') > 0) {
+          const ethReserve = parseFloat(mcfunToken.current_eth_reserve || '0');
+          const tokenReserve = parseFloat(mcfunToken.current_token_reserve || '0');
+
+          // Calculate McFun token price in ETH
+          const priceEth = tokenReserve > 0 ? ethReserve / tokenReserve : 0;
+
+          // Calculate McFun market cap (total supply * price in USD)
+          const totalSupply = 1000000; // McFun has 1M total supply
+          const mcfunMarketCapUSD = totalSupply * priceEth * ethPrice;
+
+          // Calculate percentage of total market cap
+          const totalMarketCap = parseFloat(statsData.total_market_cap_usd);
+          const mcfunPercent = totalMarketCap > 0 ? (mcfunMarketCapUSD / totalMarketCap) * 100 : 0;
+          setMcfunMarketCapPercent(mcfunPercent);
         }
       }
     } catch (err) {
@@ -299,16 +316,16 @@ export function About() {
             <div className="text-center bg-white/60 backdrop-blur rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
-                <h3 className="text-sm sm:text-base font-bold text-gray-900">Liquidity % of FDV</h3>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900">MCFUN % of FDV</h3>
               </div>
               {isLoading ? (
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
               ) : (
                 <div className="text-2xl sm:text-3xl font-bold text-green-700">
-                  {liquidityToFDVPercent > 0 ? `${liquidityToFDVPercent.toFixed(1)}%` : '0%'}
+                  {mcfunMarketCapPercent > 0 ? `${mcfunMarketCapPercent.toFixed(1)}%` : '0%'}
                 </div>
               )}
-              <p className="text-xs text-gray-600 mt-1">Total platform liquidity as % of market cap</p>
+              <p className="text-xs text-gray-600 mt-1">MCFUN's market cap over total market cap</p>
             </div>
           </div>
         </div>
