@@ -184,7 +184,7 @@ export function LaunchCelebration({
                     type="text"
                     value={`${window.location.origin}/token/${tokenAddress}`}
                     readOnly
-                    className="flex-1 px-3 py-2 bg-white dark:bg-gray-800 border border-blue-300 rounded-lg text-sm font-mono"
+                    className="flex-1 px-3 py-2 bg-white dark:bg-gray-700 border border-blue-300 dark:border-gray-600 rounded-lg text-sm font-mono text-gray-900 dark:text-gray-100"
                   />
                   <button
                     onClick={() => copyToClipboard(`${window.location.origin}/token/${tokenAddress}`, 'link')}
@@ -204,9 +204,9 @@ export function LaunchCelebration({
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6">
+            <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
               <h3 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                <ExternalLink className="w-5 h-5 mr-2" />
+                <ExternalLink className="w-5 h-5 mr-2 text-gray-700 dark:text-gray-300" />
                 {t('launchCelebration.contractAddresses')}
               </h3>
 
@@ -220,7 +220,7 @@ export function LaunchCelebration({
                       type="text"
                       value={tokenAddress}
                       readOnly
-                      className="flex-1 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-mono"
+                      className="flex-1 px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-mono text-gray-900 dark:text-gray-100"
                     />
                     <button
                       onClick={() => copyToClipboard(tokenAddress, 'token')}
@@ -254,7 +254,7 @@ export function LaunchCelebration({
                       type="text"
                       value={ammAddress}
                       readOnly
-                      className="flex-1 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-mono"
+                      className="flex-1 px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-mono text-gray-900 dark:text-gray-100"
                     />
                     <button
                       onClick={() => copyToClipboard(ammAddress, 'amm')}
@@ -288,7 +288,7 @@ export function LaunchCelebration({
                       type="text"
                       value={txHash}
                       readOnly
-                      className="flex-1 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-mono"
+                      className="flex-1 px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-mono text-gray-900 dark:text-gray-100"
                     />
                     <button
                       onClick={() => copyToClipboard(txHash, 'tx')}

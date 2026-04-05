@@ -220,7 +220,7 @@ export function LockCelebration({
                     type="text"
                     value={shareableLink}
                     readOnly
-                    className="flex-1 px-3 py-2 bg-white dark:bg-gray-800 border border-purple-300 rounded-lg text-sm font-mono"
+                    className="flex-1 px-3 py-2 bg-white dark:bg-gray-700 border border-purple-300 dark:border-gray-600 rounded-lg text-sm font-mono text-gray-900 dark:text-gray-100"
                   />
                   <button
                     onClick={() => copyToClipboard(shareableLink, 'link')}
@@ -240,9 +240,9 @@ export function LockCelebration({
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6">
+            <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
               <h3 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                <ExternalLink className="w-5 h-5 mr-2" />
+                <ExternalLink className="w-5 h-5 mr-2 text-gray-700 dark:text-gray-300" />
                 {t('lockCelebration.contractInfo')}
               </h3>
 
@@ -256,7 +256,7 @@ export function LockCelebration({
                       type="text"
                       value={tokenAddress}
                       readOnly
-                      className="flex-1 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-mono"
+                      className="flex-1 px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-mono text-gray-900 dark:text-gray-100"
                     />
                     <button
                       onClick={() => copyToClipboard(tokenAddress, 'token')}
@@ -290,7 +290,7 @@ export function LockCelebration({
                       type="text"
                       value={txHash}
                       readOnly
-                      className="flex-1 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-mono"
+                      className="flex-1 px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-mono text-gray-900 dark:text-gray-100"
                     />
                     <button
                       onClick={() => copyToClipboard(txHash, 'tx')}
