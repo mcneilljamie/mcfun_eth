@@ -325,7 +325,7 @@ export function About() {
                   {mcfunMarketCapPercent > 0 ? `${mcfunMarketCapPercent.toFixed(1)}%` : '0%'}
                 </div>
               )}
-              <p className="text-xs text-gray-600 mt-1">MCFUN's market cap over total market cap</p>
+              <p className="text-xs text-gray-600 mt-1">MCFUN as a share of total platform FDV</p>
             </div>
           </div>
         </div>
