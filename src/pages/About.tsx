@@ -817,7 +817,7 @@ export function About() {
                 <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-gray-900 dark:text-white flex-shrink-0 mt-1" />
                 <div>
                   <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2">{t('about.fees.trading.title')}</h3>
-                  <div className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">{t('about.fees.trading.amount')}</div>
+                  <div className="text-2xl sm:text-3xl font-bold text-green-600 mb-2">{t('about.fees.trading.amount')}</div>
                   <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300">
                     {t('about.fees.trading.description')}
                   </p>
