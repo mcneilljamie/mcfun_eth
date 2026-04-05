@@ -376,8 +376,8 @@ export function About() {
           <div className="grid md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
             <div className="flex gap-3 sm:gap-4">
               <div className="flex-shrink-0">
-                <div className="bg-green-100 p-1.5 sm:p-2 rounded-lg">
-                  <Check className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <div className="bg-green-100 dark:bg-green-900/30 p-1.5 sm:p-2 rounded-lg">
+                  <Check className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 dark:text-green-400" />
                 </div>
               </div>
               <div>
@@ -390,8 +390,8 @@ export function About() {
 
             <div className="flex gap-3 sm:gap-4">
               <div className="flex-shrink-0">
-                <div className="bg-green-100 p-1.5 sm:p-2 rounded-lg">
-                  <Check className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <div className="bg-green-100 dark:bg-green-900/30 p-1.5 sm:p-2 rounded-lg">
+                  <Check className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 dark:text-green-400" />
                 </div>
               </div>
               <div>
@@ -404,8 +404,8 @@ export function About() {
 
             <div className="flex gap-3 sm:gap-4">
               <div className="flex-shrink-0">
-                <div className="bg-green-100 p-1.5 sm:p-2 rounded-lg">
-                  <Check className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <div className="bg-green-100 dark:bg-green-900/30 p-1.5 sm:p-2 rounded-lg">
+                  <Check className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 dark:text-green-400" />
                 </div>
               </div>
               <div>
@@ -418,8 +418,8 @@ export function About() {
 
             <div className="flex gap-3 sm:gap-4">
               <div className="flex-shrink-0">
-                <div className="bg-green-100 p-1.5 sm:p-2 rounded-lg">
-                  <Check className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <div className="bg-green-100 dark:bg-green-900/30 p-1.5 sm:p-2 rounded-lg">
+                  <Check className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 dark:text-green-400" />
                 </div>
               </div>
               <div>
@@ -432,8 +432,8 @@ export function About() {
 
             <div className="flex gap-3 sm:gap-4">
               <div className="flex-shrink-0">
-                <div className="bg-green-100 p-1.5 sm:p-2 rounded-lg">
-                  <Check className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <div className="bg-green-100 dark:bg-green-900/30 p-1.5 sm:p-2 rounded-lg">
+                  <Check className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 dark:text-green-400" />
                 </div>
               </div>
               <div>
@@ -446,8 +446,8 @@ export function About() {
 
             <div className="flex gap-3 sm:gap-4">
               <div className="flex-shrink-0">
-                <div className="bg-green-100 p-1.5 sm:p-2 rounded-lg">
-                  <Check className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <div className="bg-green-100 dark:bg-green-900/30 p-1.5 sm:p-2 rounded-lg">
+                  <Check className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 dark:text-green-400" />
                 </div>
               </div>
               <div>
@@ -460,8 +460,8 @@ export function About() {
 
             <div className="flex gap-3 sm:gap-4">
               <div className="flex-shrink-0">
-                <div className="bg-green-100 p-1.5 sm:p-2 rounded-lg">
-                  <Check className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <div className="bg-green-100 dark:bg-green-900/30 p-1.5 sm:p-2 rounded-lg">
+                  <Check className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 dark:text-green-400" />
                 </div>
               </div>
               <div>
@@ -474,8 +474,8 @@ export function About() {
 
             <div className="flex gap-3 sm:gap-4">
               <div className="flex-shrink-0">
-                <div className="bg-green-100 p-1.5 sm:p-2 rounded-lg">
-                  <Check className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <div className="bg-green-100 dark:bg-green-900/30 p-1.5 sm:p-2 rounded-lg">
+                  <Check className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 dark:text-green-400" />
                 </div>
               </div>
               <div>
@@ -488,8 +488,8 @@ export function About() {
 
             <div className="flex gap-3 sm:gap-4">
               <div className="flex-shrink-0">
-                <div className="bg-green-100 p-1.5 sm:p-2 rounded-lg">
-                  <Check className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <div className="bg-green-100 dark:bg-green-900/30 p-1.5 sm:p-2 rounded-lg">
+                  <Check className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 dark:text-green-400" />
                 </div>
               </div>
               <div>
@@ -502,8 +502,8 @@ export function About() {
 
             <div className="flex gap-3 sm:gap-4">
               <div className="flex-shrink-0">
-                <div className="bg-green-100 p-1.5 sm:p-2 rounded-lg">
-                  <Check className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <div className="bg-green-100 dark:bg-green-900/30 p-1.5 sm:p-2 rounded-lg">
+                  <Check className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 dark:text-green-400" />
                 </div>
               </div>
               <div>
