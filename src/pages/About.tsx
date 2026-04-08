@@ -324,7 +324,7 @@ export function About() {
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
               ) : (
                 <div className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-400">
-                  {mcfunPriceUSD > 0 ? formatUSD(mcfunPriceUSD) : '$0.00'}
+                  {mcfunPriceUSD > 0 ? '$' + mcfunPriceUSD.toLocaleString('en-US', { minimumFractionDigits: 6, maximumFractionDigits: 6 }) : '$0.000000'}
                 </div>
               )}
               <span className="text-xs text-gray-600 dark:text-gray-400 mt-1 inline-block">Native platform token</span>
