@@ -315,7 +315,7 @@ export function About() {
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Total liquidity on Base</p>
             </div>
 
-            <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
+            <a href="/token/0xe03e4d90a46f62ac405708ba5036f292d5e0edc8" className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4 block hover:bg-gray-50 dark:hover:bg-gray-700/60 transition-colors cursor-pointer">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                 <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">MCFUN Price</h3>
@@ -327,8 +327,8 @@ export function About() {
                   {mcfunPriceUSD > 0 ? formatUSD(mcfunPriceUSD) : '$0.00'}
                 </div>
               )}
-              <a href="https://mcfun.io/token/0xe03e4d90a46f62ac405708ba5036f292d5e0edc8" className="text-xs text-gray-600 dark:text-gray-400 hover:text-gray-800 mt-1 inline-block">Current MCFUN token price</a>
-            </div>
+              <span className="text-xs text-gray-600 dark:text-gray-400 mt-1 inline-block">Current MCFUN token price</span>
+            </a>
           </div>
         </div>
 
