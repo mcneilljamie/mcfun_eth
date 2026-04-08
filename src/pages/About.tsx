@@ -327,7 +327,7 @@ export function About() {
                   {mcfunPriceUSD > 0 ? formatUSD(mcfunPriceUSD) : '$0.00'}
                 </div>
               )}
-              <span className="text-xs text-gray-600 dark:text-gray-400 mt-1 inline-block">Current MCFUN token price</span>
+              <span className="text-xs text-gray-600 dark:text-gray-400 mt-1 inline-block">Native platform token</span>
             </a>
           </div>
         </div>
