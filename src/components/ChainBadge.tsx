@@ -1,22 +1,28 @@
-import { getNetworkShortName } from '../contracts/addresses';
-
 interface ChainBadgeProps {
   chainId: number;
   size?: 'sm' | 'md';
 }
 
-export function ChainBadge({ chainId, size = 'sm' }: ChainBadgeProps) {
-  const networkName = getNetworkShortName(chainId);
+const CHAIN_CONFIG: Record<number, { label: string; dot: string }> = {
+  1: { label: 'ETH', dot: 'bg-gray-400' },
+  8453: { label: 'BASE', dot: 'bg-blue-400' },
+};
 
-  const sizeClasses = size === 'sm' ? 'px-2 py-0.5 text-xs' : 'px-3 py-1 text-sm';
+export function ChainBadge({ chainId, size = 'sm' }: ChainBadgeProps) {
+  const config = CHAIN_CONFIG[chainId] ?? { label: `${chainId}`, dot: 'bg-gray-400' };
+  const dotSize = size === 'sm' ? 'w-1.5 h-1.5' : 'w-2 h-2';
+  const textSize = size === 'sm' ? 'text-xs' : 'text-sm';
 
   const colorClasses = chainId === 8453
-    ? 'bg-blue-500/20 text-blue-300 border-blue-500/30'
-    : 'bg-purple-500/20 text-purple-300 border-purple-500/30';
+    ? 'bg-blue-500/15 text-blue-300 border-blue-500/30'
+    : 'bg-gray-500/15 text-gray-300 border-gray-500/30';
 
   return (
-    <span className={`inline-flex items-center ${sizeClasses} rounded-full font-medium border ${colorClasses}`}>
-      {networkName}
+    <span
+      title={chainId === 8453 ? 'Base' : 'Ethereum'}
+      className={`inline-flex items-center justify-center w-5 h-5 rounded-full border ${colorClasses}`}
+    >
+      <span className={`${dotSize} rounded-full ${config.dot} flex-shrink-0`} />
     </span>
   );
 }
