@@ -21,6 +21,7 @@ export function About() {
   const [ethereumLiquidityUSD, setEthereumLiquidityUSD] = useState<number>(0);
   const [baseLiquidityUSD, setBaseLiquidityUSD] = useState<number>(0);
   const [mcfunMarketCapPercent, setMcfunMarketCapPercent] = useState<number>(0);
+  const [mcfunPriceUSD, setMcfunPriceUSD] = useState<number>(0);
   const [platformStats, setPlatformStats] = useState<PlatformStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -160,6 +161,7 @@ export function About() {
           const totalMarketCap = parseFloat(statsData.total_market_cap_usd);
           const mcfunPercent = totalMarketCap > 0 ? (mcfunMarketCapUSD / totalMarketCap) * 100 : 0;
           setMcfunMarketCapPercent(mcfunPercent);
+          setMcfunPriceUSD(priceEth * ethPrice);
         }
       }
     } catch (err) {
@@ -316,16 +318,16 @@ export function About() {
             <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
-                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">MCFUN % of FDV</h3>
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">MCFUN Price</h3>
               </div>
               {isLoading ? (
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
               ) : (
                 <div className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-400">
-                  {mcfunMarketCapPercent > 0 ? `${mcfunMarketCapPercent.toFixed(1)}%` : '0%'}
+                  {mcfunPriceUSD > 0 ? formatUSD(mcfunPriceUSD) : '$0.00'}
                 </div>
               )}
-              <a href="https://mcfun.io/token/0xe03e4d90a46f62ac405708ba5036f292d5e0edc8" className="text-xs text-gray-600 dark:text-gray-400 hover:text-gray-800 mt-1 inline-block">MCFUN as a share of total platform FDV</a>
+              <a href="https://mcfun.io/token/0xe03e4d90a46f62ac405708ba5036f292d5e0edc8" className="text-xs text-gray-600 dark:text-gray-400 hover:text-gray-800 mt-1 inline-block">Current MCFUN token price</a>
             </div>
           </div>
         </div>
