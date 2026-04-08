@@ -6,7 +6,6 @@ import { getEthPriceUSD } from '../lib/ethPrice';
 import { Loader2, Wallet, Lock as LockIcon, Clock } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ChainBadge } from '../components/ChainBadge';
 import { SUPPORTED_CHAIN_IDS, getRpcUrl } from '../contracts/addresses';
 
 interface TokenBalance {
@@ -480,8 +479,7 @@ export default function Portfolio() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 mb-2 flex-wrap">
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white whitespace-nowrap">{token.symbol}</h3>
-                    <ChainBadge chainId={token.chainId} />
-                    <span className="text-sm text-gray-500 dark:text-gray-400 break-words">{token.name}</span>
+<span className="text-sm text-gray-500 dark:text-gray-400 break-words">{token.name}</span>
                   </div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">
                     {t('portfolio.balance')}: {formatNumber(token.balance)} {token.symbol}
