@@ -340,7 +340,7 @@ export default function Portfolio() {
       setAggregatedLockedTokens(aggregatedArray);
 
       // Calculate total value (including locked tokens)
-      const ethValue = parseFloat(ethBal) * ethPrice;
+      const ethValue = totalEthBalance * ethPrice;
       const tokensValue = tokenBalances.reduce((sum, t) => sum + t.valueUsd, 0);
       const totalValue = ethValue + tokensValue + lockedValue;
       console.log('ETH value:', ethValue);
@@ -527,12 +527,12 @@ export default function Portfolio() {
                 <div
                   key={aggLock.token_address}
                   onClick={() => navigate(`/lock/${aggLock.token_address}`)}
-                  className="rounded-xl border-2 p-6 hover:shadow-lg transition-all cursor-pointer bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200"
+                  className="rounded-xl border-2 p-6 hover:shadow-lg transition-all cursor-pointer bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-green-400 dark:hover:border-green-600"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2 flex-wrap">
-                        <LockIcon className="w-5 h-5 text-purple-600" />
+                        <LockIcon className="w-5 h-5 text-green-700 dark:text-green-500" />
                         <h3 className="text-xl font-bold text-gray-900 dark:text-white">{aggLock.token_symbol}</h3>
                         <span className="text-sm text-gray-500 dark:text-gray-400">{aggLock.token_name}</span>
                       </div>
