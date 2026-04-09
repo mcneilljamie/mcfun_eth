@@ -4,7 +4,7 @@ import { ArrowDownUp, AlertCircle, Loader, TrendingUp, Wallet, CheckCircle } fro
 import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '../lib/web3';
 import { swapTokens, getQuote, getAMMReserves, checkNeedsApproval } from '../lib/contracts';
-import { formatNumber, formatCurrency, calculatePriceImpact, limitDecimalPrecision } from '../lib/utils';
+import { formatNumber, formatCurrency, calculatePriceImpact, limitDecimalPrecision, getReadOnlyProvider } from '../lib/utils';
 import { Token } from '../lib/supabase';
 import { TokenSelector } from '../components/TokenSelector';
 import { SwapConfirmation } from '../components/SwapConfirmation';
@@ -87,9 +87,9 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
   }, [account, provider, selectedTokenData]);
 
   useEffect(() => {
-    if (amountIn && selectedTokenData && provider) {
+    if (amountIn && selectedTokenData) {
       loadQuote();
-      checkApproval();
+      if (provider) checkApproval();
     } else {
       setAmountOut('');
       setNeedsApproval(false);
@@ -147,15 +147,17 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
   };
 
   const loadQuote = async () => {
-    if (!selectedTokenData || !provider || !amountIn || parseFloat(amountIn) <= 0) {
+    if (!selectedTokenData || !amountIn || parseFloat(amountIn) <= 0) {
       setAmountOut('');
       return;
     }
 
+    const quoteProvider = provider ?? getReadOnlyProvider(selectedTokenData.chain_id);
+
     setIsLoadingQuote(true);
 
     try {
-      const quote = await getQuote(provider, selectedTokenData.amm_address, isETHToToken, amountIn);
+      const quote = await getQuote(quoteProvider, selectedTokenData.amm_address, isETHToToken, amountIn);
       setAmountOut(quote);
     } catch (err) {
       console.error('Failed to get quote:', err);

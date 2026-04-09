@@ -7,9 +7,11 @@ export function getReadOnlyProvider(chainId: number = 1): JsonRpcProvider {
     return readOnlyProviderCache.get(chainId)!;
   }
 
-  const rpcUrl = chainId === 1
-    ? import.meta.env.VITE_MAINNET_RPC_URL || 'https://eth.llamarpc.com'
-    : import.meta.env.VITE_SEPOLIA_RPC_URL || 'https://ethereum-sepolia-rpc.publicnode.com';
+  const rpcUrl = chainId === 8453
+    ? 'https://mainnet.base.org'
+    : chainId === 1
+      ? import.meta.env.VITE_MAINNET_RPC_URL || 'https://eth.llamarpc.com'
+      : import.meta.env.VITE_SEPOLIA_RPC_URL || 'https://ethereum-sepolia-rpc.publicnode.com';
 
   const provider = new JsonRpcProvider(rpcUrl);
   readOnlyProviderCache.set(chainId, provider);
