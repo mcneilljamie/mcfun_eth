@@ -75,7 +75,7 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
   };
 
   useEffect(() => {
-    if (selectedTokenData && provider) {
+    if (selectedTokenData) {
       loadReserves();
     }
   }, [selectedTokenData, provider]);
@@ -110,10 +110,12 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
   };
 
   const loadReserves = async () => {
-    if (!selectedTokenData || !provider) return;
+    if (!selectedTokenData) return;
+
+    const reservesProvider = provider ?? getReadOnlyProvider(selectedTokenData.chain_id);
 
     try {
-      const reserveData = await getAMMReserves(provider, selectedTokenData.amm_address);
+      const reserveData = await getAMMReserves(reservesProvider, selectedTokenData.amm_address);
       setReserves(reserveData);
     } catch (err) {
       console.error('Failed to load reserves:', err);
