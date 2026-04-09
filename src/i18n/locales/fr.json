@@ -193,8 +193,11 @@
       "holders": "Détenteurs",
       "24h": "24h",
       "sinceLaunch": "Depuis le Lancement",
-      "launch": "Lancement"
-    }
+      "launch": "Lancement",
+      "blockchain": "Blockchain"
+    },
+    "filterByBlockchain": "Filtrer par Blockchain :",
+    "allChains": "Toutes les Chaînes"
   },
   "about": {
     "title": "À Propos de McFun",

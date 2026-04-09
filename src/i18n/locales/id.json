@@ -193,8 +193,11 @@
       "holders": "Pemegang",
       "24h": "24j",
       "sinceLaunch": "Sejak Peluncuran",
-      "launch": "Peluncuran"
-    }
+      "launch": "Peluncuran",
+      "blockchain": "Blockchain"
+    },
+    "filterByBlockchain": "Filter berdasarkan Blockchain:",
+    "allChains": "Semua Rantai"
   },
   "about": {
     "title": "Tentang McFun",

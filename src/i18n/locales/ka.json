@@ -193,8 +193,11 @@
       "holders": "მფლობელები",
       "24h": "24სთ",
       "sinceLaunch": "გაშვებიდან",
-      "launch": "გაშვება"
-    }
+      "launch": "გაშვება",
+      "blockchain": "ბლოკჩეინი"
+    },
+    "filterByBlockchain": "ბლოკჩეინით ფილტრი:",
+    "allChains": "ყველა ჯაჭვი"
   },
   "about": {
     "title": "McFun-ის შესახებ",

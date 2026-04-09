@@ -193,8 +193,11 @@
       "holders": "Владельцы",
       "24h": "24ч",
       "sinceLaunch": "С Запуска",
-      "launch": "Запуск"
-    }
+      "launch": "Запуск",
+      "blockchain": "Блокчейн"
+    },
+    "filterByBlockchain": "Фильтр по блокчейну:",
+    "allChains": "Все сети"
   },
   "about": {
     "title": "О McFun",

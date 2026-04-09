@@ -193,8 +193,11 @@
       "holders": "持有者",
       "24h": "24小时",
       "sinceLaunch": "自发行以来",
-      "launch": "发行"
-    }
+      "launch": "发行",
+      "blockchain": "区块链"
+    },
+    "filterByBlockchain": "按区块链筛选：",
+    "allChains": "所有链"
   },
   "about": {
     "title": "关于McFun",

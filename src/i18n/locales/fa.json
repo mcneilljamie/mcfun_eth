@@ -193,8 +193,11 @@
       "holders": "دارندگان",
       "24h": "24 ساعت",
       "sinceLaunch": "از زمان راه‌اندازی",
-      "launch": "راه‌اندازی"
-    }
+      "launch": "راه‌اندازی",
+      "blockchain": "بلاکچین"
+    },
+    "filterByBlockchain": "فیلتر بر اساس بلاکچین:",
+    "allChains": "همه زنجیره‌ها"
   },
   "about": {
     "title": "درباره McFun",

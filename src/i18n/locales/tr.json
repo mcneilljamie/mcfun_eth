@@ -193,8 +193,11 @@
       "holders": "Sahipler",
       "24h": "24s",
       "sinceLaunch": "Başlatmadan Beri",
-      "launch": "Başlatma"
-    }
+      "launch": "Başlatma",
+      "blockchain": "Blokzinciri"
+    },
+    "filterByBlockchain": "Blokzincire Göre Filtrele:",
+    "allChains": "Tüm Zincirler"
   },
   "about": {
     "title": "McFun Hakkında",

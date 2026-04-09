@@ -193,8 +193,11 @@
       "holders": "보유자",
       "24h": "24시간",
       "sinceLaunch": "출시 이후",
-      "launch": "출시"
-    }
+      "launch": "출시",
+      "blockchain": "블록체인"
+    },
+    "filterByBlockchain": "블록체인으로 필터:",
+    "allChains": "모든 체인"
   },
   "about": {
     "title": "McFun 소개",

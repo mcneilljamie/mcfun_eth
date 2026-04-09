@@ -193,8 +193,11 @@
       "holders": "الحاملون",
       "24h": "24 ساعة",
       "sinceLaunch": "منذ الإطلاق",
-      "launch": "الإطلاق"
-    }
+      "launch": "الإطلاق",
+      "blockchain": "البلوكشين"
+    },
+    "filterByBlockchain": "تصفية حسب البلوكشين:",
+    "allChains": "جميع السلاسل"
   },
   "about": {
     "title": "حول McFun",

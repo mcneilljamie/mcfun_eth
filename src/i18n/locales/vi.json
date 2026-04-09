@@ -193,8 +193,11 @@
       "holders": "Người Nắm Giữ",
       "24h": "24h",
       "sinceLaunch": "Kể Từ Ra Mắt",
-      "launch": "Ra Mắt"
-    }
+      "launch": "Ra Mắt",
+      "blockchain": "Blockchain"
+    },
+    "filterByBlockchain": "Lọc theo Blockchain:",
+    "allChains": "Tất cả chuỗi"
   },
   "about": {
     "title": "Giới Thiệu McFun",

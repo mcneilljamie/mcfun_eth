@@ -193,8 +193,11 @@
       "holders": "धारक",
       "24h": "24 घंटे",
       "sinceLaunch": "लॉन्च के बाद से",
-      "launch": "लॉन्च"
-    }
+      "launch": "लॉन्च",
+      "blockchain": "ब्लॉकचेन"
+    },
+    "filterByBlockchain": "ब्लॉकचेन से फ़िल्टर करें:",
+    "allChains": "सभी चेन"
   },
   "about": {
     "title": "McFun के बारे में",

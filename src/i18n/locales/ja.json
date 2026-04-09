@@ -193,8 +193,11 @@
       "holders": "保有者",
       "24h": "24時間",
       "sinceLaunch": "ローンチからの変動",
-      "launch": "ローンチ"
-    }
+      "launch": "ローンチ",
+      "blockchain": "ブロックチェーン"
+    },
+    "filterByBlockchain": "ブロックチェーンで絞り込む：",
+    "allChains": "すべてのチェーン"
   },
   "about": {
     "title": "McFunについて",

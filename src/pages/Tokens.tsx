@@ -434,7 +434,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Filter by Blockchain:</span>
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('tokens.filterByBlockchain')}</span>
                   <ChainFilter selectedChain={selectedChain} onChainChange={setSelectedChain} />
                 </div>
               </div>
@@ -466,7 +466,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                       <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-400">{t('tokens.table.priceChange')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-400">{t('tokens.table.marketCap')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-400">{t('tokens.table.liquidity')}</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-400">Blockchain</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-400">{t('tokens.table.blockchain')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-400">{t('tokens.table.created')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-400">{t('tokens.table.action')}</th>
                     </tr>
@@ -643,7 +643,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                       </div>
 
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600 dark:text-gray-400">Blockchain:</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">{t('tokens.table.blockchain')}:</span>
                         <span className="text-sm text-gray-900 dark:text-white">
                           {token.chain_id === 1 ? 'Ethereum' : token.chain_id === 8453 ? 'Base' : 'Unknown'}
                         </span>

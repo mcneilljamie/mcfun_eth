@@ -193,8 +193,11 @@
       "holders": "Possessori",
       "24h": "24h",
       "sinceLaunch": "Dal Lancio",
-      "launch": "Lancio"
-    }
+      "launch": "Lancio",
+      "blockchain": "Blockchain"
+    },
+    "filterByBlockchain": "Filtra per Blockchain:",
+    "allChains": "Tutte le Catene"
   },
   "about": {
     "title": "Informazioni su McFun",

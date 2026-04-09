@@ -192,8 +192,11 @@
       "holders": "Holders",
       "24h": "24h",
       "sinceLaunch": "Since Launch",
-      "launch": "Launch"
-    }
+      "launch": "Launch",
+      "blockchain": "Blockchain"
+    },
+    "filterByBlockchain": "Filter by Blockchain:",
+    "allChains": "All Chains"
   },
   "about": {
     "title": "About McFun",
