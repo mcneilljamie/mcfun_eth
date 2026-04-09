@@ -98,7 +98,9 @@ export function AccountDropdown({ account, chainId, onDisconnect, onShowToast }:
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-gray-500 dark:text-gray-400">{t('wallet.balance')}</span>
               <span className={`text-sm font-medium px-2 py-1 rounded-lg ${
-                isSupported ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                isSupported
+                  ? 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200'
+                  : 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400'
               }`}>
                 {networkName}
               </span>
