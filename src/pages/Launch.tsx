@@ -283,7 +283,7 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
             onClick={() => onNavigate('tokens')}
             className="px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg font-semibold hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors"
           >
-            Explore Tokens
+            {t('launch.exploreTokens')}
           </button>
         </div>
       </div>
@@ -328,7 +328,7 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Select Blockchain
+                {t('launch.selectBlockchain')}
               </label>
               <div className="grid grid-cols-2 gap-3">
                 {SUPPORTED_CHAIN_IDS.map((chainId) => (
@@ -355,12 +355,12 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
                         )}
                       </div>
                       <span className="text-sm text-gray-600 dark:text-gray-400">
-                        Min: {getMinLiquidityETH(chainId)} ETH
+                        {t('launch.minLiquidity', { amount: getMinLiquidityETH(chainId) })}
                       </span>
                     </div>
                     {account && chainId !== selectedChainId && chainId === selectedChainId && (
                       <div className="mt-2 text-xs text-blue-600">
-                        Click to switch network
+                        {t('launch.clickToSwitch')}
                       </div>
                     )}
                   </button>
@@ -406,7 +406,7 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Website <span className="text-gray-400 font-normal">(Optional)</span>
+                {t('launch.website')} <span className="text-gray-400 font-normal">({t('launch.optional')})</span>
               </label>
               <input
                 type="url"
@@ -419,11 +419,11 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
             </div>
 
             <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 space-y-4">
-              <h3 className="text-sm font-medium text-gray-900 dark:text-white">Social Media Links <span className="text-gray-400 dark:text-gray-500 font-normal">(Optional)</span></h3>
+              <h3 className="text-sm font-medium text-gray-900 dark:text-white">{t('launch.socialMediaLinks')} <span className="text-gray-400 dark:text-gray-500 font-normal">({t('launch.optional')})</span></h3>
 
               <div>
                 <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Telegram
+                  {t('launch.telegram')}
                 </label>
                 <input
                   type="url"
@@ -437,7 +437,7 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
 
               <div>
                 <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Discord
+                  {t('launch.discord')}
                 </label>
                 <input
                   type="url"
@@ -451,7 +451,7 @@ export function Launch({ onNavigate, onShowToast }: LaunchProps) {
 
               <div>
                 <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  X (Twitter)
+                  {t('launch.xTwitter')}
                 </label>
                 <input
                   type="url"
