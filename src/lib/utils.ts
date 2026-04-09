@@ -101,6 +101,7 @@ export function formatUSD(value: number, abbreviated: boolean = false): string {
     if (value >= 1000) {
       return `$${(value / 1000).toFixed(2)}K`;
     }
+    return `$${Math.round(value)}`;
   }
 
   let decimals: number;
