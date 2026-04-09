@@ -300,21 +300,6 @@ export function About() {
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Total liquidity on Ethereum</p>
             </div>
 
-            <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <Droplets className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
-                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">Base Liquidity</h3>
-              </div>
-              {isLoading ? (
-                <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
-              ) : (
-                <div className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-400">
-                  {formatUSD(baseLiquidityUSD, true)}
-                </div>
-              )}
-              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Total liquidity on Base</p>
-            </div>
-
             <a href="/token/0xe03e4d90a46f62ac405708ba5036f292d5e0edc8" className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4 block hover:bg-gray-50 dark:hover:bg-gray-700/60 transition-colors cursor-pointer">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
@@ -329,6 +314,21 @@ export function About() {
               )}
               <span className="text-xs text-gray-600 dark:text-gray-400 mt-1 inline-block">Native platform token</span>
             </a>
+
+            <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Droplets className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">Base Liquidity</h3>
+              </div>
+              {isLoading ? (
+                <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
+              ) : (
+                <div className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-400">
+                  {formatUSD(baseLiquidityUSD, true)}
+                </div>
+              )}
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Total liquidity on Base</p>
+            </div>
           </div>
         </div>
 
