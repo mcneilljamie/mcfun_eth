@@ -119,6 +119,10 @@ export default function Portfolio() {
       console.log('ETH price USD:', ethPrice);
       setEthPriceUsd(ethPrice);
 
+      function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+        return Promise.race([promise, new Promise<T>((_, reject) => setTimeout(() => reject(new Error('timeout')), ms))]);
+      }
+
       // Create providers for all supported chains
       const providers = new Map<number, ethers.JsonRpcProvider>();
       for (const chainId of SUPPORTED_CHAIN_IDS) {
@@ -126,19 +130,17 @@ export default function Portfolio() {
         providers.set(chainId, new ethers.JsonRpcProvider(rpcUrl));
       }
 
-      // Get ETH balance from all chains
+      // Get ETH balance from all chains in parallel
       console.log('Fetching ETH balance for account from all chains:', account);
-      let totalEthBalance = 0;
-      for (const [chainId, chainProvider] of providers) {
-        try {
-          const balance = await chainProvider.getBalance(account);
+      const ethBalanceResults = await Promise.allSettled(
+        Array.from(providers.entries()).map(async ([chainId, chainProvider]) => {
+          const balance = await withTimeout(chainProvider.getBalance(account), 10000);
           const ethBal = parseFloat(ethers.formatEther(balance));
           console.log(`Chain ${chainId} ETH balance:`, ethBal);
-          totalEthBalance += ethBal;
-        } catch (err) {
-          console.error(`Error fetching ETH balance for chain ${chainId}:`, err);
-        }
-      }
+          return ethBal;
+        })
+      );
+      const totalEthBalance = ethBalanceResults.reduce((sum, r) => sum + (r.status === 'fulfilled' ? r.value : 0), 0);
       console.log('Total ETH balance across all chains:', totalEthBalance);
       setEthBalance(totalEthBalance.toString());
 
@@ -164,8 +166,7 @@ export default function Portfolio() {
         }
       });
 
-      // Check balances for each token on its respective chain
-      const tokenBalances: TokenBalance[] = [];
+      // Check balances for all tokens in parallel
       const ERC20_ABI = [
         'function balanceOf(address) view returns (uint256)',
         'function decimals() view returns (uint8)',
@@ -173,58 +174,48 @@ export default function Portfolio() {
 
       console.log(`Checking balances for ${allTokens.length} tokens across all chains...`);
 
-      for (const token of allTokens) {
-        try {
+      const balanceResults = await Promise.allSettled(
+        allTokens.map(async (token) => {
           const chainId = token.chain_id || 1;
           const chainProvider = providers.get(chainId);
+          if (!chainProvider) return null;
 
-          if (!chainProvider) {
-            console.log(`  ✗ No provider for chain ${chainId}`);
-            continue;
-          }
-
-          console.log(`Checking ${token.symbol} (${token.token_address}) on chain ${chainId}...`);
           const contract = new ethers.Contract(token.token_address, ERC20_ABI, chainProvider);
-          const [balance, decimals] = await Promise.all([
-            contract.balanceOf(account),
-            contract.decimals(),
-          ]);
-
-          console.log(`  Raw balance: ${balance.toString()}`);
-          console.log(`  Decimals: ${decimals}`);
+          const [balance, decimals] = await withTimeout(
+            Promise.all([contract.balanceOf(account), contract.decimals()]),
+            12000
+          );
 
           const balanceFormatted = ethers.formatUnits(balance, decimals);
-          console.log(`  Formatted balance: ${balanceFormatted}`);
+          if (parseFloat(balanceFormatted) <= 0) return null;
 
-          if (parseFloat(balanceFormatted) > 0) {
-            console.log(`  ✓ User has ${balanceFormatted} ${token.symbol} on chain ${chainId}`);
-            const ethReserve = parseFloat(token.current_eth_reserve);
-            const tokenReserve = parseFloat(token.current_token_reserve);
-            const priceEth = ethReserve / tokenReserve;
-            const priceUsd = priceEth * ethPrice;
-            const valueEth = parseFloat(balanceFormatted) * priceEth;
-            const valueUsd = valueEth * ethPrice;
-            const change24h = priceChangeMap.get(`${token.token_address}_${chainId}`) || 0;
+          const ethReserve = parseFloat(token.current_eth_reserve);
+          const tokenReserve = parseFloat(token.current_token_reserve);
+          const priceEth = tokenReserve > 0 ? ethReserve / tokenReserve : 0;
+          const priceUsd = priceEth * ethPrice;
+          const valueEth = parseFloat(balanceFormatted) * priceEth;
+          const valueUsd = valueEth * ethPrice;
+          const change24h = priceChangeMap.get(`${token.token_address}_${chainId}`) || 0;
 
-            tokenBalances.push({
-              tokenAddress: token.token_address,
-              symbol: token.symbol,
-              name: token.name,
-              balance: balanceFormatted,
-              priceEth,
-              priceUsd,
-              valueEth,
-              valueUsd,
-              change24h,
-              chainId,
-            });
-          } else {
-            console.log(`  ✗ User has 0 ${token.symbol} on chain ${chainId}`);
-          }
-        } catch (err) {
-          console.error(`Error loading balance for ${token.symbol}:`, err);
-        }
-      }
+          return {
+            tokenAddress: token.token_address,
+            symbol: token.symbol,
+            name: token.name,
+            balance: balanceFormatted,
+            priceEth,
+            priceUsd,
+            valueEth,
+            valueUsd,
+            change24h,
+            chainId,
+          } as TokenBalance;
+        })
+      );
+
+      const tokenBalances: TokenBalance[] = balanceResults
+        .filter((r): r is PromiseFulfilledResult<TokenBalance | null> => r.status === 'fulfilled')
+        .map(r => r.value)
+        .filter((v): v is TokenBalance => v !== null);
 
       console.log(`Found ${tokenBalances.length} tokens with balance > 0`);
 

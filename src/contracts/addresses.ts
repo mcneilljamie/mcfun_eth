@@ -22,7 +22,7 @@ export const NETWORK_CONFIG: Record<number, {
     lockerAddress: '0xaDEcE045ccC27b3364628499F2DDF4eAaD034D38',
     explorerUrl: 'https://etherscan.io',
     minLiquidityETH: '0.1',
-    rpcUrl: 'https://eth.llamarpc.com',
+    rpcUrl: import.meta.env.VITE_MAINNET_RPC_URL || 'https://ethereum-rpc.publicnode.com',
     nativeCurrency: {
       name: 'Ether',
       symbol: 'ETH',
@@ -36,7 +36,7 @@ export const NETWORK_CONFIG: Record<number, {
     lockerAddress: '0x49Fd91582C442ae01f3d1Db28272b7B053D38b79',
     explorerUrl: 'https://basescan.org',
     minLiquidityETH: '0.01',
-    rpcUrl: 'https://mainnet.base.org',
+    rpcUrl: import.meta.env.VITE_BASE_RPC_URL || 'https://mainnet.base.org',
     nativeCurrency: {
       name: 'Ether',
       symbol: 'ETH',
