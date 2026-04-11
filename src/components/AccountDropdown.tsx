@@ -99,8 +99,8 @@ export function AccountDropdown({ account, chainId, onDisconnect, onShowToast }:
               <span className="text-sm text-gray-500 dark:text-gray-400">{t('wallet.balance')}</span>
               <span className={`text-sm font-medium px-2 py-1 rounded-lg ${
                 isSupported
-                  ? 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200'
-                  : 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400'
+                  ? 'bg-blue-50 text-blue-700 border border-blue-200 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600'
+                  : 'bg-red-50 text-red-700 border border-red-200 dark:bg-red-900/40 dark:text-red-400 dark:border-red-800'
               }`}>
                 {networkName}
               </span>
