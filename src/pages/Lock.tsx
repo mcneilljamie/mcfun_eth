@@ -755,28 +755,28 @@ export function Lock({ onShowToast }: LockPageProps) {
                 </div>
                 <button
                   onClick={handleShareLock}
-                  className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800/10 hover:bg-white rounded-lg transition-colors backdrop-blur"
+                  className="flex items-center gap-2 px-4 py-2 bg-white/15 hover:bg-white/25 text-white rounded-lg transition-colors backdrop-blur"
                 >
                   <Share2 className="w-5 h-5" />
                   <span className="hidden sm:inline">{t('lock.shareLock')}</span>
                 </button>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-white dark:bg-gray-800/10 backdrop-blur rounded-lg p-4">
-                  <div className="text-gray-300 text-sm mb-1">{t('lock.totalValue')}</div>
-                  <div className="text-2xl font-bold">{formatCurrency(tokenStats.total_value_usd)}</div>
+                <div className="bg-white/15 backdrop-blur rounded-lg p-4">
+                  <div className="text-gray-200 text-sm mb-1">{t('lock.totalValue')}</div>
+                  <div className="text-2xl font-bold text-white">{formatCurrency(tokenStats.total_value_usd)}</div>
                 </div>
-                <div className="bg-white dark:bg-gray-800/10 backdrop-blur rounded-lg p-4">
-                  <div className="text-gray-300 text-sm mb-1">{t('lock.priceUsd')}</div>
-                  <div className="text-2xl font-bold">${tokenStats.current_price_usd.toFixed(6)}</div>
+                <div className="bg-white/15 backdrop-blur rounded-lg p-4">
+                  <div className="text-gray-200 text-sm mb-1">{t('lock.priceUsd')}</div>
+                  <div className="text-2xl font-bold text-white">${tokenStats.current_price_usd.toFixed(6)}</div>
                 </div>
-                <div className="bg-white dark:bg-gray-800/10 backdrop-blur rounded-lg p-4">
-                  <div className="text-gray-300 text-sm mb-1">{t('lock.activeLocks')}</div>
-                  <div className="text-2xl font-bold">{tokenStats.active_locks_count}</div>
+                <div className="bg-white/15 backdrop-blur rounded-lg p-4">
+                  <div className="text-gray-200 text-sm mb-1">{t('lock.activeLocks')}</div>
+                  <div className="text-2xl font-bold text-white">{tokenStats.active_locks_count}</div>
                 </div>
-                <div className="bg-white dark:bg-gray-800/10 backdrop-blur rounded-lg p-4">
-                  <div className="text-gray-300 text-sm mb-1">{t('lock.totalQuantityLocked')}</div>
-                  <div className="text-2xl font-bold">
+                <div className="bg-white/15 backdrop-blur rounded-lg p-4">
+                  <div className="text-gray-200 text-sm mb-1">{t('lock.totalQuantityLocked')}</div>
+                  <div className="text-2xl font-bold text-white">
                     {formatLargeTokenAmount(
                       tokenStats.non_withdrawn_amount_locked || tokenStats.active_amount_locked,
                       tokenStats.token_decimals
