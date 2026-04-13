@@ -9,7 +9,6 @@ import { WithdrawSuccess } from '../components/WithdrawSuccess';
 import { ToastMessage } from '../App';
 import { getExplorerUrl, getLockerAddress } from '../contracts/addresses';
 import { TOKEN_LOCKER_ABI } from '../contracts/abis';
-import { getEthPriceUSD } from '../lib/ethPrice';
 
 interface TokenLock {
   lockId: number;
@@ -39,38 +38,24 @@ interface MyLocksProps {
 export function MyLocks({ onShowToast }: MyLocksProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { account, signer, chainId, provider } = useWeb3();
+  const { account, signer, chainId } = useWeb3();
   const [withdrawing, setWithdrawing] = useState<number | null>(null);
   const [withdrawSuccess, setWithdrawSuccess] = useState<{
     txHash: string;
     tokenSymbol: string;
     amount: string;
   } | null>(null);
-  const [ethPriceUsd, setEthPriceUsd] = useState(0);
   const [enrichedLocks, setEnrichedLocks] = useState<TokenLock[]>([]);
-  const [tokenPrices, setTokenPrices] = useState<Map<string, { priceEth: number; priceUsd: number }>>(new Map());
-
-  // Use database as primary source to avoid rate limits
   const [dbLocks, setDbLocks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Load ETH price
-  useEffect(() => {
-    const loadEthPrice = async () => {
-      const price = await getEthPriceUSD();
-      setEthPriceUsd(price);
-    };
-    loadEthPrice();
-    const interval = setInterval(loadEthPrice, 60000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Load locks from database
+  // Load locks from database using RPC which returns pre-calculated USD values across all chains
   useEffect(() => {
     const loadLocks = async () => {
       if (!account) {
         setDbLocks([]);
+        setEnrichedLocks([]);
         setLoading(false);
         return;
       }
@@ -79,15 +64,42 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
         setLoading(true);
         setError(null);
 
-        const { data, error: dbError } = await supabase
-          .from('token_locks')
-          .select('*')
-          .eq('user_address', account.toLowerCase())
-          .order('lock_id', { ascending: false });
+        const { data, error: dbError } = await supabase.rpc('get_user_locked_tokens', {
+          user_addr: account
+        });
 
         if (dbError) throw dbError;
 
-        setDbLocks(data || []);
+        const locks = data || [];
+        setDbLocks(locks);
+
+        const enriched: TokenLock[] = locks.map((lock: any) => {
+          const amountFormatted = parseFloat(lock.amount_locked_formatted || 0);
+          const unlockTime = Math.floor(new Date(lock.unlock_timestamp).getTime() / 1000);
+
+          return {
+            lockId: lock.lock_id,
+            owner: lock.user_address,
+            tokenAddress: lock.token_address,
+            amount: BigInt(Math.round(parseFloat(lock.amount_locked || '0'))),
+            unlockTime,
+            withdrawn: lock.is_withdrawn,
+            tokenSymbol: lock.token_symbol,
+            tokenName: lock.token_name,
+            tokenDecimals: lock.token_decimals,
+            lock_timestamp: lock.lock_timestamp,
+            tx_hash: lock.tx_hash,
+            withdraw_tx_hash: lock.withdraw_tx_hash,
+            value_eth: parseFloat(lock.value_eth || 0),
+            value_usd: parseFloat(lock.value_usd || 0),
+            current_price_eth: parseFloat(lock.current_price_eth || 0),
+            current_price_usd: parseFloat(lock.current_price_usd || 0),
+            amount_locked_formatted: amountFormatted,
+            lock_duration_days: lock.lock_duration_days,
+          };
+        });
+
+        setEnrichedLocks(enriched);
       } catch (err: any) {
         console.error('Failed to load locks from database:', err);
         setError(err.message || 'Failed to load locks');
@@ -115,89 +127,6 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
       subscription.unsubscribe();
     };
   }, [account]);
-
-  // Load token prices for each unique token
-  useEffect(() => {
-    if (!provider || dbLocks.length === 0) return;
-
-    const loadPrices = async () => {
-      const uniqueTokens = new Set(dbLocks.map(lock => lock.token_address));
-      const prices = new Map<string, { priceEth: number; priceUsd: number }>();
-
-      // Get token info from database to find AMM addresses
-      const { data: tokensData } = await supabase
-        .from('tokens')
-        .select('token_address, amm_address')
-        .in('token_address', Array.from(uniqueTokens));
-
-      if (tokensData) {
-        for (const tokenData of tokensData) {
-          try {
-            const reserves = await import('../lib/contracts').then(m =>
-              m.getAMMReserves(provider, tokenData.amm_address)
-            );
-            const priceEth = parseFloat(reserves.reserveETH) / parseFloat(reserves.reserveToken);
-            prices.set(tokenData.token_address, {
-              priceEth,
-              priceUsd: priceEth * ethPriceUsd,
-            });
-          } catch (err) {
-            console.error(`Failed to load price for ${tokenData.token_address}:`, err);
-          }
-        }
-      }
-
-      setTokenPrices(prices);
-    };
-
-    loadPrices();
-    const interval = setInterval(loadPrices, 30000);
-    return () => clearInterval(interval);
-  }, [provider, dbLocks, ethPriceUsd]);
-
-  // Enrich database locks with price data
-  useEffect(() => {
-    const enrichLocks = async () => {
-      if (dbLocks.length === 0) {
-        setEnrichedLocks([]);
-        return;
-      }
-
-      const enriched: TokenLock[] = dbLocks.map(lock => {
-        const price = tokenPrices.get(lock.token_address);
-        const amountFormatted = parseFloat(ethers.formatUnits(BigInt(lock.amount_locked), lock.token_decimals));
-        const unlockTime = Math.floor(new Date(lock.unlock_timestamp).getTime() / 1000);
-
-        const valueEth = price ? amountFormatted * price.priceEth : undefined;
-        const valueUsd = price ? amountFormatted * price.priceUsd : undefined;
-
-        return {
-          lockId: lock.lock_id,
-          owner: lock.user_address,
-          tokenAddress: lock.token_address,
-          amount: BigInt(lock.amount_locked),
-          unlockTime,
-          withdrawn: lock.is_withdrawn,
-          tokenSymbol: lock.token_symbol,
-          tokenName: lock.token_name,
-          tokenDecimals: lock.token_decimals,
-          lock_timestamp: lock.lock_timestamp,
-          tx_hash: lock.tx_hash,
-          withdraw_tx_hash: lock.withdraw_tx_hash,
-          value_eth: valueEth,
-          value_usd: valueUsd,
-          current_price_eth: price?.priceEth,
-          current_price_usd: price?.priceUsd,
-          amount_locked_formatted: amountFormatted,
-          lock_duration_days: lock.lock_duration_days,
-        };
-      });
-
-      setEnrichedLocks(enriched);
-    };
-
-    enrichLocks();
-  }, [dbLocks, tokenPrices]);
 
   const handleWithdraw = async (lock: TokenLock) => {
     if (!signer || !chainId || !account) {

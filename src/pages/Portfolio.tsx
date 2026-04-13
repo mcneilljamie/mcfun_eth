@@ -412,27 +412,27 @@ export default function Portfolio() {
         <h1 className="text-3xl font-bold mb-2">{t('portfolio.portfolioValue')}</h1>
         <div className="text-5xl font-bold mb-6">{formatCurrency(totalValueUsd)}</div>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-          <div className="bg-white dark:bg-gray-800/10 backdrop-blur rounded-lg p-4">
-            <div className="text-green-50 text-sm mb-2">{t('portfolio.ethBalance')}</div>
-            <div className="text-2xl font-bold mb-1">
+          <div className="bg-white/20 backdrop-blur rounded-lg p-4">
+            <div className="text-green-100 text-sm mb-2">{t('portfolio.ethBalance')}</div>
+            <div className="text-2xl font-bold text-white mb-1">
               {parseFloat(ethBalance).toLocaleString('en-US', { minimumFractionDigits: 4, maximumFractionDigits: 4 })} ETH
             </div>
-            <div className="text-green-50 text-sm">
+            <div className="text-green-100 text-sm">
               {formatCurrency(parseFloat(ethBalance) * ethPriceUsd)}
             </div>
           </div>
-          <div className="bg-white dark:bg-gray-800/10 backdrop-blur rounded-lg p-4">
-            <div className="text-green-50 text-sm mb-2">{t('portfolio.tokensValue')}</div>
-            <div className="text-2xl font-bold">
+          <div className="bg-white/20 backdrop-blur rounded-lg p-4">
+            <div className="text-green-100 text-sm mb-2">{t('portfolio.tokensValue')}</div>
+            <div className="text-2xl font-bold text-white">
               {formatCurrency(tokens.reduce((sum, t) => sum + t.valueUsd, 0))}
             </div>
           </div>
-          <div className="bg-white dark:bg-gray-800/10 backdrop-blur rounded-lg p-4">
-            <div className="text-green-50 text-sm mb-2 flex items-center">
+          <div className="bg-white/20 backdrop-blur rounded-lg p-4">
+            <div className="text-green-100 text-sm mb-2 flex items-center">
               <LockIcon className="w-4 h-4 mr-1" />
               {t('portfolio.lockedValue')}
             </div>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold text-white">
               {formatCurrency(totalLockedValueUsd)}
             </div>
           </div>
