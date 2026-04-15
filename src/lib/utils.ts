@@ -98,7 +98,7 @@ export function formatUSD(value: number, abbreviated: boolean = false): string {
     if (value >= 1000000) {
       return `$${(value / 1000000).toFixed(2)}M`;
     }
-    if (value >= 1000) {
+    if (value >= 999.5) {
       return `$${(value / 1000).toFixed(2)}K`;
     }
     return `$${Math.round(value)}`;
