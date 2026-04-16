@@ -49,8 +49,8 @@
         "description": "Choose your token name, symbol, and how much liquidity to lock"
       },
       "step2": {
-        "title": "Add Liquidity",
-        "description": "Deposit ETH to initialize your token's liquidity pool"
+        "title": "Launch Token",
+        "description": "Create token and permanent liquidity in one click"
       },
       "step3": {
         "title": "Start Trading",
