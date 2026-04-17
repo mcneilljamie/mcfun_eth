@@ -443,7 +443,7 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
               <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-3 sm:p-4 space-y-2 text-xs sm:text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-600 dark:text-gray-400">{t('trade.priceImpact')}</span>
-                    <span className={`font-medium ${priceImpact > 5 ? 'text-red-600' : 'text-gray-900 dark:text-white'}`}>
+                    <span className="font-medium text-gray-900 dark:text-white">
                       {priceImpact.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
                     </span>
                   </div>
