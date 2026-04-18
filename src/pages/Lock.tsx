@@ -54,7 +54,7 @@ export function Lock({ onShowToast }: LockPageProps) {
   const { t } = useTranslation();
   const { tokenAddress: urlTokenAddress } = useParams<{ tokenAddress: string }>();
   const navigate = useNavigate();
-  const { account, provider, signer, chainId } = useWeb3();
+  const { account, provider, signer, chainId, switchNetwork } = useWeb3();
   const [loading, setLoading] = useState(false);
   const [allLocks, setAllLocks] = useState<TokenLock[]>([]);
   const [aggregatedLocks, setAggregatedLocks] = useState<AggregatedLock[]>([]);
@@ -200,7 +200,7 @@ export function Lock({ onShowToast }: LockPageProps) {
       setTokenInfo(null);
       setNeedsApproval(false);
     }
-  }, [tokenAddress, provider, account]);
+  }, [tokenAddress, provider, account, chainId]);
 
   useEffect(() => {
     if (tokenInfo && amount && parseFloat(amount) > 0 && account && provider) {
@@ -353,25 +353,37 @@ export function Lock({ onShowToast }: LockPageProps) {
     try {
       setTokenValidationError(null);
 
-      // First check if it's a McFun token via on-chain call
-      let isMcFunToken = false;
-      try {
-        const factoryAddress = getFactoryAddress(chainId);
-        const factoryContract = new ethers.Contract(factoryAddress, MCFUN_FACTORY_ABI, provider);
-        const ammAddress = await factoryContract.tokenToAMM(tokenAddress);
-        isMcFunToken = ammAddress !== ethers.ZeroAddress;
-      } catch {
-        // on-chain call failed, fall through to DB check
+      // Check Supabase tokens table to find which chain this token belongs to
+      const { data: dbToken } = await supabase
+        .from('tokens')
+        .select('token_address, chain_id')
+        .ilike('token_address', tokenAddress)
+        .maybeSingle();
+
+      // If found in DB on a different chain, switch to that chain
+      if (dbToken && dbToken.chain_id && dbToken.chain_id !== chainId) {
+        try {
+          await switchNetwork(dbToken.chain_id);
+          // After switching, the chainId state will update and re-trigger loadTokenInfo
+          return;
+        } catch {
+          setTokenInfo(null);
+          setTokenValidationError(t('lock.errors.notMcFunToken'));
+          return;
+        }
       }
 
-      // Fallback: check Supabase tokens table
+      // First check if it's a McFun token via on-chain call
+      let isMcFunToken = !!dbToken;
       if (!isMcFunToken) {
-        const { data: dbToken } = await supabase
-          .from('tokens')
-          .select('token_address')
-          .ilike('token_address', tokenAddress)
-          .maybeSingle();
-        isMcFunToken = !!dbToken;
+        try {
+          const factoryAddress = getFactoryAddress(chainId);
+          const factoryContract = new ethers.Contract(factoryAddress, MCFUN_FACTORY_ABI, provider);
+          const ammAddress = await factoryContract.tokenToAMM(tokenAddress);
+          isMcFunToken = ammAddress !== ethers.ZeroAddress;
+        } catch {
+          // on-chain call failed
+        }
       }
 
       if (!isMcFunToken) {
