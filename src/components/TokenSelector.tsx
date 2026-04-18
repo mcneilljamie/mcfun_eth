@@ -199,8 +199,8 @@ export function TokenSelector({ selectedToken, onSelectToken, disabled = false }
                   <button
                     key={token.id}
                     onClick={() => handleSelectToken(token)}
-                    className={`w-full px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 transition-colors text-left flex items-center justify-between group ${
-                      selectedToken?.token_address === token.token_address ? 'bg-gray-50 dark:bg-gray-900' : ''
+                    className={`w-full px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-left flex items-center justify-between group ${
+                      selectedToken?.token_address === token.token_address ? 'bg-gray-100 dark:bg-gray-700' : ''
                     }`}
                   >
                     <div className="flex items-center space-x-3 flex-1 min-w-0">
@@ -222,7 +222,7 @@ export function TokenSelector({ selectedToken, onSelectToken, disabled = false }
                         </div>
                         <div className="flex items-center space-x-2">
                           <span className="text-xs text-gray-400 font-mono truncate">{token.token_address.slice(0, 10)}...{token.token_address.slice(-8)}</span>
-                          <span className="text-xs px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded">
+                          <span className="text-xs px-1.5 py-0.5 bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300 rounded">
                             {token.chain_id === 1 ? 'ETH' : token.chain_id === 8453 ? 'Base' : 'Unknown'}
                           </span>
                         </div>
