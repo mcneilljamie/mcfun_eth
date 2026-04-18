@@ -353,11 +353,26 @@ export function Lock({ onShowToast }: LockPageProps) {
     try {
       setTokenValidationError(null);
 
-      // First check if it's a McFun token
-      const factoryAddress = getFactoryAddress(chainId);
-      const factoryContract = new ethers.Contract(factoryAddress, MCFUN_FACTORY_ABI, provider);
-      const ammAddress = await factoryContract.tokenToAMM(tokenAddress);
-      const isMcFunToken = ammAddress !== ethers.ZeroAddress;
+      // First check if it's a McFun token via on-chain call
+      let isMcFunToken = false;
+      try {
+        const factoryAddress = getFactoryAddress(chainId);
+        const factoryContract = new ethers.Contract(factoryAddress, MCFUN_FACTORY_ABI, provider);
+        const ammAddress = await factoryContract.tokenToAMM(tokenAddress);
+        isMcFunToken = ammAddress !== ethers.ZeroAddress;
+      } catch {
+        // on-chain call failed, fall through to DB check
+      }
+
+      // Fallback: check Supabase tokens table
+      if (!isMcFunToken) {
+        const { data: dbToken } = await supabase
+          .from('tokens')
+          .select('token_address')
+          .ilike('token_address', tokenAddress)
+          .maybeSingle();
+        isMcFunToken = !!dbToken;
+      }
 
       if (!isMcFunToken) {
         setTokenInfo(null);
