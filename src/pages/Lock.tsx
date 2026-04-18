@@ -992,7 +992,7 @@ export function Lock({ onShowToast }: LockPageProps) {
                             setTokenAddress(token.token_address);
                             setShowTokenDropdown(false);
                           }}
-                          className="w-full text-left px-4 py-3 hover:bg-blue-50 transition-colors border-b border-gray-100 last:border-b-0"
+                          className="w-full text-left px-4 py-3 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-b-0"
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex-1 min-w-0">
@@ -1035,7 +1035,7 @@ export function Lock({ onShowToast }: LockPageProps) {
                 </div>
 
                 {tokenInfo && (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 rounded-lg p-4">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm text-gray-600 dark:text-gray-400">{t('lock.token')}:</span>
                       <span className="font-semibold text-gray-900 dark:text-white">
