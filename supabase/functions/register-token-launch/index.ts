@@ -96,6 +96,7 @@ Deno.serve(async (req: Request) => {
     const provider = await createProviderWithFailover(chainId);
 
     console.log(`Validating token launch for tx: ${txHash} on ${chainConfig.CHAIN_NAME}`);
+    console.log(`Social links received - website: ${website || 'none'}, telegram: ${telegramUrl || 'none'}, discord: ${discordUrl || 'none'}, x: ${xUrl || 'none'}`);
 
     const receipt = await provider.getTransactionReceipt(txHash);
 

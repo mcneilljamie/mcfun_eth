@@ -126,11 +126,13 @@ Deno.serve(async (req: Request) => {
           block_hash: block.hash,
           chain_id: chainId,
           launch_eth_price_usd: parseFloat(ethPriceData.price_usd),
-        }, { onConflict: "token_address" });
+        }, { onConflict: "token_address", ignoreDuplicates: true });
 
         if (!error) {
           tokensLaunched++;
-          console.log(`Registered new token: ${event.args!.name} (${event.args!.symbol}) on ${chainConfig.CHAIN_NAME}`);
+          console.log(`[${chainConfig.CHAIN_NAME}] Registered new token: ${event.args!.name} (${event.args!.symbol}) at block ${block.number} (website/social links preserved if previously set)`);
+        } else {
+          console.error(`[${chainConfig.CHAIN_NAME}] Failed to register token ${tokenAddress}:`, error);
         }
       }
     } catch (err) {
