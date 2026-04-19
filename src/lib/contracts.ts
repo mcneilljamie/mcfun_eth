@@ -54,6 +54,7 @@ export async function swapTokens(
   signer: any,
   params: SwapParams,
   onApprovalSent?: () => void,
+  onApprovalConfirmed?: () => void,
   onSwapSent?: () => void
 ) {
   const amm = new Contract(params.ammAddress, MCFUN_AMM_ABI, signer);
@@ -76,9 +77,24 @@ export async function swapTokens(
       const approveTx = await token.approve(params.ammAddress, MaxUint256);
       onApprovalSent?.();
       await approveTx.wait();
+      onApprovalConfirmed?.();
     }
 
-    tx = await amm.swapTokenForETH(amountIn, parseEther(limitDecimalPrecision(params.minAmountOut)));
+    // Re-fetch a fresh quote after approval to get updated minAmountOut
+    let minAmountOut = parseEther(limitDecimalPrecision(params.minAmountOut));
+    try {
+      const freshEthOut = await amm.getETHOut(amountIn);
+      // Apply the same slippage tolerance as the original minAmountOut ratio
+      const originalOut = parseEther(limitDecimalPrecision(params.minAmountOut));
+      const originalExpected = parseEther(limitDecimalPrecision(params.amountIn));
+      // Use fresh quote with original slippage ratio preserved
+      const slippageRatio = (originalOut * 10000n) / originalExpected;
+      minAmountOut = (freshEthOut * slippageRatio) / 10000n;
+    } catch {
+      // If re-fetch fails, continue with original minAmountOut
+    }
+
+    tx = await amm.swapTokenForETH(amountIn, minAmountOut);
     onSwapSent?.();
   }
 

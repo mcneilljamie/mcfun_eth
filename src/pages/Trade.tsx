@@ -271,6 +271,9 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
           setSwapStep('approving');
         },
         () => {
+          setSwapStep('approved');
+        },
+        () => {
           setSwapStep('swapping');
         }
       );
