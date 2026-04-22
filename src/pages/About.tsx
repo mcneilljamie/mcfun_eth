@@ -224,17 +224,20 @@ export function About() {
 
             <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 mb-2">
-                <Lock className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
-                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">Total Locked</h3>
+                <ArrowLeftRight className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">Tokens by Chain</h3>
               </div>
               {isLoading ? (
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
               ) : (
                 <div className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-400">
-                  {platformStats ? formatUSD(platformStats.totalLockedUsd, true) : '$0'}
+                  {platformStats && platformStats.tokenCount > 0
+                    ? `${Math.round((platformStats.ethereumCount / platformStats.tokenCount) * 100)}% : ${Math.round((platformStats.baseCount / platformStats.tokenCount) * 100)}%`
+                    : '0% : 0%'
+                  }
                 </div>
               )}
-              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Total value locked on McFun</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Ethereum : Base</p>
             </div>
 
             <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
@@ -269,20 +272,17 @@ export function About() {
 
             <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 mb-2">
-                <ArrowLeftRight className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
-                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">Tokens by Chain</h3>
+                <Lock className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">Total Locked</h3>
               </div>
               {isLoading ? (
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
               ) : (
                 <div className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-400">
-                  {platformStats && platformStats.tokenCount > 0
-                    ? `${Math.round((platformStats.ethereumCount / platformStats.tokenCount) * 100)}% : ${Math.round((platformStats.baseCount / platformStats.tokenCount) * 100)}%`
-                    : '0% : 0%'
-                  }
+                  {platformStats ? formatUSD(platformStats.totalLockedUsd, true) : '$0'}
                 </div>
               )}
-              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Ethereum : Base</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Total value locked on McFun</p>
             </div>
 
             <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
