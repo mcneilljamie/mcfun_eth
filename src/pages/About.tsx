@@ -346,7 +346,7 @@ export function About() {
                   {'$' + treasuryUSD.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </div>
               )}
-              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">ETH held across Ethereum & Base</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">USD value of McFun's ETH Treasury</p>
             </a>
           </div>
         </div>
