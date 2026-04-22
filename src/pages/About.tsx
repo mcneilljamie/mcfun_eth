@@ -308,7 +308,7 @@ export function About() {
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Total value locked on McFun</p>
             </div>
 
-            <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
+            <a href="/tokens" className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4 block hover:bg-gray-50 dark:hover:bg-gray-700/60 transition-colors cursor-pointer">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Coins className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                 <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">{t('aboutPage.projectsListed')}</h3>
@@ -321,7 +321,7 @@ export function About() {
                 </div>
               )}
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{t('aboutPage.totalProjects')}</p>
-            </div>
+            </a>
 
             <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 mb-2">
@@ -334,7 +334,7 @@ export function About() {
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Since January 27, 2026</p>
             </div>
 
-            <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
+            <a href="https://app.zerion.io/0x993AEe79ee816B636D80f06186325b19a0eE3D45/overview" target="_blank" rel="noopener noreferrer" className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4 block hover:bg-gray-50 dark:hover:bg-gray-700/60 transition-colors cursor-pointer">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Wallet className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                 <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">McFun ETH Treasury</h3>
@@ -347,7 +347,7 @@ export function About() {
                 </div>
               )}
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">ETH held across Ethereum & Base</p>
-            </div>
+            </a>
           </div>
         </div>
 
