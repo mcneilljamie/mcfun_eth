@@ -309,18 +309,7 @@ export function About() {
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Ethereum : Base</p>
             </div>
 
-            <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
-                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">Days Live</h3>
-              </div>
-              <div className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-400">
-                {daysLive}
-              </div>
-              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Established January 27th, 2026</p>
-            </div>
-
-            <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
+            <a href="https://mcfun.io/tokens" target="_blank" rel="noopener noreferrer" className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-700/60 transition-colors block">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Coins className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                 <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">{t('aboutPage.projectsListed')}</h3>
@@ -333,9 +322,20 @@ export function About() {
                 </div>
               )}
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{t('aboutPage.totalProjects')}</p>
-            </div>
+            </a>
 
             <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">Days Live</h3>
+              </div>
+              <div className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-400">
+                {daysLive}
+              </div>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Established January 27th, 2026</p>
+            </div>
+
+            <a href="https://app.zerion.io/0x993aee79ee816b636d80f06186325b19a0ee3d45/overview" target="_blank" rel="noopener noreferrer" className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-700/60 transition-colors block">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Wallet className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                 <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">McFun ETH Treasury</h3>
@@ -348,7 +348,7 @@ export function About() {
                 </div>
               )}
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Current McFun ETH treasury value</p>
-            </div>
+            </a>
           </div>
         </div>
 
