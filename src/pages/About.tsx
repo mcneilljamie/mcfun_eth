@@ -1,19 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Shield, Lock, Coins, TrendingUp, Users, Zap, DollarSign, Check, Eye, BarChart3, Wallet, Flame, ArrowLeftRight, Droplets, Calendar } from 'lucide-react';
+import { Shield, Lock, Coins, TrendingUp, Users, Zap, DollarSign, Check, Eye, BarChart3, Wallet, Flame, ArrowLeftRight, Droplets } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { formatEther } from 'ethers';
 import { supabase } from '../lib/supabase';
-import { formatCurrency, formatUSD, getReadOnlyProvider } from '../lib/utils';
+import { formatCurrency, formatUSD } from '../lib/utils';
 import { getEthPriceUSD } from '../lib/ethPrice';
-
-const LAUNCH_DATE = new Date('2026-01-27T00:00:00Z');
-const TREASURY_WALLET = '0x993AEe79ee816B636D80f06186325b19a0eE3D45';
-
-function getDaysLive(): number {
-  const now = new Date();
-  return Math.floor((now.getTime() - LAUNCH_DATE.getTime()) / (1000 * 60 * 60 * 24));
-}
 
 interface PlatformStats {
   totalMarketCapUsd: number;
@@ -27,12 +17,9 @@ interface PlatformStats {
 
 export function About() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const [totalLiquidityUSD, setTotalLiquidityUSD] = useState<number>(0);
   const [ethereumLiquidityUSD, setEthereumLiquidityUSD] = useState<number>(0);
   const [baseLiquidityUSD, setBaseLiquidityUSD] = useState<number>(0);
-  const [treasuryUSD, setTreasuryUSD] = useState<number>(0);
-  const [daysLive] = useState<number>(getDaysLive());
   const [mcfunMarketCapPercent, setMcfunMarketCapPercent] = useState<number>(0);
   const [mcfunPriceUSD, setMcfunPriceUSD] = useState<number>(0);
   const [platformStats, setPlatformStats] = useState<PlatformStats | null>(null);
@@ -72,19 +59,6 @@ export function About() {
   const loadData = async () => {
     try {
       const ethPrice = await getEthPriceUSD();
-
-      // Fetch treasury wallet ETH balance on both Ethereum and Base
-      try {
-        const [ethProvider, baseProvider] = [getReadOnlyProvider(1), getReadOnlyProvider(8453)];
-        const [ethBal, baseBal] = await Promise.all([
-          ethProvider.getBalance(TREASURY_WALLET),
-          baseProvider.getBalance(TREASURY_WALLET),
-        ]);
-        const totalEth = parseFloat(formatEther(ethBal)) + parseFloat(formatEther(baseBal));
-        setTreasuryUSD(totalEth * ethPrice);
-      } catch (err) {
-        console.error('Failed to fetch treasury balance:', err);
-      }
 
       // Get the timestamp of the last ETH price update
       const { data: ethPriceData } = await supabase
@@ -311,7 +285,22 @@ export function About() {
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Ethereum : Base</p>
             </div>
 
-            <div onClick={() => navigate('/tokens')} className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-700/60 transition-colors cursor-pointer">
+            <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Droplets className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">Ethereum Liquidity</h3>
+              </div>
+              {isLoading ? (
+                <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
+              ) : (
+                <div className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-400">
+                  {formatUSD(ethereumLiquidityUSD, true)}
+                </div>
+              )}
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Total liquidity on Ethereum</p>
+            </div>
+
+            <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Coins className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                 <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">{t('aboutPage.projectsListed')}</h3>
@@ -328,29 +317,18 @@ export function About() {
 
             <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 mb-2">
-                <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
-                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">Days Live</h3>
-              </div>
-              <div className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-400">
-                {daysLive}
-              </div>
-              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Established January 27th, 2026</p>
-            </div>
-
-            <a href="https://app.zerion.io/0x993aee79ee816b636d80f06186325b19a0ee3d45/overview" target="_blank" rel="noopener noreferrer" className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-700/60 transition-colors block">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <Wallet className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
-                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">McFun ETH Treasury</h3>
+                <Droplets className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">Base Liquidity</h3>
               </div>
               {isLoading ? (
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
               ) : (
                 <div className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-400">
-                  ${treasuryUSD.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  {formatUSD(baseLiquidityUSD, true)}
                 </div>
               )}
-              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Current McFun ETH treasury value</p>
-            </a>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Total liquidity on Base</p>
+            </div>
           </div>
         </div>
 
