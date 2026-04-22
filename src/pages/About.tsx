@@ -317,7 +317,7 @@ export function About() {
               <div className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-400">
                 {daysLive}
               </div>
-              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Days since launch on Jan 27</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Established January 27th, 2026</p>
             </div>
 
             <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
@@ -344,10 +344,10 @@ export function About() {
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
               ) : (
                 <div className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-400">
-                  {formatUSD(treasuryUSD, true)}
+                  ${treasuryUSD.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </div>
               )}
-              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">ETH held across Ethereum & Base</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Current McFun ETH treasury value</p>
             </div>
           </div>
         </div>
