@@ -388,7 +388,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                       href={ensureProtocol(token.telegram_url)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-3 py-1.5 bg-white/10 hover:bg-white/20 dark:bg-white/10 dark:hover:bg-white/20 text-gray-200 border border-white/20 rounded-lg text-sm font-medium transition-colors flex items-center space-x-1.5"
+                      className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium transition-colors flex items-center space-x-1.5"
                       title="Join Telegram"
                     >
                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -402,7 +402,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                       href={ensureProtocol(token.discord_url)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-3 py-1.5 bg-white/10 hover:bg-white/20 dark:bg-white/10 dark:hover:bg-white/20 text-gray-200 border border-white/20 rounded-lg text-sm font-medium transition-colors flex items-center space-x-1.5"
+                      className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium transition-colors flex items-center space-x-1.5"
                       title="Join Discord"
                     >
                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
