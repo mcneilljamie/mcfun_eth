@@ -331,7 +331,7 @@ export function About() {
               <div className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-400">
                 {daysLive.toLocaleString()}
               </div>
-              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Since January 27, 2026</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Established January 27, 2026</p>
             </div>
 
             <a href="https://app.zerion.io/0x993AEe79ee816B636D80f06186325b19a0eE3D45/overview" target="_blank" rel="noopener noreferrer" className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4 block hover:bg-gray-50 dark:hover:bg-gray-700/60 transition-colors cursor-pointer">
