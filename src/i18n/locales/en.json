@@ -300,7 +300,7 @@
       "trading": {
         "title": "Trading Fees",
         "amount": "0.4% - 0.8%",
-        "description": "Every token swap incurs a small fee: 0.4% on Ethereum, 0.8% on Base. Fees are routed to the McFun treasury, supporting platform infrastructure, development, and ongoing improvements."
+        "description": "Every token swap incurs a small fee: 0.4% on Ethereum, 0.8% on Base. This fee supports platform infrastructure, development, and ongoing improvements."
       }
     },
     "security": {
