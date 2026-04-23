@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Shield, Lock, Coins, TrendingUp, Users, Zap, DollarSign, Check, Eye, BarChart3, Wallet, Flame, ArrowLeftRight, Droplets, Calendar } from 'lucide-react';
+import { Shield, Lock, Coins, TrendingUp, Users, Zap, DollarSign, Check, Eye, BarChart3, Wallet, Flame, ArrowLeftRight, Droplets } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { formatCurrency, formatUSD } from '../lib/utils';
@@ -20,10 +20,6 @@ export function About() {
   const [totalLiquidityUSD, setTotalLiquidityUSD] = useState<number>(0);
   const [ethereumLiquidityUSD, setEthereumLiquidityUSD] = useState<number>(0);
   const [baseLiquidityUSD, setBaseLiquidityUSD] = useState<number>(0);
-  const [treasuryUSD, setTreasuryUSD] = useState<number | null>(null);
-
-  const LAUNCH_DATE = new Date('2026-01-27T00:00:00Z');
-  const daysLive = Math.floor((Date.now() - LAUNCH_DATE.getTime()) / (1000 * 60 * 60 * 24));
   const [mcfunMarketCapPercent, setMcfunMarketCapPercent] = useState<number>(0);
   const [mcfunPriceUSD, setMcfunPriceUSD] = useState<number>(0);
   const [platformStats, setPlatformStats] = useState<PlatformStats | null>(null);
@@ -168,25 +164,6 @@ export function About() {
           setMcfunPriceUSD(priceEth * ethPrice);
         }
       }
-      // Fetch treasury ETH balance on Ethereum and Base
-      const TREASURY = '0x993aee79ee816b636d80f06186325b19a0ee3d45';
-      try {
-        const ethRpc = 'https://ethereum.publicnode.com';
-        const baseRpc = 'https://base.publicnode.com';
-        const fetchBalance = async (rpc: string) => {
-          const res = await fetch(rpc, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ jsonrpc: '2.0', method: 'eth_getBalance', params: [TREASURY, 'latest'], id: 1 }),
-          });
-          const json = await res.json();
-          return parseInt(json.result, 16) / 1e18;
-        };
-        const [ethBal, baseBal] = await Promise.all([fetchBalance(ethRpc), fetchBalance(baseRpc)]);
-        setTreasuryUSD((ethBal + baseBal) * ethPrice);
-      } catch {
-        // treasury fetch failure is non-critical
-      }
     } catch (err) {
       console.error('Failed to load data:', err);
     } finally {
@@ -247,23 +224,20 @@ export function About() {
 
             <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 mb-2">
-                <ArrowLeftRight className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
-                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">Tokens by Chain</h3>
+                <Lock className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">Total Locked</h3>
               </div>
               {isLoading ? (
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
               ) : (
                 <div className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-400">
-                  {platformStats && platformStats.tokenCount > 0
-                    ? `${Math.round((platformStats.ethereumCount / platformStats.tokenCount) * 100)}% : ${Math.round((platformStats.baseCount / platformStats.tokenCount) * 100)}%`
-                    : '0% : 0%'
-                  }
+                  {platformStats ? formatUSD(platformStats.totalLockedUsd, true) : '$0'}
                 </div>
               )}
-              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Ethereum : Base</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Total value locked on McFun</p>
             </div>
 
-            <a href="/burn" className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4 block hover:bg-gray-50 dark:hover:bg-gray-700/60 transition-colors cursor-pointer">
+            <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Flame className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                 <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">Total Burned</h3>
@@ -276,7 +250,7 @@ export function About() {
                 </div>
               )}
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Total value burned</p>
-            </a>
+            </div>
 
             <a href="/token/0xe03e4d90a46f62ac405708ba5036f292d5e0edc8" className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4 block hover:bg-gray-50 dark:hover:bg-gray-700/60 transition-colors cursor-pointer">
               <div className="flex items-center justify-center gap-2 mb-2">
@@ -293,22 +267,40 @@ export function About() {
               <span className="text-xs text-gray-600 dark:text-gray-400 mt-1 inline-block">Native platform token</span>
             </a>
 
-            <a href="/lock" className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4 block hover:bg-gray-50 dark:hover:bg-gray-700/60 transition-colors cursor-pointer">
+            <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 mb-2">
-                <Lock className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
-                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">Total Locked</h3>
+                <ArrowLeftRight className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">Tokens by Chain</h3>
               </div>
               {isLoading ? (
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
               ) : (
                 <div className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-400">
-                  {platformStats ? formatUSD(platformStats.totalLockedUsd, true) : '$0'}
+                  {platformStats && platformStats.tokenCount > 0
+                    ? `${Math.round((platformStats.ethereumCount / platformStats.tokenCount) * 100)}% : ${Math.round((platformStats.baseCount / platformStats.tokenCount) * 100)}%`
+                    : '0% : 0%'
+                  }
                 </div>
               )}
-              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Total value locked on McFun</p>
-            </a>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Ethereum : Base</p>
+            </div>
 
-            <a href="/tokens" className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4 block hover:bg-gray-50 dark:hover:bg-gray-700/60 transition-colors cursor-pointer">
+            <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Droplets className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">Ethereum Liquidity</h3>
+              </div>
+              {isLoading ? (
+                <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
+              ) : (
+                <div className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-400">
+                  {formatUSD(ethereumLiquidityUSD, true)}
+                </div>
+              )}
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Total liquidity on Ethereum</p>
+            </div>
+
+            <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Coins className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                 <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">{t('aboutPage.projectsListed')}</h3>
@@ -321,33 +313,22 @@ export function About() {
                 </div>
               )}
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{t('aboutPage.totalProjects')}</p>
-            </a>
+            </div>
 
             <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 mb-2">
-                <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
-                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">Days Live</h3>
+                <Droplets className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">Base Liquidity</h3>
               </div>
-              <div className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-400">
-                {daysLive.toLocaleString()}
-              </div>
-              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Established January 27th, 2026</p>
-            </div>
-
-            <a href="https://app.zerion.io/0x993AEe79ee816B636D80f06186325b19a0eE3D45/overview" target="_blank" rel="noopener noreferrer" className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4 block hover:bg-gray-50 dark:hover:bg-gray-700/60 transition-colors cursor-pointer">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <Wallet className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
-                <h3 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white">McFun ETH Treasury</h3>
-              </div>
-              {isLoading || treasuryUSD === null ? (
+              {isLoading ? (
                 <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
               ) : (
                 <div className="text-2xl sm:text-3xl font-bold text-green-700 dark:text-green-400">
-                  {'$' + treasuryUSD.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  {formatUSD(baseLiquidityUSD, true)}
                 </div>
               )}
-              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">USD value of McFun's ETH Treasury</p>
-            </a>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Total liquidity on Base</p>
+            </div>
           </div>
         </div>
 
