@@ -45,7 +45,7 @@
     "howItWorks": {
       "title": "How It Works",
       "step1": {
-        "title": "Launch Token",
+        "title": "Create Token",
         "description": "Choose your token name, symbol, and how much liquidity to lock"
       },
       "step2": {
