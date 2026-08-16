@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
-import { createChart, IChartApi, ISeriesApi, LineData, Time, LineSeries } from 'lightweight-charts';
+import { createChart, IChartApi, ISeriesApi, LineData, Time, AreaSeries } from 'lightweight-charts';
 import { useChartData } from '../hooks/useChartData';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 import { formatPrice } from '../lib/utils';
@@ -17,7 +17,7 @@ const TOKEN_TOTAL_SUPPLY = 1000000;
 export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceChartProps) {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
-  const seriesRef = useRef<ISeriesApi<'Line'> | null>(null);
+  const seriesRef = useRef<ISeriesApi<'Area'> | null>(null);
   const [chartMode, setChartMode] = useState<ChartMode>(() => {
     const saved = localStorage.getItem('chartMode');
     return (saved === 'price' || saved === 'marketCap') ? saved : 'price';
@@ -96,10 +96,19 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
     const precision = chartMode === 'marketCap' ? 0 : (displayPrice < 1 ? 5 : 3);
     const minMove = chartMode === 'marketCap' ? 1 : (displayPrice < 1 ? 0.00001 : 0.001);
 
-    const lineSeries = chart.addSeries(LineSeries, {
-      color: (priceChange !== null && priceChange >= 0)
-        ? (isDark ? '#34d399' : '#10b981')
-        : (isDark ? '#f87171' : '#ef4444'),
+    const isUp = priceChange !== null && priceChange >= 0;
+    const lineColor = isUp
+      ? (isDark ? '#34d399' : '#10b981')
+      : (isDark ? '#f87171' : '#ef4444');
+
+    const areaSeries = chart.addSeries(AreaSeries, {
+      lineColor,
+      topColor: isUp
+        ? (isDark ? 'rgba(52, 211, 153, 0.4)' : 'rgba(16, 185, 129, 0.4)')
+        : (isDark ? 'rgba(248, 113, 113, 0.4)' : 'rgba(239, 68, 68, 0.4)'),
+      bottomColor: isUp
+        ? (isDark ? 'rgba(52, 211, 153, 0.0)' : 'rgba(16, 185, 129, 0.0)')
+        : (isDark ? 'rgba(248, 113, 113, 0.0)' : 'rgba(239, 68, 68, 0.0)'),
       lineWidth: 2,
       priceFormat: {
         type: 'custom',
@@ -111,10 +120,21 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
           return '$' + Math.abs(price).toFixed(precision);
         },
       },
+      autoscaleInfoProvider: (original: () => any) => {
+        const res = original();
+        if (res !== null && res.priceRange) {
+          const { minValue, maxValue } = res.priceRange;
+          const minAllowed = maxValue / 11;
+          if (minValue < minAllowed) {
+            res.priceRange.minValue = minAllowed;
+          }
+        }
+        return res;
+      },
     });
 
     chartRef.current = chart;
-    seriesRef.current = lineSeries;
+    seriesRef.current = areaSeries;
 
     const handleResize = () => {
       if (chartContainerRef.current && chartRef.current) {
@@ -136,8 +156,16 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
   useEffect(() => {
     if (!seriesRef.current) return;
 
-    const color = (priceChange !== null && priceChange >= 0) ? '#10b981' : '#ef4444';
-    seriesRef.current.applyOptions({ color });
+    const isUp = priceChange !== null && priceChange >= 0;
+    const lineColor = isUp ? '#10b981' : '#ef4444';
+    const topColor = isUp ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)';
+    const bottomColor = isUp ? 'rgba(16, 185, 129, 0.0)' : 'rgba(239, 68, 68, 0.0)';
+
+    seriesRef.current.applyOptions({
+      lineColor,
+      topColor,
+      bottomColor,
+    });
   }, [priceChange]);
 
   // Update chart data
@@ -159,12 +187,23 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
       lastValue = value;
     }
 
+    // Append a live "now" point at current time with the current price
+    if (displayPrice > 0) {
+      const nowTime = Math.floor(Date.now() / 1000);
+      const liveValue = chartMode === 'marketCap' ? displayPrice * TOKEN_TOTAL_SUPPLY : displayPrice;
+      if (nowTime > lastTime) {
+        chartData.push({ time: nowTime as Time, value: liveValue });
+      } else if (chartData.length > 0) {
+        chartData[chartData.length - 1] = { time: Math.max(nowTime, lastTime) as Time, value: liveValue };
+      }
+    }
+
     seriesRef.current.setData(chartData);
 
     if (chartRef.current) {
       chartRef.current.timeScale().fitContent();
     }
-  }, [data, chartMode]);
+  }, [data, chartMode, displayPrice]);
 
   // Auto-refresh every 60 seconds as fallback
   useEffect(() => {
@@ -180,7 +219,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
       <div className="bg-gray-900 rounded-xl p-8 text-center">
         <p className="text-red-400">Failed to load chart: {error}</p>
         <button
-          onClick={() => refetch()}
+          onClick={() => refetch}
           className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
         >
           Retry
