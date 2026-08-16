@@ -245,6 +245,20 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
       // Load data for all filtered tokens
       const visibleTokens = filteredTokens;
 
+      // Fetch burn percentages for all visible tokens
+      const burnMap = new Map<string, number>();
+      if (visibleTokens.length > 0) {
+        const { data: burnData } = await supabase
+          .from('token_burn_totals')
+          .select('token_address, percent_supply_burned')
+          .in('token_address', visibleTokens.map(t => t.token_address.toLowerCase()));
+        if (burnData) {
+          for (const row of burnData) {
+            burnMap.set(row.token_address, parseFloat(row.percent_supply_burned) || 0);
+          }
+        }
+      }
+
       // Fetch latest prices from database for all visible tokens
       // We need to get the most recent snapshot for each token individually
       const priceMap = new Map<string, { price_usd: number; eth_reserve: string; token_reserve: string }>();
@@ -290,7 +304,9 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
               return priceInEth * ethPriceUSD;
             })();
         const TOKEN_TOTAL_SUPPLY = 1000000;
-        const marketCap = currentPriceUSD * TOKEN_TOTAL_SUPPLY;
+        const burnPercent = burnMap.get(token.token_address.toLowerCase()) || 0;
+        const circulatingSupply = TOKEN_TOTAL_SUPPLY * (1 - burnPercent / 100);
+        const marketCap = currentPriceUSD * circulatingSupply;
 
         // Use database reserves for liquidity - calculate USD value for both sides of the pool
         const ethReserveValue = parseFloat(dbPrice?.eth_reserve || token.current_eth_reserve?.toString() || token.initial_liquidity_eth.toString());
