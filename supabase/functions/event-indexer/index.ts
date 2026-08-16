@@ -45,6 +45,7 @@ async function createProviderWithFailover(chainId: number): Promise<ethers.JsonR
 }
 
 async function getEthPriceAt(supabase: any, timestamp: string): Promise<number | null> {
+  // First try to get the price from the history table
   const { data } = await supabase
     .from("eth_price_history")
     .select("price_usd")
@@ -52,7 +53,34 @@ async function getEthPriceAt(supabase: any, timestamp: string): Promise<number |
     .order("timestamp", { ascending: false })
     .limit(1)
     .maybeSingle();
-  return data?.price_usd ? parseFloat(data.price_usd) : null;
+  if (data?.price_usd) return parseFloat(data.price_usd);
+
+  // If no price found, fetch from CoinGecko and store it
+  try {
+    const dateStr = timestamp.split('T')[0];
+    const url = `https://api.coingecko.com/api/v3/coins/ethereum/history?date=${dateStr}&localization=false`;
+    const response = await fetch(url, {
+      headers: { 'User-Agent': 'McFunIndexer/1.0' },
+    });
+    if (!response.ok) return null;
+    const cgData = await response.json();
+    const price = cgData?.market_data?.current_price?.usd;
+    if (!price || price <= 0) return null;
+
+    // Store for future use
+    await supabase
+      .from("eth_price_history")
+      .upsert({
+        timestamp: `${dateStr}T00:00:00+00:00`,
+        price_usd: price,
+      }, { onConflict: 'timestamp' });
+
+    console.log(`Fetched and stored ETH price for ${dateStr}: ${price}`);
+    return price;
+  } catch (err) {
+    console.warn(`Failed to fetch ETH price from CoinGecko for ${timestamp}:`, err);
+    return null;
+  }
 }
 
 Deno.serve(async (req: Request) => {
