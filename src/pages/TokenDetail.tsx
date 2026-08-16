@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Flame } from 'lucide-react';
+import { Flame, Lock } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Copy, CheckCircle, ExternalLink, TrendingUp, Info, Share2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -33,6 +33,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
   const [snapshotCount, setSnapshotCount] = useState<number>(0);
   const { currentPrice: chartPrice } = useChartData(tokenAddress || '', 'ALL');
   const [activeLockCount, setActiveLockCount] = useState<number>(0);
+  const [lockedAmount, setLockedAmount] = useState<number>(0);
   const [burnPercent, setBurnPercent] = useState<number>(0);
   const [burnEvents, setBurnEvents] = useState<Array<{ burn_timestamp: string; cumulative_burned: string; percent_supply_burned: string }>>([]);
   const { reserves: liveReserves } = useLiveReserves(provider, token?.amm_address || null, 30000, token?.chain_id || DEFAULT_CHAIN_ID);
@@ -167,6 +168,8 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
       if (error) throw error;
 
       setActiveLockCount(data?.length || 0);
+      const totalLocked = (data || []).reduce((sum, lock: any) => sum + (parseFloat(lock.amount_locked) || 0), 0);
+      setLockedAmount(totalLocked / 1e18);
     } catch (err) {
       console.error('Failed to load active lock count:', err);
     }
@@ -590,6 +593,17 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                   {token.chain_id === 1 ? 'Ethereum' : token.chain_id === 8453 ? 'Base' : 'Unknown'}
                 </span>
               </div>
+              {lockedAmount > 0 && (
+                <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700/30">
+                  <span className="text-gray-600 dark:text-gray-400 flex items-center gap-1.5">
+                    <Lock className="w-4 h-4 text-blue-500" />
+                    % Supply Locked
+                  </span>
+                  <span className="font-semibold text-gray-900 dark:text-white">
+                    {((lockedAmount / TOKEN_TOTAL_SUPPLY) * 100).toFixed(2)}%
+                  </span>
+                </div>
+              )}
               {activeLockCount > 0 && (
                 <div className="flex justify-between items-center py-2">
                   <span className="text-gray-600 dark:text-gray-400">Active Locks</span>
