@@ -96,6 +96,14 @@ export function useChartData(tokenAddress: string | undefined, timeRange: TimeRa
       const hasTrades = totalVolume > 0;
       setHasTraded(hasTrades);
 
+      // Check if there has been at least 1 trade in the last 24 hours
+      const { count: recentTradeCount } = await supabase
+        .from('swaps')
+        .select('id', { count: 'exact', head: true })
+        .eq('token_address', tokenAddress.toLowerCase())
+        .gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
+      const hasRecentTrades = (recentTradeCount ?? 0) > 0;
+
       // Extract metadata from first row (all rows have same metadata)
       const firstRow = chartData[0];
       const tokenCreatedAt = firstRow.token_created_at ? new Date(firstRow.token_created_at) : null;
@@ -121,8 +129,8 @@ export function useChartData(tokenAddress: string | undefined, timeRange: TimeRa
 
       setCurrentPrice(lastPriceUsd);
 
-      // Only show price changes if token has trading volume
-      if (hasTrades) {
+      // Only show price changes if there has been at least 1 trade in the last 24 hours
+      if (hasRecentTrades) {
         // Always calculate price change since launch (using actual launch price)
         if (launchPriceUsd > 0 && lastPriceUsd > 0) {
           const changeSinceLaunch = ((lastPriceUsd - launchPriceUsd) / launchPriceUsd) * 100;
