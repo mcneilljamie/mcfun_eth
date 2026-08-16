@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Flame } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Copy, CheckCircle, ExternalLink, TrendingUp, Info, Share2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -32,6 +33,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
   const [snapshotCount, setSnapshotCount] = useState<number>(0);
   const { currentPrice: chartPrice } = useChartData(tokenAddress || '', 'ALL');
   const [activeLockCount, setActiveLockCount] = useState<number>(0);
+  const [burnPercent, setBurnPercent] = useState<number>(0);
   const { reserves: liveReserves } = useLiveReserves(provider, token?.amm_address || null, 30000, token?.chain_id || DEFAULT_CHAIN_ID);
   const [returnDisplayMode, setReturnDisplayMode] = useState<'multiple' | 'percentage'>(() => {
     const saved = localStorage.getItem('mcfun_return_display_mode');
@@ -59,7 +61,8 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
         await Promise.all([
           loadEthPrice(),
           loadSnapshotCount(),
-          loadActiveLockCount()
+          loadActiveLockCount(),
+          loadBurnData()
         ]);
       } catch (error) {
         console.error('Error loading token data:', error);
@@ -122,6 +125,23 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
       setSnapshotCount(count || 0);
     } catch (err) {
       console.error('Failed to load snapshot count:', err);
+    }
+  };
+
+  const loadBurnData = async () => {
+    if (!tokenAddress) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('token_burn_totals')
+        .select('percent_supply_burned')
+        .eq('token_address', tokenAddress.toLowerCase())
+        .maybeSingle();
+
+      if (error) throw error;
+      setBurnPercent(data ? parseFloat(data.percent_supply_burned) : 0);
+    } catch (err) {
+      console.error('Failed to load burn data:', err);
     }
   };
 
@@ -234,10 +254,12 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
     return priceInEth * ethPriceUSD;
   };
 
+  const TOKEN_TOTAL_SUPPLY = 1000000;
+
   const calculateMarketCap = (): number => {
-    const TOKEN_TOTAL_SUPPLY = 1000000;
     const priceUSD = calculateTokenPriceUSD();
-    return priceUSD * TOKEN_TOTAL_SUPPLY;
+    const circulatingSupply = TOKEN_TOTAL_SUPPLY * (1 - burnPercent / 100);
+    return priceUSD * circulatingSupply;
   };
 
   const calculateReturnSinceLaunch = (): number => {
@@ -488,6 +510,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
           tokenAddress={token.token_address}
           tokenSymbol={token.symbol}
           theme={theme}
+          burnPercent={burnPercent}
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
@@ -498,6 +521,17 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
                 <span className="text-gray-600 dark:text-gray-400">{t('tokenDetail.totalSupply')}</span>
                 <span className="font-semibold text-gray-900 dark:text-white">1,000,000 {token.symbol}</span>
               </div>
+              {burnPercent > 0 && (
+                <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700/30">
+                  <span className="text-gray-600 dark:text-gray-400 flex items-center gap-1.5">
+                    <Flame className="w-4 h-4 text-orange-500" />
+                    % Supply Burned
+                  </span>
+                  <span className="font-semibold text-gray-900 dark:text-white">
+                    {burnPercent < 0.01 ? '<0.01' : burnPercent.toFixed(2)}%
+                  </span>
+                </div>
+              )}
               <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700/30">
                 <span className="text-gray-600 dark:text-gray-400">{t('tokenDetail.creator')}</span>
                 <button

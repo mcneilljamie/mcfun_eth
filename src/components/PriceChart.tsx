@@ -8,13 +8,16 @@ interface PriceChartProps {
   tokenAddress: string;
   tokenSymbol: string;
   theme?: 'light' | 'dark';
+  burnPercent?: number;
 }
 
 type ChartMode = 'price' | 'marketCap';
 
 const TOKEN_TOTAL_SUPPLY = 1000000;
 
-export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceChartProps) {
+export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', burnPercent = 0 }: PriceChartProps) {
+
+  const circulatingSupply = TOKEN_TOTAL_SUPPLY * (1 - burnPercent / 100);
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<'Area'> | null>(null);
@@ -28,7 +31,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
   );
 
   const displayPrice = currentPrice;
-  const displayValue = chartMode === 'marketCap' ? displayPrice * TOKEN_TOTAL_SUPPLY : displayPrice;
+  const displayValue = chartMode === 'marketCap' ? displayPrice * circulatingSupply : displayPrice;
 
   const priceChange = useMemo(() => {
     if (!hasTraded) return null;
@@ -155,7 +158,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
     let lastValue: number | null = null;
 
     for (const point of sortedData) {
-      const value = chartMode === 'marketCap' ? point.value * TOKEN_TOTAL_SUPPLY : point.value;
+      const value = chartMode === 'marketCap' ? point.value * circulatingSupply : point.value;
       if (point.time === lastTime && value === lastValue) continue;
 
       const time = Math.max(point.time, lastTime + 1);
@@ -167,7 +170,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
     // Append a live "now" point at current time with the current price
     if (displayPrice > 0) {
       const nowTime = Math.floor(Date.now() / 1000);
-      const liveValue = chartMode === 'marketCap' ? displayPrice * TOKEN_TOTAL_SUPPLY : displayPrice;
+      const liveValue = chartMode === 'marketCap' ? displayPrice * circulatingSupply : displayPrice;
       if (nowTime > lastTime) {
         chartData.push({ time: nowTime as Time, value: liveValue });
       } else if (chartData.length > 0) {
