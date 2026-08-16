@@ -38,6 +38,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   const [ethPriceUSD, setEthPriceUSD] = useState<number>(0);
   const [tokenDataMap, setTokenDataMap] = useState<Record<string, TokenEnrichedData>>({});
   const [isUpdating, setIsUpdating] = useState(false);
+  const [has24hTrades, setHas24hTrades] = useState(false);
   const [sortBy, setSortBy] = useState<'marketCap' | 'liquidity' | 'age-newest' | 'age-oldest' | 'price-increase' | 'price-decrease'>(() => {
     const saved = localStorage.getItem('mcfun_tokens_sort_preference');
     if (saved && ['marketCap', 'liquidity', 'age-newest', 'age-oldest', 'price-increase', 'price-decrease'].includes(saved)) {
@@ -150,6 +151,26 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     const price = await getEthPriceUSD();
     setEthPriceUSD(price);
   };
+
+  useEffect(() => {
+    const check24hTrades = async () => {
+      try {
+        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+        const { count, error } = await supabase
+          .from('swaps')
+          .select('*', { count: 'exact', head: true })
+          .gte('created_at', twentyFourHoursAgo);
+        if (!error) {
+          setHas24hTrades((count ?? 0) > 0);
+        }
+      } catch (err) {
+        console.error('Failed to check 24h trades:', err);
+      }
+    };
+    check24hTrades();
+    const interval = setInterval(check24hTrades, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     let result = tokens;
@@ -426,6 +447,8 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                 >
                   {t('tokens.ageOldest')}
                 </button>
+                {has24hTrades && (
+                <>
                 <button
                   onClick={() => setSortBy('price-increase')}
                   className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
@@ -446,6 +469,8 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                 >
                   {t('tokens.priceDecrease')}
                 </button>
+                </>
+                )}
                 </div>
                 </div>
 
@@ -479,7 +504,9 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                       <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-400">{t('tokens.table.rank')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-400">{t('tokens.table.token')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-400">{t('tokens.table.price')}</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-400">{t('tokens.table.priceChange')}</th>
+                      {has24hTrades && (
+                        <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-400">{t('tokens.table.priceChange')}</th>
+                      )}
                       <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-400">{t('tokens.table.marketCap')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-400">{t('tokens.table.liquidity')}</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-gray-400">{t('tokens.table.blockchain')}</th>
@@ -525,6 +552,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                             {tokenData ? formatUSD(tokenData.currentPriceUSD, false) : '–'}
                           </div>
                         </td>
+                        {has24hTrades && (
                         <td className="py-4 px-4">
                           {tokenData ? (
                             <div className={`font-semibold ${
@@ -540,6 +568,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                             <span className="text-gray-500 dark:text-gray-400">–</span>
                           )}
                         </td>
+                        )}
                         <td className="py-4 px-4">
                           <div className="font-semibold text-gray-900 dark:text-white">
                             {tokenData ? formatUSD(tokenData.marketCap, true) : '–'}
@@ -630,7 +659,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
                           <div className="font-semibold text-gray-900 dark:text-white">
                             {tokenData ? formatUSD(tokenData.currentPriceUSD, false) : '–'}
                           </div>
-                          {tokenData && (
+                          {has24hTrades && tokenData && (
                             <span className={`text-xs font-medium ${
                               tokenData.priceChange === null || tokenData.priceChange === 0
                                 ? 'text-gray-500 dark:text-gray-400'
