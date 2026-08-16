@@ -9,6 +9,7 @@ import { WithdrawSuccess } from '../components/WithdrawSuccess';
 import { ToastMessage } from '../App';
 import { getExplorerUrl, getLockerAddress } from '../contracts/addresses';
 import { TOKEN_LOCKER_ABI } from '../contracts/abis';
+import { ChainBadge } from '../components/ChainBadge';
 
 interface TokenLock {
   lockId: number;
@@ -29,6 +30,7 @@ interface TokenLock {
   current_price_usd?: number;
   amount_locked_formatted?: number;
   lock_duration_days?: number;
+  chain_id?: number;
 }
 
 interface MyLocksProps {
@@ -96,6 +98,7 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
             current_price_usd: parseFloat(lock.current_price_usd || 0),
             amount_locked_formatted: amountFormatted,
             lock_duration_days: lock.lock_duration_days,
+            chain_id: lock.chain_id,
           };
         });
 
@@ -129,6 +132,8 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
   }, [account]);
 
   const handleWithdraw = async (lock: TokenLock) => {
+    const lockChainId = lock.chain_id || chainId || 1;
+
     if (!signer || !chainId || !account) {
       onShowToast({
         message: t('myLocks.errors.connectWallet'),
@@ -137,7 +142,15 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
       return;
     }
 
-    const lockerAddress = getLockerAddress(chainId);
+    if (chainId !== lockChainId) {
+      onShowToast({
+        message: `Please switch to ${lockChainId === 8453 ? 'Base' : 'Ethereum'} network to withdraw this lock`,
+        type: 'error'
+      });
+      return;
+    }
+
+    const lockerAddress = getLockerAddress(lockChainId);
     if (!lockerAddress) {
       onShowToast({
         message: t('myLocks.errors.lockerNotAvailable'),
@@ -455,21 +468,24 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
                   </div>
 
                   <div className="flex items-center justify-between">
-                    {lock.tx_hash ? (
-                      <a
-                        href={`${getExplorerUrl(chainId || 1)}/tx/${lock.withdraw_tx_hash || lock.tx_hash}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
-                      >
-                        {t('myLocks.viewTransaction')}
-                        <ExternalLink className="w-3 h-3" />
-                      </a>
-                    ) : (
-                      <div className="text-sm text-gray-400">
-                        {t('myLocks.viewTransaction')}
-                      </div>
-                    )}
+                    <div className="flex items-center gap-3">
+                      {lock.tx_hash ? (
+                        <a
+                          href={`${getExplorerUrl(lock.chain_id || 1)}/tx/${lock.withdraw_tx_hash || lock.tx_hash}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                        >
+                          {t('myLocks.viewTransaction')}
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      ) : (
+                        <div className="text-sm text-gray-400">
+                          {t('myLocks.viewTransaction')}
+                        </div>
+                      )}
+                      <ChainBadge chainId={lock.chain_id || 1} />
+                    </div>
 
                     {isUnlockable && (
                       <button
@@ -514,17 +530,20 @@ export function MyLocks({ onShowToast }: MyLocksProps) {
                           {t('myLocks.lockedFor')} {lock.lock_duration_days ? formatDuration(lock.lock_duration_days) : '...'} • {t('myLocks.withdrawn')}
                         </div>
                       </div>
-                      {lock.tx_hash && (
-                        <a
-                          href={`${getExplorerUrl(chainId || 1)}/tx/${lock.withdraw_tx_hash || lock.tx_hash}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
-                        >
-                          {t('myLocks.viewTransaction')}
-                          <ExternalLink className="w-3 h-3" />
-                        </a>
-                      )}
+                      <div className="flex items-center gap-3">
+                        {lock.tx_hash && (
+                          <a
+                            href={`${getExplorerUrl(lock.chain_id || 1)}/tx/${lock.withdraw_tx_hash || lock.tx_hash}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                          >
+                            {t('myLocks.viewTransaction')}
+                            <ExternalLink className="w-3 h-3" />
+                          </a>
+                        )}
+                        <ChainBadge chainId={lock.chain_id || 1} />
+                      </div>
                     </div>
                   </div>
                 ))}

@@ -299,7 +299,7 @@ async function processLockIndexing(req: Request, chainId: number): Promise<Respo
         await supabase
           .from("lock_indexer_state")
           .update({ is_active: false })
-          .eq("indexer_name", "lock_indexer");
+          .eq("indexer_name", `lock_indexer_${chainId}`);
 
         return new Response(
           JSON.stringify({
@@ -471,7 +471,7 @@ async function processLockIndexing(req: Request, chainId: number): Promise<Respo
       const { error: upsertError } = await supabase
         .from("token_locks")
         .upsert(newLocks, {
-          onConflict: 'lock_id',
+          onConflict: 'lock_id,chain_id',
           ignoreDuplicates: false
         });
 
