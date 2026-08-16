@@ -96,19 +96,12 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
     const precision = chartMode === 'marketCap' ? 0 : (displayPrice < 1 ? 5 : 3);
     const minMove = chartMode === 'marketCap' ? 1 : (displayPrice < 1 ? 0.00001 : 0.001);
 
-    const isUp = priceChange !== null && priceChange >= 0;
-    const lineColor = isUp
-      ? (isDark ? '#34d399' : '#10b981')
-      : (isDark ? '#f87171' : '#ef4444');
+    const lineColor = isDark ? '#3b82f6' : '#2563eb';
 
     const areaSeries = chart.addSeries(AreaSeries, {
       lineColor,
-      topColor: isUp
-        ? (isDark ? 'rgba(52, 211, 153, 0.4)' : 'rgba(16, 185, 129, 0.4)')
-        : (isDark ? 'rgba(248, 113, 113, 0.4)' : 'rgba(239, 68, 68, 0.4)'),
-      bottomColor: isUp
-        ? (isDark ? 'rgba(52, 211, 153, 0.0)' : 'rgba(16, 185, 129, 0.0)')
-        : (isDark ? 'rgba(248, 113, 113, 0.0)' : 'rgba(239, 68, 68, 0.0)'),
+      topColor: isDark ? 'rgba(59, 130, 246, 0.4)' : 'rgba(37, 99, 235, 0.4)',
+      bottomColor: isDark ? 'rgba(59, 130, 246, 0.0)' : 'rgba(37, 99, 235, 0.0)',
       lineWidth: 2,
       priceFormat: {
         type: 'custom',
@@ -150,23 +143,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
       window.removeEventListener('resize', handleResize);
       chart.remove();
     };
-  }, [theme, priceChange, displayPrice, chartMode]);
-
-  // Update chart colors when price change direction changes
-  useEffect(() => {
-    if (!seriesRef.current) return;
-
-    const isUp = priceChange !== null && priceChange >= 0;
-    const lineColor = isUp ? '#10b981' : '#ef4444';
-    const topColor = isUp ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)';
-    const bottomColor = isUp ? 'rgba(16, 185, 129, 0.0)' : 'rgba(239, 68, 68, 0.0)';
-
-    seriesRef.current.applyOptions({
-      lineColor,
-      topColor,
-      bottomColor,
-    });
-  }, [priceChange]);
+  }, [theme, displayPrice, chartMode]);
 
   // Update chart data
   useEffect(() => {
