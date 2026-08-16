@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
-import { createChart, IChartApi, ISeriesApi, LineData, Time, AreaSeries } from 'lightweight-charts';
+import { createChart, IChartApi, ISeriesApi, LineData, Time, LineSeries } from 'lightweight-charts';
 import { useChartData } from '../hooks/useChartData';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 import { formatPrice } from '../lib/utils';
@@ -17,28 +17,24 @@ const TOKEN_TOTAL_SUPPLY = 1000000;
 export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceChartProps) {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
-  const seriesRef = useRef<ISeriesApi<'Area'> | null>(null);
+  const seriesRef = useRef<ISeriesApi<'Line'> | null>(null);
   const [chartMode, setChartMode] = useState<ChartMode>(() => {
     const saved = localStorage.getItem('chartMode');
     return (saved === 'price' || saved === 'marketCap') ? saved : 'price';
   });
-  const { data, loading, error, priceChange: snapshotPriceChange, currentPrice, isNew, hasTraded, refetch } = useChartData(
+  const { data, loading, error, priceChange: snapshotPriceChange, currentPrice, hasTraded, refetch } = useChartData(
     tokenAddress,
     'ALL'
   );
 
-  // Always prefer database price (currentPrice) which updates in real-time via subscriptions
-  // Blockchain reserves can be stale and cause chart display issues
   const displayPrice = currentPrice;
   const displayValue = chartMode === 'marketCap' ? displayPrice * TOKEN_TOTAL_SUPPLY : displayPrice;
 
-  // Use precalculated price change from database (already accounts for compression)
   const priceChange = useMemo(() => {
     if (!hasTraded) return null;
     return snapshotPriceChange;
   }, [snapshotPriceChange, hasTraded]);
 
-  // Save chart mode preference to localStorage
   useEffect(() => {
     localStorage.setItem('chartMode', chartMode);
   }, [chartMode]);
@@ -72,10 +68,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
       height: 400,
       rightPriceScale: {
         borderColor: isDark ? '#4b5563' : '#e5e7eb',
-        scaleMargins: {
-          top: 0.2,
-          bottom: 0.1,
-        },
+        scaleMargins: { top: 0.2, bottom: 0.1 },
         autoScale: true,
       },
       timeScale: {
@@ -100,55 +93,29 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
       },
     });
 
-    const baseValue = chartMode === 'marketCap' ? displayPrice * TOKEN_TOTAL_SUPPLY : displayPrice;
     const precision = chartMode === 'marketCap' ? 0 : (displayPrice < 1 ? 5 : 3);
     const minMove = chartMode === 'marketCap' ? 1 : (displayPrice < 1 ? 0.00001 : 0.001);
 
-    const areaSeries = chart.addSeries(AreaSeries, {
-      lineColor: (priceChange !== null && priceChange >= 0)
-        ? (isDark ? '#34d399' : '#10b981')  // Brighter green in dark mode
-        : (isDark ? '#f87171' : '#ef4444'), // Brighter red in dark mode
-      topColor: (priceChange !== null && priceChange >= 0)
-        ? (isDark ? 'rgba(52, 211, 153, 0.3)' : 'rgba(16, 185, 129, 0.4)')
-        : (isDark ? 'rgba(248, 113, 113, 0.3)' : 'rgba(239, 68, 68, 0.4)'),
-      bottomColor: (priceChange !== null && priceChange >= 0)
-        ? (isDark ? 'rgba(52, 211, 153, 0.0)' : 'rgba(16, 185, 129, 0.0)')
-        : (isDark ? 'rgba(248, 113, 113, 0.0)' : 'rgba(239, 68, 68, 0.0)'),
+    const lineSeries = chart.addSeries(LineSeries, {
+      color: (priceChange !== null && priceChange >= 0)
+        ? (isDark ? '#34d399' : '#10b981')
+        : (isDark ? '#f87171' : '#ef4444'),
       lineWidth: 2,
-      lineType: 0,
       priceFormat: {
         type: 'custom',
-        minMove: minMove,
+        minMove,
         formatter: (price: number) => {
           if (chartMode === 'marketCap') {
             return '$' + Math.round(price).toLocaleString('en-US');
           }
-          // Prevent negative zero display
-          const absolutePrice = Math.abs(price);
-          return '$' + absolutePrice.toFixed(precision);
+          return '$' + Math.abs(price).toFixed(precision);
         },
-      },
-      autoscaleInfoProvider: (original: () => any) => {
-        const res = original();
-        if (res !== null && res.priceRange) {
-          const { minValue, maxValue } = res.priceRange;
-          // With bottom margin of 0.1 (10%), the displayed minimum is:
-          // displayedMin = minValue - 0.1 * (maxValue - minValue)
-          // To ensure displayedMin >= 0, we need: minValue >= maxValue / 11
-          const minAllowed = maxValue / 11;
-
-          if (minValue < minAllowed) {
-            res.priceRange.minValue = minAllowed;
-          }
-        }
-        return res;
       },
     });
 
     chartRef.current = chart;
-    seriesRef.current = areaSeries;
+    seriesRef.current = lineSeries;
 
-    // Handle window resize
     const handleResize = () => {
       if (chartContainerRef.current && chartRef.current) {
         chartRef.current.applyOptions({
@@ -170,37 +137,36 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark' }: PriceC
     if (!seriesRef.current) return;
 
     const color = (priceChange !== null && priceChange >= 0) ? '#10b981' : '#ef4444';
-    const topColor = (priceChange !== null && priceChange >= 0) ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)';
-    const bottomColor = (priceChange !== null && priceChange >= 0) ? 'rgba(16, 185, 129, 0.0)' : 'rgba(239, 68, 68, 0.0)';
-
-    seriesRef.current.applyOptions({
-      lineColor: color,
-      topColor: topColor,
-      bottomColor: bottomColor,
-    });
+    seriesRef.current.applyOptions({ color });
   }, [priceChange]);
 
   // Update chart data
   useEffect(() => {
     if (!seriesRef.current || !data || data.length === 0) return;
 
-    // Sort data by time to ensure proper ordering
     const sortedData = [...data].sort((a, b) => a.time - b.time);
+    const chartData: LineData[] = [];
+    let lastTime = -1;
+    let lastValue: number | null = null;
 
-    const chartData: LineData[] = sortedData.map((point) => ({
-      time: point.time as Time,
-      value: chartMode === 'marketCap' ? point.value * TOKEN_TOTAL_SUPPLY : point.value,
-    }));
+    for (const point of sortedData) {
+      const value = chartMode === 'marketCap' ? point.value * TOKEN_TOTAL_SUPPLY : point.value;
+      if (point.time === lastTime && value === lastValue) continue;
+
+      const time = Math.max(point.time, lastTime + 1);
+      chartData.push({ time: time as Time, value });
+      lastTime = time;
+      lastValue = value;
+    }
 
     seriesRef.current.setData(chartData);
 
-    // Fit content to show all data
     if (chartRef.current) {
       chartRef.current.timeScale().fitContent();
     }
   }, [data, chartMode]);
 
-  // Auto-refresh every 60 seconds as fallback (realtime subscription handles instant updates)
+  // Auto-refresh every 60 seconds as fallback
   useEffect(() => {
     const interval = setInterval(() => {
       refetch();
