@@ -157,6 +157,15 @@ export function limitDecimalPrecision(value: string | number, maxDecimals: numbe
   return result;
 }
 
+export function withTimeout<T>(promise: PromiseLike<T>, ms = 10000, label = 'Request'): Promise<T> {
+  return Promise.race([
+    Promise.resolve(promise),
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms)
+    )
+  ]);
+}
+
 export function getOrdinalSuffix(num: number): string {
   const j = num % 10;
   const k = num % 100;

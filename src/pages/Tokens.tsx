@@ -3,7 +3,7 @@ import { Trophy, Search, TrendingUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { JsonRpcProvider } from 'ethers';
 import { supabase, Token } from '../lib/supabase';
-import { formatCurrency, formatTimeAgo, formatUSD } from '../lib/utils';
+import { formatCurrency, formatTimeAgo, formatUSD, withTimeout } from '../lib/utils';
 import { getEthPriceUSD } from '../lib/ethPrice';
 import { useWeb3 } from '../lib/web3';
 import { ToastMessage } from '../App';
@@ -39,6 +39,7 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
   const [tokenDataMap, setTokenDataMap] = useState<Record<string, TokenEnrichedData>>({});
   const [isUpdating, setIsUpdating] = useState(false);
   const [has24hTrades, setHas24hTrades] = useState(false);
+  const [loadError, setLoadError] = useState(false);
   const [sortBy, setSortBy] = useState<'marketCap' | 'liquidity' | 'age-newest' | 'age-oldest' | 'price-increase' | 'price-decrease'>(() => {
     const saved = localStorage.getItem('mcfun_tokens_sort_preference');
     if (saved && ['marketCap', 'liquidity', 'age-newest', 'age-oldest', 'price-increase', 'price-decrease'].includes(saved)) {
@@ -231,27 +232,27 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     setFilteredTokens(sorted);
   }, [searchQuery, tokens, tokenDataMap, sortBy, selectedChain]);
 
-  const loadTokens = async () => {
-    setIsLoading(true);
+  const loadTokens = async (isRetry = false) => {
+    if (isRetry) setIsLoading(true);
 
     try {
-      const { data, error } = await supabase
-        .from('tokens')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const { data, error } = await withTimeout(
+        supabase
+          .from('tokens')
+          .select('*')
+          .order('created_at', { ascending: false }),
+        10000,
+        'Token list'
+      );
 
-      if (error) {
-        console.error('Database error loading tokens:', error);
-        setIsLoading(false);
-        return;
-      }
+      if (error) throw error;
 
-      if (data) {
-        setTokens(data);
-        setFilteredTokens(data);
-      }
+      setLoadError(false);
+      setTokens(data || []);
+      setFilteredTokens(data || []);
     } catch (err) {
       console.error('Failed to load tokens:', err);
+      setLoadError(true);
     } finally {
       setIsLoading(false);
     }
@@ -487,6 +488,17 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
               <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white"></div>
               <p className="mt-4 text-gray-600 dark:text-gray-400">{t('tokens.loading')}</p>
             </div>
+          ) : loadError && filteredTokens.length === 0 ? (
+            <div className="text-center py-12">
+              <Trophy className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-600 dark:text-gray-400 mb-4">{t('tokens.loadError')}</p>
+              <button
+                onClick={() => loadTokens(true)}
+                className="bg-gray-900 dark:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 dark:hover:bg-gray-600 transition-colors"
+              >
+                {t('tokens.retry')}
+              </button>
+            </div>
           ) : filteredTokens.length === 0 ? (
             <div className="text-center py-12">
               <Trophy className="w-16 h-16 text-gray-300 mx-auto mb-4" />
@@ -496,6 +508,17 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
             </div>
           ) : (
             <>
+              {loadError && (
+                <div className="mb-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3 flex items-center justify-between">
+                  <span className="text-sm text-amber-700 dark:text-amber-400">{t('tokens.staleData')}</span>
+                  <button
+                    onClick={() => loadTokens(true)}
+                    className="text-sm font-medium text-amber-700 dark:text-amber-400 hover:underline"
+                  >
+                    {t('tokens.retry')}
+                  </button>
+                </div>
+              )}
               {/* Desktop Table View */}
               <div className="hidden lg:block overflow-x-auto">
                 <table className="w-full">

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Shield, Lock, Coins, TrendingUp, Users, Zap, DollarSign, Check, Eye, BarChart3, Wallet, Flame, ArrowLeftRight, Droplets, Calendar } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
-import { formatCurrency, formatUSD } from '../lib/utils';
+import { formatCurrency, formatUSD, withTimeout } from '../lib/utils';
 import { getEthPriceUSD } from '../lib/ethPrice';
 
 interface PlatformStats {
@@ -28,6 +28,7 @@ export function About() {
   const [mcfunPriceUSD, setMcfunPriceUSD] = useState<number>(0);
   const [platformStats, setPlatformStats] = useState<PlatformStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [timeAgo, setTimeAgo] = useState<string>('');
 
@@ -60,43 +61,58 @@ export function About() {
     return () => clearInterval(interval);
   }, [lastUpdated]);
 
-  const loadData = async () => {
+  const loadData = async (isRetry = false) => {
+    if (isRetry) setIsLoading(true);
+
     try {
       const ethPrice = await getEthPriceUSD();
 
       // Get the timestamp of the last ETH price update
-      const { data: ethPriceData } = await supabase
-        .from('eth_price_history')
-        .select('timestamp')
-        .order('timestamp', { ascending: false })
-        .limit(1)
-        .single();
+      const { data: ethPriceData } = await withTimeout(
+        supabase
+          .from('eth_price_history')
+          .select('timestamp')
+          .order('timestamp', { ascending: false })
+          .limit(1)
+          .single(),
+        10000,
+        'ETH price history'
+      );
 
       if (ethPriceData?.timestamp) {
         setLastUpdated(new Date(ethPriceData.timestamp));
       }
 
       // Load platform stats
-      const { data: statsData, error: statsError } = await supabase
-        .from('platform_stats')
-        .select('total_market_cap_usd, total_volume_eth, total_burned_usd, total_locked_usd, token_count')
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
+      const { data: statsData, error: statsError } = await withTimeout(
+        supabase
+          .from('platform_stats')
+          .select('total_market_cap_usd, total_volume_eth, total_burned_usd, total_locked_usd, token_count')
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle(),
+        10000,
+        'Platform stats'
+      );
 
       if (statsError) {
         console.error('Error loading platform stats:', statsError);
       }
 
       // Count tokens by chain first, before using statsData
-      const { data: chainCountData } = await supabase
-        .from('tokens')
-        .select('chain_id');
+      const { data: chainCountData } = await withTimeout(
+        supabase
+          .from('tokens')
+          .select('chain_id'),
+        10000,
+        'Token chain counts'
+      );
 
       const ethereumCount = chainCountData?.filter(t => t.chain_id === 1).length || 0;
       const baseCount = chainCountData?.filter(t => t.chain_id === 8453).length || 0;
 
       if (statsData) {
+        setLoadError(false);
         setPlatformStats({
           totalMarketCapUsd: parseFloat(statsData.total_market_cap_usd || '0'),
           totalVolumeEth: parseFloat(statsData.total_volume_eth || '0'),
@@ -109,9 +125,13 @@ export function About() {
       }
 
       // Load all tokens from ALL chains (Ethereum + Base)
-      const { data: tokensData, error: tokensError } = await supabase
-        .from('tokens')
-        .select('current_eth_reserve, initial_liquidity_eth, current_token_reserve, price_change_24h, total_volume_eth, chain_id');
+      const { data: tokensData, error: tokensError } = await withTimeout(
+        supabase
+          .from('tokens')
+          .select('current_eth_reserve, initial_liquidity_eth, current_token_reserve, price_change_24h, total_volume_eth, chain_id'),
+        10000,
+        'About page tokens'
+      );
 
       if (tokensError) {
         console.error('Database error loading tokens:', tokensError);
@@ -189,6 +209,7 @@ export function About() {
       }
     } catch (err) {
       console.error('Failed to load data:', err);
+      setLoadError(true);
     } finally {
       setIsLoading(false);
     }
@@ -213,6 +234,18 @@ export function About() {
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Last updated {timeAgo}</p>
             )}
           </div>
+
+          {loadError && !isLoading && (
+            <div className="mb-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3 flex items-center justify-between">
+              <span className="text-sm text-amber-700 dark:text-amber-400">{t('tokens.staleData')}</span>
+              <button
+                onClick={() => loadData(true)}
+                className="text-sm font-medium text-amber-700 dark:text-amber-400 hover:underline"
+              >
+                {t('tokens.retry')}
+              </button>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             <div className="text-center bg-white dark:bg-gray-800/60 backdrop-blur rounded-lg p-4">
