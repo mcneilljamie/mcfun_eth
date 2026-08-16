@@ -15,7 +15,7 @@ const TIME_RANGE_HOURS: Record<TimeRange, number> = {
   '24H': 24,
   '7D': 168,
   '30D': 720,
-  'ALL': 8760,
+  'ALL': 0, // 0 means all history from token launch
 };
 
 export function useChartData(tokenAddress: string | undefined, timeRange: TimeRange = 'ALL') {
@@ -41,6 +41,7 @@ export function useChartData(tokenAddress: string | undefined, timeRange: TimeRa
       const hoursBack = TIME_RANGE_HOURS[timeRange];
 
       // Single optimized query that returns all data including metadata
+      // hoursBack=0 means all history from token launch
       const { data: chartData, error: fetchError } = await supabase
         .rpc('get_price_chart_data_optimized', {
           p_token_address: tokenAddress.toLowerCase(),
