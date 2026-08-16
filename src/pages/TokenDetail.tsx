@@ -34,7 +34,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
   const { currentPrice: chartPrice } = useChartData(tokenAddress || '', 'ALL');
   const [activeLockCount, setActiveLockCount] = useState<number>(0);
   const [burnPercent, setBurnPercent] = useState<number>(0);
-  const [burnTimestamp, setBurnTimestamp] = useState<number | null>(null);
+  const [burnEvents, setBurnEvents] = useState<Array<{ burn_timestamp: string; cumulative_burned: string; percent_supply_burned: string }>>([]);
   const { reserves: liveReserves } = useLiveReserves(provider, token?.amm_address || null, 30000, token?.chain_id || DEFAULT_CHAIN_ID);
   const [returnDisplayMode, setReturnDisplayMode] = useState<'multiple' | 'percentage'>(() => {
     const saved = localStorage.getItem('mcfun_return_display_mode');
@@ -135,13 +135,22 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
     try {
       const { data, error } = await supabase
         .from('token_burn_totals')
-        .select('percent_supply_burned, last_burn_timestamp')
+        .select('percent_supply_burned')
         .eq('token_address', tokenAddress.toLowerCase())
         .maybeSingle();
 
       if (error) throw error;
       setBurnPercent(data ? parseFloat(data.percent_supply_burned) : 0);
-      setBurnTimestamp(data?.last_burn_timestamp ? Math.floor(new Date(data.last_burn_timestamp).getTime() / 1000) : null);
+
+      // Fetch individual burn events for per-burn chart accuracy
+      const { data: eventsData, error: eventsError } = await supabase
+        .from('token_burn_events')
+        .select('burn_timestamp, cumulative_burned, percent_supply_burned')
+        .eq('token_address', tokenAddress.toLowerCase())
+        .order('burn_timestamp', { ascending: true });
+
+      if (eventsError) throw eventsError;
+      setBurnEvents(eventsData || []);
     } catch (err) {
       console.error('Failed to load burn data:', err);
     }
@@ -513,7 +522,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
           tokenSymbol={token.symbol}
           theme={theme}
           burnPercent={burnPercent}
-          burnTimestamp={burnTimestamp}
+          burnEvents={burnEvents}
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">

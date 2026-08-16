@@ -168,7 +168,9 @@ Deno.serve(async (req: Request) => {
           }
 
           const burnedAmount = burnedBalance.toString();
+          const incrementalBurned = burnedBalance - previousBurnedAmount;
           const burnedAmountFloat = Number(burnedBalance) / 1e18;
+          const incrementalBurnedFloat = Number(incrementalBurned) / 1e18;
           const totalValueUsd = burnedAmountFloat * tokenPriceEth * ethPriceUsd;
           const percentBurned = (Number(burnedBalance) / Number(TOKEN_SUPPLY)) * 100;
           const burnCount = (existingBurn?.burn_count || 0) + 1;
@@ -195,7 +197,24 @@ Deno.serve(async (req: Request) => {
             return { success: false, hasBurn: true };
           }
 
-          console.log(`New burn detected for ${token.symbol}: ${burnedAmountFloat.toFixed(2)} tokens`);
+          // Record individual burn event for per-burn chart accuracy
+          const { error: eventError } = await supabase
+            .from("token_burn_events")
+            .insert({
+              token_address: token.token_address.toLowerCase(),
+              chain_id: chainId,
+              amount_burned: incrementalBurned.toString(),
+              cumulative_burned: burnedAmount,
+              percent_supply_burned: percentBurned.toString(),
+              burn_timestamp: lastBurnTimestamp,
+              burn_block: currentBlock,
+            });
+
+          if (eventError) {
+            console.error(`Failed to insert burn event for ${token.token_address}:`, eventError);
+          }
+
+          console.log(`New burn detected for ${token.symbol}: ${incrementalBurnedFloat.toFixed(2)} tokens (total: ${burnedAmountFloat.toFixed(2)})`);
           return { success: true, hasBurn: true };
         })
       );
