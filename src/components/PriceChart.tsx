@@ -9,15 +9,23 @@ interface PriceChartProps {
   tokenSymbol: string;
   theme?: 'light' | 'dark';
   burnPercent?: number;
+  burnTimestamp?: number | null;
 }
 
 type ChartMode = 'price' | 'marketCap';
 
 const TOKEN_TOTAL_SUPPLY = 1000000;
 
-export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', burnPercent = 0 }: PriceChartProps) {
+export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', burnPercent = 0, burnTimestamp = null }: PriceChartProps) {
 
   const circulatingSupply = TOKEN_TOTAL_SUPPLY * (1 - burnPercent / 100);
+
+  const getSupplyAtTime = (timestamp: number): number => {
+    if (burnTimestamp && timestamp >= burnTimestamp) {
+      return circulatingSupply;
+    }
+    return TOKEN_TOTAL_SUPPLY;
+  };
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<'Area'> | null>(null);
@@ -32,6 +40,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', burnPerc
 
   const displayPrice = currentPrice;
   const displayValue = chartMode === 'marketCap' ? displayPrice * circulatingSupply : displayPrice;
+  // Note: circulatingSupply already accounts for burnPercent, which is correct for the current/header value
 
   const priceChange = useMemo(() => {
     if (!hasTraded) return null;
@@ -158,7 +167,8 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', burnPerc
     let lastValue: number | null = null;
 
     for (const point of sortedData) {
-      const value = chartMode === 'marketCap' ? point.value * circulatingSupply : point.value;
+      const supply = getSupplyAtTime(point.time);
+      const value = chartMode === 'marketCap' ? point.value * supply : point.value;
       if (point.time === lastTime && value === lastValue) continue;
 
       const time = Math.max(point.time, lastTime + 1);
@@ -170,7 +180,8 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', burnPerc
     // Append a live "now" point at current time with the current price
     if (displayPrice > 0) {
       const nowTime = Math.floor(Date.now() / 1000);
-      const liveValue = chartMode === 'marketCap' ? displayPrice * circulatingSupply : displayPrice;
+      const liveSupply = burnTimestamp ? circulatingSupply : TOKEN_TOTAL_SUPPLY;
+      const liveValue = chartMode === 'marketCap' ? displayPrice * liveSupply : displayPrice;
       if (nowTime > lastTime) {
         chartData.push({ time: nowTime as Time, value: liveValue });
       } else if (chartData.length > 0) {
@@ -183,7 +194,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', burnPerc
     if (chartRef.current) {
       chartRef.current.timeScale().fitContent();
     }
-  }, [data, chartMode, displayPrice]);
+  }, [data, chartMode, displayPrice, burnTimestamp, burnPercent]);
 
   // Auto-refresh every 60 seconds as fallback
   useEffect(() => {
