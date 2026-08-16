@@ -399,7 +399,7 @@
   "aboutPage": {
     "platformStats": "Platform Statistics",
     "totalMarketCap": "Total Market Cap",
-    "combinedFDV": "Combined FDV of all tokens",
+    "combinedFDV": "Combined market cap of all tokens (excluding burned supply)",
     "totalLiquidity": "Total Liquidity",
     "totalEthInPools": "Both sides of all pools",
     "projectsListed": "Projects Listed",
