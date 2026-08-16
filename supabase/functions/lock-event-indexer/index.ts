@@ -182,7 +182,7 @@ async function processLockIndexing(req: Request, chainId: number): Promise<Respo
   try {
 
     const provider = await retryWithBackoff(() => createProviderWithFailover(chainId));
-    const lockerContract = new ethers.Contract(LOCKER_ADDRESS, LOCKER_ABI, provider);
+    let lockerContract = new ethers.Contract(LOCKER_ADDRESS, LOCKER_ABI, provider);
 
     const { data: skipBlocksData } = await supabase
       .from("skip_blocks")
@@ -347,18 +347,54 @@ async function processLockIndexing(req: Request, chainId: number): Promise<Respo
     const CHUNK_SIZE = 10000;
     const allLockedEvents = [];
     const allUnlockedEvents = [];
+    const failedChunks: { start: number; end: number; error: string }[] = [];
 
     for (let chunkStart = fromBlock; chunkStart <= toBlock; chunkStart += CHUNK_SIZE) {
       const chunkEnd = Math.min(chunkStart + CHUNK_SIZE - 1, toBlock);
       console.log(`Querying chunk: ${chunkStart} to ${chunkEnd}`);
 
-      const lockedFilter = lockerContract.filters.TokensLocked();
-      const lockedEvents = await lockerContract.queryFilter(lockedFilter, chunkStart, chunkEnd);
-      allLockedEvents.push(...lockedEvents);
+      let chunkSuccess = false;
+      for (let attempt = 0; attempt < 3 && !chunkSuccess; attempt++) {
+        try {
+          const lockedFilter = lockerContract.filters.TokensLocked();
+          const lockedEvents = await lockerContract.queryFilter(lockedFilter, chunkStart, chunkEnd);
+          allLockedEvents.push(...lockedEvents);
 
-      const unlockedFilter = lockerContract.filters.TokensUnlocked();
-      const unlockedEvents = await lockerContract.queryFilter(unlockedFilter, chunkStart, chunkEnd);
-      allUnlockedEvents.push(...unlockedEvents);
+          const unlockedFilter = lockerContract.filters.TokensUnlocked();
+          const unlockedEvents = await lockerContract.queryFilter(unlockedFilter, chunkStart, chunkEnd);
+          allUnlockedEvents.push(...unlockedEvents);
+          chunkSuccess = true;
+        } catch (chunkErr: any) {
+          console.error(`Chunk ${chunkStart}-${chunkEnd} attempt ${attempt + 1}/3 failed:`, chunkErr.message?.slice(0, 100));
+          if (attempt < 2) {
+            const delay = Math.min(2000 * Math.pow(2, attempt), 10000);
+            console.log(`Retrying chunk in ${delay}ms...`);
+            await rateLimit(delay);
+            if (attempt === 1) {
+              try {
+                await provider.destroy();
+              } catch {}
+              const newProvider = await retryWithBackoff(() => createProviderWithFailover(chainId));
+              const newLockerContract = new ethers.Contract(LOCKER_ADDRESS, LOCKER_ABI, newProvider);
+              lockerContract = newLockerContract;
+            }
+          }
+        }
+      }
+
+      if (!chunkSuccess) {
+        failedChunks.push({ start: chunkStart, end: chunkEnd, error: "All retries failed" });
+        console.error(`Chunk ${chunkStart}-${chunkEnd} failed after 3 attempts, continuing to next chunk`);
+      }
+    }
+
+    if (failedChunks.length > 0) {
+      console.log(`${failedChunks.length} chunks failed. Updating state to retry from earliest failed chunk next run.`);
+      const earliestFailed = failedChunks[0].start;
+      if (earliestFailed < toBlock) {
+        toBlock = earliestFailed - 1;
+        console.log(`Adjusted toBlock to ${toBlock} to retry from failed chunk next run`);
+      }
     }
 
     console.log(`Found ${allLockedEvents.length} TokensLocked events`);
