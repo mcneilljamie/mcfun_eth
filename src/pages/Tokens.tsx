@@ -3,7 +3,7 @@ import { Trophy, Search, TrendingUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { JsonRpcProvider } from 'ethers';
 import { supabase, Token } from '../lib/supabase';
-import { formatCurrency, formatTimeAgo, formatUSD, withTimeout } from '../lib/utils';
+import { formatCurrency, formatTimeAgo, formatUSD, withTimeout, withRetry } from '../lib/utils';
 import { getEthPriceUSD } from '../lib/ethPrice';
 import { useWeb3 } from '../lib/web3';
 import { ToastMessage } from '../App';
@@ -236,13 +236,16 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
     if (isRetry) setIsLoading(true);
 
     try {
-      const { data, error } = await withTimeout(
-        supabase
-          .from('tokens')
-          .select('*')
-          .order('created_at', { ascending: false }),
-        10000,
-        'Token list'
+      const { data, error } = await withRetry(
+        () => withTimeout(
+          supabase
+            .from('tokens')
+            .select('*')
+            .order('created_at', { ascending: false }),
+          10000,
+          'Token list'
+        ),
+        { retries: 3, delayMs: 2000, label: 'Token list' }
       );
 
       if (error) throw error;

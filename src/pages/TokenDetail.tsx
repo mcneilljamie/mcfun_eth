@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Copy, CheckCircle, ExternalLink, TrendingUp, Info, Share2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { supabase, Token } from '../lib/supabase';
-import { formatCurrency, formatAddress, formatTimeAgo, formatUSD, ethToUSD } from '../lib/utils';
+import { formatCurrency, formatAddress, formatTimeAgo, formatUSD, ethToUSD, withRetry } from '../lib/utils';
 import { getEthPriceUSD } from '../lib/ethPrice';
 import { useWeb3 } from '../lib/web3';
 import { getExplorerUrl, DEFAULT_CHAIN_ID } from '../contracts/addresses';
@@ -182,11 +182,14 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
     setError(null);
 
     try {
-      const { data, error } = await supabase
-        .from('tokens')
-        .select('*')
-        .eq('token_address', tokenAddress.toLowerCase())
-        .maybeSingle();
+      const { data, error } = await withRetry(
+        () => supabase
+          .from('tokens')
+          .select('*')
+          .eq('token_address', tokenAddress.toLowerCase())
+          .maybeSingle(),
+        { retries: 3, delayMs: 2000, label: 'Token detail' }
+      );
 
       if (error) {
         console.error('Supabase error:', error);

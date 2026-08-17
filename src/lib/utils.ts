@@ -166,6 +166,25 @@ export function withTimeout<T>(promise: PromiseLike<T>, ms = 10000, label = 'Req
   ]);
 }
 
+export async function withRetry<T>(
+  fn: () => Promise<T>,
+  opts: { retries?: number; delayMs?: number; label?: string } = {}
+): Promise<T> {
+  const { retries = 3, delayMs = 2000, label = 'Request' } = opts;
+  let lastError: unknown;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      lastError = err;
+      if (attempt < retries) {
+        await new Promise(resolve => setTimeout(resolve, delayMs * (attempt + 1)));
+      }
+    }
+  }
+  throw lastError;
+}
+
 export function getOrdinalSuffix(num: number): string {
   const j = num % 10;
   const k = num % 100;

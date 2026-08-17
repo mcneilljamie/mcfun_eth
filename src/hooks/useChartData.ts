@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
+import { withRetry } from '../lib/utils';
 
 export interface ChartDataPoint {
   time: number;
@@ -42,12 +43,15 @@ export function useChartData(tokenAddress: string | undefined, timeRange: TimeRa
 
       // Single optimized query that returns all data including metadata
       // hoursBack=0 means all history from token launch
-      const { data: chartData, error: fetchError } = await supabase
-        .rpc('get_price_chart_data_optimized', {
-          p_token_address: tokenAddress.toLowerCase(),
-          p_hours_back: hoursBack,
-          p_max_points: 500
-        });
+      const { data: chartData, error: fetchError } = await withRetry(
+        () => supabase
+          .rpc('get_price_chart_data_optimized', {
+            p_token_address: tokenAddress.toLowerCase(),
+            p_hours_back: hoursBack,
+            p_max_points: 500
+          }),
+        { retries: 2, delayMs: 1500, label: 'Chart data' }
+      );
 
       if (fetchError) throw fetchError;
 
