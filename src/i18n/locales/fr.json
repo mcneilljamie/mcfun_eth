@@ -45,14 +45,10 @@
     "howItWorks": {
       "title": "Comment Ça Marche",
       "step1": {
-        "title": "Créer Token",
-        "description": "Choisissez le nom, le symbole et la liquidité à verrouiller."
-      },
-      "step2": {
         "title": "Ajouter Liquidité",
         "description": "Déposez de l'ETH pour initialiser le pool de liquidité de votre token."
       },
-      "step3": {
+      "step2": {
         "title": "Commencer à Échanger",
         "description": "Votre token est instantanément échangeable sur notre DEX natif"
       }

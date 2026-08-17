@@ -45,14 +45,10 @@
     "howItWorks": {
       "title": "How It Works",
       "step1": {
-        "title": "Create Token",
-        "description": "Choose your token name, symbol, and how much liquidity to lock"
-      },
-      "step2": {
         "title": "Launch Token",
         "description": "Create token and permanent liquidity in one click"
       },
-      "step3": {
+      "step2": {
         "title": "Start Trading",
         "description": "Your token is instantly tradable on our native DEX"
       }

@@ -45,14 +45,10 @@
     "howItWorks": {
       "title": "Cách Hoạt Động",
       "step1": {
-        "title": "Tạo Token",
-        "description": "Chọn tên token, ký hiệu và lượng thanh khoản cần khóa."
-      },
-      "step2": {
         "title": "Thêm Thanh Khoản",
         "description": "Gửi ETH để khởi tạo pool thanh khoản token của bạn."
       },
-      "step3": {
+      "step2": {
         "title": "Bắt Đầu Giao Dịch",
         "description": "Token của bạn có thể giao dịch ngay lập tức trên DEX gốc của chúng tôi"
       }

@@ -45,14 +45,10 @@
     "howItWorks": {
       "title": "Cara Kerjanya",
       "step1": {
-        "title": "Buat Token",
-        "description": "Pilih nama token, simbol, dan berapa banyak likuiditas yang akan dikunci."
-      },
-      "step2": {
         "title": "Tambah Likuiditas",
         "description": "Deposit ETH untuk menginisialisasi pool likuiditas token Anda."
       },
-      "step3": {
+      "step2": {
         "title": "Mulai Trading",
         "description": "Token Anda langsung dapat diperdagangkan di DEX native kami"
       }

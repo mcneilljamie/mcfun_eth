@@ -45,14 +45,10 @@
     "howItWorks": {
       "title": "작동 방식",
       "step1": {
-        "title": "토큰 생성",
-        "description": "토큰 이름, 심볼, 잠글 유동성 양을 선택하세요."
-      },
-      "step2": {
         "title": "유동성 추가",
         "description": "토큰의 유동성 풀을 초기화하기 위해 ETH를 예치하세요."
       },
-      "step3": {
+      "step2": {
         "title": "거래 시작",
         "description": "토큰이 우리의 네이티브 DEX에서 즉시 거래 가능합니다"
       }

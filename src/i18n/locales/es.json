@@ -45,14 +45,10 @@
     "howItWorks": {
       "title": "Cómo Funciona",
       "step1": {
-        "title": "Crear Token",
-        "description": "Elige el nombre, símbolo y cuánta liquidez bloquear."
-      },
-      "step2": {
         "title": "Agregar Liquidez",
         "description": "Deposita ETH para inicializar el pool de liquidez de tu token."
       },
-      "step3": {
+      "step2": {
         "title": "Comenzar a Comerciar",
         "description": "Tu token es instantáneamente comerciable en nuestro DEX nativo"
       }

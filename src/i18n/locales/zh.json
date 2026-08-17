@@ -45,14 +45,10 @@
     "howItWorks": {
       "title": "如何运作",
       "step1": {
-        "title": "创建代币",
-        "description": "选择代币名称、符号以及要锁定的流动性数量。"
-      },
-      "step2": {
         "title": "添加流动性",
         "description": "存入ETH以初始化代币流动性池。"
       },
-      "step3": {
+      "step2": {
         "title": "开始交易",
         "description": "您的代币可在我们的原生DEX上即时交易"
       }

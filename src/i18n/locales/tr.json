@@ -45,14 +45,10 @@
     "howItWorks": {
       "title": "Nasıl Çalışır",
       "step1": {
-        "title": "Token Oluştur",
-        "description": "Token adı, sembolü ve ne kadar likidite kilitleyeceğinizi seçin."
-      },
-      "step2": {
         "title": "Likidite Ekle",
         "description": "Tokenınızın likidite havuzunu başlatmak için ETH yatırın."
       },
-      "step3": {
+      "step2": {
         "title": "İşleme Başla",
         "description": "Tokenınız yerel DEX'imizde anında işlem görmeye başlar"
       }

@@ -45,14 +45,10 @@
     "howItWorks": {
       "title": "仕組み",
       "step1": {
-        "title": "トークン作成",
-        "description": "トークン名、シンボル、ロックする流動性の量を選択。"
-      },
-      "step2": {
         "title": "流動性追加",
         "description": "トークンの流動性プールを初期化するためにETHをデポジット。"
       },
-      "step3": {
+      "step2": {
         "title": "取引開始",
         "description": "トークンはネイティブDEXで即座に取引可能になります"
       }

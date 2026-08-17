@@ -80,7 +80,7 @@ export function Home({ onNavigate }: HomeProps) {
 
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 sm:p-8 mb-12 sm:mb-16 transition-colors">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6 text-center transition-colors">{t('home.howItWorks.title')}</h2>
-          <div className="grid md:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-8 max-w-3xl mx-auto">
             <div className="text-center">
               <div className="bg-gray-900 dark:bg-white text-white dark:text-gray-900 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-lg sm:text-xl font-bold mx-auto mb-3 sm:mb-4 transition-colors">
                 1
@@ -98,16 +98,6 @@ export function Home({ onNavigate }: HomeProps) {
               <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2 transition-colors">{t('home.howItWorks.step2.title')}</h3>
               <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 transition-colors">
                 {t('home.howItWorks.step2.description')}
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="bg-gray-900 dark:bg-white text-white dark:text-gray-900 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-lg sm:text-xl font-bold mx-auto mb-3 sm:mb-4 transition-colors">
-                3
-              </div>
-              <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2 transition-colors">{t('home.howItWorks.step3.title')}</h3>
-              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 transition-colors">
-                {t('home.howItWorks.step3.description')}
               </p>
             </div>
           </div>
