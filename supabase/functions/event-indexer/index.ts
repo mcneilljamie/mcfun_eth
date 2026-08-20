@@ -22,6 +22,7 @@ const AMM_ABI = [
 const CONFIRMATION_DEPTH = 2;
 const MAX_BLOCK_RANGE = 2000;
 const MAX_EXECUTION_TIME_MS = 50000;
+const RPC_TIMEOUT_MS = 5000;
 
 const providerIndexMap = new Map<number, number>();
 
@@ -32,8 +33,13 @@ async function createProviderWithFailover(chainId: number): Promise<ethers.JsonR
   for (let i = 0; i < RPC_PROVIDERS.length; i++) {
     const providerUrl = RPC_PROVIDERS[(currentProviderIndex + i) % RPC_PROVIDERS.length];
     try {
-      const provider = new ethers.JsonRpcProvider(providerUrl);
-      await provider.getBlockNumber();
+      const provider = new ethers.JsonRpcProvider(providerUrl, undefined, { staticNetwork: true });
+      const blockNumber = await Promise.race([
+        provider.getBlockNumber(),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error(`RPC timeout after ${RPC_TIMEOUT_MS}ms`)), RPC_TIMEOUT_MS)
+        ),
+      ]);
       providerIndexMap.set(chainId, (currentProviderIndex + i) % RPC_PROVIDERS.length);
       return provider;
     } catch (error) {
@@ -377,8 +383,9 @@ Deno.serve(async (req: Request) => {
           tokensProcessed++;
         } catch (err) {
           console.error(`Error indexing ${token.token_address}:`, err);
-          // Mark as partial - don't advance cursor past this range
-          partialRun = true;
+          // Don't freeze the cursor for a single token's RPC failure.
+          // The block range was still scanned; other tokens' swaps were processed.
+          // The failing token will be retried on the next run when its RPC responds.
         }
       }
     }

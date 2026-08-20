@@ -12,15 +12,32 @@ const TOKEN_SUPPLY = 1_000_000n * (10n ** 18n);
 
 const MAX_EXECUTION_TIME_MS = 23000;
 const PARALLEL_TOKEN_LIMIT = 10;
+const RPC_TIMEOUT_MS = 5000;
 
 const providerIndexMap = new Map<number, number>();
 
-function getProvider(chainId: number): ethers.JsonRpcProvider {
+async function createProviderWithFailover(chainId: number): Promise<ethers.JsonRpcProvider> {
   const RPC_PROVIDERS = getRPCProviders(chainId);
   const currentProviderIndex = providerIndexMap.get(chainId) || 0;
-  const url = RPC_PROVIDERS[currentProviderIndex];
-  providerIndexMap.set(chainId, (currentProviderIndex + 1) % RPC_PROVIDERS.length);
-  return new ethers.JsonRpcProvider(url);
+
+  for (let i = 0; i < RPC_PROVIDERS.length; i++) {
+    const providerUrl = RPC_PROVIDERS[(currentProviderIndex + i) % RPC_PROVIDERS.length];
+    try {
+      const provider = new ethers.JsonRpcProvider(providerUrl, undefined, { staticNetwork: true });
+      await Promise.race([
+        provider.getBlockNumber(),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error(`RPC timeout after ${RPC_TIMEOUT_MS}ms`)), RPC_TIMEOUT_MS)
+        ),
+      ]);
+      providerIndexMap.set(chainId, (currentProviderIndex + i) % RPC_PROVIDERS.length);
+      return provider;
+    } catch (error) {
+      console.error(`RPC provider ${providerUrl} failed, trying next...`, error);
+      continue;
+    }
+  }
+  throw new Error("All RPC providers failed");
 }
 
 interface TokenPriceCache {
@@ -45,7 +62,7 @@ Deno.serve(async (req: Request) => {
   console.log(`Starting burn indexer for ${chainConfig.CHAIN_NAME} (chain ID: ${chainId})`);
 
   const startTime = Date.now();
-  const provider = getProvider(chainId);
+  const provider = await createProviderWithFailover(chainId);
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL")!,
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!

@@ -21,6 +21,7 @@ const ERC20_ABI = [
 
 const providerIndexMap = new Map<number, number>();
 const tokenMetadataCache = new Map<string, { name: string; symbol: string; decimals: number }>();
+const RPC_TIMEOUT_MS = 5000;
 
 async function createProviderWithFailover(chainId: number): Promise<ethers.JsonRpcProvider> {
   const RPC_PROVIDERS = getRPCProviders(chainId);
@@ -29,8 +30,13 @@ async function createProviderWithFailover(chainId: number): Promise<ethers.JsonR
   for (let i = 0; i < RPC_PROVIDERS.length; i++) {
     const providerUrl = RPC_PROVIDERS[(currentProviderIndex + i) % RPC_PROVIDERS.length];
     try {
-      const provider = new ethers.JsonRpcProvider(providerUrl);
-      await provider.getBlockNumber();
+      const provider = new ethers.JsonRpcProvider(providerUrl, undefined, { staticNetwork: true });
+      await Promise.race([
+        provider.getBlockNumber(),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error(`RPC timeout after ${RPC_TIMEOUT_MS}ms`)), RPC_TIMEOUT_MS)
+        ),
+      ]);
       providerIndexMap.set(chainId, (currentProviderIndex + i) % RPC_PROVIDERS.length);
       return provider;
     } catch (error) {
