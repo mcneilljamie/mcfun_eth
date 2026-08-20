@@ -128,7 +128,7 @@ export function About() {
       const { data: tokensData, error: tokensError } = await withTimeout(
         supabase
           .from('tokens')
-          .select('current_eth_reserve, initial_liquidity_eth, current_token_reserve, price_change_24h, total_volume_eth, chain_id'),
+          .select('token_address, current_eth_reserve, initial_liquidity_eth, current_token_reserve, price_change_24h, total_volume_eth, chain_id'),
         10000,
         'About page tokens'
       );
@@ -136,6 +136,24 @@ export function About() {
       if (tokensError) {
         console.error('Database error loading tokens:', tokensError);
       } else if (tokensData) {
+        // Fetch burn percentages for all tokens (same source as the DB function)
+        const burnMap = new Map<string, number>();
+        if (tokensData.length > 0) {
+          const { data: burnData } = await withTimeout(
+            supabase
+              .from('token_burn_totals')
+              .select('token_address, percent_supply_burned')
+              .in('token_address', tokensData.map(t => t.token_address.toLowerCase())),
+            10000,
+            'About page burn totals'
+          );
+          if (burnData) {
+            for (const row of burnData) {
+              burnMap.set(row.token_address.toLowerCase(), parseFloat(row.percent_supply_burned) || 0);
+            }
+          }
+        }
+
         // Calculate total liquidity (both sides of the pool)
         const totalEth = tokensData.reduce((sum, token) => {
           const reserve = parseFloat(token.current_eth_reserve || token.initial_liquidity_eth || '0');
@@ -163,29 +181,51 @@ export function About() {
         setEthereumLiquidityUSD(ethereumEth * ethPrice * 2);
         setBaseLiquidityUSD(baseEth * ethPrice * 2);
 
-        // Calculate McFun market cap percentage
-        const { data: mcfunToken } = await supabase
-          .from('tokens')
-          .select('current_eth_reserve, current_token_reserve')
-          .eq('symbol', 'MCFUN')
-          .maybeSingle();
+        // Calculate total market cap live from current reserves (matches DB function)
+        // Market cap = price_eth * circulating_supply * eth_price_usd
+        // circulating_supply = 1,000,000 * (1 - burn_percent / 100)
+        const TOKEN_TOTAL_SUPPLY = 1000000;
+        let liveMarketCapUSD = 0;
+        let mcfunMarketCapUSD = 0;
+        let mcfunPriceUSDValue = 0;
 
-        if (mcfunToken && statsData && parseFloat(statsData.total_market_cap_usd || '0') > 0) {
-          const ethReserve = parseFloat(mcfunToken.current_eth_reserve || '0');
-          const tokenReserve = parseFloat(mcfunToken.current_token_reserve || '0');
+        for (const token of tokensData) {
+          const ethReserve = parseFloat(token.current_eth_reserve || token.initial_liquidity_eth || '0');
+          const tokenReserve = parseFloat(token.current_token_reserve || '1000000');
+          if (tokenReserve > 0 && ethReserve > 0) {
+            const priceEth = ethReserve / tokenReserve;
+            const burnPercent = burnMap.get(token.token_address.toLowerCase()) || 0;
+            const circulatingSupply = TOKEN_TOTAL_SUPPLY * (1 - burnPercent / 100);
+            const tokenMarketCap = priceEth * circulatingSupply * ethPrice;
+            liveMarketCapUSD += tokenMarketCap;
 
-          // Calculate McFun token price in ETH
-          const priceEth = tokenReserve > 0 ? ethReserve / tokenReserve : 0;
+            if (token.token_address.toLowerCase() === '0xe03e4d90a46f62ac405708ba5036f292d5e0edc8') {
+              mcfunMarketCapUSD = tokenMarketCap;
+              mcfunPriceUSDValue = priceEth * ethPrice;
+            }
+          }
+        }
 
-          // Calculate McFun market cap (total supply * price in USD)
-          const totalSupply = 1000000; // McFun has 1M total supply
-          const mcfunMarketCapUSD = totalSupply * priceEth * ethPrice;
+        if (liveMarketCapUSD > 0) {
+          setPlatformStats(prev => prev ? {
+            ...prev,
+            totalMarketCapUsd: liveMarketCapUSD,
+          } : {
+            totalMarketCapUsd: liveMarketCapUSD,
+            totalVolumeEth: 0,
+            totalBurnedUsd: 0,
+            totalLockedUsd: 0,
+            tokenCount: tokensData.length,
+            ethereumCount: tokensData.filter(t => t.chain_id === 1).length,
+            baseCount: tokensData.filter(t => t.chain_id === 8453).length,
+          });
 
-          // Calculate percentage of total market cap
-          const totalMarketCap = parseFloat(statsData.total_market_cap_usd);
-          const mcfunPercent = totalMarketCap > 0 ? (mcfunMarketCapUSD / totalMarketCap) * 100 : 0;
-          setMcfunMarketCapPercent(mcfunPercent);
-          setMcfunPriceUSD(priceEth * ethPrice);
+          if (mcfunMarketCapUSD > 0) {
+            setMcfunMarketCapPercent((mcfunMarketCapUSD / liveMarketCapUSD) * 100);
+          }
+          if (mcfunPriceUSDValue > 0) {
+            setMcfunPriceUSD(mcfunPriceUSDValue);
+          }
         }
       }
       // Fetch treasury ETH balance on Ethereum and Base
