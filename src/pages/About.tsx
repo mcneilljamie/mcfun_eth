@@ -83,47 +83,6 @@ export function About() {
         setLastUpdated(new Date(ethPriceData.timestamp));
       }
 
-      // Load platform stats
-      const { data: statsData, error: statsError } = await withTimeout(
-        supabase
-          .from('platform_stats')
-          .select('total_market_cap_usd, total_volume_eth, total_burned_usd, total_locked_usd, token_count')
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .maybeSingle(),
-        10000,
-        'Platform stats'
-      );
-
-      if (statsError) {
-        console.error('Error loading platform stats:', statsError);
-      }
-
-      // Count tokens by chain first, before using statsData
-      const { data: chainCountData } = await withTimeout(
-        supabase
-          .from('tokens')
-          .select('chain_id'),
-        10000,
-        'Token chain counts'
-      );
-
-      const ethereumCount = chainCountData?.filter(t => t.chain_id === 1).length || 0;
-      const baseCount = chainCountData?.filter(t => t.chain_id === 8453).length || 0;
-
-      if (statsData) {
-        setLoadError(false);
-        setPlatformStats({
-          totalMarketCapUsd: parseFloat(statsData.total_market_cap_usd || '0'),
-          totalVolumeEth: parseFloat(statsData.total_volume_eth || '0'),
-          totalBurnedUsd: parseFloat(statsData.total_burned_usd || '0'),
-          totalLockedUsd: parseFloat(statsData.total_locked_usd || '0'),
-          tokenCount: statsData.token_count || 0,
-          ethereumCount,
-          baseCount,
-        });
-      }
-
       // Load all tokens from ALL chains (Ethereum + Base)
       const { data: tokensData, error: tokensError } = await withTimeout(
         supabase
@@ -135,21 +94,58 @@ export function About() {
 
       if (tokensError) {
         console.error('Database error loading tokens:', tokensError);
+        setLoadError(true);
       } else if (tokensData) {
-        // Fetch burn percentages for all tokens (same source as the DB function)
-        const burnMap = new Map<string, number>();
+        setLoadError(false);
+
+        // Build a price lookup: token_address -> price_eth (from current reserves)
+        const priceEthMap = new Map<string, number>();
+        for (const token of tokensData) {
+          const ethReserve = parseFloat(token.current_eth_reserve || token.initial_liquidity_eth || '0');
+          const tokenReserve = parseFloat(token.current_token_reserve || '1000000');
+          if (tokenReserve > 0 && ethReserve > 0) {
+            priceEthMap.set(token.token_address.toLowerCase(), ethReserve / tokenReserve);
+          }
+        }
+
+        // Fetch burn totals (amount burned + supply percentage) for all tokens
+        const burnMap = new Map<string, { percent: number; amountBurned: number }>();
         if (tokensData.length > 0) {
           const { data: burnData } = await withTimeout(
             supabase
               .from('token_burn_totals')
-              .select('token_address, percent_supply_burned')
+              .select('token_address, percent_supply_burned, total_amount_burned')
               .in('token_address', tokensData.map(t => t.token_address.toLowerCase())),
             10000,
             'About page burn totals'
           );
           if (burnData) {
             for (const row of burnData) {
-              burnMap.set(row.token_address.toLowerCase(), parseFloat(row.percent_supply_burned) || 0);
+              burnMap.set(row.token_address.toLowerCase(), {
+                percent: parseFloat(row.percent_supply_burned) || 0,
+                amountBurned: parseFloat(row.total_amount_burned) || 0,
+              });
+            }
+          }
+        }
+
+        // Fetch active (non-withdrawn) locks for all tokens
+        const lockAmounts = new Map<string, number>();
+        if (tokensData.length > 0) {
+          const { data: lockData } = await withTimeout(
+            supabase
+              .from('token_locks')
+              .select('token_address, amount_locked')
+              .eq('is_withdrawn', false)
+              .gt('amount_locked', 0)
+              .in('token_address', tokensData.map(t => t.token_address.toLowerCase())),
+            10000,
+            'About page token locks'
+          );
+          if (lockData) {
+            for (const row of lockData) {
+              const addr = row.token_address.toLowerCase();
+              lockAmounts.set(addr, (lockAmounts.get(addr) || 0) + (parseFloat(row.amount_locked) || 0));
             }
           }
         }
@@ -160,7 +156,6 @@ export function About() {
           return sum + reserve;
         }, 0);
 
-        // Calculate Ethereum liquidity
         const ethereumEth = tokensData
           .filter(token => token.chain_id === 1)
           .reduce((sum, token) => {
@@ -168,7 +163,6 @@ export function About() {
             return sum + reserve;
           }, 0);
 
-        // Calculate Base liquidity
         const baseEth = tokensData
           .filter(token => token.chain_id === 8453)
           .reduce((sum, token) => {
@@ -181,51 +175,67 @@ export function About() {
         setEthereumLiquidityUSD(ethereumEth * ethPrice * 2);
         setBaseLiquidityUSD(baseEth * ethPrice * 2);
 
-        // Calculate total market cap live from current reserves (matches DB function)
-        // Market cap = price_eth * circulating_supply * eth_price_usd
-        // circulating_supply = 1,000,000 * (1 - burn_percent / 100)
+        // Calculate all three stats live from current data (matches DB function)
         const TOKEN_TOTAL_SUPPLY = 1000000;
+        const WEI_DIVISOR = 1e18;
         let liveMarketCapUSD = 0;
+        let liveBurnedUSD = 0;
+        let liveLockedUSD = 0;
+        let liveVolumeEth = 0;
         let mcfunMarketCapUSD = 0;
         let mcfunPriceUSDValue = 0;
 
         for (const token of tokensData) {
           const ethReserve = parseFloat(token.current_eth_reserve || token.initial_liquidity_eth || '0');
           const tokenReserve = parseFloat(token.current_token_reserve || '1000000');
+          liveVolumeEth += parseFloat(token.total_volume_eth || '0');
+
           if (tokenReserve > 0 && ethReserve > 0) {
             const priceEth = ethReserve / tokenReserve;
-            const burnPercent = burnMap.get(token.token_address.toLowerCase()) || 0;
-            const circulatingSupply = TOKEN_TOTAL_SUPPLY * (1 - burnPercent / 100);
-            const tokenMarketCap = priceEth * circulatingSupply * ethPrice;
-            liveMarketCapUSD += tokenMarketCap;
+            const addr = token.token_address.toLowerCase();
+            const burnPercent = burnMap.get(addr)?.percent || 0;
+            const amountBurned = burnMap.get(addr)?.amountBurned || 0;
+            const totalLockedRaw = lockAmounts.get(addr) || 0;
 
-            if (token.token_address.toLowerCase() === '0xe03e4d90a46f62ac405708ba5036f292d5e0edc8') {
-              mcfunMarketCapUSD = tokenMarketCap;
+            // Market cap: price_eth * circulating_supply * eth_price_usd
+            const circulatingSupply = TOKEN_TOTAL_SUPPLY * (1 - burnPercent / 100);
+            liveMarketCapUSD += priceEth * circulatingSupply * ethPrice;
+
+            // Burned value: (amount_burned / 1e18) * price_eth * eth_price_usd
+            if (amountBurned > 0) {
+              liveBurnedUSD += (amountBurned / WEI_DIVISOR) * priceEth * ethPrice;
+            }
+
+            // Locked value: (amount_locked / 1e18) * price_eth * eth_price_usd
+            if (totalLockedRaw > 0) {
+              liveLockedUSD += (totalLockedRaw / WEI_DIVISOR) * priceEth * ethPrice;
+            }
+
+            if (addr === '0xe03e4d90a46f62ac405708ba5036f292d5e0edc8') {
+              mcfunMarketCapUSD = priceEth * circulatingSupply * ethPrice;
               mcfunPriceUSDValue = priceEth * ethPrice;
             }
           }
         }
 
-        if (liveMarketCapUSD > 0) {
-          setPlatformStats(prev => prev ? {
-            ...prev,
-            totalMarketCapUsd: liveMarketCapUSD,
-          } : {
-            totalMarketCapUsd: liveMarketCapUSD,
-            totalVolumeEth: 0,
-            totalBurnedUsd: 0,
-            totalLockedUsd: 0,
-            tokenCount: tokensData.length,
-            ethereumCount: tokensData.filter(t => t.chain_id === 1).length,
-            baseCount: tokensData.filter(t => t.chain_id === 8453).length,
-          });
+        const ethereumCount = tokensData.filter(t => t.chain_id === 1).length;
+        const baseCount = tokensData.filter(t => t.chain_id === 8453).length;
 
-          if (mcfunMarketCapUSD > 0) {
-            setMcfunMarketCapPercent((mcfunMarketCapUSD / liveMarketCapUSD) * 100);
-          }
-          if (mcfunPriceUSDValue > 0) {
-            setMcfunPriceUSD(mcfunPriceUSDValue);
-          }
+        setPlatformStats({
+          totalMarketCapUsd: liveMarketCapUSD,
+          totalVolumeEth: liveVolumeEth,
+          totalBurnedUsd: liveBurnedUSD,
+          totalLockedUsd: liveLockedUSD,
+          tokenCount: tokensData.length,
+          ethereumCount,
+          baseCount,
+        });
+
+        if (liveMarketCapUSD > 0 && mcfunMarketCapUSD > 0) {
+          setMcfunMarketCapPercent((mcfunMarketCapUSD / liveMarketCapUSD) * 100);
+        }
+        if (mcfunPriceUSDValue > 0) {
+          setMcfunPriceUSD(mcfunPriceUSDValue);
         }
       }
       // Fetch treasury ETH balance on Ethereum and Base
