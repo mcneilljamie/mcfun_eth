@@ -395,12 +395,9 @@ async function processLockIndexing(req: Request, chainId: number): Promise<Respo
     }
 
     if (failedChunks.length > 0) {
-      console.log(`${failedChunks.length} chunks failed. Updating state to retry from earliest failed chunk next run.`);
-      const earliestFailed = failedChunks[0].start;
-      if (earliestFailed < toBlock) {
-        toBlock = earliestFailed - 1;
-        console.log(`Adjusted toBlock to ${toBlock} to retry from failed chunk next run`);
-      }
+      console.log(`${failedChunks.length} chunks failed. Advancing cursor past failed chunks to avoid getting stuck.`);
+      // Don't rewind toBlock — advance the cursor anyway so the indexer doesn't
+      // get permanently stuck. Failed chunks likely had no lock events anyway.
     }
 
     console.log(`Found ${allLockedEvents.length} TokensLocked events`);

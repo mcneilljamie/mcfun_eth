@@ -21,11 +21,12 @@ export const ETHEREUM_CONFIG: ChainConfig = {
   LOCKER_ADDRESS: "0xaDEcE045ccC27b3364628499F2DDF4eAaD034D38",
   FACTORY_DEPLOYMENT_BLOCK: 24328122,
   LOCKER_DEPLOYMENT_BLOCK: 24328123,
-  PRIMARY_RPC: "https://eth.llamarpc.com",
+  PRIMARY_RPC: "https://eth.drpc.org",
   FALLBACK_RPCS: [
+    "https://ethereum-rpc.publicnode.com",
     "https://rpc.ankr.com/eth",
     "https://ethereum.blockpi.network/v1/rpc/public",
-    "https://ethereum-rpc.publicnode.com"
+    "https://eth.llamarpc.com"
   ],
 };
 

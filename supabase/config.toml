@@ -1,0 +1,44 @@
+[functions.backfill-eth-prices]
+verify_jwt = false
+
+[functions.backfill-missing-swaps]
+verify_jwt = false
+
+[functions.backfill-swap-snapshots]
+verify_jwt = false
+
+[functions.backfill-token-history]
+verify_jwt = false
+
+[functions.burn-event-indexer]
+verify_jwt = false
+
+[functions.detect-indexer-gaps]
+verify_jwt = false
+
+[functions.detect-lock-gaps]
+verify_jwt = false
+
+[functions.event-indexer]
+verify_jwt = false
+
+[functions.lock-event-indexer]
+verify_jwt = false
+
+[functions.price-snapshot]
+verify_jwt = false
+
+[functions.register-token-launch]
+verify_jwt = false
+
+[functions.sync-lock-withdrawals]
+verify_jwt = false
+
+[functions.sync-reserves]
+verify_jwt = false
+
+[functions.sync-token-metadata]
+verify_jwt = false
+
+[functions.track-eth-price]
+verify_jwt = false
