@@ -173,7 +173,6 @@
     "noTokens": "아직 출시된 토큰이 없습니다",
     "noResults": "검색과 일치하는 토큰을 찾을 수 없습니다",
     "showing": "{{count}}개 토큰 표시 중",
-    "showing_plural": "{{count}}개 토큰 표시 중",
     "rankBy": "정렬 기준",
     "marketCap": "시가총액",
     "liquidity": "유동성",
@@ -203,7 +202,10 @@
       "blockchain": "블록체인"
     },
     "filterByBlockchain": "블록체인으로 필터:",
-    "allChains": "모든 체인"
+    "allChains": "모든 체인",
+    "loadError": "토큰을 로드할 수 없습니다. 데이터베이스가 일시적으로 사용 불가능할 수 있습니다.",
+    "retry": "재시도",
+    "staleData": "캐시된 데이터 표시 중 — 데이터베이스에서 새로고침할 수 없습니다."
   },
   "about": {
     "title": "McFun 소개",
@@ -315,7 +317,6 @@
         "description": "모든 스마트 계약은 GitHub에서 오픈 소스로 제공되며 Etherscan에서 보고 검증할 수 있습니다. 플랫폼을 사용하기 전에 직접 코드를 감사하세요."
       }
     },
-    "founder": "McFun은 Jamie McNeill이 설립하고 유지 관리합니다.",
     "trading": {
       "title": "거래 작동 방식",
       "builtInAMM": {
@@ -341,7 +342,9 @@
     "eth": "ETH",
     "copiedToClipboard": "클립보드에 복사되었습니다!",
     "character": "자",
-    "characters": "자"
+    "characters": "자",
+    "close": "닫기",
+    "refresh": "새로고침"
   },
   "tokenDetail": {
     "loadingToken": "토큰 로딩 중...",
@@ -444,8 +447,7 @@
     "increaseScarcity": "토큰 희소성 증가",
     "increaseScarcityDescription": "공급을 줄임으로써 토큰 소각은 희소성을 증가시킬 수 있습니다. 많은 프로젝트는 시간이 지남에 따라 토큰 경제에 잠재적으로 영향을 미치기 위한 디플레이션 메커니즘으로 소각을 사용합니다.",
     "permanentRemoval": "영구적이고 검증 가능한 제거",
-    "permanentRemovalDescription": "모든 토큰 소각은 영구적이며 블록체인에서 검증 가능합니다. 일단 소각되면 토큰은 복구하거나 재사용할 수 없습니다. 소각 기록은 완전한 투명성을 위해 공개적으로 볼 수 있습니다.",
-    "readyToWithdraw": "출금 준비"
+    "permanentRemovalDescription": "모든 토큰 소각은 영구적이며 블록체인에서 검증 가능합니다. 일단 소각되면 토큰은 복구하거나 재사용할 수 없습니다. 소각 기록은 완전한 투명성을 위해 공개적으로 볼 수 있습니다."
   },
   "wallet": {
     "connectWallet": "지갑 연결",
@@ -593,8 +595,28 @@
       "approvalFailed": "토큰 승인 실패",
       "lockFailed": "토큰 잠금 실패",
       "unlockFailed": "토큰 인출 실패",
-      "transactionRejected": "Transaction was rejected"
-    }
+      "transactionRejected": "Transaction was rejected",
+      "belowMinimumLock": "잠금 수량은 최소 {{minimum}} 토큰이어야 합니다",
+      "exceedsMaxDuration": "잠금 기간은 {{max}}일을 초과할 수 없습니다",
+      "notMcFunToken": "이 토큰은 McFun에서 출시되지 않았습니다. McFun에서 출시된 토큰만 이 플랫폼에서 잠글 수 있습니다.",
+      "userRejected": "사용자가 트랜잭션을 거부했습니다"
+    },
+    "active": "활성",
+    "connectWalletDescription": "토큰을 잠그고 잠금 프로그램에 참여하려면 지갑을 연결해 주세요",
+    "day": "일",
+    "loadingLocks": "토큰 잠금 로딩 중...",
+    "lockedOn": "잠금 날짜",
+    "marketCap": "시가총액",
+    "next": "다음",
+    "noActiveLocksForToken": "이 토큰에 대한 활성 잠금 없음",
+    "of": "/",
+    "page": "페이지",
+    "popularTokensDropdown": "인기 McFun 토큰",
+    "previous": "이전",
+    "showing": "표시 중",
+    "unlockedOn": "잠금 해제 날짜",
+    "unlocksOn": "잠금 해제 날짜",
+    "viewTransaction": "트랜잭션 보기"
   },
   "burn": {
     "title": "토큰 소각",
@@ -633,7 +655,25 @@
       "burnFailed": "토큰 소각 실패",
       "userRejected": "사용자에 의해 거래가 거부되었습니다"
     },
-    "ofSupply": "공급량 중"
+    "ofSupply": "공급량 중",
+    "amountBurned": "소각된 수량",
+    "burnDetails": "소각 세부정보",
+    "connectWalletDescription": "토큰을 소각하고 유통 공급량을 줄이려면 지갑을 연결해 주세요",
+    "contractInfo": "컨트랙트 정보",
+    "copyTokenAddress": "토큰 주소 복사",
+    "copyTxHash": "트랜잭션 해시 복사",
+    "indexingDescription": "소각은 5분마다 자동으로 인덱싱됩니다. 방금 토큰을 소각했다면 곧 여기에 나타납니다.",
+    "indexingNote": "참고:",
+    "noBurnsDescription": "토큰을 소각하고 리더보드에 처음으로 등장해 보세요!",
+    "noBurnsYet": "아직 소각 없음",
+    "permanentlyDestroyed": "영구적으로 파괴됨",
+    "status": "상태",
+    "successDescription": "{{amount}} {{symbol}} 소각 성공",
+    "tokenContract": "토큰 컨트랙트",
+    "transactionHash": "트랜잭션 해시",
+    "viewOnExplorer": "블록 익스플로러에서 보기",
+    "viewToken": "토큰 세부정보 보기",
+    "viewTxOnExplorer": "블록 익스플로러에서 트랜잭션 보기"
   },
   "withdrawSuccess": {
     "title": "출금 성공!",
@@ -688,5 +728,29 @@
       "withdrawSubmitted": "Withdrawal transaction submitted...",
       "withdrawSuccess": "Successfully withdrawn {{symbol}}!"
     }
+  },
+  "lockCelebration": {
+    "amount": "수량",
+    "close": "닫기",
+    "contractInfo": "컨트랙트 정보",
+    "copyLink": "공유 가능한 링크 복사",
+    "copyTokenAddress": "토큰 주소 복사",
+    "copyTxHash": "트랜잭션 해시 복사",
+    "days": "일",
+    "duration": "기간",
+    "goToMyLocks": "내 잠금으로 이동",
+    "lockDetails": "잠금 세부정보",
+    "lockSuccessful": "잠금 성공",
+    "shareDescription": "이 링크를 공유하여 토큰 잠금을 보여주세요",
+    "shareLock": "잠금 공유",
+    "shareableLink": "공유 가능한 링크",
+    "subtitle": "{{amount}} {{symbol}}을(를) {{days}} 동안 성공적으로 잠갔습니다",
+    "title": "토큰 잠금 성공!",
+    "token": "토큰",
+    "tokenContract": "토큰 컨트랙트 주소",
+    "transactionHash": "트랜잭션 해시",
+    "unlockDate": "잠금 해제 날짜",
+    "viewOnEtherscan": "Etherscan에서 보기",
+    "viewOnExplorer": "블록 익스플로러에서 보기"
   }
 }

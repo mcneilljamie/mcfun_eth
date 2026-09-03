@@ -173,7 +173,6 @@
     "noTokens": "まだトークンがローンチされていません",
     "noResults": "検索に一致するトークンが見つかりません",
     "showing": "{{count}}個のトークンを表示中",
-    "showing_plural": "{{count}}個のトークンを表示中",
     "rankBy": "並べ替え",
     "marketCap": "時価総額",
     "liquidity": "流動性",
@@ -203,7 +202,10 @@
       "blockchain": "ブロックチェーン"
     },
     "filterByBlockchain": "ブロックチェーンで絞り込む：",
-    "allChains": "すべてのチェーン"
+    "allChains": "すべてのチェーン",
+    "loadError": "トークンを読み込めませんでした。データベースが一時的に利用できない可能性があります。",
+    "retry": "再試行",
+    "staleData": "キャッシュされたデータを表示中 — データベースから更新できませんでした。"
   },
   "about": {
     "title": "McFunについて",
@@ -315,7 +317,6 @@
         "description": "すべてのスマートコントラクトはGitHub上でオープンソース化されており、Etherscanで表示および検証できます。プラットフォームを使用する前に自分でコードを監査してください。"
       }
     },
-    "founder": "McFunはJamie McNeillによって設立され、維持されています。",
     "trading": {
       "title": "取引の仕組み",
       "builtInAMM": {
@@ -341,7 +342,9 @@
     "eth": "ETH",
     "copiedToClipboard": "クリップボードにコピーしました!",
     "character": "文字",
-    "characters": "文字"
+    "characters": "文字",
+    "close": "閉じる",
+    "refresh": "更新"
   },
   "tokenDetail": {
     "loadingToken": "トークンを読み込んでいます...",
@@ -444,8 +447,7 @@
     "increaseScarcity": "トークンの希少性を高める",
     "increaseScarcityDescription": "供給を減らすことで、トークンバーンは希少性を高めることができます。多くのプロジェクトは、時間の経過とともにトークンエコノミクスに潜在的に影響を与えるためのデフレメカニズムとしてバーンを使用します。",
     "permanentRemoval": "永久的で検証可能な削除",
-    "permanentRemovalDescription": "すべてのトークンバーンは永久的でブロックチェーン上で検証可能です。一度バーンされると、トークンは回復または再利用できません。完全な透明性のためにバーン履歴は公開されています。",
-    "readyToWithdraw": "出金準備完了"
+    "permanentRemovalDescription": "すべてのトークンバーンは永久的でブロックチェーン上で検証可能です。一度バーンされると、トークンは回復または再利用できません。完全な透明性のためにバーン履歴は公開されています。"
   },
   "wallet": {
     "connectWallet": "ウォレットを接続",
@@ -611,8 +613,10 @@
       "lockFailed": "トークンのロックに失敗しました",
       "unlockFailed": "トークンの引き出しに失敗しました",
       "transactionRejected": "トランザクションが拒否されました",
-      "userRejected": "トランザクションがユーザーによって拒否されました"
-    }
+      "userRejected": "トランザクションがユーザーによって拒否されました",
+      "exceedsMaxDuration": "ロック期間は{{max}}日を超えることはできません"
+    },
+    "connectWalletDescription": "トークンをロックしてロックプログラムに参加するには、ウォレットを接続してください"
   },
   "burn": {
     "title": "トークンをバーン",
@@ -651,7 +655,25 @@
       "burnFailed": "トークンのバーンに失敗しました",
       "userRejected": "ユーザーによってトランザクションが拒否されました"
     },
-    "ofSupply": "供給量の"
+    "ofSupply": "供給量の",
+    "amountBurned": "焼却量",
+    "burnDetails": "焼却詳細",
+    "connectWalletDescription": "トークンを焼却して流通量を減らすには、ウォレットを接続してください",
+    "contractInfo": "コントラクト情報",
+    "copyTokenAddress": "トークンアドレスをコピー",
+    "copyTxHash": "トランザクションハッシュをコピー",
+    "indexingDescription": "焼却は5分ごとに自動的にインデックスされます。トークンを焼却したばかりの場合、まもなくここに表示されます。",
+    "indexingNote": "注意：",
+    "noBurnsDescription": "最初のトークン焼却者になり、リーダーボードに登場しましょう！",
+    "noBurnsYet": "まだ焼却はありません",
+    "permanentlyDestroyed": "永久に破棄済み",
+    "status": "ステータス",
+    "successDescription": "{{amount}} {{symbol}}を正常に焼却しました",
+    "tokenContract": "トークンコントラクト",
+    "transactionHash": "トランザクションハッシュ",
+    "viewOnExplorer": "ブロックエクスプローラーで表示",
+    "viewToken": "トークン詳細を表示",
+    "viewTxOnExplorer": "ブロックエクスプローラーでトランザクションを表示"
   },
   "withdrawSuccess": {
     "title": "出金成功！",
@@ -706,5 +728,29 @@
       "withdrawSubmitted": "Withdrawal transaction submitted...",
       "withdrawSuccess": "Successfully withdrawn {{symbol}}!"
     }
+  },
+  "lockCelebration": {
+    "amount": "数量",
+    "close": "閉じる",
+    "contractInfo": "コントラクト情報",
+    "copyLink": "共有可能なリンクをコピー",
+    "copyTokenAddress": "トークンアドレスをコピー",
+    "copyTxHash": "トランザクションハッシュをコピー",
+    "days": "日間",
+    "duration": "期間",
+    "goToMyLocks": "マイロックへ",
+    "lockDetails": "ロック詳細",
+    "lockSuccessful": "ロック成功",
+    "shareDescription": "このリンクを共有してトークンロックを表示",
+    "shareLock": "ロックを共有",
+    "shareableLink": "共有可能なリンク",
+    "subtitle": "{{amount}} {{symbol}}を{{days}}間ロックしました",
+    "title": "トークンのロックに成功しました！",
+    "token": "トークン",
+    "tokenContract": "トークンコントラクトアドレス",
+    "transactionHash": "トランザクションハッシュ",
+    "unlockDate": "ロック解除日",
+    "viewOnEtherscan": "Etherscanで表示",
+    "viewOnExplorer": "ブロックエクスプローラーで表示"
   }
 }

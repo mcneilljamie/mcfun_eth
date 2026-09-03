@@ -173,7 +173,6 @@
     "noTokens": "Aún no se han lanzado tokens",
     "noResults": "No se encontraron tokens que coincidan con tu búsqueda",
     "showing": "Mostrando {{count}} token",
-    "showing_plural": "Mostrando {{count}} tokens",
     "rankBy": "Clasificar por",
     "marketCap": "Capitalización de Mercado",
     "liquidity": "Liquidez",
@@ -203,7 +202,10 @@
       "blockchain": "Blockchain"
     },
     "filterByBlockchain": "Filtrar por Blockchain:",
-    "allChains": "Todas las Cadenas"
+    "allChains": "Todas las Cadenas",
+    "loadError": "No se pudieron cargar los tokens. La base de datos puede no estar disponible temporalmente.",
+    "retry": "Reintentar",
+    "staleData": "Mostrando datos en caché — no se pudo actualizar desde la base de datos."
   },
   "about": {
     "title": "Acerca de McFun",
@@ -315,7 +317,6 @@
         "description": "Todos los contratos inteligentes están en código abierto en GitHub y pueden ser vistos y verificados en Etherscan. Audita el código tú mismo antes de usar la plataforma."
       }
     },
-    "founder": "McFun fue fundado y es mantenido por Jamie McNeill.",
     "trading": {
       "title": "Cómo Funciona el Trading",
       "builtInAMM": {
@@ -341,7 +342,9 @@
     "eth": "ETH",
     "copiedToClipboard": "¡Copiado al portapapeles!",
     "character": "carácter",
-    "characters": "caracteres"
+    "characters": "caracteres",
+    "close": "Cerrar",
+    "refresh": "Actualizar"
   },
   "tokenDetail": {
     "loadingToken": "Cargando token...",
@@ -444,8 +447,7 @@
     "increaseScarcity": "Aumentar Escasez del Token",
     "increaseScarcityDescription": "Al reducir el suministro, la quema de tokens puede aumentar la escasez. Muchos proyectos utilizan quemas como mecanismo deflacionario para impactar potencialmente la economía del token con el tiempo.",
     "permanentRemoval": "Eliminación Permanente y Verificable",
-    "permanentRemovalDescription": "Todas las quemas de tokens son permanentes y verificables en la blockchain. Una vez quemados, los tokens no pueden ser recuperados o reutilizados. El historial de quemas es públicamente visible para completa transparencia.",
-    "readyToWithdraw": "Listo para Retirar"
+    "permanentRemovalDescription": "Todas las quemas de tokens son permanentes y verificables en la blockchain. Una vez quemados, los tokens no pueden ser recuperados o reutilizados. El historial de quemas es públicamente visible para completa transparencia."
   },
   "wallet": {
     "connectWallet": "Conecta Tu Billetera",
@@ -611,8 +613,10 @@
       "lockFailed": "Error al bloquear tokens",
       "unlockFailed": "Error al retirar tokens",
       "transactionRejected": "Transacción rechazada",
-      "userRejected": "Transacción rechazada por el usuario"
-    }
+      "userRejected": "Transacción rechazada por el usuario",
+      "exceedsMaxDuration": "La duración del bloqueo no puede exceder {{max}} días"
+    },
+    "connectWalletDescription": "Por favor conecta tu billetera para bloquear tokens y participar en el programa de bloqueo"
   },
   "burn": {
     "title": "Quemar Tokens",
@@ -651,7 +655,25 @@
       "burnFailed": "Fallo al quemar tokens",
       "userRejected": "Transacción rechazada por el usuario"
     },
-    "ofSupply": "del suministro"
+    "ofSupply": "del suministro",
+    "amountBurned": "Cantidad Quemada",
+    "burnDetails": "Detalles de la Quema",
+    "connectWalletDescription": "Por favor conecta tu billetera para quemar tokens y reducir la oferta circulante",
+    "contractInfo": "Información del Contrato",
+    "copyTokenAddress": "Copiar dirección del token",
+    "copyTxHash": "Copiar hash de transacción",
+    "indexingDescription": "Las quemas se indexan automáticamente cada 5 minutos. Si acabas de quemar tokens, aparecerán aquí en breve.",
+    "indexingNote": "Nota:",
+    "noBurnsDescription": "¡Sé el primero en quemar tokens y aparecer en la tabla de clasificación!",
+    "noBurnsYet": "Aún No Hay Quemas",
+    "permanentlyDestroyed": "Destruido Permanentemente",
+    "status": "Estado",
+    "successDescription": "Se han quemado {{amount}} {{symbol}} con éxito",
+    "tokenContract": "Contrato del Token",
+    "transactionHash": "Hash de Transacción",
+    "viewOnExplorer": "Ver en el explorador de bloques",
+    "viewToken": "Ver Detalles del Token",
+    "viewTxOnExplorer": "Ver transacción en el explorador de bloques"
   },
   "withdrawSuccess": {
     "title": "¡Retiro Exitoso!",
@@ -706,5 +728,29 @@
       "withdrawSubmitted": "Withdrawal transaction submitted...",
       "withdrawSuccess": "Successfully withdrawn {{symbol}}!"
     }
+  },
+  "lockCelebration": {
+    "amount": "Cantidad",
+    "close": "Cerrar",
+    "contractInfo": "Información del Contrato",
+    "copyLink": "Copiar enlace compartible",
+    "copyTokenAddress": "Copiar dirección del token",
+    "copyTxHash": "Copiar hash de transacción",
+    "days": "días",
+    "duration": "Duración",
+    "goToMyLocks": "Ir a Mis Bloqueos",
+    "lockDetails": "Detalles del Bloqueo",
+    "lockSuccessful": "Bloqueo exitoso",
+    "shareDescription": "Comparte este enlace para mostrar el bloqueo de tu token",
+    "shareLock": "Comparte Tu Bloqueo",
+    "shareableLink": "Enlace Compartible",
+    "subtitle": "Has bloqueado con éxito {{amount}} {{symbol}} por {{days}}",
+    "title": "¡Tokens Bloqueados con Éxito!",
+    "token": "Token",
+    "tokenContract": "Dirección del Contrato del Token",
+    "transactionHash": "Hash de Transacción",
+    "unlockDate": "Fecha de Desbloqueo",
+    "viewOnEtherscan": "Ver en Etherscan",
+    "viewOnExplorer": "Ver en el explorador de bloques"
   }
 }

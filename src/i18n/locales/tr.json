@@ -173,7 +173,6 @@
     "noTokens": "Henüz başlatılmış token yok",
     "noResults": "Aramanızla eşleşen token bulunamadı",
     "showing": "{{count}} token gösteriliyor",
-    "showing_plural": "{{count}} token gösteriliyor",
     "rankBy": "Sıralama",
     "marketCap": "Piyasa Değeri",
     "liquidity": "Likidite",
@@ -203,7 +202,10 @@
       "blockchain": "Blokzinciri"
     },
     "filterByBlockchain": "Blokzincire Göre Filtrele:",
-    "allChains": "Tüm Zincirler"
+    "allChains": "Tüm Zincirler",
+    "loadError": "Tokenler yüklenemedi. Veritabanı geçici olarak kullanılamıyor olabilir.",
+    "retry": "Tekrar Dene",
+    "staleData": "Önbelleğe alınmış veriler gösteriliyor — veritabanından yenilenemedi."
   },
   "about": {
     "title": "McFun Hakkında",
@@ -315,7 +317,6 @@
         "description": "Tüm akıllı sözleşmeler GitHub'da açık kaynaktır ve Etherscan'de görüntülenebilir ve doğrulanabilir. Platformu kullanmadan önce kodu kendiniz denetleyin."
       }
     },
-    "founder": "McFun, Jamie McNeill tarafından kurulmuştur ve sürdürülmektedir.",
     "trading": {
       "title": "İşlem Nasıl Çalışır",
       "builtInAMM": {
@@ -341,7 +342,9 @@
     "eth": "ETH",
     "copiedToClipboard": "Panoya kopyalandı!",
     "character": "karakter",
-    "characters": "karakter"
+    "characters": "karakter",
+    "close": "Kapat",
+    "refresh": "Yenile"
   },
   "tokenDetail": {
     "loadingToken": "Token yükleniyor...",
@@ -444,8 +447,7 @@
     "increaseScarcity": "Token Kıtlığını Artırın",
     "increaseScarcityDescription": "Arzı azaltarak, token yakma kıtlığı artırabilir. Birçok proje, zaman içinde token ekonomisini potansiyel olarak etkilemek için deflasyonist bir mekanizma olarak yakmayı kullanır.",
     "permanentRemoval": "Kalıcı ve Doğrulanabilir Çıkarma",
-    "permanentRemovalDescription": "Tüm token yakmaları kalıcıdır ve blockchain üzerinde doğrulanabilir. Yakıldıktan sonra tokenlar kurtarılamaz veya yeniden kullanılamaz. Yakma geçmişi tam şeffaflık için halka açık olarak görülebilir.",
-    "readyToWithdraw": "Çekime Hazır"
+    "permanentRemovalDescription": "Tüm token yakmaları kalıcıdır ve blockchain üzerinde doğrulanabilir. Yakıldıktan sonra tokenlar kurtarılamaz veya yeniden kullanılamaz. Yakma geçmişi tam şeffaflık için halka açık olarak görülebilir."
   },
   "wallet": {
     "connectWallet": "Cüzdanınızı Bağlayın",
@@ -593,8 +595,28 @@
       "approvalFailed": "Token onayı başarısız",
       "lockFailed": "Tokenler kilitlenemedi",
       "unlockFailed": "Token çekme başarısız",
-      "transactionRejected": "Transaction was rejected"
-    }
+      "transactionRejected": "Transaction was rejected",
+      "belowMinimumLock": "Kilit miktarı en az {{minimum}} token olmalıdır",
+      "exceedsMaxDuration": "Kilit süresi {{max}} günü geçemez",
+      "notMcFunToken": "Bu token McFun'da başlatılmamış. Yalnızca McFun'da başlatılan tokenler bu platformda kilitlenebilir.",
+      "userRejected": "İşlem kullanıcı tarafından reddedildi"
+    },
+    "active": "Aktif",
+    "connectWalletDescription": "Token kilitlemek ve kilitleme programına katılmak için lütfen cüzdanınızı bağlayın",
+    "day": "gün",
+    "loadingLocks": "Token kilitleri yükleniyor...",
+    "lockedOn": "Kilitlendi",
+    "marketCap": "Piyasa Değeri",
+    "next": "Sonraki",
+    "noActiveLocksForToken": "Bu token için aktif kilit yok",
+    "of": "/",
+    "page": "Sayfa",
+    "popularTokensDropdown": "Popüler McFun Tokenleri",
+    "previous": "Önceki",
+    "showing": "Gösteriliyor",
+    "unlockedOn": "Kilidi Açıldı",
+    "unlocksOn": "Kilidi Açılır",
+    "viewTransaction": "İşlemi Görüntüle"
   },
   "burn": {
     "title": "Token Yak",
@@ -633,7 +655,25 @@
       "burnFailed": "Tokenları yakma başarısız",
       "userRejected": "İşlem kullanıcı tarafından reddedildi"
     },
-    "ofSupply": "arz oranı"
+    "ofSupply": "arz oranı",
+    "amountBurned": "Yakılan Miktar",
+    "burnDetails": "Yakım Detayları",
+    "connectWalletDescription": "Token yakmak ve dolaşımdaki arzı azaltmak için lütfen cüzdanınızı bağlayın",
+    "contractInfo": "Sözleşme Bilgileri",
+    "copyTokenAddress": "Token adresini kopyala",
+    "copyTxHash": "İşlem hash'ini kopyala",
+    "indexingDescription": "Yakımlar 5 dakikada bir otomatik olarak indekslenir. Az önce token yaktıysanız, yakında burada görünecektir.",
+    "indexingNote": "Not:",
+    "noBurnsDescription": "Token yakanda ilk siz olun ve lider tablosunda görünün!",
+    "noBurnsYet": "Henüz Yakım Yok",
+    "permanentlyDestroyed": "Kalıcı Olarak Yok Edildi",
+    "status": "Durum",
+    "successDescription": "{{amount}} {{symbol}} başarıyla yakıldı",
+    "tokenContract": "Token Sözleşmesi",
+    "transactionHash": "İşlem Hash'i",
+    "viewOnExplorer": "Blok gezgininde görüntüle",
+    "viewToken": "Token Detaylarını Görüntüle",
+    "viewTxOnExplorer": "İşlemi blok gezgininde görüntüle"
   },
   "withdrawSuccess": {
     "title": "Çekim Başarılı!",
@@ -688,5 +728,29 @@
       "withdrawSubmitted": "Withdrawal transaction submitted...",
       "withdrawSuccess": "Successfully withdrawn {{symbol}}!"
     }
+  },
+  "lockCelebration": {
+    "amount": "Miktar",
+    "close": "Kapat",
+    "contractInfo": "Sözleşme Bilgileri",
+    "copyLink": "Paylaşılabilir bağlantıyı kopyala",
+    "copyTokenAddress": "Token adresini kopyala",
+    "copyTxHash": "İşlem hash'ini kopyala",
+    "days": "gün",
+    "duration": "Süre",
+    "goToMyLocks": "Kilitlerime Git",
+    "lockDetails": "Kilit Detayları",
+    "lockSuccessful": "Kilitleme başarılı",
+    "shareDescription": "Token kilidinizi göstermek için bu bağlantıyı paylaşın",
+    "shareLock": "Kilidinizi Paylaşın",
+    "shareableLink": "Paylaşılabilir Bağlantı",
+    "subtitle": "{{amount}} {{symbol}} tokenini {{days}} süresiyle başarıyla kilitlediniz",
+    "title": "Tokenler Başarıyla Kilitlendi!",
+    "token": "Token",
+    "tokenContract": "Token Sözleşme Adresi",
+    "transactionHash": "İşlem Hash'i",
+    "unlockDate": "Kilit Açma Tarihi",
+    "viewOnEtherscan": "Etherscan'de Görüntüle",
+    "viewOnExplorer": "Blok gezgininde görüntüle"
   }
 }

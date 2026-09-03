@@ -173,7 +173,6 @@
     "noTokens": "لم يتم إطلاق رموز بعد",
     "noResults": "لم يتم العثور على رموز تطابق بحثك",
     "showing": "عرض {{count}} رمز",
-    "showing_plural": "عرض {{count}} رموز",
     "rankBy": "ترتيب حسب",
     "marketCap": "القيمة السوقية",
     "liquidity": "السيولة",
@@ -203,7 +202,10 @@
       "blockchain": "البلوكشين"
     },
     "filterByBlockchain": "تصفية حسب البلوكشين:",
-    "allChains": "جميع السلاسل"
+    "allChains": "جميع السلاسل",
+    "loadError": "تعذر تحميل الرموز. قد تكون قاعدة البيانات غير متاحة مؤقتاً.",
+    "retry": "إعادة المحاولة",
+    "staleData": "عرض البيانات المخزنة مؤقتاً — تعذر التحديث من قاعدة البيانات."
   },
   "about": {
     "title": "حول McFun",
@@ -315,7 +317,6 @@
         "description": "جميع العقود الذكية مفتوحة المصدر على GitHub ويمكن عرضها والتحقق منها على Etherscan. تحقق من الكود بنفسك قبل استخدام المنصة."
       }
     },
-    "founder": "تم تأسيس McFun ويتم صيانته من قبل جيمي ماكنيل.",
     "trading": {
       "title": "كيف يعمل التداول",
       "builtInAMM": {
@@ -341,7 +342,9 @@
     "eth": "ETH",
     "copiedToClipboard": "تم النسخ إلى الحافظة!",
     "character": "حرف",
-    "characters": "أحرف"
+    "characters": "أحرف",
+    "close": "إغلاق",
+    "refresh": "تحديث"
   },
   "tokenDetail": {
     "loadingToken": "جارٍ تحميل الرمز...",
@@ -444,8 +447,7 @@
     "increaseScarcity": "زيادة ندرة الرمز",
     "increaseScarcityDescription": "من خلال تقليل العرض، يمكن أن يزيد حرق الرموز من الندرة. تستخدم العديد من المشاريع الحرق كآلية انكماشية للتأثير بشكل محتمل على اقتصاديات الرمز مع مرور الوقت.",
     "permanentRemoval": "إزالة دائمة وقابلة للتحقق",
-    "permanentRemovalDescription": "جميع عمليات حرق الرموز دائمة وقابلة للتحقق على البلوكشين. بمجرد الحرق، لا يمكن استرداد الرموز أو إعادة استخدامها. سجل الحرق مرئي علنًا للشفافية الكاملة.",
-    "readyToWithdraw": "جاهز للسحب"
+    "permanentRemovalDescription": "جميع عمليات حرق الرموز دائمة وقابلة للتحقق على البلوكشين. بمجرد الحرق، لا يمكن استرداد الرموز أو إعادة استخدامها. سجل الحرق مرئي علنًا للشفافية الكاملة."
   },
   "wallet": {
     "connectWallet": "قم بتوصيل محفظتك",
@@ -611,8 +613,10 @@
       "lockFailed": "فشل قفل الرموز",
       "unlockFailed": "فشل سحب الرموز",
       "transactionRejected": "تم رفض المعاملة",
-      "userRejected": "تم رفض المعاملة من قبل المستخدم"
-    }
+      "userRejected": "تم رفض المعاملة من قبل المستخدم",
+      "exceedsMaxDuration": "لا يمكن أن تتجاوز مدة القفل {{max}} يوماً"
+    },
+    "connectWalletDescription": "يرجى توصيل محفظتك لقفل الرموز والمشاركة في برنامج القفل"
   },
   "burn": {
     "title": "حرق الرموز",
@@ -651,7 +655,25 @@
       "burnFailed": "فشل حرق الرموز",
       "userRejected": "تم رفض المعاملة من قبل المستخدم"
     },
-    "ofSupply": "من العرض"
+    "ofSupply": "من العرض",
+    "amountBurned": "الكمية المحروقة",
+    "burnDetails": "تفاصيل الحرق",
+    "connectWalletDescription": "يرجى توصيل محفظتك لحرق الرموز وتقليل العرض المتداول",
+    "contractInfo": "معلومات العقد",
+    "copyTokenAddress": "نسخ عنوان الرمز",
+    "copyTxHash": "نسخ هاش المعاملة",
+    "indexingDescription": "يتم فهرسة الحرق تلقائياً كل 5 دقائق. إذا قمت بحرق الرموز للتو، ستظهر هنا قريباً.",
+    "indexingNote": "ملاحظة:",
+    "noBurnsDescription": "كن أول من يحرق الرموز ويظهر على لوحة المتصدرين!",
+    "noBurnsYet": "لا توجد عمليات حرق بعد",
+    "permanentlyDestroyed": "تم التدمير بشكل دائم",
+    "status": "الحالة",
+    "successDescription": "تم حرق {{amount}} {{symbol}} بنجاح",
+    "tokenContract": "عقد الرمز",
+    "transactionHash": "هاش المعاملة",
+    "viewOnExplorer": "عرض على مستكشف الكتل",
+    "viewToken": "عرض تفاصيل الرمز",
+    "viewTxOnExplorer": "عرض المعاملة على مستكشف الكتل"
   },
   "withdrawSuccess": {
     "title": "سحب ناجح!",
@@ -706,5 +728,29 @@
       "withdrawSubmitted": "Withdrawal transaction submitted...",
       "withdrawSuccess": "Successfully withdrawn {{symbol}}!"
     }
+  },
+  "lockCelebration": {
+    "amount": "الكمية",
+    "close": "إغلاق",
+    "contractInfo": "معلومات العقد",
+    "copyLink": "نسخ الرابط القابل للمشاركة",
+    "copyTokenAddress": "نسخ عنوان الرمز",
+    "copyTxHash": "نسخ هاش المعاملة",
+    "days": "أيام",
+    "duration": "المدة",
+    "goToMyLocks": "الذهاب إلى أقفالي",
+    "lockDetails": "تفاصيل القفل",
+    "lockSuccessful": "تم القفل بنجاح",
+    "shareDescription": "شارك هذا الرابط لإظهار قفل الرمز الخاص بك",
+    "shareLock": "شارك قفلك",
+    "shareableLink": "رابط قابل للمشاركة",
+    "subtitle": "لقد قمت بقفل {{amount}} {{symbol}} لمدة {{days}} بنجاح",
+    "title": "تم قفل الرموز بنجاح!",
+    "token": "الرمز",
+    "tokenContract": "عنوان عقد الرمز",
+    "transactionHash": "هاش المعاملة",
+    "unlockDate": "تاريخ إلغاء القفل",
+    "viewOnEtherscan": "عرض على Etherscan",
+    "viewOnExplorer": "عرض على مستكشف الكتل"
   }
 }

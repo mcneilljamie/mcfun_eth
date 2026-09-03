@@ -173,7 +173,6 @@
     "noTokens": "Chưa có token nào được ra mắt",
     "noResults": "Không tìm thấy token nào phù hợp với tìm kiếm của bạn",
     "showing": "Hiển thị {{count}} token",
-    "showing_plural": "Hiển thị {{count}} token",
     "rankBy": "Xếp hạng theo",
     "marketCap": "Vốn Hóa Thị Trường",
     "liquidity": "Thanh Khoản",
@@ -203,7 +202,10 @@
       "blockchain": "Blockchain"
     },
     "filterByBlockchain": "Lọc theo Blockchain:",
-    "allChains": "Tất cả chuỗi"
+    "allChains": "Tất cả chuỗi",
+    "loadError": "Không thể tải token. Cơ sở dữ liệu có thể tạm thời không khả dụng.",
+    "retry": "Thử lại",
+    "staleData": "Hiển thị dữ liệu đã lưu trong bộ nhớ đệm — không thể làm mới từ cơ sở dữ liệu."
   },
   "about": {
     "title": "Giới Thiệu McFun",
@@ -315,7 +317,6 @@
         "description": "Tất cả smart contract đều mã nguồn mở trên GitHub và có thể xem và xác minh trên Etherscan. Tự kiểm tra mã trước khi sử dụng nền tảng."
       }
     },
-    "founder": "McFun được thành lập và duy trì bởi Jamie McNeill.",
     "trading": {
       "title": "Cách Giao Dịch Hoạt Động",
       "builtInAMM": {
@@ -341,7 +342,9 @@
     "eth": "ETH",
     "copiedToClipboard": "Đã sao chép vào clipboard!",
     "character": "ký tự",
-    "characters": "ký tự"
+    "characters": "ký tự",
+    "close": "Đóng",
+    "refresh": "Làm mới"
   },
   "tokenDetail": {
     "loadingToken": "Đang tải token...",
@@ -444,8 +447,7 @@
     "increaseScarcity": "Tăng Sự Khan Hiếm của Token",
     "increaseScarcityDescription": "Bằng cách giảm nguồn cung, đốt token có thể tăng sự khan hiếm. Nhiều dự án sử dụng đốt như một cơ chế giảm phát để có khả năng ảnh hưởng đến kinh tế token theo thời gian.",
     "permanentRemoval": "Loại Bỏ Vĩnh Viễn và Có Thể Xác Minh",
-    "permanentRemovalDescription": "Tất cả các lần đốt token đều vĩnh viễn và có thể xác minh trên blockchain. Một khi đã đốt, token không thể khôi phục hoặc tái sử dụng. Lịch sử đốt có thể nhìn thấy công khai để có tính minh bạch hoàn toàn.",
-    "readyToWithdraw": "Sẵn Sàng Rút"
+    "permanentRemovalDescription": "Tất cả các lần đốt token đều vĩnh viễn và có thể xác minh trên blockchain. Một khi đã đốt, token không thể khôi phục hoặc tái sử dụng. Lịch sử đốt có thể nhìn thấy công khai để có tính minh bạch hoàn toàn."
   },
   "wallet": {
     "connectWallet": "Kết Nối Ví Của Bạn",
@@ -593,8 +595,28 @@
       "approvalFailed": "Phê duyệt token thất bại",
       "lockFailed": "Không thể khóa token",
       "unlockFailed": "Không thể rút token",
-      "transactionRejected": "Transaction was rejected"
-    }
+      "transactionRejected": "Transaction was rejected",
+      "belowMinimumLock": "Số lượng khóa phải ít nhất {{minimum}} token",
+      "exceedsMaxDuration": "Thời gian khóa không thể vượt quá {{max}} ngày",
+      "notMcFunToken": "Token này không được khởi chạy trên McFun. Chỉ các token được khởi chạy trên McFun mới có thể được khóa trên nền tảng này.",
+      "userRejected": "Giao dịch đã bị người dùng từ chối"
+    },
+    "active": "Hoạt động",
+    "connectWalletDescription": "Vui lòng kết nối ví của bạn để khóa token và tham gia chương trình khóa",
+    "day": "ngày",
+    "loadingLocks": "Đang tải khóa token...",
+    "lockedOn": "Khóa vào",
+    "marketCap": "Vốn hóa thị trường",
+    "next": "Tiếp theo",
+    "noActiveLocksForToken": "Không có khóa hoạt động cho token này",
+    "of": "trong",
+    "page": "Trang",
+    "popularTokensDropdown": "Token McFun Phổ biến",
+    "previous": "Trước",
+    "showing": "Hiển thị",
+    "unlockedOn": "Mở khóa vào",
+    "unlocksOn": "Mở khóa vào",
+    "viewTransaction": "Xem Giao dịch"
   },
   "burn": {
     "title": "Đốt Token",
@@ -633,7 +655,25 @@
       "burnFailed": "Đốt token không thành công",
       "userRejected": "Giao dịch bị người dùng từ chối"
     },
-    "ofSupply": "của nguồn cung"
+    "ofSupply": "của nguồn cung",
+    "amountBurned": "Số Lượng Đã Đốt",
+    "burnDetails": "Chi Tiết Đốt",
+    "connectWalletDescription": "Vui lòng kết nối ví của bạn để đốt token và giảm nguồn cung lưu thông",
+    "contractInfo": "Thông Tin Hợp Đồng",
+    "copyTokenAddress": "Sao chép địa chỉ token",
+    "copyTxHash": "Sao chép hash giao dịch",
+    "indexingDescription": "Việc đốt được tự động lập chỉ mục mỗi 5 phút. Nếu bạn vừa đốt token, chúng sẽ xuất hiện tại đây trong thời gian ngắn.",
+    "indexingNote": "Lưu ý:",
+    "noBurnsDescription": "Hãy là người đầu tiên đốt token và xuất hiện trên bảng xếp hạng!",
+    "noBurnsYet": "Chưa Có Lần Đốt Nào",
+    "permanentlyDestroyed": "Hủy Diệt Vĩnh Viễn",
+    "status": "Trạng Thái",
+    "successDescription": "Đã đốt thành công {{amount}} {{symbol}}",
+    "tokenContract": "Hợp Đồng Token",
+    "transactionHash": "Hash Giao Dịch",
+    "viewOnExplorer": "Xem trên trình khám phá khối",
+    "viewToken": "Xem Chi Tiết Token",
+    "viewTxOnExplorer": "Xem giao dịch trên trình khám phá khối"
   },
   "withdrawSuccess": {
     "title": "Rút Thành Công!",
@@ -688,5 +728,29 @@
       "withdrawSubmitted": "Withdrawal transaction submitted...",
       "withdrawSuccess": "Successfully withdrawn {{symbol}}!"
     }
+  },
+  "lockCelebration": {
+    "amount": "Số lượng",
+    "close": "Đóng",
+    "contractInfo": "Thông Tin Hợp Đồng",
+    "copyLink": "Sao chép liên kết có thể chia sẻ",
+    "copyTokenAddress": "Sao chép địa chỉ token",
+    "copyTxHash": "Sao chép hash giao dịch",
+    "days": "ngày",
+    "duration": "Thời hạn",
+    "goToMyLocks": "Đi đến Khóa của tôi",
+    "lockDetails": "Chi Tiết Khóa",
+    "lockSuccessful": "Khóa thành công",
+    "shareDescription": "Chia sẻ liên kết này để hiển thị khóa token của bạn",
+    "shareLock": "Chia Sẻ Khóa Của Bạn",
+    "shareableLink": "Liên Kết Có Thể Chia Sẻ",
+    "subtitle": "Bạn đã khóa thành công {{amount}} {{symbol}} trong {{days}}",
+    "title": "Token Đã Khóa Thành Công!",
+    "token": "Token",
+    "tokenContract": "Địa Chỉ Hợp Đồng Token",
+    "transactionHash": "Hash Giao Dịch",
+    "unlockDate": "Ngày Mở Khóa",
+    "viewOnEtherscan": "Xem trên Etherscan",
+    "viewOnExplorer": "Xem trên trình khám phá khối"
   }
 }

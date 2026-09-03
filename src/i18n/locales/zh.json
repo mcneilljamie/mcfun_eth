@@ -45,8 +45,8 @@
     "howItWorks": {
       "title": "如何运作",
       "step1": {
-        "title": "添加流动性",
-        "description": "存入ETH以初始化代币流动性池。"
+        "title": "发行代币",
+        "description": "一键创建代币和永久流动性"
       },
       "step2": {
         "title": "开始交易",
@@ -67,7 +67,7 @@
         },
         "lowCost": {
           "title": "低成本",
-          "description": "Easiest place to launch on Ethereum and Base"
+          "description": "在以太坊和Base上发行代币最简单的地方"
         }
       }
     }
@@ -173,7 +173,6 @@
     "noTokens": "尚未发行代币",
     "noResults": "未找到与您的搜索匹配的代币",
     "showing": "显示{{count}}个代币",
-    "showing_plural": "显示{{count}}个代币",
     "rankBy": "排序方式",
     "marketCap": "市值",
     "liquidity": "流动性",
@@ -203,7 +202,10 @@
       "blockchain": "区块链"
     },
     "filterByBlockchain": "按区块链筛选：",
-    "allChains": "所有链"
+    "allChains": "所有链",
+    "loadError": "无法加载代币。数据库可能暂时不可用。",
+    "retry": "重试",
+    "staleData": "显示缓存数据 — 无法从数据库刷新。"
   },
   "about": {
     "title": "关于McFun",
@@ -216,7 +218,7 @@
       },
       "step2": {
         "title": "2. 自动流动性池",
-        "description": "代币创建后立即创建自动做市商（AMM）流动性池。您将ETH（最低0.1 ETH）与分配的代币一起存入以形成初始流动性。交易使用恒定乘积公式（x * y = k）立即启用，类似于Uniswap V2。"
+        "description": "代币创建后立即创建自动做市商（AMM）流动性池。您将ETH（以太坊上最低0.1 ETH，Base上最低0.01 ETH）与分配的代币一起存入以形成初始流动性。交易使用恒定乘积公式（x * y = k）立即启用，类似于Uniswap V2。"
       },
       "step3": {
         "title": "3. 流动性销毁",
@@ -232,7 +234,7 @@
       "description": "通过McFun启动的每个代币都会在我们的平台上获得永久可见性，为您的项目提供持久的曝光机会，吸引潜在的交易者和投资者。",
       "ranking": {
         "title": "自动上市与排名",
-        "description": "所有代币都会自动列在热门代币页面上，并提供灵活的排名选项。用户可以按市值、流动性或年龄对代币进行排序。"
+        "description": "所有代币都会自动列在热门代币页面上，并提供灵活的排名选项。用户可以按市值、流动性、上市时间或过去24小时的最大涨跌幅对代币进行排序。"
       },
       "permanent": {
         "title": "永久上市",
@@ -255,7 +257,7 @@
       },
       "freeTokenLocking": {
         "title": "免费代币锁定",
-        "description": "完全免费锁定您的代币任意时长。以零成本与您的社区建立信任。"
+        "description": "完全免费锁定您的代币长达10,000天。以零成本与您的社区建立信任。"
       },
       "easyBurning": {
         "title": "轻松销毁代币",
@@ -263,7 +265,7 @@
       },
       "extremeLowFees": {
         "title": "极低费用",
-        "description": "仅0.4%交易费。无启动费用，无锁定费用。保留更多价值。"
+        "description": "低交易费：以太坊上0.4%，Base上0.8%。无发行费用，无锁定费用。保留更多价值。"
       },
       "simple": {
         "title": "简单直接",
@@ -271,7 +273,7 @@
       },
       "lowBarrier": {
         "title": "低进入门槛",
-        "description": "仅需0.1 ETH最低流动性。发行无需平台费用。"
+        "description": "低最低流动性：以太坊上0.1 ETH，Base上0.01 ETH。发行无需平台费用。"
       },
       "instant": {
         "title": "即时流动性",
@@ -292,12 +294,12 @@
       "locking": {
         "title": "代币锁定费用",
         "amount": "$0",
-        "description": "完全免费锁定任何 ERC-20 代币任意时长。您只需支付以太坊网络 gas 费用。"
+        "description": "完全免费锁定 McFun 代币长达10,000天。您只需支付网络 gas 费用。"
       },
       "trading": {
         "title": "交易费用",
         "amount": "0.4% - 0.8%",
-        "description": "每次代币交换都会产生少量费用：以太坊上0.4%，Base上0.8%。此费用支持平台基础设施、开发和持续改进。"
+        "description": "每次代币交换都会产生少量费用：以太坊上0.4%，Base上0.8%。费用路由至 McFun 国库，以支持平台基础设施、开发和持续改进。"
       }
     },
     "security": {
@@ -315,7 +317,6 @@
         "description": "所有智能合约都在GitHub上开源，并可以在Etherscan上查看和验证。使用平台前请自行审核代码。"
       }
     },
-    "founder": "McFun由杰米·麦克尼尔创立并维护。",
     "trading": {
       "title": "交易如何运作",
       "builtInAMM": {
@@ -341,7 +342,9 @@
     "eth": "ETH",
     "copiedToClipboard": "已复制到剪贴板！",
     "character": "字符",
-    "characters": "字符"
+    "characters": "字符",
+    "close": "关闭",
+    "refresh": "刷新"
   },
   "tokenDetail": {
     "loadingToken": "加载代币中...",
@@ -395,7 +398,7 @@
   "aboutPage": {
     "platformStats": "平台统计",
     "totalMarketCap": "总市值",
-    "combinedFDV": "所有代币的综合FDV",
+    "combinedFDV": "所有代币的总市值（不含已销毁供应）",
     "totalLiquidity": "总流动性",
     "totalEthInPools": "所有池的两侧",
     "projectsListed": "已列出的项目",
@@ -444,8 +447,7 @@
     "increaseScarcity": "增加代币稀缺性",
     "increaseScarcityDescription": "通过减少供应，代币销毁可以增加稀缺性。许多项目使用销毁作为通缩机制，以随时间潜在地影响代币经济。",
     "permanentRemoval": "永久且可验证的移除",
-    "permanentRemovalDescription": "所有代币销毁都是永久性的并在区块链上可验证。一旦销毁，代币无法恢复或重新使用。销毁历史公开可见，完全透明。",
-    "readyToWithdraw": "准备提取"
+    "permanentRemovalDescription": "所有代币销毁都是永久性的并在区块链上可验证。一旦销毁，代币无法恢复或重新使用。销毁历史公开可见，完全透明。"
   },
   "wallet": {
     "connectWallet": "连接您的钱包",
@@ -557,8 +559,8 @@
     "step3Title": "锁定和跟踪",
     "step3Description": "批准并锁定您的代币。期限到期后可以解锁",
     "yourLocks": "您的活跃锁定",
-    "allLocks": "Upcoming Token Unlocks",
-    "upcomingLocks": "Upcoming Locks",
+    "allLocks": "即将解锁的代币锁定",
+    "upcomingLocks": "即将到来的锁定",
     "topLockedTokens": "按总价值排名的顶级锁定McFun代币",
     "totalLocked": "总锁定",
     "lockCount": "锁定数量",
@@ -593,8 +595,28 @@
       "approvalFailed": "代币批准失败",
       "lockFailed": "锁定代币失败",
       "unlockFailed": "提取代币失败",
-      "transactionRejected": "Transaction was rejected"
-    }
+      "transactionRejected": "交易被拒绝",
+      "belowMinimumLock": "锁定数量必须至少为 {{minimum}} 个代币",
+      "exceedsMaxDuration": "锁定期限不能超过 {{max}} 天",
+      "notMcFunToken": "此代币未在 McFun 上发行。只有在 McFun 上发行的代币才能在此平台上锁定。",
+      "userRejected": "用户拒绝了交易"
+    },
+    "active": "活跃",
+    "connectWalletDescription": "请连接您的钱包以锁定代币并参与锁定计划",
+    "day": "天",
+    "loadingLocks": "加载代币锁定中...",
+    "lockedOn": "锁定日期",
+    "marketCap": "市值",
+    "next": "下一页",
+    "noActiveLocksForToken": "此代币没有活跃的锁定",
+    "of": "共",
+    "page": "页",
+    "popularTokensDropdown": "热门 McFun 代币",
+    "previous": "上一页",
+    "showing": "显示",
+    "unlockedOn": "解锁日期",
+    "unlocksOn": "解锁日期",
+    "viewTransaction": "查看交易"
   },
   "burn": {
     "title": "销毁代币",
@@ -607,7 +629,7 @@
     "yourBalance": "您的余额",
     "amountToBurn": "销毁数量",
     "warning": "永久操作 - 此操作无法撤销",
-    "warningDescription": "被销毁的代币将发送到零地址（0x000...000）并永久从流通中移除。没有办法恢复它们。",
+    "warningDescription": "被销毁的代币将发送到死地址（0x000...dEaD）并永久从流通中移除。没有办法恢复它们。",
     "burnButton": "销毁代币",
     "confirmButton": "我明白 - 销毁代币",
     "cancelButton": "取消",
@@ -633,7 +655,25 @@
       "burnFailed": "销毁代币失败",
       "userRejected": "用户拒绝了交易"
     },
-    "ofSupply": "供应量的"
+    "ofSupply": "供应量的",
+    "amountBurned": "销毁数量",
+    "burnDetails": "销毁详情",
+    "connectWalletDescription": "请连接您的钱包以销毁代币并减少流通供应",
+    "contractInfo": "合约信息",
+    "copyTokenAddress": "复制代币地址",
+    "copyTxHash": "复制交易哈希",
+    "indexingDescription": "销毁每5分钟自动索引。如果您刚刚销毁了代币，它们很快就会出现在这里。",
+    "indexingNote": "注意：",
+    "noBurnsDescription": "成为第一个销毁代币并登上排行榜的人！",
+    "noBurnsYet": "尚无销毁",
+    "permanentlyDestroyed": "永久销毁",
+    "status": "状态",
+    "successDescription": "成功销毁 {{amount}} {{symbol}}",
+    "tokenContract": "代币合约",
+    "transactionHash": "交易哈希",
+    "viewOnExplorer": "在区块浏览器上查看",
+    "viewToken": "查看代币详情",
+    "viewTxOnExplorer": "在区块浏览器上查看交易"
   },
   "withdrawSuccess": {
     "title": "提取成功！",
@@ -645,48 +685,72 @@
     "close": "关闭"
   },
   "myLocks": {
-    "title": "My Locked Tokens",
-    "subtitle": "View and manage all your locked tokens",
-    "connectWallet": "Connect Your Wallet",
-    "connectWalletDescription": "Please connect your wallet to view your locked tokens",
-    "loading": "Loading your locks...",
-    "noActiveLocks": "No Active Locks",
-    "noLocksDescription": "You don't have any active token locks yet",
-    "lockTokensButton": "Lock Tokens",
-    "totalLockedValue": "Total Locked Value",
-    "activeLock": "active lock",
-    "activeLocks": "active locks",
-    "readyToUnlock": "Ready to Unlock",
-    "viewAllForToken": "View all locks for this token",
-    "lockedOn": "Locked On",
-    "lockDuration": "Lock Duration",
-    "unlocksOn": "Unlocks On",
-    "unlockedOn": "Unlocked On",
-    "day": "day",
-    "days": "days",
-    "hour": "hour",
-    "hours": "hours",
+    "title": "我的锁定代币",
+    "subtitle": "查看和管理您所有锁定的代币",
+    "connectWallet": "连接您的钱包",
+    "connectWalletDescription": "请连接您的钱包以查看您锁定的代币",
+    "loading": "加载您的锁定中...",
+    "noActiveLocks": "没有活跃的锁定",
+    "noLocksDescription": "您还没有任何活跃的代币锁定",
+    "lockTokensButton": "锁定代币",
+    "totalLockedValue": "总锁定价值",
+    "activeLock": "个活跃锁定",
+    "activeLocks": "个活跃锁定",
+    "readyToUnlock": "准备解锁",
+    "viewAllForToken": "查看此代币的所有锁定",
+    "lockedOn": "锁定日期",
+    "lockDuration": "锁定期限",
+    "unlocksOn": "解锁日期",
+    "unlockedOn": "解锁日期",
+    "day": "天",
+    "days": "天",
+    "hour": "小时",
+    "hours": "小时",
     "minute": "分钟",
     "minutes": "分钟",
-    "remaining": "remaining",
-    "viewTransaction": "View Transaction",
-    "withdrawing": "Withdrawing...",
-    "withdraw": "Withdraw",
-    "withdrawnLocks": "Withdrawn Locks",
-    "withdrawn": "Withdrawn",
-    "lockedFor": "Locked for",
+    "remaining": "剩余",
+    "viewTransaction": "查看交易",
+    "withdrawing": "提取中...",
+    "withdraw": "提取",
+    "withdrawnLocks": "已提取的锁定",
+    "withdrawn": "已提取",
+    "lockedFor": "锁定时长",
     "errors": {
-      "failedToLoad": "Failed to load your locks",
-      "connectWallet": "Please connect your wallet",
-      "lockerNotAvailable": "Token locker not available on this network",
-      "lockNotEnded": "Lock period has not ended yet",
-      "withdrawFailed": "Failed to withdraw tokens",
-      "transactionRejected": "Transaction was rejected",
-      "alreadyWithdrawn": "This lock has already been withdrawn"
+      "failedToLoad": "加载您的锁定失败",
+      "connectWallet": "请连接您的钱包",
+      "lockerNotAvailable": "此网络上代币锁定器不可用",
+      "lockNotEnded": "锁定期尚未结束",
+      "withdrawFailed": "提取代币失败",
+      "transactionRejected": "交易被拒绝",
+      "alreadyWithdrawn": "此锁定已被提取"
     },
     "toasts": {
-      "withdrawSubmitted": "Withdrawal transaction submitted...",
-      "withdrawSuccess": "Successfully withdrawn {{symbol}}!"
+      "withdrawSubmitted": "提取交易已提交...",
+      "withdrawSuccess": "成功提取 {{symbol}}！"
     }
+  },
+  "lockCelebration": {
+    "amount": "数量",
+    "close": "关闭",
+    "contractInfo": "合约信息",
+    "copyLink": "复制可分享链接",
+    "copyTokenAddress": "复制代币地址",
+    "copyTxHash": "复制交易哈希",
+    "days": "天",
+    "duration": "期限",
+    "goToMyLocks": "前往我的锁定",
+    "lockDetails": "锁定详情",
+    "lockSuccessful": "锁定成功",
+    "shareDescription": "分享此链接以展示您的代币锁定",
+    "shareLock": "分享您的锁定",
+    "shareableLink": "可分享链接",
+    "subtitle": "您已成功锁定 {{amount}} {{symbol}}，期限 {{days}}",
+    "title": "代币锁定成功！",
+    "token": "代币",
+    "tokenContract": "代币合约地址",
+    "transactionHash": "交易哈希",
+    "unlockDate": "解锁日期",
+    "viewOnEtherscan": "在 Etherscan 上查看",
+    "viewOnExplorer": "在区块浏览器上查看"
   }
 }

@@ -173,7 +173,6 @@
     "noTokens": "Aucun token lancé pour le moment",
     "noResults": "Aucun token trouvé correspondant à votre recherche",
     "showing": "Affichage de {{count}} token",
-    "showing_plural": "Affichage de {{count}} tokens",
     "rankBy": "Classer par",
     "marketCap": "Capitalisation Boursière",
     "liquidity": "Liquidité",
@@ -203,7 +202,10 @@
       "blockchain": "Blockchain"
     },
     "filterByBlockchain": "Filtrer par Blockchain :",
-    "allChains": "Toutes les Chaînes"
+    "allChains": "Toutes les Chaînes",
+    "loadError": "Impossible de charger les tokens. La base de données peut être temporairement indisponible.",
+    "retry": "Réessayer",
+    "staleData": "Affichage des données en cache — impossible d'actualiser depuis la base de données."
   },
   "about": {
     "title": "À Propos de McFun",
@@ -315,7 +317,6 @@
         "description": "Tous les contrats intelligents sont en open source sur GitHub et peuvent être consultés et vérifiés sur Etherscan. Auditez le code vous-même avant d'utiliser la plateforme."
       }
     },
-    "founder": "McFun a été fondé et est maintenu par Jamie McNeill.",
     "trading": {
       "title": "Comment Fonctionne le Trading",
       "builtInAMM": {
@@ -341,7 +342,9 @@
     "eth": "ETH",
     "copiedToClipboard": "Copié dans le presse-papiers !",
     "character": "caractère",
-    "characters": "caractères"
+    "characters": "caractères",
+    "close": "Fermer",
+    "refresh": "Actualiser"
   },
   "tokenDetail": {
     "loadingToken": "Chargement du token...",
@@ -444,8 +447,7 @@
     "increaseScarcity": "Augmenter la Rareté du Token",
     "increaseScarcityDescription": "En réduisant l'offre, le brûlage de tokens peut augmenter la rareté. De nombreux projets utilisent le brûlage comme mécanisme déflationniste pour potentiellement impacter l'économie du token au fil du temps.",
     "permanentRemoval": "Suppression Permanente et Vérifiable",
-    "permanentRemovalDescription": "Tous les brûlages de tokens sont permanents et vérifiables sur la blockchain. Une fois brûlés, les tokens ne peuvent être récupérés ou réutilisés. L'historique de brûlage est publiquement visible pour une transparence complète.",
-    "readyToWithdraw": "Prêt à Retirer"
+    "permanentRemovalDescription": "Tous les brûlages de tokens sont permanents et vérifiables sur la blockchain. Une fois brûlés, les tokens ne peuvent être récupérés ou réutilisés. L'historique de brûlage est publiquement visible pour une transparence complète."
   },
   "wallet": {
     "connectWallet": "Connecter Votre Portefeuille",
@@ -611,8 +613,10 @@
       "lockFailed": "Échec du verrouillage des tokens",
       "unlockFailed": "Échec du retrait des tokens",
       "transactionRejected": "Transaction rejetée",
-      "userRejected": "Transaction rejetée par l'utilisateur"
-    }
+      "userRejected": "Transaction rejetée par l'utilisateur",
+      "exceedsMaxDuration": "La durée de verrouillage ne peut pas dépasser {{max}} jours"
+    },
+    "connectWalletDescription": "Veuillez connecter votre portefeuille pour verrouiller des tokens et participer au programme de verrouillage"
   },
   "burn": {
     "title": "Brûler des Tokens",
@@ -651,7 +655,25 @@
       "burnFailed": "Échec du brûlage des tokens",
       "userRejected": "Transaction rejetée par l'utilisateur"
     },
-    "ofSupply": "de l'offre"
+    "ofSupply": "de l'offre",
+    "amountBurned": "Quantité Brûlée",
+    "burnDetails": "Détails de la Brûlure",
+    "connectWalletDescription": "Veuillez connecter votre portefeuille pour brûler des tokens et réduire l'offre en circulation",
+    "contractInfo": "Informations du Contrat",
+    "copyTokenAddress": "Copier l'adresse du token",
+    "copyTxHash": "Copier le hash de transaction",
+    "indexingDescription": "Les brûlures sont indexées automatiquement toutes les 5 minutes. Si vous venez de brûler des tokens, ils apparaîtront ici sous peu.",
+    "indexingNote": "Note :",
+    "noBurnsDescription": "Soyez le premier à brûler des tokens et à apparaître sur le classement !",
+    "noBurnsYet": "Aucune Brûlure Pour le Moment",
+    "permanentlyDestroyed": "Détruit Définitivement",
+    "status": "Statut",
+    "successDescription": "{{amount}} {{symbol}} brûlés avec succès",
+    "tokenContract": "Contrat du Token",
+    "transactionHash": "Hash de Transaction",
+    "viewOnExplorer": "Voir sur l'explorateur de blocs",
+    "viewToken": "Voir les Détails du Token",
+    "viewTxOnExplorer": "Voir la transaction sur l'explorateur de blocs"
   },
   "withdrawSuccess": {
     "title": "Retrait Réussi !",
@@ -706,5 +728,29 @@
       "withdrawSubmitted": "Withdrawal transaction submitted...",
       "withdrawSuccess": "Successfully withdrawn {{symbol}}!"
     }
+  },
+  "lockCelebration": {
+    "amount": "Quantité",
+    "close": "Fermer",
+    "contractInfo": "Informations du Contrat",
+    "copyLink": "Copier le lien partageable",
+    "copyTokenAddress": "Copier l'adresse du token",
+    "copyTxHash": "Copier le hash de transaction",
+    "days": "jours",
+    "duration": "Durée",
+    "goToMyLocks": "Aller à Mes Verrouillages",
+    "lockDetails": "Détails du Verrouillage",
+    "lockSuccessful": "Verrouillage réussi",
+    "shareDescription": "Partagez ce lien pour montrer le verrouillage de votre token",
+    "shareLock": "Partagez Votre Verrouillage",
+    "shareableLink": "Lien Partageable",
+    "subtitle": "Vous avez verrouillé {{amount}} {{symbol}} pour {{days}} avec succès",
+    "title": "Tokens Verrouillés avec Succès !",
+    "token": "Token",
+    "tokenContract": "Adresse du Contrat du Token",
+    "transactionHash": "Hash de Transaction",
+    "unlockDate": "Date de Déverrouillage",
+    "viewOnEtherscan": "Voir sur Etherscan",
+    "viewOnExplorer": "Voir sur l'explorateur de blocs"
   }
 }

@@ -173,7 +173,6 @@
     "noTokens": "अभी तक कोई टोकन लॉन्च नहीं किया गया",
     "noResults": "आपकी खोज से मेल खाने वाला कोई टोकन नहीं मिला",
     "showing": "{{count}} टोकन दिखा रहा है",
-    "showing_plural": "{{count}} टोकन दिखा रहे हैं",
     "rankBy": "रैंकिंग के आधार",
     "marketCap": "मार्केट कैप",
     "liquidity": "लिक्विडिटी",
@@ -203,7 +202,10 @@
       "blockchain": "ब्लॉकचेन"
     },
     "filterByBlockchain": "ब्लॉकचेन से फ़िल्टर करें:",
-    "allChains": "सभी चेन"
+    "allChains": "सभी चेन",
+    "loadError": "टोकन लोड नहीं किए जा सके। डेटाबेस अस्थायी रूप से अनुपलब्ध हो सकता है।",
+    "retry": "पुनः प्रयास करें",
+    "staleData": "कैश किए गए डेटा दिखाए जा रहे हैं — डेटाबेस से रिफ्रेश नहीं हो सका।"
   },
   "about": {
     "title": "McFun के बारे में",
@@ -315,7 +317,6 @@
         "description": "सभी स्मार्ट कॉन्ट्रैक्ट GitHub पर ओपन सोर्स हैं और Etherscan पर देखे और सत्यापित किए जा सकते हैं। प्लेटफ़ॉर्म का उपयोग करने से पहले कोड का खुद ऑडिट करें।"
       }
     },
-    "founder": "McFun की स्थापना और रखरखाव Jamie McNeill द्वारा किया गया है।",
     "trading": {
       "title": "ट्रेडिंग कैसे काम करती है",
       "builtInAMM": {
@@ -341,7 +342,9 @@
     "eth": "ETH",
     "copiedToClipboard": "क्लिपबोर्ड पर कॉपी किया गया!",
     "character": "अक्षर",
-    "characters": "अक्षर"
+    "characters": "अक्षर",
+    "close": "बंद करें",
+    "refresh": "रिफ्रेश"
   },
   "tokenDetail": {
     "loadingToken": "टोकन लोड हो रहा है...",
@@ -444,8 +447,7 @@
     "increaseScarcity": "टोकन दुर्लभता बढ़ाएं",
     "increaseScarcityDescription": "आपूर्ति को कम करके, टोकन बर्न दुर्लभता बढ़ा सकता है। कई परियोजनाएं समय के साथ टोकन अर्थशास्त्र पर संभावित प्रभाव के लिए डिफ्लेशनरी तंत्र के रूप में बर्न का उपयोग करती हैं।",
     "permanentRemoval": "स्थायी और सत्यापन योग्य हटाना",
-    "permanentRemovalDescription": "सभी टोकन बर्न स्थायी हैं और ब्लॉकचेन पर सत्यापन योग्य हैं। एक बार बर्न होने के बाद, टोकन पुनर्प्राप्त या पुन: उपयोग नहीं किए जा सकते। पूर्ण पारदर्शिता के लिए बर्न इतिहास सार्वजनिक रूप से दृश्यमान है।",
-    "readyToWithdraw": "निकासी के लिए तैयार"
+    "permanentRemovalDescription": "सभी टोकन बर्न स्थायी हैं और ब्लॉकचेन पर सत्यापन योग्य हैं। एक बार बर्न होने के बाद, टोकन पुनर्प्राप्त या पुन: उपयोग नहीं किए जा सकते। पूर्ण पारदर्शिता के लिए बर्न इतिहास सार्वजनिक रूप से दृश्यमान है।"
   },
   "wallet": {
     "connectWallet": "अपना वॉलेट कनेक्ट करें",
@@ -611,8 +613,10 @@
       "lockFailed": "टोकन लॉक करने में विफल",
       "unlockFailed": "टोकन निकालने में विफल",
       "transactionRejected": "लेनदेन अस्वीकृत",
-      "userRejected": "उपयोगकर्ता द्वारा लेनदेन अस्वीकृत किया गया"
-    }
+      "userRejected": "उपयोगकर्ता द्वारा लेनदेन अस्वीकृत किया गया",
+      "exceedsMaxDuration": "लॉक अवधि {{max}} दिन से अधिक नहीं हो सकती"
+    },
+    "connectWalletDescription": "टोकन लॉक करने और लॉकिंग कार्यक्रम में भाग लेने के लिए कृपया अपना वॉलेट कनेक्ट करें"
   },
   "burn": {
     "title": "टोकन जलाएं",
@@ -651,7 +655,25 @@
       "burnFailed": "टोकन जलाने में विफल",
       "userRejected": "लेनदेन उपयोगकर्ता द्वारा अस्वीकार किया गया"
     },
-    "ofSupply": "आपूर्ति का"
+    "ofSupply": "आपूर्ति का",
+    "amountBurned": "जलाई गई मात्रा",
+    "burnDetails": "बर्न विवरण",
+    "connectWalletDescription": "टोकन जलाने और परिसंचारी आपूर्ति कम करने के लिए कृपया अपना वॉलेट कनेक्ट करें",
+    "contractInfo": "अनुबंध जानकारी",
+    "copyTokenAddress": "टोकन पता कॉपी करें",
+    "copyTxHash": "लेन-देन हैश कॉपी करें",
+    "indexingDescription": "बर्न हर 5 मिनट में स्वचालित रूप से अनुक्रमित होते हैं। यदि आपने अभी टोकन जलाए हैं, तो वे जल्द ही यहाँ दिखाई देंगे।",
+    "indexingNote": "नोट:",
+    "noBurnsDescription": "टोकन जलाने वाले पहले व्यक्ति बनें और लीडरबोर्ड पर दिखाई दें!",
+    "noBurnsYet": "अभी तक कोई बर्न नहीं",
+    "permanentlyDestroyed": "स्थायी रूप से नष्ट",
+    "status": "स्थिति",
+    "successDescription": "{{amount}} {{symbol}} सफलतापूर्वक जलाए गए",
+    "tokenContract": "टोकन अनुबंध",
+    "transactionHash": "लेन-देन हैश",
+    "viewOnExplorer": "ब्लॉक एक्सप्लोरर पर देखें",
+    "viewToken": "टोकन विवरण देखें",
+    "viewTxOnExplorer": "ब्लॉक एक्सप्लोरर पर लेन-देन देखें"
   },
   "withdrawSuccess": {
     "title": "निकासी सफल!",
@@ -706,5 +728,29 @@
       "withdrawSubmitted": "Withdrawal transaction submitted...",
       "withdrawSuccess": "Successfully withdrawn {{symbol}}!"
     }
+  },
+  "lockCelebration": {
+    "amount": "राशि",
+    "close": "बंद करें",
+    "contractInfo": "अनुबंध जानकारी",
+    "copyLink": "शेयर करने योग्य लिंक कॉपी करें",
+    "copyTokenAddress": "टोकन पता कॉपी करें",
+    "copyTxHash": "लेन-देन हैश कॉपी करें",
+    "days": "दिन",
+    "duration": "अवधि",
+    "goToMyLocks": "मेरे लॉक पर जाएं",
+    "lockDetails": "लॉक विवरण",
+    "lockSuccessful": "लॉक सफल",
+    "shareDescription": "अपना टोकन लॉक दिखाने के लिए यह लिंक साझा करें",
+    "shareLock": "अपना लॉक साझा करें",
+    "shareableLink": "शेयर करने योग्य लिंक",
+    "subtitle": "आपने सफलतापूर्वक {{amount}} {{symbol}} को {{days}} के लिए लॉक किया है",
+    "title": "टोकन सफलतापूर्वक लॉक किए गए!",
+    "token": "टोकन",
+    "tokenContract": "टोकन अनुबंध पता",
+    "transactionHash": "लेन-देन हैश",
+    "unlockDate": "अनलॉक तिथि",
+    "viewOnEtherscan": "Etherscan पर देखें",
+    "viewOnExplorer": "ब्लॉक एक्सप्लोरर पर देखें"
   }
 }

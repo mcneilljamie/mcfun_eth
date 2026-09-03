@@ -173,7 +173,6 @@
     "noTokens": "Belum ada token yang diluncurkan",
     "noResults": "Tidak ada token yang cocok dengan pencarian Anda",
     "showing": "Menampilkan {{count}} token",
-    "showing_plural": "Menampilkan {{count}} token",
     "rankBy": "Urutkan berdasarkan",
     "marketCap": "Kapitalisasi Pasar",
     "liquidity": "Likuiditas",
@@ -203,7 +202,10 @@
       "blockchain": "Blockchain"
     },
     "filterByBlockchain": "Filter berdasarkan Blockchain:",
-    "allChains": "Semua Rantai"
+    "allChains": "Semua Rantai",
+    "loadError": "Tidak dapat memuat token. Database mungkin sementara tidak tersedia.",
+    "retry": "Coba Lagi",
+    "staleData": "Menampilkan data cache — tidak dapat menyegarkan dari database."
   },
   "about": {
     "title": "Tentang McFun",
@@ -315,7 +317,6 @@
         "description": "Semua smart contract adalah open source di GitHub dan dapat dilihat dan diverifikasi di Etherscan. Audit kodenya sendiri sebelum menggunakan platform."
       }
     },
-    "founder": "McFun didirikan dan dikelola oleh Jamie McNeill.",
     "trading": {
       "title": "Cara Kerja Perdagangan",
       "builtInAMM": {
@@ -341,7 +342,9 @@
     "eth": "ETH",
     "copiedToClipboard": "Disalin ke clipboard!",
     "character": "karakter",
-    "characters": "karakter"
+    "characters": "karakter",
+    "close": "Tutup",
+    "refresh": "Segarkan"
   },
   "tokenDetail": {
     "loadingToken": "Memuat token...",
@@ -444,8 +447,7 @@
     "increaseScarcity": "Tingkatkan Kelangkaan Token",
     "increaseScarcityDescription": "Dengan mengurangi pasokan, pembakaran token dapat meningkatkan kelangkaan. Banyak proyek menggunakan pembakaran sebagai mekanisme deflasi untuk berpotensi mempengaruhi ekonomi token dari waktu ke waktu.",
     "permanentRemoval": "Penghapusan Permanen dan Dapat Diverifikasi",
-    "permanentRemovalDescription": "Semua pembakaran token bersifat permanen dan dapat diverifikasi di blockchain. Setelah dibakar, token tidak dapat dipulihkan atau digunakan kembali. Riwayat pembakaran dapat dilihat secara publik untuk transparansi penuh.",
-    "readyToWithdraw": "Siap Ditarik"
+    "permanentRemovalDescription": "Semua pembakaran token bersifat permanen dan dapat diverifikasi di blockchain. Setelah dibakar, token tidak dapat dipulihkan atau digunakan kembali. Riwayat pembakaran dapat dilihat secara publik untuk transparansi penuh."
   },
   "wallet": {
     "connectWallet": "Hubungkan Dompet Anda",
@@ -611,8 +613,10 @@
       "lockFailed": "Gagal mengunci token",
       "unlockFailed": "Gagal menarik token",
       "transactionRejected": "Transaksi ditolak",
-      "userRejected": "Transaksi ditolak oleh pengguna"
-    }
+      "userRejected": "Transaksi ditolak oleh pengguna",
+      "exceedsMaxDuration": "Durasi kunci tidak dapat melebihi {{max}} hari"
+    },
+    "connectWalletDescription": "Silakan hubungkan dompet Anda untuk mengunci token dan berpartisipasi dalam program penguncian"
   },
   "burn": {
     "title": "Bakar Token",
@@ -651,7 +655,25 @@
       "burnFailed": "Gagal membakar token",
       "userRejected": "Transaksi ditolak oleh pengguna"
     },
-    "ofSupply": "dari pasokan"
+    "ofSupply": "dari pasokan",
+    "amountBurned": "Jumlah Dibakar",
+    "burnDetails": "Detail Burn",
+    "connectWalletDescription": "Silakan hubungkan dompet Anda untuk membakar token dan mengurangi pasokan yang beredar",
+    "contractInfo": "Informasi Kontrak",
+    "copyTokenAddress": "Salin alamat token",
+    "copyTxHash": "Salin hash transaksi",
+    "indexingDescription": "Burn diindeks otomatis setiap 5 menit. Jika Anda baru saja membakar token, token akan muncul di sini sebentar lagi.",
+    "indexingNote": "Catatan:",
+    "noBurnsDescription": "Jadilah yang pertama membakar token dan muncul di papan peringkat!",
+    "noBurnsYet": "Belum Ada Burn",
+    "permanentlyDestroyed": "Dimusnahkan Secara Permanen",
+    "status": "Status",
+    "successDescription": "Berhasil membakar {{amount}} {{symbol}}",
+    "tokenContract": "Kontrak Token",
+    "transactionHash": "Hash Transaksi",
+    "viewOnExplorer": "Lihat di block explorer",
+    "viewToken": "Lihat Detail Token",
+    "viewTxOnExplorer": "Lihat transaksi di block explorer"
   },
   "withdrawSuccess": {
     "title": "Penarikan Berhasil!",
@@ -706,5 +728,29 @@
       "withdrawSubmitted": "Withdrawal transaction submitted...",
       "withdrawSuccess": "Successfully withdrawn {{symbol}}!"
     }
+  },
+  "lockCelebration": {
+    "amount": "Jumlah",
+    "close": "Tutup",
+    "contractInfo": "Informasi Kontrak",
+    "copyLink": "Salin tautan yang dapat dibagikan",
+    "copyTokenAddress": "Salin alamat token",
+    "copyTxHash": "Salin hash transaksi",
+    "days": "hari",
+    "duration": "Durasi",
+    "goToMyLocks": "Ke Kunci Saya",
+    "lockDetails": "Detail Kunci",
+    "lockSuccessful": "Kunci berhasil",
+    "shareDescription": "Bagikan tautan ini untuk menampilkan kunci token Anda",
+    "shareLock": "Bagikan Kunci Anda",
+    "shareableLink": "Tautan yang Dapat Dibagikan",
+    "subtitle": "Anda telah berhasil mengunci {{amount}} {{symbol}} selama {{days}}",
+    "title": "Token Berhasil Dikunci!",
+    "token": "Token",
+    "tokenContract": "Alamat Kontrak Token",
+    "transactionHash": "Hash Transaksi",
+    "unlockDate": "Tanggal Buka Kunci",
+    "viewOnEtherscan": "Lihat di Etherscan",
+    "viewOnExplorer": "Lihat di block explorer"
   }
 }
