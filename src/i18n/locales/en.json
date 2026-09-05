@@ -144,7 +144,7 @@
     "youPay": "You Pay",
     "youReceive": "You Receive",
     "priceImpact": "Price Impact:",
-    "newPrice": "New Price:",
+    "newPrice": "Estimated Post-Trade Price:",
     "slippageTolerance": "Slippage Tolerance:",
     "slippageLabel": "Slippage Tolerance: {{percent}}%",
     "tradingFee": "Trading Fee:",

@@ -144,7 +144,7 @@
     "youPay": "أنت تدفع",
     "youReceive": "أنت تستلم",
     "priceImpact": "تأثير السعر:",
-    "newPrice": "السعر الجديد:",
+    "newPrice": "السعر المقدر بعد التداول:",
     "slippageTolerance": "تحمل الانزلاق:",
     "slippageLabel": "تحمل الانزلاق: {{percent}}%",
     "tradingFee": "رسوم التداول:",

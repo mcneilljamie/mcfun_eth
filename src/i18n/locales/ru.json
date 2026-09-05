@@ -144,7 +144,7 @@
     "youPay": "Вы Платите",
     "youReceive": "Вы Получаете",
     "priceImpact": "Влияние на Цену:",
-    "newPrice": "Новая Цена:",
+    "newPrice": "Расчётная Цена После Сделки:",
     "slippageTolerance": "Допуск Проскальзывания:",
     "slippageLabel": "Допуск Проскальзывания: {{percent}}%",
     "tradingFee": "Торговая Комиссия:",

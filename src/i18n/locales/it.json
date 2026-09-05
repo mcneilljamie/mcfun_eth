@@ -144,7 +144,7 @@
     "youPay": "Tu Paghi",
     "youReceive": "Tu Ricevi",
     "priceImpact": "Impatto sul Prezzo:",
-    "newPrice": "Nuovo Prezzo:",
+    "newPrice": "Prezzo Stimato Dopo lo Scambio:",
     "slippageTolerance": "Tolleranza allo Slippage:",
     "slippageLabel": "Tolleranza allo Slippage: {{percent}}%",
     "tradingFee": "Commissione di Scambio:",
