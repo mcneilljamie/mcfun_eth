@@ -144,6 +144,7 @@
     "youPay": "Ödeyeceğiniz",
     "youReceive": "Alacağınız",
     "priceImpact": "Fiyat Etkisi:",
+    "newPrice": "Yeni Fiyat:",
     "slippageTolerance": "Kayma Toleransı:",
     "slippageLabel": "Kayma Toleransı: {{percent}}%",
     "tradingFee": "İşlem Ücreti:",

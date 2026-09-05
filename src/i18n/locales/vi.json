@@ -144,6 +144,7 @@
     "youPay": "Bạn Trả",
     "youReceive": "Bạn Nhận",
     "priceImpact": "Tác Động Giá:",
+    "newPrice": "Giá Mới:",
     "slippageTolerance": "Dung Sai Trượt Giá:",
     "slippageLabel": "Dung Sai Trượt Giá: {{percent}}%",
     "tradingFee": "Phí Giao Dịch:",

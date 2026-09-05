@@ -144,6 +144,7 @@
     "youPay": "شما پرداخت می‌کنید",
     "youReceive": "شما دریافت می‌کنید",
     "priceImpact": "تأثیر قیمت:",
+    "newPrice": "قیمت جدید:",
     "slippageTolerance": "تحمل لغزش:",
     "slippageLabel": "تحمل لغزش: {{percent}}٪",
     "tradingFee": "کارمزد معامله:",

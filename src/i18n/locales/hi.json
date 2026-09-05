@@ -144,6 +144,7 @@
     "youPay": "आप भुगतान करें",
     "youReceive": "आपको मिलेगा",
     "priceImpact": "मूल्य प्रभाव:",
+    "newPrice": "नई कीमत:",
     "slippageTolerance": "स्लिपेज सहनशीलता:",
     "slippageLabel": "स्लिपेज सहनशीलता: {{percent}}%",
     "tradingFee": "ट्रेडिंग शुल्क:",

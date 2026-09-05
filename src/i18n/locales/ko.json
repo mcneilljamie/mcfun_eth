@@ -144,6 +144,7 @@
     "youPay": "지불 금액",
     "youReceive": "받을 금액",
     "priceImpact": "가격 영향:",
+    "newPrice": "새 가격:",
     "slippageTolerance": "슬리피지 허용치:",
     "slippageLabel": "슬리피지 허용치: {{percent}}%",
     "tradingFee": "거래 수수료:",

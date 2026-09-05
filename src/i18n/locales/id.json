@@ -144,6 +144,7 @@
     "youPay": "Anda Bayar",
     "youReceive": "Anda Terima",
     "priceImpact": "Dampak Harga:",
+    "newPrice": "Harga Baru:",
     "slippageTolerance": "Toleransi Slippage:",
     "slippageLabel": "Toleransi Slippage: {{percent}}%",
     "tradingFee": "Biaya Trading:",

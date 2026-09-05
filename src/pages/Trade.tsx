@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowDownUp, AlertCircle, Loader, TrendingUp, Wallet, CheckCircle } from 'lucide-react';
+import { ArrowDownUp, AlertCircle, Loader, TrendingUp, Wallet, CheckCircle, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '../lib/web3';
 import { swapTokens, getQuote, getAMMReserves, checkNeedsApproval } from '../lib/contracts';
-import { formatNumber, formatCurrency, calculatePriceImpact, limitDecimalPrecision, getReadOnlyProvider } from '../lib/utils';
+import { formatNumber, formatCurrency, calculatePriceImpact, limitDecimalPrecision, getReadOnlyProvider, formatUSD } from '../lib/utils';
+import { getEthPriceUSD } from '../lib/ethPrice';
 import { Token } from '../lib/supabase';
 import { TokenSelector } from '../components/TokenSelector';
 import { SwapConfirmation } from '../components/SwapConfirmation';
@@ -38,6 +39,7 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
   } | null>(null);
 
   const [reserves, setReserves] = useState<{ reserveETH: string; reserveToken: string } | null>(null);
+  const [ethPriceUSD, setEthPriceUSD] = useState<number>(0);
   const [ethBalance, setEthBalance] = useState<string>('0');
   const [tokenBalance, setTokenBalance] = useState<string>('0');
   const [needsApproval, setNeedsApproval] = useState<boolean>(false);
@@ -79,6 +81,20 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
       loadReserves();
     }
   }, [selectedTokenData, provider]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const loadEthPrice = async () => {
+      const price = await getEthPriceUSD();
+      if (!cancelled) setEthPriceUSD(price);
+    };
+    loadEthPrice();
+    const interval = setInterval(loadEthPrice, 60000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, []);
 
   useEffect(() => {
     if (account && provider) {
@@ -312,6 +328,27 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
       )
     : 0;
 
+  const priceProjection = (() => {
+    if (!reserves || !amountIn || !amountOut || ethPriceUSD <= 0) return null;
+
+    const reserveETH = parseFloat(reserves.reserveETH);
+    const reserveToken = parseFloat(reserves.reserveToken);
+    const inAmount = parseFloat(amountIn);
+    const outAmount = parseFloat(amountOut);
+
+    if (!(reserveETH > 0) || !(reserveToken > 0) || !(inAmount > 0) || !(outAmount > 0)) return null;
+
+    const newReserveETH = isETHToToken ? reserveETH + inAmount : reserveETH - outAmount;
+    const newReserveToken = isETHToToken ? reserveToken - outAmount : reserveToken + inAmount;
+
+    if (!(newReserveETH > 0) || !(newReserveToken > 0)) return null;
+
+    const currentPriceUSD = (reserveETH / reserveToken) * ethPriceUSD;
+    const newPriceUSD = (newReserveETH / newReserveToken) * ethPriceUSD;
+
+    return { currentPriceUSD, newPriceUSD };
+  })();
+
   return (
     <>
       {swapSuccess && selectedTokenData && (
@@ -450,6 +487,16 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
                       {priceImpact.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
                     </span>
                   </div>
+                  {priceProjection && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600 dark:text-gray-400">{t('trade.newPrice')}</span>
+                      <span className="font-medium text-gray-900 dark:text-white flex items-center space-x-1.5">
+                        <span>{formatUSD(priceProjection.currentPriceUSD)}</span>
+                        <ArrowRight className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
+                        <span>{formatUSD(priceProjection.newPriceUSD)}</span>
+                      </span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
                     <span className="text-gray-600 dark:text-gray-400">{t('trade.slippageTolerance')}</span>
                     <span className="font-medium text-gray-900 dark:text-white">

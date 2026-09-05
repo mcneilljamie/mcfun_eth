@@ -144,6 +144,7 @@
     "youPay": "支払い額",
     "youReceive": "受取額",
     "priceImpact": "価格影響:",
+    "newPrice": "新しい価格:",
     "slippageTolerance": "スリッページ許容度:",
     "slippageLabel": "スリッページ許容度: {{percent}}%",
     "tradingFee": "取引手数料:",

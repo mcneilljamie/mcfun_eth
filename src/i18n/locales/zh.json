@@ -144,6 +144,7 @@
     "youPay": "您支付",
     "youReceive": "您接收",
     "priceImpact": "价格影响：",
+    "newPrice": "新价格：",
     "slippageTolerance": "滑点容忍度：",
     "slippageLabel": "滑点容忍度：{{percent}}%",
     "tradingFee": "交易费用：",

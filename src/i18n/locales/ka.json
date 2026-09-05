@@ -144,6 +144,7 @@
     "youPay": "თქვენ იხდით",
     "youReceive": "თქვენ იღებთ",
     "priceImpact": "ფასის გავლენა:",
+    "newPrice": "ახალი ფასი:",
     "slippageTolerance": "სრიალის ტოლერანტობა:",
     "slippageLabel": "სრიალის ტოლერანტობა: {{percent}}%",
     "tradingFee": "ვაჭრობის საკომისიო:",
