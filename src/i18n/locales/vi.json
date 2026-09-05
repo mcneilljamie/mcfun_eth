@@ -145,6 +145,7 @@
     "youReceive": "Bạn Nhận",
     "priceImpact": "Tác Động Giá:",
     "newPrice": "Giá Ước Tính Sau Giao Dịch:",
+    "avgExecutionPrice": "Giá Thực Hiện Trung Bình Ước Tính:",
     "slippageTolerance": "Dung Sai Trượt Giá:",
     "slippageLabel": "Dung Sai Trượt Giá: {{percent}}%",
     "tradingFee": "Phí Giao Dịch:",

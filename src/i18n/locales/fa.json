@@ -145,6 +145,7 @@
     "youReceive": "شما دریافت می‌کنید",
     "priceImpact": "تأثیر قیمت:",
     "newPrice": "قیمت تخمینی پس از معامله:",
+    "avgExecutionPrice": "میانگین قیمت اجرای تخمینی:",
     "slippageTolerance": "تحمل لغزش:",
     "slippageLabel": "تحمل لغزش: {{percent}}٪",
     "tradingFee": "کارمزد معامله:",

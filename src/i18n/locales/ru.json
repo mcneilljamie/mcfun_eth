@@ -145,6 +145,7 @@
     "youReceive": "Вы Получаете",
     "priceImpact": "Влияние на Цену:",
     "newPrice": "Расчётная Цена После Сделки:",
+    "avgExecutionPrice": "Расчётная Средняя Цена Исполнения:",
     "slippageTolerance": "Допуск Проскальзывания:",
     "slippageLabel": "Допуск Проскальзывания: {{percent}}%",
     "tradingFee": "Торговая Комиссия:",

@@ -145,6 +145,7 @@
     "youReceive": "თქვენ იღებთ",
     "priceImpact": "ფასის გავლენა:",
     "newPrice": "სავარაუდო ფასი გარიგების შემდეგ:",
+    "avgExecutionPrice": "სავარაუდო საშუალო შესრულების ფასი:",
     "slippageTolerance": "სრიალის ტოლერანტობა:",
     "slippageLabel": "სრიალის ტოლერანტობა: {{percent}}%",
     "tradingFee": "ვაჭრობის საკომისიო:",

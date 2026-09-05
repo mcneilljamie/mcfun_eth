@@ -145,6 +145,7 @@
     "youReceive": "Alacağınız",
     "priceImpact": "Fiyat Etkisi:",
     "newPrice": "Tahmini İşlem Sonrası Fiyat:",
+    "avgExecutionPrice": "Tahmini Ort. İşlem Fiyatı:",
     "slippageTolerance": "Kayma Toleransı:",
     "slippageLabel": "Kayma Toleransı: {{percent}}%",
     "tradingFee": "İşlem Ücreti:",

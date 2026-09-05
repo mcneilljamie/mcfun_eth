@@ -145,6 +145,7 @@
     "youReceive": "받을 금액",
     "priceImpact": "가격 영향:",
     "newPrice": "예상 거래 후 가격:",
+    "avgExecutionPrice": "예상 평균 체결 가격:",
     "slippageTolerance": "슬리피지 허용치:",
     "slippageLabel": "슬리피지 허용치: {{percent}}%",
     "tradingFee": "거래 수수료:",

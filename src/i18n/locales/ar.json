@@ -145,6 +145,7 @@
     "youReceive": "أنت تستلم",
     "priceImpact": "تأثير السعر:",
     "newPrice": "السعر المقدر بعد التداول:",
+    "avgExecutionPrice": "متوسط سعر التنفيذ المقدر:",
     "slippageTolerance": "تحمل الانزلاق:",
     "slippageLabel": "تحمل الانزلاق: {{percent}}%",
     "tradingFee": "رسوم التداول:",

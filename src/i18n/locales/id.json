@@ -145,6 +145,7 @@
     "youReceive": "Anda Terima",
     "priceImpact": "Dampak Harga:",
     "newPrice": "Perkiraan Harga Setelah Perdagangan:",
+    "avgExecutionPrice": "Perkiraan Harga Eksekusi Rata-rata:",
     "slippageTolerance": "Toleransi Slippage:",
     "slippageLabel": "Toleransi Slippage: {{percent}}%",
     "tradingFee": "Biaya Trading:",

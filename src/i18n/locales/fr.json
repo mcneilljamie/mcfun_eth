@@ -145,6 +145,7 @@
     "youReceive": "Vous Recevez",
     "priceImpact": "Impact sur le Prix:",
     "newPrice": "Prix Estimé Après Transaction:",
+    "avgExecutionPrice": "Prix Moyen d'Exécution Est.:",
     "slippageTolerance": "Tolérance au Slippage:",
     "slippageLabel": "Tolérance au Slippage: {{percent}}%",
     "tradingFee": "Frais d'Échange:",

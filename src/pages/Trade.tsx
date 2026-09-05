@@ -346,7 +346,11 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
     const currentPriceUSD = (reserveETH / reserveToken) * ethPriceUSD;
     const newPriceUSD = (newReserveETH / newReserveToken) * ethPriceUSD;
 
-    return { currentPriceUSD, newPriceUSD };
+    const ethAmount = isETHToToken ? inAmount : outAmount;
+    const tokenAmount = isETHToToken ? outAmount : inAmount;
+    const avgExecutionPriceUSD = (ethAmount / tokenAmount) * ethPriceUSD;
+
+    return { currentPriceUSD, newPriceUSD, avgExecutionPriceUSD };
   })();
 
   return (
@@ -494,6 +498,14 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
                         <span>{formatUSD(priceProjection.currentPriceUSD)}</span>
                         <ArrowRight className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
                         <span>{formatUSD(priceProjection.newPriceUSD)}</span>
+                      </span>
+                    </div>
+                  )}
+                  {priceProjection && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600 dark:text-gray-400">{t('trade.avgExecutionPrice')}</span>
+                      <span className="font-medium text-gray-900 dark:text-white">
+                        {formatUSD(priceProjection.avgExecutionPriceUSD)}
                       </span>
                     </div>
                   )}

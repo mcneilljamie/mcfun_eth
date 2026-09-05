@@ -145,6 +145,7 @@
     "youReceive": "您接收",
     "priceImpact": "价格影响：",
     "newPrice": "预计交易后价格：",
+    "avgExecutionPrice": "预计平均成交价格：",
     "slippageTolerance": "滑点容忍度：",
     "slippageLabel": "滑点容忍度：{{percent}}%",
     "tradingFee": "交易费用：",
