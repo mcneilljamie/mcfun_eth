@@ -471,7 +471,7 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
                 <div className="flex items-center space-x-2 sm:space-x-3">
                   <input
                     type="text"
-                    value={isLoadingQuote ? 'Loading...' : amountOut}
+                    value={isLoadingQuote ? 'Loading...' : amountOut ? formatNumber(amountOut, 2) : ''}
                     placeholder="0.0"
                     className="flex-1 bg-transparent text-xl sm:text-2xl font-semibold outline-none text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500"
                     disabled
