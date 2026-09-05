@@ -4,7 +4,7 @@ import { ArrowDownUp, AlertCircle, Loader, TrendingUp, Wallet, CheckCircle, Arro
 import { useTranslation } from 'react-i18next';
 import { useWeb3 } from '../lib/web3';
 import { swapTokens, getQuote, getAMMReserves, checkNeedsApproval } from '../lib/contracts';
-import { formatNumber, formatCurrency, calculatePriceImpact, limitDecimalPrecision, getReadOnlyProvider, formatUSD } from '../lib/utils';
+import { formatNumber, formatCurrency, limitDecimalPrecision, getReadOnlyProvider, formatUSD } from '../lib/utils';
 import { getEthPriceUSD } from '../lib/ethPrice';
 import { Token } from '../lib/supabase';
 import { TokenSelector } from '../components/TokenSelector';
@@ -319,15 +319,6 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
     setNeedsApproval(false);
   };
 
-  const priceImpact = reserves && amountIn && amountOut
-    ? calculatePriceImpact(
-        isETHToToken ? parseFloat(reserves.reserveETH) : parseFloat(reserves.reserveToken),
-        isETHToToken ? parseFloat(reserves.reserveToken) : parseFloat(reserves.reserveETH),
-        parseFloat(amountIn),
-        parseFloat(amountOut)
-      )
-    : 0;
-
   const priceProjection = (() => {
     if (!reserves || !amountIn || !amountOut || ethPriceUSD <= 0) return null;
 
@@ -485,12 +476,6 @@ export function Trade({ selectedToken, onShowToast }: TradeProps) {
 
             {amountIn && amountOut && (
               <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-3 sm:p-4 space-y-2 text-xs sm:text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">{t('trade.priceImpact')}</span>
-                    <span className="font-medium text-gray-900 dark:text-white">
-                      {priceImpact.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
-                    </span>
-                  </div>
                   {priceProjection && (
                     <div className="flex justify-between items-center">
                       <span className="text-gray-600 dark:text-gray-400">{t('trade.newPrice')}</span>
