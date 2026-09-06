@@ -23,8 +23,26 @@ const CONFIRMATION_DEPTH = 2;
 const MAX_BLOCK_RANGE = 2000;
 const MAX_EXECUTION_TIME_MS = 50000;
 const RPC_TIMEOUT_MS = 5000;
+// Safety net: every run we also re-scan this many blocks behind the committed
+// cursor to recover any swaps that a transient RPC error dropped on a prior run.
+const DEFAULT_LOOKBACK_BLOCKS = 600;
 
 const providerIndexMap = new Map<number, number>();
+
+async function withRetry<T>(fn: () => Promise<T>, attempts = 3, delayMs = 400): Promise<T> {
+  let lastErr: unknown;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      return await fn();
+    } catch (err) {
+      lastErr = err;
+      if (i < attempts - 1) {
+        await new Promise((resolve) => setTimeout(resolve, delayMs * (i + 1)));
+      }
+    }
+  }
+  throw lastErr;
+}
 
 async function createProviderWithFailover(chainId: number): Promise<ethers.JsonRpcProvider> {
   const RPC_PROVIDERS = getRPCProviders(chainId);
@@ -34,7 +52,7 @@ async function createProviderWithFailover(chainId: number): Promise<ethers.JsonR
     const providerUrl = RPC_PROVIDERS[(currentProviderIndex + i) % RPC_PROVIDERS.length];
     try {
       const provider = new ethers.JsonRpcProvider(providerUrl, undefined, { staticNetwork: true });
-      const blockNumber = await Promise.race([
+      await Promise.race([
         provider.getBlockNumber(),
         new Promise<never>((_, reject) =>
           setTimeout(() => reject(new Error(`RPC timeout after ${RPC_TIMEOUT_MS}ms`)), RPC_TIMEOUT_MS)
@@ -89,6 +107,180 @@ async function getEthPriceAt(supabase: any, timestamp: string): Promise<number |
   }
 }
 
+interface SwapRangeResult {
+  swapsIndexed: number;
+  snapshotsCreated: number;
+  tokensProcessed: number;
+  tokensFailed: number;
+  timedOut: boolean;
+}
+
+// Scans every tracked token for Swap events in [fromBlock, toBlock] and upserts
+// them (idempotent). Reserve/price reads are retried so a momentary RPC error no
+// longer silently drops a trade. `updateReserves` refreshes each token's current
+// reserves and should only be true for the live forward pass, not the lookback.
+async function indexSwapsInRange(
+  supabase: any,
+  provider: ethers.JsonRpcProvider,
+  tokens: any[],
+  chainId: number,
+  fromBlock: number,
+  toBlock: number,
+  startTime: number,
+  updateReserves: boolean,
+): Promise<SwapRangeResult> {
+  let swapsIndexed = 0;
+  let snapshotsCreated = 0;
+  let tokensProcessed = 0;
+  let tokensFailed = 0;
+  let timedOut = false;
+
+  if (fromBlock > toBlock) {
+    return { swapsIndexed, snapshotsCreated, tokensProcessed, tokensFailed, timedOut };
+  }
+
+  for (const token of tokens) {
+    if (Date.now() - startTime > MAX_EXECUTION_TIME_MS) {
+      console.log(`Timeout approaching after ${tokensProcessed}/${tokens.length} tokens, stopping`);
+      timedOut = true;
+      break;
+    }
+
+    try {
+      const amm = new ethers.Contract(token.amm_address, AMM_ABI, provider);
+
+      const events = await withRetry(() => amm.queryFilter(amm.filters.Swap(), fromBlock, toBlock));
+
+      if (events.length === 0) {
+        tokensProcessed++;
+        continue;
+      }
+
+      const sortedEvents = events.sort((a, b) => {
+        if (a.blockNumber !== b.blockNumber) return a.blockNumber - b.blockNumber;
+        return a.index - b.index;
+      });
+
+      for (const event of sortedEvents) {
+        try {
+          const block = await withRetry(() => provider.getBlock(event.blockNumber));
+          if (!block) continue;
+
+          const blockTimestamp = new Date(block.timestamp * 1000).toISOString();
+          const ethIn = event.args!.ethIn;
+          const tokenIn = event.args!.tokenIn;
+          const ethOut = event.args!.ethOut;
+          const tokenOut = event.args!.tokenOut;
+
+          const isBuy = ethIn > 0n && tokenOut > 0n;
+          const tradeDirection = isBuy ? 'BUY' : 'SELL';
+
+          // Read the post-trade reserves as of this swap's block.
+          const [postTradeEthReserve, postTradeTokenReserve] = await withRetry(() => Promise.all([
+            amm.reserveETH({ blockTag: event.blockNumber }),
+            amm.reserveToken({ blockTag: event.blockNumber }),
+          ]));
+
+          const postEthFormatted = ethers.formatEther(postTradeEthReserve);
+          const postTokenFormatted = ethers.formatEther(postTradeTokenReserve);
+          const priceEth = parseFloat(postEthFormatted) / parseFloat(postTokenFormatted);
+
+          const ethPriceUsd = await getEthPriceAt(supabase, blockTimestamp);
+          if (!ethPriceUsd) {
+            console.warn(`No ETH price for block ${event.blockNumber} at ${blockTimestamp}`);
+          }
+
+          const priceUsd = priceEth * (ethPriceUsd || 0);
+          const marketCapUsd = priceUsd * 1000000;
+
+          const swapRecord = {
+            token_address: token.token_address,
+            amm_address: token.amm_address,
+            user_address: event.args!.user.toLowerCase(),
+            eth_in: ethers.formatEther(ethIn),
+            token_in: ethers.formatEther(tokenIn),
+            eth_out: ethers.formatEther(ethOut),
+            token_out: ethers.formatEther(tokenOut),
+            tx_hash: event.transactionHash,
+            transaction_index: event.transactionIndex,
+            log_index: event.index,
+            created_at: blockTimestamp,
+            block_number: event.blockNumber,
+            block_hash: block.hash,
+            chain_id: chainId,
+          };
+
+          const { error: swapError } = await supabase
+            .from("swaps")
+            .upsert(swapRecord, { onConflict: 'chain_id,tx_hash,log_index' });
+
+          if (swapError) {
+            console.error(`Failed to upsert swap ${event.transactionHash}:${event.index}:`, swapError);
+          }
+
+          const snapshotRecord = {
+            token_address: token.token_address,
+            price_eth: priceEth.toString(),
+            eth_reserve: postEthFormatted,
+            token_reserve: postTokenFormatted,
+            eth_price_usd: ethPriceUsd || 0,
+            is_interpolated: false,
+            block_number: event.blockNumber,
+            created_at: blockTimestamp,
+            chain_id: chainId,
+            transaction_hash: event.transactionHash,
+            transaction_index: event.transactionIndex,
+            log_index: event.index,
+            block_timestamp: blockTimestamp,
+            trade_direction: tradeDirection,
+            eth_amount: ethers.formatEther(ethIn > 0n ? ethIn : ethOut),
+            token_amount: ethers.formatEther(tokenIn > 0n ? tokenIn : tokenOut),
+            post_trade_eth_reserve: postEthFormatted,
+            post_trade_token_reserve: postTokenFormatted,
+            market_cap_usd: marketCapUsd,
+            is_reconstructed: false,
+          };
+
+          const { error: snapError } = await supabase
+            .from("price_snapshots")
+            .upsert(snapshotRecord, { onConflict: 'chain_id,transaction_hash,log_index' });
+
+          if (snapError) {
+            console.error(`Failed to upsert snapshot for ${event.transactionHash}:${event.index}:`, snapError);
+          } else {
+            snapshotsCreated++;
+          }
+
+          swapsIndexed++;
+        } catch (err) {
+          console.error(`Error processing swap event:`, err);
+        }
+      }
+
+      if (updateReserves) {
+        const [reserveETH, reserveToken] = await withRetry(() => Promise.all([
+          amm.reserveETH(),
+          amm.reserveToken(),
+        ]));
+        await supabase.from("tokens").update({
+          current_eth_reserve: ethers.formatEther(reserveETH),
+          current_token_reserve: ethers.formatEther(reserveToken),
+        }).eq("token_address", token.token_address).eq("chain_id", chainId);
+      }
+
+      tokensProcessed++;
+    } catch (err) {
+      // All retries for this token failed. Don't freeze the whole cursor for one
+      // token's RPC failure — the lookback re-scan on a later run will recover any
+      // swaps missed here once its RPC responds.
+      console.error(`Error indexing ${token.token_address} (retries exhausted):`, err);
+      tokensFailed++;
+    }
+  }
+
+  return { swapsIndexed, snapshotsCreated, tokensProcessed, tokensFailed, timedOut };
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders });
@@ -98,6 +290,7 @@ Deno.serve(async (req: Request) => {
   try {
     const url = new URL(req.url);
     const chainId = parseInt(url.searchParams.get("chain_id") || "1");
+    const lookbackBlocks = parseInt(url.searchParams.get("lookback_blocks") || String(DEFAULT_LOOKBACK_BLOCKS));
     const chainConfig = getChainConfig(chainId);
 
     console.log(`Starting indexer for ${chainConfig.CHAIN_NAME} (chain ID: ${chainId})`);
@@ -125,64 +318,59 @@ Deno.serve(async (req: Request) => {
     const startBlock = lastIndexedBlock + 1;
     const endBlock = Math.min(startBlock + MAX_BLOCK_RANGE - 1, safeBlock);
 
-    if (startBlock > endBlock) {
-      return new Response(JSON.stringify({
-        message: "No new blocks to index",
-        chainId,
-        lastIndexedBlock,
-        currentBlock,
-        safeBlock,
-      }), { headers: corsHeaders });
-    }
-
-    console.log(`Indexing blocks ${startBlock} to ${endBlock} (safe block: ${safeBlock}, behind: ${safeBlock - endBlock})`);
+    const hasNewBlocks = startBlock <= endBlock;
 
     // Process token launches
     let tokensLaunched = 0;
-    try {
-      const factoryAddress = getFactoryAddress(chainId);
-      const factory = new ethers.Contract(factoryAddress, FACTORY_ABI, provider);
-      const launchEvents = await factory.queryFilter(factory.filters.TokenLaunched(), startBlock, endBlock);
+    if (hasNewBlocks) {
+      console.log(`Indexing blocks ${startBlock} to ${endBlock} (safe block: ${safeBlock}, behind: ${safeBlock - endBlock})`);
+      try {
+        const factoryAddress = getFactoryAddress(chainId);
+        const factory = new ethers.Contract(factoryAddress, FACTORY_ABI, provider);
+        const launchEvents = await factory.queryFilter(factory.filters.TokenLaunched(), startBlock, endBlock);
 
-      for (const event of launchEvents) {
-        const block = await provider.getBlock(event.blockNumber);
-        if (!block) continue;
+        for (const event of launchEvents) {
+          const block = await provider.getBlock(event.blockNumber);
+          if (!block) continue;
 
-        const tokenAddress = event.args!.tokenAddress.toLowerCase();
-        const ammAddress = event.args!.ammAddress.toLowerCase();
-        const liquidityPercent = Number(event.args!.liquidityPercent);
-        const initialLiquidityETH = ethers.formatEther(event.args!.initialLiquidityETH);
-        const initialTokenReserve = 1000000 * liquidityPercent / 100;
-        const launchPriceEth = parseFloat(initialLiquidityETH) / initialTokenReserve;
+          const tokenAddress = event.args!.tokenAddress.toLowerCase();
+          const ammAddress = event.args!.ammAddress.toLowerCase();
+          const liquidityPercent = Number(event.args!.liquidityPercent);
+          const initialLiquidityETH = ethers.formatEther(event.args!.initialLiquidityETH);
+          const initialTokenReserve = 1000000 * liquidityPercent / 100;
+          const launchPriceEth = parseFloat(initialLiquidityETH) / initialTokenReserve;
 
-        const ethPriceUsd = await getEthPriceAt(supabase, new Date(block.timestamp * 1000).toISOString());
+          const ethPriceUsd = await getEthPriceAt(supabase, new Date(block.timestamp * 1000).toISOString());
 
-        const { error } = await supabase.from("tokens").upsert({
-          token_address: tokenAddress,
-          amm_address: ammAddress,
-          name: event.args!.name,
-          symbol: event.args!.symbol,
-          creator_address: event.args!.creator.toLowerCase(),
-          liquidity_percent: liquidityPercent,
-          initial_liquidity_eth: initialLiquidityETH,
-          launch_price_eth: launchPriceEth,
-          current_eth_reserve: initialLiquidityETH,
-          current_token_reserve: initialTokenReserve,
-          total_volume_eth: 0,
-          created_at: new Date(block.timestamp * 1000).toISOString(),
-          block_number: block.number,
-          block_hash: block.hash,
-          chain_id: chainId,
-          launch_eth_price_usd: ethPriceUsd || null,
-        }, { onConflict: "token_address,chain_id", ignoreDuplicates: true });
+          const { error } = await supabase.from("tokens").upsert({
+            token_address: tokenAddress,
+            amm_address: ammAddress,
+            name: event.args!.name,
+            symbol: event.args!.symbol,
+            creator_address: event.args!.creator.toLowerCase(),
+            liquidity_percent: liquidityPercent,
+            initial_liquidity_eth: initialLiquidityETH,
+            launch_price_eth: launchPriceEth,
+            current_eth_reserve: initialLiquidityETH,
+            current_token_reserve: initialTokenReserve,
+            total_volume_eth: 0,
+            created_at: new Date(block.timestamp * 1000).toISOString(),
+            block_number: block.number,
+            block_hash: block.hash,
+            chain_id: chainId,
+            launch_eth_price_usd: ethPriceUsd || null,
+          }, { onConflict: "token_address,chain_id", ignoreDuplicates: true });
 
-        if (!error) {
-          tokensLaunched++;
-          console.log(`[${chainConfig.CHAIN_NAME}] Registered token: ${event.args!.name} (${event.args!.symbol}) at block ${block.number}`);
+          if (!error) {
+            tokensLaunched++;
+            console.log(`[${chainConfig.CHAIN_NAME}] Registered token: ${event.args!.name} (${event.args!.symbol}) at block ${block.number}`);
+          }
         }
+      } catch (err) {
+        console.error(`Error indexing token launches:`, err);
       }
-    } catch (err) {
-      console.error(`Error indexing token launches:`, err);
+    } else {
+      console.log(`No new blocks to index (cursor ${lastIndexedBlock}, safe ${safeBlock}). Running lookback only.`);
     }
 
     // Get all tokens for this chain
@@ -191,208 +379,23 @@ Deno.serve(async (req: Request) => {
       .select("token_address, amm_address")
       .eq("chain_id", chainId);
 
-    let swapsIndexed = 0;
-    let snapshotsCreated = 0;
-    let tokensProcessed = 0;
-    let partialRun = false;
+    const tokenList = tokens || [];
 
-    if (tokens && tokens.length > 0) {
-      for (const token of tokens) {
-        // Check timeout before processing each token
-        if (Date.now() - startTime > MAX_EXECUTION_TIME_MS) {
-          console.log(`Timeout approaching after processing ${tokensProcessed}/${tokens.length} tokens, stopping`);
-          partialRun = true;
-          break;
-        }
-
-        try {
-          const amm = new ethers.Contract(token.amm_address, AMM_ABI, provider);
-
-          // Get all swap events for this token in the block range
-          const events = await amm.queryFilter(amm.filters.Swap(), startBlock, endBlock);
-
-          if (events.length === 0) {
-            tokensProcessed++;
-            continue;
-          }
-
-          // Sort events by block number, transaction index, log index
-          // This ensures we process swaps in the exact order they occurred
-          const sortedEvents = events.sort((a, b) => {
-            if (a.blockNumber !== b.blockNumber) return a.blockNumber - b.blockNumber;
-            return a.logIndex - b.logIndex;
-          });
-
-          // Process each swap individually to get correct per-swap reserves
-          for (const event of sortedEvents) {
-            try {
-              const block = await provider.getBlock(event.blockNumber);
-              if (!block) continue;
-
-              const blockTimestamp = new Date(block.timestamp * 1000).toISOString();
-              const ethIn = event.args!.ethIn;
-              const tokenIn = event.args!.tokenIn;
-              const ethOut = event.args!.ethOut;
-              const tokenOut = event.args!.tokenOut;
-
-              // Determine trade direction
-              const isBuy = ethIn > 0n && tokenOut > 0n;
-              const tradeDirection = isBuy ? 'BUY' : 'SELL';
-
-              // Reconstruct post-trade reserves by replaying the swap
-              // For a BUY (eth in, token out): tokenReserve decreases, ethReserve increases
-              // For a SELL (token in, eth out): tokenReserve increases, ethReserve decreases
-              // We use the event amounts to reconstruct the exact post-trade state
-              //
-              // The Swap event emits the amounts transferred, so:
-              // post-trade ETH reserve = pre-trade ETH reserve + ethIn - ethOut
-              // post-trade token reserve = pre-trade token reserve + tokenIn - tokenOut
-              //
-              // Since we process sequentially, we track the running reserve state
-              // starting from the token's current reserves (which reflect the latest state)
-              // and working backwards, OR we read the reserves at each block.
-              //
-              // The most reliable approach: read reserves from the contract at each block.
-              // But that's expensive. Instead, we can reconstruct from the swap amounts
-              // if we know the starting state.
-              //
-              // For correctness, we'll read the reserves at the block of each swap.
-              // This is the only way to get the exact post-trade price.
-              //
-              // For multiple swaps in the same block, we need to track the running state.
-              // We'll use a per-token running state within each block.
-
-              // Get the post-trade reserves by reading at the end of the block
-              // For multiple swaps in the same block, we need to reconstruct sequentially
-              // We'll track a running state per token within this indexing run
-
-              // Read the reserves as they were at this block
-              // We use eth_call with blockTag to get historical state
-              let postTradeEthReserve: bigint;
-              let postTradeTokenReserve: bigint;
-
-              if (sortedEvents.length === 1) {
-                // Single swap - read current reserves (they reflect this swap's result)
-                [postTradeEthReserve, postTradeTokenReserve] = await Promise.all([
-                  amm.reserveETH({ blockTag: event.blockNumber }),
-                  amm.reserveToken({ blockTag: event.blockNumber })
-                ]);
-              } else {
-                // Multiple swaps - we need to reconstruct per-swap
-                // Read reserves at the block before the first swap
-                // Then replay each swap to get per-swap post-trade reserves
-                // This is handled by the sequential processing below
-                // For now, read at this block's end state
-                [postTradeEthReserve, postTradeTokenReserve] = await Promise.all([
-                  amm.reserveETH({ blockTag: event.blockNumber }),
-                  amm.reserveToken({ blockTag: event.blockNumber })
-                ]);
-              }
-
-              const postEthFormatted = ethers.formatEther(postTradeEthReserve);
-              const postTokenFormatted = ethers.formatEther(postTradeTokenReserve);
-              const priceEth = parseFloat(postEthFormatted) / parseFloat(postTokenFormatted);
-
-              // Get historical ETH/USD price
-              const ethPriceUsd = await getEthPriceAt(supabase, blockTimestamp);
-              if (!ethPriceUsd) {
-                console.warn(`No ETH price for block ${event.blockNumber} at ${blockTimestamp}`);
-              }
-
-              const priceUsd = priceEth * (ethPriceUsd || 0);
-              // Market cap = token supply * price per token
-              // Token supply = 1,000,000 (fixed for all McFun tokens)
-              const marketCapUsd = priceUsd * 1000000;
-
-              // Insert swap record (idempotent via chain_id + tx_hash + log_index)
-              const swapRecord = {
-                token_address: token.token_address,
-                amm_address: token.amm_address,
-                user_address: event.args!.user.toLowerCase(),
-                eth_in: ethers.formatEther(ethIn),
-                token_in: ethers.formatEther(tokenIn),
-                eth_out: ethers.formatEther(ethOut),
-                token_out: ethers.formatEther(tokenOut),
-                tx_hash: event.transactionHash,
-                transaction_index: event.transactionIndex,
-                log_index: event.logIndex,
-                created_at: blockTimestamp,
-                block_number: event.blockNumber,
-                block_hash: block.hash,
-                chain_id: chainId,
-              };
-
-              const { error: swapError } = await supabase
-                .from("swaps")
-                .upsert(swapRecord, { onConflict: 'chain_id,tx_hash,log_index' });
-
-              if (swapError) {
-                console.error(`Failed to upsert swap ${event.transactionHash}:${event.logIndex}:`, swapError);
-              }
-
-              // Create price snapshot for this specific trade (idempotent)
-              const snapshotRecord = {
-                token_address: token.token_address,
-                price_eth: priceEth.toString(),
-                eth_reserve: postEthFormatted,
-                token_reserve: postTokenFormatted,
-                eth_price_usd: ethPriceUsd || 0,
-                is_interpolated: false,
-                block_number: event.blockNumber,
-                created_at: blockTimestamp,
-                chain_id: chainId,
-                transaction_hash: event.transactionHash,
-                transaction_index: event.transactionIndex,
-                log_index: event.logIndex,
-                block_timestamp: blockTimestamp,
-                trade_direction: tradeDirection,
-                eth_amount: ethers.formatEther(ethIn > 0n ? ethIn : ethOut),
-                token_amount: ethers.formatEther(tokenIn > 0n ? tokenIn : tokenOut),
-                post_trade_eth_reserve: postEthFormatted,
-                post_trade_token_reserve: postTokenFormatted,
-                market_cap_usd: marketCapUsd,
-                is_reconstructed: false,
-              };
-
-              const { error: snapError } = await supabase
-                .from("price_snapshots")
-                .upsert(snapshotRecord, { onConflict: 'chain_id,transaction_hash,log_index' });
-
-              if (snapError) {
-                console.error(`Failed to upsert snapshot for ${event.transactionHash}:${event.logIndex}:`, snapError);
-              } else {
-                snapshotsCreated++;
-              }
-
-              swapsIndexed++;
-            } catch (err) {
-              console.error(`Error processing swap event:`, err);
-            }
-          }
-
-          // Update token's current reserves to the latest state
-          const [reserveETH, reserveToken] = await Promise.all([
-            amm.reserveETH(),
-            amm.reserveToken()
-          ]);
-          await supabase.from("tokens").update({
-            current_eth_reserve: ethers.formatEther(reserveETH),
-            current_token_reserve: ethers.formatEther(reserveToken),
-          }).eq("token_address", token.token_address).eq("chain_id", chainId);
-
-          tokensProcessed++;
-        } catch (err) {
-          console.error(`Error indexing ${token.token_address}:`, err);
-          // Don't freeze the cursor for a single token's RPC failure.
-          // The block range was still scanned; other tokens' swaps were processed.
-          // The failing token will be retried on the next run when its RPC responds.
-        }
-      }
+    // --- Forward pass: index the new block range ---
+    let forward: SwapRangeResult = {
+      swapsIndexed: 0, snapshotsCreated: 0, tokensProcessed: 0, tokensFailed: 0, timedOut: false,
+    };
+    if (hasNewBlocks && tokenList.length > 0) {
+      forward = await indexSwapsInRange(
+        supabase, provider, tokenList, chainId, startBlock, endBlock, startTime, true,
+      );
     }
 
-    // CRITICAL: Only advance cursor if the ENTIRE range was successfully processed
-    // If any token failed or we hit timeout, leave cursor where it was
-    if (!partialRun) {
+    // Advance the cursor when the forward range was fully scanned. A single token
+    // whose RPC failed does NOT hold the cursor (that would let one bad token
+    // freeze all indexing); the lookback re-scan below is the recovery mechanism.
+    const cursorAdvanced = hasNewBlocks && !forward.timedOut;
+    if (cursorAdvanced) {
       await supabase.from("indexer_state").upsert({
         id: indexerState?.id,
         last_indexed_block: endBlock,
@@ -401,29 +404,49 @@ Deno.serve(async (req: Request) => {
         updated_at: new Date().toISOString(),
         chain_id: chainId,
       });
-
       console.log(`[${chainConfig.CHAIN_NAME}] Cursor advanced to ${endBlock}`);
-    } else {
-      console.log(`[${chainConfig.CHAIN_NAME}] Partial run, cursor NOT advanced (stays at ${lastIndexedBlock})`);
+    } else if (hasNewBlocks) {
+      console.log(`[${chainConfig.CHAIN_NAME}] Timed out, cursor NOT advanced (stays at ${lastIndexedBlock})`);
+    }
+
+    // --- Lookback safety net: re-scan recently committed blocks to recover any
+    // swaps a prior run dropped due to a transient RPC error. Idempotent upserts. ---
+    let lookback: SwapRangeResult = {
+      swapsIndexed: 0, snapshotsCreated: 0, tokensProcessed: 0, tokensFailed: 0, timedOut: false,
+    };
+    const lookbackEnd = lastIndexedBlock;
+    const lookbackStart = Math.max(0, lastIndexedBlock - lookbackBlocks + 1);
+    if (tokenList.length > 0 && lookbackEnd >= lookbackStart && Date.now() - startTime < MAX_EXECUTION_TIME_MS) {
+      console.log(`[${chainConfig.CHAIN_NAME}] Lookback re-scan blocks ${lookbackStart} to ${lookbackEnd}`);
+      lookback = await indexSwapsInRange(
+        supabase, provider, tokenList, chainId, lookbackStart, lookbackEnd, startTime, false,
+      );
     }
 
     const processingTimeMs = Date.now() - startTime;
 
-    console.log(`[${chainConfig.CHAIN_NAME}] Indexed ${tokensLaunched} launches, ${swapsIndexed} swaps, ${snapshotsCreated} snapshots from ${tokensProcessed} tokens, blocks ${startBlock}-${endBlock} (${processingTimeMs}ms)`);
+    console.log(`[${chainConfig.CHAIN_NAME}] Forward: ${forward.swapsIndexed} swaps / ${tokensLaunched} launches. Lookback: ${lookback.swapsIndexed} recovered. (${processingTimeMs}ms)`);
 
     return new Response(JSON.stringify({
       chainId,
       chainName: chainConfig.CHAIN_NAME,
       tokensLaunched,
-      swapsIndexed,
-      snapshotsCreated,
-      tokensProcessed,
+      swapsIndexed: forward.swapsIndexed,
+      snapshotsCreated: forward.snapshotsCreated,
+      tokensProcessed: forward.tokensProcessed,
+      tokensFailed: forward.tokensFailed,
       fromBlock: startBlock,
       toBlock: endBlock,
       blocksBehind: safeBlock - endBlock,
+      cursorAdvanced,
+      timedOut: forward.timedOut,
+      lookback: {
+        fromBlock: lookbackStart,
+        toBlock: lookbackEnd,
+        swapsRecovered: lookback.swapsIndexed,
+        tokensFailed: lookback.tokensFailed,
+      },
       processingTimeMs,
-      cursorAdvanced: !partialRun,
-      partialRun,
     }), { headers: corsHeaders });
   } catch (err: any) {
     console.error("Error:", err);
