@@ -16,13 +16,14 @@ interface PriceChartProps {
   theme?: 'light' | 'dark';
   burnPercent?: number;
   burnEvents?: BurnEvent[];
+  livePriceUsd?: number;
 }
 
 type ChartMode = 'price' | 'marketCap';
 
 const TOKEN_TOTAL_SUPPLY = 1000000;
 
-export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', burnPercent = 0, burnEvents = [] }: PriceChartProps) {
+export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', burnPercent = 0, burnEvents = [], livePriceUsd }: PriceChartProps) {
 
   const circulatingSupply = TOKEN_TOTAL_SUPPLY * (1 - burnPercent / 100);
 
@@ -60,7 +61,9 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', burnPerc
     'ALL'
   );
 
-  const displayPrice = currentPrice;
+  // Prefer the live price (current reserves × current ETH price) so the header
+  // value matches the token stat cards exactly; fall back to the last snapshot.
+  const displayPrice = livePriceUsd && livePriceUsd > 0 ? livePriceUsd : currentPrice;
   const displayValue = chartMode === 'marketCap' ? displayPrice * circulatingSupply : displayPrice;
   // Note: circulatingSupply already accounts for burnPercent, which is correct for the current/header value
 

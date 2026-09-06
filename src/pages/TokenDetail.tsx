@@ -529,6 +529,7 @@ export function TokenDetail({ onTrade, onShowToast }: TokenDetailProps) {
           theme={theme}
           burnPercent={burnPercent}
           burnEvents={burnEvents}
+          livePriceUsd={calculateTokenPriceUSD()}
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
