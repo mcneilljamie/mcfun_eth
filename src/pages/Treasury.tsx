@@ -9,6 +9,7 @@ import {
   Calculator as CalculatorIcon,
   ArrowDownToLine,
   Server,
+  Flame,
 } from 'lucide-react';
 import { useTreasury } from '../hooks/useTreasury';
 import { TREASURY_ADDRESS } from '../lib/treasury';
@@ -224,15 +225,19 @@ export function Treasury() {
               Your share of treasury ETH
             </div>
             <div className="text-2xl font-bold text-gray-900 dark:text-white">
-              {backing
-                ? `${backing.usd.toLocaleString('en-US', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}`
-                : '—'}
+              {backing ? `${formatNumber(backing.eth, 6)} ETH` : '—'}
             </div>
+            {backing && (
+              <div className="text-sm text-green-700 dark:text-green-400 mt-0.5">
+                {formatUSD(backing.usd)}
+              </div>
+            )}
           </div>
         </div>
+        <p className="text-xs text-gray-400 dark:text-gray-500 mt-4 flex items-center gap-1.5">
+          <Flame className="w-3.5 h-3.5" />
+          Backing per token = total treasury ETH divided by MCFUN supply after burns.
+        </p>
       </div>
 
       {/* Recent additions */}
