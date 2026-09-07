@@ -82,7 +82,7 @@ Deno.serve(async (req: Request) => {
 
     const deposits = Array.from(byHash.values())
       .sort((a, b) => b.timestamp - a.timestamp)
-      .slice(0, 10);
+      .slice(0, 20);
 
     return new Response(JSON.stringify({ deposits }), {
       status: 200,

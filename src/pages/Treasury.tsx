@@ -262,7 +262,7 @@ export function Treasury() {
               >
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-gray-900 dark:text-white">
+                    <span className="font-semibold text-green-700 dark:text-green-400">
                       +{formatUSD(d.valueEth * ethPriceUsd)}
                     </span>
                     <span className="text-[11px] font-medium px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
