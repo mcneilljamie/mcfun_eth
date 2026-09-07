@@ -9,6 +9,7 @@ import { useWeb3 } from '../lib/web3';
 import { ToastMessage } from '../App';
 import { DEFAULT_CHAIN_ID } from '../contracts/addresses';
 import { ChainFilter } from '../components/ChainFilter';
+import { calculatePriceChangePercent } from '../lib/priceChange';
 
 interface TokensProps {
   onSelectToken: (token: Token) => void;
@@ -314,6 +315,30 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
 
       const newTokenData: Record<string, TokenEnrichedData> = { ...tokenDataMap };
 
+      // Fetch price-change metadata from the SAME source the token detail page uses,
+      // so a token shows an identical percentage on both screens.
+      const metaMap = new Map<string, {
+        token_created_at: string;
+        launch_price_usd: number;
+        last_price_usd: number;
+        price_24h_ago_usd: number;
+        has_recent_trades: boolean;
+      }>();
+      const { data: metaRows } = await supabase.rpc('get_tokens_price_metadata', {
+        p_token_addresses: visibleTokens.map(t => t.token_address.toLowerCase())
+      });
+      if (metaRows) {
+        for (const row of metaRows) {
+          metaMap.set(row.token_address, {
+            token_created_at: row.token_created_at,
+            launch_price_usd: parseFloat(row.launch_price_usd) || 0,
+            last_price_usd: parseFloat(row.last_price_usd) || 0,
+            price_24h_ago_usd: parseFloat(row.price_24h_ago_usd) || 0,
+            has_recent_trades: !!row.has_recent_trades,
+          });
+        }
+      }
+
       for (const token of visibleTokens) {
         const dbPrice = priceMap.get(token.token_address);
 
@@ -342,27 +367,19 @@ export function Tokens({ onSelectToken, onViewToken }: TokensProps) {
         const twentyFourHoursAgoTime = new Date(now - 24 * 60 * 60 * 1000);
         const isNew = createdAt > twentyFourHoursAgoTime;
 
-        let priceChange: number | null = null;
-
-        const totalVolume = parseFloat(token.total_volume_eth || '0');
-
-        // Check if there have been trades in the last 24 hours
-        const lastSwapAt = token.last_swap_at ? new Date(token.last_swap_at) : null;
-        const hasRecentTrades = lastSwapAt && (now - lastSwapAt.getTime() < 24 * 60 * 60 * 1000);
-
-        // Only show price change if there has been recent trading activity
-        if (hasRecentTrades) {
-          // For new tokens: calculate from live blockchain data (most accurate)
-          // For older tokens: trust database's 24h calculation (prevents flickering)
-          if (isNew && token.launch_price_eth && token.launch_eth_price_usd) {
-            const launchPriceUSD = parseFloat(token.launch_price_eth) * parseFloat(token.launch_eth_price_usd);
-            if (launchPriceUSD > 0 && currentPriceUSD > 0) {
-              priceChange = ((currentPriceUSD - launchPriceUSD) / launchPriceUSD) * 100;
-            }
-          } else if (token.price_change_24h) {
-            priceChange = parseFloat(token.price_change_24h);
-          }
-        }
+        // Price change comes from the shared metadata source so it matches the
+        // token detail page exactly. New tokens compare to launch, older tokens
+        // to 24 hours ago; all values use the current live ETH price.
+        const meta = metaMap.get(token.token_address.toLowerCase());
+        const priceChange = meta
+          ? calculatePriceChangePercent({
+              isNew,
+              hasRecentTrades: meta.has_recent_trades,
+              launchPriceUsd: meta.launch_price_usd,
+              lastPriceUsd: meta.last_price_usd,
+              price24hAgoUsd: meta.price_24h_ago_usd,
+            })
+          : null;
 
         newTokenData[token.token_address] = {
           currentPriceUSD,

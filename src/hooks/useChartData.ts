@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { withRetry } from '../lib/utils';
+import { calculatePriceChangePercent } from '../lib/priceChange';
 
 export interface ChartDataPoint {
   time: number;
@@ -143,24 +144,15 @@ export function useChartData(tokenAddress: string | undefined, timeRange: TimeRa
           setPriceChangeSinceLaunch(null);
         }
 
-        // Calculate price change based on token age (for chart display)
-        if (isTokenNew) {
-          // For tokens < 24 hours old, show price change since inception (using actual launch price)
-          if (launchPriceUsd > 0 && lastPriceUsd > 0) {
-            const change = ((lastPriceUsd - launchPriceUsd) / launchPriceUsd) * 100;
-            setPriceChange(change);
-          } else {
-            setPriceChange(null);
-          }
-        } else {
-          // For tokens >= 24 hours old, calculate 24-hour price change
-          if (price24hAgoUsd > 0 && lastPriceUsd > 0) {
-            const change24h = ((lastPriceUsd - price24hAgoUsd) / price24hAgoUsd) * 100;
-            setPriceChange(change24h);
-          } else {
-            setPriceChange(null);
-          }
-        }
+        // Shared calculation so the chart header, token list and everywhere else
+        // report the exact same percentage for a given token.
+        setPriceChange(calculatePriceChangePercent({
+          isNew: isTokenNew,
+          hasRecentTrades,
+          launchPriceUsd,
+          lastPriceUsd,
+          price24hAgoUsd,
+        }));
       } else {
         // No trades yet, don't show any price change
         setPriceChange(null);
