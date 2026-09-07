@@ -52,6 +52,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', burnPerc
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<'Area'> | null>(null);
+  const [chartReady, setChartReady] = useState(false);
   const [chartMode, setChartMode] = useState<ChartMode>(() => {
     const saved = localStorage.getItem('chartMode');
     return (saved === 'price' || saved === 'marketCap') ? saved : 'price';
@@ -85,100 +86,115 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', burnPerc
 
   // Initialize chart
   useEffect(() => {
-    if (!chartContainerRef.current) return;
+    const container = chartContainerRef.current;
+    if (!container) return;
 
     const isDark = theme === 'dark';
-    const containerWidth = chartContainerRef.current.clientWidth;
+    let chart: IChartApi | null = null;
 
-    if (containerWidth === 0) return;
-
-    const chart = createChart(chartContainerRef.current, {
-      layout: {
-        background: { color: isDark ? '#111827' : '#ffffff' },
-        textColor: isDark ? '#e5e7eb' : '#374151',
-      },
-      grid: {
-        vertLines: { color: isDark ? '#374151' : '#f3f4f6' },
-        horzLines: { color: isDark ? '#374151' : '#f3f4f6' },
-      },
-      width: containerWidth,
-      height: 400,
-      rightPriceScale: {
-        borderColor: isDark ? '#4b5563' : '#e5e7eb',
-        scaleMargins: { top: 0.2, bottom: 0.1 },
-        autoScale: true,
-      },
-      timeScale: {
-        borderColor: isDark ? '#4b5563' : '#e5e7eb',
-        timeVisible: true,
-        secondsVisible: false,
-      },
-      crosshair: {
-        mode: 1,
-        vertLine: {
-          color: isDark ? '#6b7280' : '#9ca3af',
-          width: 1,
-          style: 3,
-          labelBackgroundColor: isDark ? '#3b82f6' : '#2563eb',
+    const createChartInstance = (width: number) => {
+      chart = createChart(container, {
+        layout: {
+          background: { color: isDark ? '#111827' : '#ffffff' },
+          textColor: isDark ? '#e5e7eb' : '#374151',
         },
-        horzLine: {
-          color: isDark ? '#6b7280' : '#9ca3af',
-          width: 1,
-          style: 3,
-          labelBackgroundColor: isDark ? '#3b82f6' : '#2563eb',
+        grid: {
+          vertLines: { color: isDark ? '#374151' : '#f3f4f6' },
+          horzLines: { color: isDark ? '#374151' : '#f3f4f6' },
         },
-      },
-    });
+        width,
+        height: 400,
+        rightPriceScale: {
+          borderColor: isDark ? '#4b5563' : '#e5e7eb',
+          scaleMargins: { top: 0.2, bottom: 0.1 },
+          autoScale: true,
+        },
+        timeScale: {
+          borderColor: isDark ? '#4b5563' : '#e5e7eb',
+          timeVisible: true,
+          secondsVisible: false,
+        },
+        crosshair: {
+          mode: 1,
+          vertLine: {
+            color: isDark ? '#6b7280' : '#9ca3af',
+            width: 1,
+            style: 3,
+            labelBackgroundColor: isDark ? '#3b82f6' : '#2563eb',
+          },
+          horzLine: {
+            color: isDark ? '#6b7280' : '#9ca3af',
+            width: 1,
+            style: 3,
+            labelBackgroundColor: isDark ? '#3b82f6' : '#2563eb',
+          },
+        },
+      });
 
-    const precision = chartMode === 'marketCap' ? 0 : (displayPrice < 1 ? 5 : 3);
-    const minMove = chartMode === 'marketCap' ? 1 : (displayPrice < 1 ? 0.00001 : 0.001);
+      const precision = chartMode === 'marketCap' ? 0 : (displayPrice < 1 ? 5 : 3);
+      const minMove = chartMode === 'marketCap' ? 1 : (displayPrice < 1 ? 0.00001 : 0.001);
 
-    const lineColor = isDark ? '#3b82f6' : '#2563eb';
+      const lineColor = isDark ? '#3b82f6' : '#2563eb';
 
-    const areaSeries = chart.addSeries(AreaSeries, {
-      lineColor,
-      topColor: isDark ? 'rgba(59, 130, 246, 0.4)' : 'rgba(37, 99, 235, 0.4)',
-      bottomColor: isDark ? 'rgba(59, 130, 246, 0.0)' : 'rgba(37, 99, 235, 0.0)',
-      lineWidth: 2,
-      priceFormat: {
-        type: 'custom',
-        minMove,
-        formatter: (price: number) => {
-          if (chartMode === 'marketCap') {
-            return '$' + Math.round(price).toLocaleString('en-US');
+      const areaSeries = chart.addSeries(AreaSeries, {
+        lineColor,
+        topColor: isDark ? 'rgba(59, 130, 246, 0.4)' : 'rgba(37, 99, 235, 0.4)',
+        bottomColor: isDark ? 'rgba(59, 130, 246, 0.0)' : 'rgba(37, 99, 235, 0.0)',
+        lineWidth: 2,
+        priceFormat: {
+          type: 'custom',
+          minMove,
+          formatter: (price: number) => {
+            if (chartMode === 'marketCap') {
+              return '$' + Math.round(price).toLocaleString('en-US');
+            }
+            return '$' + Math.abs(price).toFixed(precision);
+          },
+        },
+        autoscaleInfoProvider: (original: () => any) => {
+          const res = original();
+          if (res !== null && res.priceRange) {
+            const { minValue, maxValue } = res.priceRange;
+            const minAllowed = maxValue / 11;
+            if (minValue < minAllowed) {
+              res.priceRange.minValue = minAllowed;
+            }
           }
-          return '$' + Math.abs(price).toFixed(precision);
+          return res;
         },
-      },
-      autoscaleInfoProvider: (original: () => any) => {
-        const res = original();
-        if (res !== null && res.priceRange) {
-          const { minValue, maxValue } = res.priceRange;
-          const minAllowed = maxValue / 11;
-          if (minValue < minAllowed) {
-            res.priceRange.minValue = minAllowed;
-          }
-        }
-        return res;
-      },
-    });
+      });
 
-    chartRef.current = chart;
-    seriesRef.current = areaSeries;
-
-    const handleResize = () => {
-      if (chartContainerRef.current && chartRef.current) {
-        chartRef.current.applyOptions({
-          width: chartContainerRef.current.clientWidth,
-        });
-      }
+      chartRef.current = chart;
+      seriesRef.current = areaSeries;
+      // Signal that the chart exists so the data effect runs and fills it in,
+      // even when the container only gained its width after the first render.
+      setChartReady(true);
     };
 
-    window.addEventListener('resize', handleResize);
+    if (container.clientWidth > 0) {
+      createChartInstance(container.clientWidth);
+    }
+
+    // Create the chart the moment the container has a measurable width, and keep
+    // it sized to the container afterwards. This is what makes the chart appear
+    // immediately instead of only after toggling Price/Market Cap.
+    const resizeObserver = new ResizeObserver((entries) => {
+      const width = Math.floor(entries[0].contentRect.width);
+      if (width === 0) return;
+      if (!chartRef.current) {
+        createChartInstance(width);
+      } else {
+        chartRef.current.applyOptions({ width });
+      }
+    });
+    resizeObserver.observe(container);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
-      chart.remove();
+      resizeObserver.disconnect();
+      if (chart) chart.remove();
+      chartRef.current = null;
+      seriesRef.current = null;
+      setChartReady(false);
     };
   }, [theme, displayPrice, chartMode]);
 
@@ -218,7 +234,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', burnPerc
     if (chartRef.current) {
       chartRef.current.timeScale().fitContent();
     }
-  }, [data, chartMode, displayPrice, sortedBurnEvents, burnPercent]);
+  }, [data, chartMode, displayPrice, sortedBurnEvents, burnPercent, chartReady]);
 
   // Auto-refresh every 60 seconds as fallback
   useEffect(() => {
@@ -234,7 +250,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', burnPerc
       <div className="bg-gray-900 rounded-xl p-8 text-center">
         <p className="text-red-400">Failed to load chart: {error}</p>
         <button
-          onClick={() => refetch}
+          onClick={() => refetch()}
           className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
         >
           Retry
@@ -322,21 +338,25 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', burnPerc
 
       {/* Chart */}
       <div className="relative">
-        {loading && data.length === 0 ? (
-          <div className="h-[400px] flex items-center justify-center">
+        {/* The container stays mounted at all times so the chart can draw as
+            soon as it has a width. Loading / empty states overlay on top. */}
+        <div ref={chartContainerRef} className="rounded-lg overflow-hidden w-full h-[400px]" />
+
+        {loading && data.length === 0 && (
+          <div className={`absolute inset-0 flex items-center justify-center rounded-lg ${isDark ? 'bg-gray-900' : 'bg-white dark:bg-gray-800'}`}>
             <div className="text-center">
               <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
               <p className={isDark ? 'text-gray-400' : 'text-gray-600 dark:text-gray-400'}>Loading chart data...</p>
             </div>
           </div>
-        ) : data.length === 0 ? (
-          <div className="h-[400px] flex items-center justify-center">
+        )}
+
+        {!loading && data.length === 0 && (
+          <div className={`absolute inset-0 flex items-center justify-center rounded-lg ${isDark ? 'bg-gray-900' : 'bg-white dark:bg-gray-800'}`}>
             <div className="text-center">
               <p className={`${isDark ? 'text-gray-400' : 'text-gray-600 dark:text-gray-400'}`}>No price data available yet</p>
             </div>
           </div>
-        ) : (
-          <div ref={chartContainerRef} className="rounded-lg overflow-hidden w-full h-[400px]" />
         )}
       </div>
 
