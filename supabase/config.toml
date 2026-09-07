@@ -42,3 +42,6 @@ verify_jwt = false
 
 [functions.track-eth-price]
 verify_jwt = false
+
+[functions.treasury-transactions]
+verify_jwt = false

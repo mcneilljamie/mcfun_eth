@@ -130,6 +130,16 @@ export function Navigation({ currentPage, onNavigate, setToast }: NavigationProp
                 {t('nav.burn')}
               </button>
               <button
+                onClick={() => onNavigate('treasury')}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  currentPage === 'treasury'
+                    ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                }`}
+              >
+                {t('nav.treasury')}
+              </button>
+              <button
                 onClick={() => onNavigate('about')}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                   currentPage === 'about'
@@ -249,6 +259,16 @@ export function Navigation({ currentPage, onNavigate, setToast }: NavigationProp
                 }`}
               >
                 {t('nav.burn')}
+              </button>
+              <button
+                onClick={() => handleNavigate('treasury')}
+                className={`px-4 py-3 text-left rounded-lg font-medium transition-colors ${
+                  currentPage === 'treasury'
+                    ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                }`}
+              >
+                {t('nav.treasury')}
               </button>
               <button
                 onClick={() => handleNavigate('about')}

@@ -15,6 +15,7 @@ import { Lock } from './pages/Lock';
 import { MyLocks } from './pages/MyLocks';
 import { Burn } from './pages/Burn';
 import { About } from './pages/About';
+import { Treasury } from './pages/Treasury';
 import { Token } from './lib/supabase';
 
 export interface ToastMessage {
@@ -37,6 +38,7 @@ function AppContent() {
     else if (page === 'lock') navigate('/lock');
     else if (page === 'my-locks') navigate('/my-locks');
     else if (page === 'burn') navigate('/burn');
+    else if (page === 'treasury') navigate('/treasury');
     else if (page === 'token-detail' && tokenAddress) navigate(`/token/${tokenAddress}`);
     else if (page === 'about') navigate('/about');
   };
@@ -60,6 +62,7 @@ function AppContent() {
     if (path === '/lock' || path.startsWith('/lock/')) return 'lock';
     if (path === '/my-locks') return 'my-locks';
     if (path === '/burn') return 'burn';
+    if (path === '/treasury') return 'treasury';
     if (path.startsWith('/token/')) return 'token-detail';
     if (path === '/about') return 'about';
     return 'home';
@@ -100,6 +103,7 @@ function AppContent() {
               <Route path="/my-locks" element={<MyLocks onShowToast={setToast} />} />
               <Route path="/burn" element={<Burn onShowToast={setToast} />} />
               <Route path="/about" element={<About />} />
+              <Route path="/treasury" element={<Treasury />} />
             </Routes>
           </div>
 
