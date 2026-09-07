@@ -222,7 +222,7 @@ export function Treasury() {
         <div className="mt-5">
           <div className="bg-green-600/10 rounded-xl px-4 py-4">
             <div className="text-xs text-green-700 dark:text-green-400 mb-1 font-medium">
-              ETH backing your holdings
+              Your share of treasury ETH
             </div>
             <div className="text-2xl font-bold text-gray-900 dark:text-white">
               {backing ? `${formatNumber(backing.eth, 6)} ETH` : '—'}
