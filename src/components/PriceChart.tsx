@@ -52,7 +52,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', burnPerc
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<'Area'> | null>(null);
-  const [chartReady, setChartReady] = useState(false);
+  const [chartVersion, setChartVersion] = useState(0);
   const [chartMode, setChartMode] = useState<ChartMode>(() => {
     const saved = localStorage.getItem('chartMode');
     return (saved === 'price' || saved === 'marketCap') ? saved : 'price';
@@ -166,9 +166,12 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', burnPerc
 
       chartRef.current = chart;
       seriesRef.current = areaSeries;
-      // Signal that the chart exists so the data effect runs and fills it in,
-      // even when the container only gained its width after the first render.
-      setChartReady(true);
+      // Bump a version counter (rather than a boolean) so the data effect always
+      // re-runs after a new chart instance is built. On a theme switch the chart
+      // is torn down and rebuilt within one render; a boolean would flip
+      // false->true and settle back to its prior value, so React would see no
+      // change and never refill the new chart, leaving it blank.
+      setChartVersion((v) => v + 1);
     };
 
     if (container.clientWidth > 0) {
@@ -194,7 +197,6 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', burnPerc
       if (chart) chart.remove();
       chartRef.current = null;
       seriesRef.current = null;
-      setChartReady(false);
     };
   }, [theme, displayPrice, chartMode]);
 
@@ -234,7 +236,7 @@ export function PriceChart({ tokenAddress, tokenSymbol, theme = 'dark', burnPerc
     if (chartRef.current) {
       chartRef.current.timeScale().fitContent();
     }
-  }, [data, chartMode, displayPrice, sortedBurnEvents, burnPercent, chartReady]);
+  }, [data, chartMode, displayPrice, sortedBurnEvents, burnPercent, chartVersion]);
 
   // Auto-refresh every 60 seconds as fallback
   useEffect(() => {
