@@ -8,7 +8,6 @@ import {
   RefreshCw,
   Calculator as CalculatorIcon,
   ArrowDownToLine,
-  TrendingUp,
   Server,
   Flame,
 } from 'lucide-react';
@@ -47,10 +46,28 @@ export function Treasury() {
   }, []);
 
   const handleHoldingsChange = (value: string) => {
-    const cleaned = value.replace(/[^0-9.]/g, '');
+    let cleaned = value.replace(/[^0-9.]/g, '');
+    const firstDot = cleaned.indexOf('.');
+    if (firstDot !== -1) {
+      cleaned =
+        cleaned.slice(0, firstDot + 1) + cleaned.slice(firstDot + 1).replace(/\./g, '');
+    }
+    if (circulatingSupply && cleaned !== '' && cleaned !== '.') {
+      const parsed = parseFloat(cleaned);
+      if (!isNaN(parsed) && parsed > circulatingSupply) {
+        cleaned = String(circulatingSupply);
+      }
+    }
     setHoldings(cleaned);
     localStorage.setItem(HOLDINGS_STORAGE_KEY, cleaned);
   };
+
+  const holdingsDisplay = useMemo(() => {
+    if (!holdings) return '';
+    const [intPart, ...rest] = holdings.split('.');
+    const withCommas = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return holdings.includes('.') ? `${withCommas}.${rest.join('')}` : withCommas;
+  }, [holdings]);
 
   const copyAddress = async () => {
     try {
@@ -179,7 +196,7 @@ export function Treasury() {
       <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 sm:p-8 mb-6 transition-colors">
         <div className="flex items-center gap-2 mb-1">
           <CalculatorIcon className="w-5 h-5 text-green-600 dark:text-green-400" />
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Your ETH backing</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Your look through ETH exposure</h2>
         </div>
         <p className="text-sm text-gray-500 dark:text-gray-400 mb-5">
           Enter how many MCFUN you hold to see the ETH currently backing them.
@@ -191,13 +208,18 @@ export function Treasury() {
         <input
           type="text"
           inputMode="decimal"
-          value={holdings}
+          value={holdingsDisplay}
           onChange={(e) => handleHoldingsChange(e.target.value)}
           placeholder="e.g. 1000"
           className="w-full bg-gray-50 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 rounded-xl px-4 py-3 text-lg text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
         />
+        {circulatingSupply && (
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+            Capped at the circulating supply of {formatNumber(circulatingSupply, 0)} MCFUN.
+          </p>
+        )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-5">
+        <div className="mt-5">
           <div className="bg-green-600/10 rounded-xl px-4 py-4">
             <div className="text-xs text-green-700 dark:text-green-400 mb-1 font-medium">
               ETH backing your holdings
@@ -208,19 +230,6 @@ export function Treasury() {
             {backing && (
               <div className="text-sm text-green-700 dark:text-green-400 mt-0.5">
                 {formatUSD(backing.usd)}
-              </div>
-            )}
-          </div>
-          <div className="bg-gray-50 dark:bg-gray-700/40 rounded-xl px-4 py-4">
-            <div className="text-xs text-gray-500 dark:text-gray-400 mb-1 font-medium flex items-center gap-1">
-              <TrendingUp className="w-3.5 h-3.5" /> ETH backing per MCFUN
-            </div>
-            <div className="text-2xl font-bold text-gray-900 dark:text-white">
-              {ethPerMcfun ? formatNumber(ethPerMcfun, 8) : '—'}
-            </div>
-            {circulatingSupply && (
-              <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                Based on {formatNumber(circulatingSupply, 0)} MCFUN in supply
               </div>
             )}
           </div>
