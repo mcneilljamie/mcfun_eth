@@ -129,11 +129,17 @@ export function Treasury() {
                 <div className="text-lg font-semibold text-gray-900 dark:text-white">
                   {formatNumber(balances?.ethereum ?? 0, 4)} ETH
                 </div>
+                <div className="text-xs text-green-700 dark:text-green-400 mt-0.5">
+                  {formatUSD((balances?.ethereum ?? 0) * ethPriceUsd)}
+                </div>
               </div>
               <div className="bg-gray-50 dark:bg-gray-700/40 rounded-xl px-4 py-3">
                 <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Base</div>
                 <div className="text-lg font-semibold text-gray-900 dark:text-white">
                   {formatNumber(balances?.base ?? 0, 4)} ETH
+                </div>
+                <div className="text-xs text-green-700 dark:text-green-400 mt-0.5">
+                  {formatUSD((balances?.base ?? 0) * ethPriceUsd)}
                 </div>
               </div>
             </div>
@@ -154,7 +160,7 @@ export function Treasury() {
             {copied ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
           </button>
           <a
-            href={`https://etherscan.io/address/${TREASURY_ADDRESS}`}
+            href={`https://app.zerion.io/${TREASURY_ADDRESS.toLowerCase()}/overview`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 text-sm text-green-700 dark:text-green-400 hover:underline"
@@ -176,8 +182,7 @@ export function Treasury() {
           <h2 className="text-xl font-bold text-gray-900 dark:text-white">Your ETH backing</h2>
         </div>
         <p className="text-sm text-gray-500 dark:text-gray-400 mb-5">
-          Enter how many MCFUN you hold to see the ETH currently backing them. We'll remember your
-          amount on this device.
+          Enter how many MCFUN you hold to see the ETH currently backing them.
         </p>
 
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -259,6 +264,9 @@ export function Treasury() {
                   <div className="flex items-center gap-2">
                     <span className="font-semibold text-gray-900 dark:text-white">
                       +{formatNumber(d.valueEth, 6)} ETH
+                    </span>
+                    <span className="text-xs text-green-700 dark:text-green-400">
+                      {formatUSD(d.valueEth * ethPriceUsd)}
                     </span>
                     <span className="text-[11px] font-medium px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
                       {chainLabel(d.chainId)}
