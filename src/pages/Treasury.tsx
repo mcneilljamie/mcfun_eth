@@ -82,10 +82,10 @@ export function Treasury() {
       </div>
 
       <p className="text-gray-600 dark:text-gray-300 leading-relaxed max-w-3xl mb-8">
-        McFun's revenue is retained in ETH in the treasury. A small portion may be used for
+        McFun's revenue is retained as ETH in the treasury. A small portion may be used for
         maintenance and hosting, and some may go toward protocol-owned liquidity, buybacks and
-        burns, but the majority is held. Over the long term, the goal is simple: to grow the amount
-        of ETH backing each MCFUN.
+        burns, but the majority is held long term. Over the long term, the goal is simple: to grow
+        the amount of ETH backing each MCFUN.
       </p>
 
       {/* Live balance */}
@@ -263,10 +263,7 @@ export function Treasury() {
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="font-semibold text-gray-900 dark:text-white">
-                      +{formatNumber(d.valueEth, 6)} ETH
-                    </span>
-                    <span className="text-xs text-green-700 dark:text-green-400">
-                      {formatUSD(d.valueEth * ethPriceUsd)}
+                      +{formatUSD(d.valueEth * ethPriceUsd)}
                     </span>
                     <span className="text-[11px] font-medium px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
                       {chainLabel(d.chainId)}
